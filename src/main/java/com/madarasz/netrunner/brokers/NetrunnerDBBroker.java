@@ -1,14 +1,18 @@
 package com.madarasz.netrunner.brokers;
 
-import com.madarasz.netrunner.DOs.CardSet;
+import com.madarasz.netrunner.DOs.node.CardSet;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * Created by jenkins on 05/06/15.
+ * Created by madarasz on 05/06/15.
  */
 public final class NetrunnerDBBroker {
     private final static String NETRUNNERDB_API_URL = "http://netrunnerdb.com/api/";
+
+    private NetrunnerDBBroker() {
+
+    }
 
     public static int readSets() {
         JSONArray setsData = new JSONObject(JSONBroker.readJSONFromUrl(NETRUNNERDB_API_URL + "sets"))

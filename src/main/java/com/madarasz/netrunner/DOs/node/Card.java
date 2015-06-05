@@ -1,14 +1,18 @@
-package com.madarasz.netrunner.DOs;
+package com.madarasz.netrunner.DOs.node;
 
+import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;
+import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 /**
- * Created by jenkins on 05/06/15.
+ * Created by madarasz on 05/06/15.
  */
+@NodeEntity
 public class Card {
+    @GraphId
+    private int code; // NOT STRING
     @Indexed(unique=true)
-    private String code;
     private String title;
     private String type_code; // identity, event, hardware, program, resource, agenda, asset, operation, ice, upgrade
     private String subtype_code;

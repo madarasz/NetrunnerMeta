@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 /**
- * Created by jenkins on 05/06/15.
+ * Created by madarasz on 05/06/15.
  */
 public final class JSONBroker {
 
