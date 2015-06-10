@@ -82,12 +82,60 @@ public class Card {
         return cardPack;
     }
 
+    public String getFaction_code() {
+        return faction_code;
+    }
+
+    public String getSide_code() {
+        return side_code;
+    }
+
+    public String getType_code() {
+        return type_code;
+    }
+
+    public boolean isLimited() {
+        return limited;
+    }
+
+    public int getInfluencelimit() {
+        return influencelimit;
+    }
+
+    public int getMinimumdecksize() {
+        return minimumdecksize;
+    }
+
+    public int getFactioncost() {
+        return factioncost;
+    }
+
+    public int getAgendapoints() {
+        return agendapoints;
+    }
+
     public boolean isIdentity() {
         return type_code.equals("identity");
     }
 
     @Override
     public String toString() {
-        return title + " (" + code + ") - " + cardPack.toString();
+//        return String.format("%s (%s) - %s", title, code, cardPack.toString());
+        return title;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Card card = (Card) obj;
+        if (code == null) return super.equals(obj);
+        return code.equals(card.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.valueOf(code);
     }
 }

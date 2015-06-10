@@ -77,16 +77,12 @@ public final class NetrunnerDBBroker {
             String key = (String) cardData.next();
             Card card = cardRepository.findByCode(key);
             if (card.isIdentity()) {
-                System.out.println("Identity: " + card.getTitle());
                 resultDeck.setIdentity(card);
             } else {
                 int quantity = cards.getInt(key);
-                System.out.println(quantity + " " + card.getTitle());
                 resultDeck.hasCard(card, quantity);
             }
-//            resultDeck.hasCard(cardRepository.findByCode(key), cards.getInt(key));
         }
-        System.out.println("Cards up to: " + resultDeck.getUpto().toString());
 
         return resultDeck;
     }

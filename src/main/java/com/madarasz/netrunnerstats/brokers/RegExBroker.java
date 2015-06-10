@@ -22,7 +22,7 @@ public class RegExBroker {
         }
     }
 
-    public String getTitle(String line) {
+    public String getCardFromLine(String line) {
         String[] splits = line.split("\\d{1}x | \\(");
         if (splits[0].isEmpty()) {
             return splits[1];
@@ -30,4 +30,5 @@ public class RegExBroker {
             return splits[0];
         }
     }
+
 }

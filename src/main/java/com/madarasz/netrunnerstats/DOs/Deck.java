@@ -56,6 +56,18 @@ public class Deck {
         return identity;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPlayer(String player) {
+        this.player = player;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public void setIdentity(Card identity) {
         this.identity = identity;
     }
@@ -78,6 +90,42 @@ public class Deck {
         upto = result;
     }
 
+    public int getNumberofCards() {
+        int result = 0;
+        for (DeckHasCard deckHasCard : cards) {
+            result += deckHasCard.getQuantity();
+        }
+        return result;
+    }
+
+    public int getInfluenceCount() {
+        if (identity == null) return 0;
+        int result = 0;
+        String faction_code = identity.getFaction_code();
+
+        if (identity.getCode().equals("03029")) {  // The professor
+            for (DeckHasCard deckHasCard : cards) {
+                Card card = deckHasCard.getCard();
+                if (!faction_code.equals(card.getFaction_code())) {
+                    if (card.getType_code().equals("program")) {
+                        result += card.getFactioncost() * (deckHasCard.getQuantity()-1);
+                    } else {
+                        result += card.getFactioncost() * deckHasCard.getQuantity();
+                    }
+                }
+            }
+        } else {    // not The professor
+            for (DeckHasCard deckHasCard : cards) {
+                Card card = deckHasCard.getCard();
+                if (!faction_code.equals(card.getFaction_code())) {
+                    result += card.getFactioncost() * deckHasCard.getQuantity();
+                }
+            }
+        }
+
+        return result;
+    }
+
     // TODO
     @Override
     public int hashCode() {
@@ -91,6 +139,7 @@ public class Deck {
 
     @Override
     public String toString() {
-        return String.format("%s - cards up to: %s - %s", name, upto.toString(), url);
+        return String.format("%s (%s) - %d cards (%d inf) up to: %s - %s", name, identity.toString(), getNumberofCards(), getInfluenceCount(), getUpto().toString(), url);
+//        return name;
     }
 }

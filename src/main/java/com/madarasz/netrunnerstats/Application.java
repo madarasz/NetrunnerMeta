@@ -3,6 +3,7 @@ package com.madarasz.netrunnerstats;
 import com.madarasz.netrunnerstats.DOs.Card;
 import com.madarasz.netrunnerstats.DOs.CardPack;
 import com.madarasz.netrunnerstats.DOs.Deck;
+import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
 import com.madarasz.netrunnerstats.DRs.DeckRepository;
@@ -21,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.neo4j.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.config.Neo4jConfiguration;
 import org.springframework.data.neo4j.core.GraphDatabase;
+import org.springframework.data.neo4j.template.Neo4jOperations;
 
 import java.io.File;
 import java.util.Set;
@@ -63,6 +65,8 @@ public class Application implements CommandLineRunner {
     @Autowired
     GraphDatabase graphDatabase;
 
+    @Autowired
+    private Neo4jOperations template;
 
     public void run(String... args) throws Exception {
 
@@ -75,7 +79,7 @@ public class Application implements CommandLineRunner {
             switch (op) {
                 case loadnetrunnerdb: loadNetrunnerDB(false); break;
                 case updatenetrunnerdb: loadNetrunnerDB(true); break;
-                case testnetrunnerdb: testNetrunnerDb(); break;
+                case testdb: testDb(); break;
                 case loadnetrunnerdbdeck: loadNetrunnerDbDeck(); break;
                 case loadacoodeck: loadAcooDeck(); break;
             }
@@ -94,7 +98,7 @@ public class Application implements CommandLineRunner {
     }
 
     public enum PossibleOperations {
-        deletedb, loadnetrunnerdb, updatenetrunnerdb, testnetrunnerdb,
+        deletedb, loadnetrunnerdb, updatenetrunnerdb, testdb,
         loadnetrunnerdbdeck, loadacoodeck
     }
 
@@ -102,7 +106,7 @@ public class Application implements CommandLineRunner {
         Set<CardPack> allCardPacks = netrunnerDBBroker.readSets();
         int found = 0;
         for (CardPack cardPack : allCardPacks) {
-            if ((!merge) || (cardPackRepository.findByCode(cardPack.getCode()).equals(null))) {
+            if ((!merge) || (cardPackRepository.findByCode(cardPack.getCode()) == null)) {
                 cardPackRepository.save(cardPack);
                 System.out.println("Found pack: " + cardPack.toString());
                 found++;
@@ -113,7 +117,7 @@ public class Application implements CommandLineRunner {
         Set<Card> allCards = netrunnerDBBroker.readCards();
         found = 0;
         for (Card card : allCards) {
-            if ((!merge) || (cardRepository.findByTitle(card.getTitle()).equals(null))) {
+            if ((!merge) || (cardRepository.findByTitle(card.getTitle()) == null)) {
                 cardRepository.save(card);
                 System.out.println("Found card: " + card.toString());
                 found++;
@@ -122,7 +126,7 @@ public class Application implements CommandLineRunner {
         System.out.println("Found new cards: " + found);
     }
 
-    public void testNetrunnerDb() {
+    public void testDb() {
         CardPack whatset = cardPackRepository.findByName("Core Set");
         if (whatset != null) {
             System.out.println(whatset.toString());
@@ -141,7 +145,14 @@ public class Application implements CommandLineRunner {
         if (whatdeck != null) {
             System.out.println(whatdeck.toString());
         } else {
-            System.out.println("Deck not found!");
+            System.out.println("NetrunnerDB Deck not found!");
+        }
+
+        Deck whatdeck2 = deckRepository.findByUrl("http://www.acoo.net/deck/10890");
+        if (whatdeck2 != null) {
+            System.out.println(whatdeck2.toString());
+        } else {
+            System.out.println("Acoo deck not found!");
         }
     }
 
@@ -149,9 +160,17 @@ public class Application implements CommandLineRunner {
         Deck deck = netrunnerDBBroker.readDeck(20162);
         System.out.println(deck.toString());
         deckRepository.save(deck);
+        for (DeckHasCard deckHasCard : deck.getCards()) {
+            template.save(deckHasCard);
+        }
     }
 
     public void loadAcooDeck() {
-        Deck deck = acooBroker.readDeck(11382);
+        Deck deck = acooBroker.readDeck(10890);
+        System.out.println(deck.toString());
+        deckRepository.save(deck);
+        for (DeckHasCard deckHasCard : deck.getCards()) {
+            template.save(deckHasCard);
+        }
     }
 }

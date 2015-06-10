@@ -1,10 +1,7 @@
 package com.madarasz.netrunnerstats.DOs;
 
-import org.neo4j.graphdb.Direction;
-import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import java.util.Set;
 
@@ -57,6 +54,6 @@ public class CardPack {
 
     @Override
     public String toString() {
-        return name + " (" + code + ")";
+        return name;
     }
 }
