@@ -17,6 +17,7 @@ public class Deck {
     private String player;
     private String url;
     @RelatedTo(type = "IDENTITY") private @Fetch Card identity;
+    @RelatedTo(type = "UP_TO") private @Fetch CardPack upto;
 
     public Deck() {
         cards = new HashSet<DeckHasCard>();
@@ -57,6 +58,24 @@ public class Deck {
 
     public void setIdentity(Card identity) {
         this.identity = identity;
+    }
+
+    public CardPack getUpto() {
+        if (upto == null) {
+            calculateUpto();
+        }
+        return upto;
+    }
+
+    public void calculateUpto() {
+        CardPack result = new CardPack("dummy", "dummy", 0, 0);
+        for (DeckHasCard deckHasCard : cards) {
+            CardPack cardPack = deckHasCard.getCard().getCardPack();
+            if (cardPack.later(result)) {
+                result = cardPack;
+            }
+        }
+        upto = result;
     }
 
     // TODO

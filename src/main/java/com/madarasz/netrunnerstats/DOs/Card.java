@@ -78,6 +78,10 @@ public class Card {
         return title;
     }
 
+    public CardPack getCardPack() {
+        return cardPack;
+    }
+
     public boolean isIdentity() {
         return type_code.equals("identity");
     }

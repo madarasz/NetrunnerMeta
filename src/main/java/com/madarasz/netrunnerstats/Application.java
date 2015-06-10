@@ -91,7 +91,7 @@ public class Application implements CommandLineRunner {
         Set<CardPack> allCardPacks = netrunnerDBBroker.readSets();
         int found = 0;
         for (CardPack cardPack : allCardPacks) {
-            if ((!merge) || (cardPackRepository.findByCode(cardPack.code).equals(null))) {
+            if ((!merge) || (cardPackRepository.findByCode(cardPack.getCode()).equals(null))) {
                 cardPackRepository.save(cardPack);
                 System.out.println("Found pack: " + cardPack.toString());
                 found++;
@@ -119,6 +119,6 @@ public class Application implements CommandLineRunner {
     }
 
     public void loadNetrunnerDbDeck() {
-        netrunnerDBBroker.readDeck(21538);
+        netrunnerDBBroker.readDeck(2556);
     }
 }

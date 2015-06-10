@@ -86,6 +86,7 @@ public final class NetrunnerDBBroker {
             }
 //            resultDeck.hasCard(cardRepository.findByCode(key), cards.getInt(key));
         }
+        System.out.println("Cards up to: " + resultDeck.getUpto().toString());
 
         return resultDeck;
     }

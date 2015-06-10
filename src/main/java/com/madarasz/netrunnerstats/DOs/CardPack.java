@@ -15,7 +15,7 @@ import java.util.Set;
 public class CardPack {
     @GraphId Long id;
     private String name;
-    public String code;
+    private String code;
     private int number;
     private int cyclenumber;
 
@@ -27,6 +27,32 @@ public class CardPack {
         this.code = code;
         this.number = number;
         this.cyclenumber = cyclenumber;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public int getCyclenumber() {
+        return cyclenumber;
+    }
+
+    /**
+     * Checks if this cardPack came out later than the other pack.
+     * @param cardPack other pack
+     * @return
+     */
+    public boolean later(CardPack cardPack) {
+        return ((cyclenumber > cardPack.getCyclenumber()) ||
+                ((cyclenumber == cardPack.getCyclenumber()) && (number > cardPack.getNumber())));
     }
 
     @Override
