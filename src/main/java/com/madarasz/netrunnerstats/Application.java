@@ -6,6 +6,7 @@ import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
 import com.madarasz.netrunnerstats.DRs.DeckRepository;
+import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
@@ -57,6 +58,9 @@ public class Application implements CommandLineRunner {
     NetrunnerDBBroker netrunnerDBBroker;
 
     @Autowired
+    AcooBroker acooBroker;
+
+    @Autowired
     GraphDatabase graphDatabase;
 
 
@@ -73,6 +77,7 @@ public class Application implements CommandLineRunner {
                 case updatenetrunnerdb: loadNetrunnerDB(true); break;
                 case testnetrunnerdb: testNetrunnerDb(); break;
                 case loadnetrunnerdbdeck: loadNetrunnerDbDeck(); break;
+                case loadacoodeck: loadAcooDeck(); break;
             }
 
             tx.success();
@@ -89,7 +94,8 @@ public class Application implements CommandLineRunner {
     }
 
     public enum PossibleOperations {
-        deletedb, loadnetrunnerdb, updatenetrunnerdb, testnetrunnerdb, loadnetrunnerdbdeck
+        deletedb, loadnetrunnerdb, updatenetrunnerdb, testnetrunnerdb,
+        loadnetrunnerdbdeck, loadacoodeck
     }
 
     public void loadNetrunnerDB(boolean merge) {
@@ -143,5 +149,9 @@ public class Application implements CommandLineRunner {
         Deck deck = netrunnerDBBroker.readDeck(20162);
         System.out.println(deck.toString());
         deckRepository.save(deck);
+    }
+
+    public void loadAcooDeck() {
+        Deck deck = acooBroker.readDeck(11382);
     }
 }

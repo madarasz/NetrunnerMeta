@@ -32,7 +32,7 @@ public final class NetrunnerDBBroker {
     }
 
     public Set<CardPack> readSets() {
-        JSONArray setData = new JSONObject(JSONBroker.readJSONFromUrl(NETRUNNERDB_API_URL + "sets", true))
+        JSONArray setData = new JSONObject(HttpBroker.readFromUrl(NETRUNNERDB_API_URL + "sets", true))
                 .getJSONArray("input");
         Set<CardPack> resultSet = new HashSet<CardPack>();
 
@@ -46,7 +46,7 @@ public final class NetrunnerDBBroker {
     }
 
     public Set<Card> readCards() {
-        JSONArray cardsData = new JSONObject(JSONBroker.readJSONFromUrl(NETRUNNERDB_API_URL + "cards", true))
+        JSONArray cardsData = new JSONObject(HttpBroker.readFromUrl(NETRUNNERDB_API_URL + "cards", true))
                 .getJSONArray("input");
         Set<Card> resultSet = new HashSet<Card>();
 
@@ -68,7 +68,7 @@ public final class NetrunnerDBBroker {
     }
 
     public Deck readDeck(int deckid) {
-        JSONObject deckData = new JSONObject(JSONBroker.readJSONFromUrl(NETRUNNERDB_API_URL + "decklist/" + deckid, false));
+        JSONObject deckData = new JSONObject(HttpBroker.readFromUrl(NETRUNNERDB_API_URL + "decklist/" + deckid, false));
         Deck resultDeck = new Deck(deckData.getString("name"), deckData.getString("username"), NETRUNNERDB_API_URL + "/en/decklist/" + deckid);
 
         JSONObject cards = deckData.getJSONObject("cards");
