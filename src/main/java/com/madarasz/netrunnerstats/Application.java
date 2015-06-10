@@ -102,7 +102,7 @@ public class Application implements CommandLineRunner {
         Set<Card> allCards = netrunnerDBBroker.readCards();
         found = 0;
         for (Card card : allCards) {
-            if ((!merge) || (cardRepository.findByTitle(card.title).equals(null))) {
+            if ((!merge) || (cardRepository.findByTitle(card.getTitle()).equals(null))) {
                 cardRepository.save(card);
                 System.out.println("Found card: " + card.toString());
                 found++;

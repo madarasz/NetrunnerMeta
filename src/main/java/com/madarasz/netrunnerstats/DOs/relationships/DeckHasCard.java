@@ -46,7 +46,7 @@ public class DeckHasCard {
 
     @Override
     public String toString() {
-        return String.format("Deck %s has %s %s", deck.getName(), quantity, card.title);
+        return String.format("Deck %s has %s %s", deck.getName(), quantity, card.getTitle());
     }
 
     @Override

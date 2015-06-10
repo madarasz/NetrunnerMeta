@@ -8,8 +8,8 @@ import org.springframework.data.neo4j.annotation.*;
 @NodeEntity
 public class Card {
     @GraphId private Long id;
-    public String code;
-    @Indexed(unique=true) public String title;
+    private String code;
+    @Indexed(unique=true) private String title;
     private String type_code;  // identity, event, hardware, program, resource, agenda, asset, operation, ice, upgrade
     private String subtype_code;
     private String text;
@@ -68,6 +68,18 @@ public class Card {
         this.advancementcost = advancementcost;
         this.agendapoints = agendapoints;
         this.trash = trash;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public boolean isIdentity() {
+        return type_code.equals("identity");
     }
 
     @Override

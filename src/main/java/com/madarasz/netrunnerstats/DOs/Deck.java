@@ -3,6 +3,7 @@ package com.madarasz.netrunnerstats.DOs;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
 import org.springframework.data.neo4j.annotation.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -15,14 +16,17 @@ public class Deck {
     private String name;
     private String player;
     private String url;
+    @RelatedTo(type = "IDENTITY") private @Fetch Card identity;
 
     public Deck() {
+        cards = new HashSet<DeckHasCard>();
     }
 
     public Deck(String name, String player, String url) {
         this.name = name;
         this.player = player;
         this.url = url;
+        cards = new HashSet<DeckHasCard>();
     }
 
     public DeckHasCard hasCard(Card card, int quantity) {
@@ -45,6 +49,14 @@ public class Deck {
 
     public String getUrl() {
         return url;
+    }
+
+    public Card getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(Card identity) {
+        this.identity = identity;
     }
 
     // TODO
