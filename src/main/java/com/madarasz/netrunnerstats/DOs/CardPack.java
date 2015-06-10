@@ -12,17 +12,17 @@ import java.util.Set;
  * Created by madarasz on 2015-06-08.
  */
 @NodeEntity
-public class CardSet {
+public class CardPack {
     @GraphId Long id;
     private String name;
     public String code;
     private int number;
     private int cyclenumber;
 
-    public CardSet() {
+    public CardPack() {
     }
 
-    public CardSet(String name, String code, int number, int cyclenumber) {
+    public CardPack(String name, String code, int number, int cyclenumber) {
         this.name = name;
         this.code = code;
         this.number = number;

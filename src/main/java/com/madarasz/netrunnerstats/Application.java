@@ -1,9 +1,9 @@
 package com.madarasz.netrunnerstats;
 
 import com.madarasz.netrunnerstats.DOs.Card;
-import com.madarasz.netrunnerstats.DOs.CardSet;
+import com.madarasz.netrunnerstats.DOs.CardPack;
+import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
-import com.madarasz.netrunnerstats.DRs.CardSetRepository;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
@@ -46,7 +46,7 @@ public class Application implements CommandLineRunner {
     CardRepository cardRepository;
 
     @Autowired
-    CardSetRepository cardSetRepository;
+    CardPackRepository cardPackRepository;
 
     @Autowired
     NetrunnerDBBroker netrunnerDBBroker;
@@ -67,6 +67,7 @@ public class Application implements CommandLineRunner {
                 case loadnetrunnerdb: loadNetrunnerDB(false); break;
                 case updatenetrunnerdb: loadNetrunnerDB(true); break;
                 case testnetrunnerdb: testNetrunnerDb(); break;
+                case loadnetrunnerdbdeck: loadNetrunnerDbDeck(); break;
             }
 
             tx.success();
@@ -83,20 +84,20 @@ public class Application implements CommandLineRunner {
     }
 
     public enum PossibleOperations {
-        deletedb, loadnetrunnerdb, updatenetrunnerdb, testnetrunnerdb
+        deletedb, loadnetrunnerdb, updatenetrunnerdb, testnetrunnerdb, loadnetrunnerdbdeck
     }
 
     public void loadNetrunnerDB(boolean merge) {
-        Set<CardSet> allCardSets = netrunnerDBBroker.readSets();
+        Set<CardPack> allCardPacks = netrunnerDBBroker.readSets();
         int found = 0;
-        for (CardSet cardSet : allCardSets) {
-            if ((!merge) || (cardSetRepository.findByCode(cardSet.code).equals(null))) {
-                cardSetRepository.save(cardSet);
-                System.out.println("Found set: " + cardSet.toString());
+        for (CardPack cardPack : allCardPacks) {
+            if ((!merge) || (cardPackRepository.findByCode(cardPack.code).equals(null))) {
+                cardPackRepository.save(cardPack);
+                System.out.println("Found pack: " + cardPack.toString());
                 found++;
             }
         }
-        System.out.println("Found new card sets: " + found);
+        System.out.println("Found new card packs: " + found);
 
         Set<Card> allCards = netrunnerDBBroker.readCards();
         found = 0;
@@ -111,9 +112,13 @@ public class Application implements CommandLineRunner {
     }
 
     public void testNetrunnerDb() {
-        CardSet whatset = cardSetRepository.findByName("Core Set");
+        CardPack whatset = cardPackRepository.findByName("Core Set");
         System.out.println(whatset.toString());
         Card whatcard = cardRepository.findByTitle("Account Siphon");
         System.out.println(whatcard.toString());
+    }
+
+    public void loadNetrunnerDbDeck() {
+        netrunnerDBBroker.readDeck(21538);
     }
 }

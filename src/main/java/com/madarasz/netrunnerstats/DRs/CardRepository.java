@@ -8,8 +8,8 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface CardRepository extends CrudRepository<Card, Long> {
 
-    Card findByCode(int code);
+    Card findByCode(String code);
     Card findByTitle(String title);
 
-    Iterable<Card> findByCardSetCode(String code);
+    Iterable<Card> findByCardPackCode(String code);
 }

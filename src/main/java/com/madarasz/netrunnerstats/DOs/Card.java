@@ -1,6 +1,5 @@
 package com.madarasz.netrunnerstats.DOs;
 
-import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.*;
 
 /**
@@ -9,7 +8,7 @@ import org.springframework.data.neo4j.annotation.*;
 @NodeEntity
 public class Card {
     @GraphId private Long id;
-    public int code;
+    public String code;
     @Indexed(unique=true) public String title;
     private String type_code;  // identity, event, hardware, program, resource, agenda, asset, operation, ice, upgrade
     private String subtype_code;
@@ -18,7 +17,8 @@ public class Card {
     private String side_code; // runner, corp
     private boolean uniqueness;
     private boolean limited;
-    @RelatedTo(type = "IN_SET") private @Fetch CardSet cardSet;
+    @RelatedTo(type = "IN_SET") private @Fetch
+    CardPack cardPack;
 
     // for identity
     private int baselink;
@@ -45,8 +45,8 @@ public class Card {
     public Card() {
     }
 
-    public Card(int code, String title, String type_code, String subtype_code, String text, String faction_code, String side_code, boolean uniqueness, boolean limited,
-                CardSet cardSet, int baselink, int influencelimit, int minimumdecksize, int cost, int factioncost, int memoryunits, int strength, int advancementcost,
+    public Card(String code, String title, String type_code, String subtype_code, String text, String faction_code, String side_code, boolean uniqueness, boolean limited,
+                CardPack cardPack, int baselink, int influencelimit, int minimumdecksize, int cost, int factioncost, int memoryunits, int strength, int advancementcost,
                 int agendapoints, int trash) {
         this.code = code;
         this.title = title;
@@ -57,7 +57,7 @@ public class Card {
         this.side_code = side_code;
         this.uniqueness = uniqueness;
         this.limited = limited;
-        this.cardSet = cardSet;
+        this.cardPack = cardPack;
         this.baselink = baselink;
         this.influencelimit = influencelimit;
         this.minimumdecksize = minimumdecksize;
@@ -72,6 +72,6 @@ public class Card {
 
     @Override
     public String toString() {
-        return title + " (" + code + ") - " + cardSet.toString();
+        return title + " (" + code + ") - " + cardPack.toString();
     }
 }

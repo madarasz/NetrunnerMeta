@@ -14,7 +14,7 @@ public final class JSONBroker {
 
     }
 
-    public static String readJSONFromUrl(String urlString) {
+    public static String readJSONFromUrl(String urlString, boolean fix) {
         BufferedReader reader = null;
         try {
             URL url = new URL(urlString);
@@ -25,7 +25,11 @@ public final class JSONBroker {
             while ((read = reader.read(chars)) != -1)
                 buffer.append(chars, 0, read);
 
-            return "{\"input\": "+ buffer.toString() + "}";
+            if (fix) {
+                return "{\"input\": " + buffer.toString() + "}";
+            } else {
+                return buffer.toString();
+            }
 
         } catch (Exception ex) {
             return "";
