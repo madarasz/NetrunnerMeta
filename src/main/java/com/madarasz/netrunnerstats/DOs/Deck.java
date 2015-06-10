@@ -91,6 +91,6 @@ public class Deck {
 
     @Override
     public String toString() {
-        return super.toString();
+        return String.format("%s - cards up to: %s - %s", name, upto.toString(), url);
     }
 }

@@ -2,8 +2,10 @@ package com.madarasz.netrunnerstats;
 
 import com.madarasz.netrunnerstats.DOs.Card;
 import com.madarasz.netrunnerstats.DOs.CardPack;
+import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
+import com.madarasz.netrunnerstats.DRs.DeckRepository;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
@@ -47,6 +49,9 @@ public class Application implements CommandLineRunner {
 
     @Autowired
     CardPackRepository cardPackRepository;
+
+    @Autowired
+    DeckRepository deckRepository;
 
     @Autowired
     NetrunnerDBBroker netrunnerDBBroker;
@@ -113,12 +118,30 @@ public class Application implements CommandLineRunner {
 
     public void testNetrunnerDb() {
         CardPack whatset = cardPackRepository.findByName("Core Set");
-        System.out.println(whatset.toString());
+        if (whatset != null) {
+            System.out.println(whatset.toString());
+        } else {
+            System.out.println("Card pack not found!");
+        }
+
         Card whatcard = cardRepository.findByTitle("Account Siphon");
-        System.out.println(whatcard.toString());
+        if (whatcard != null) {
+            System.out.println(whatcard.toString());
+        } else {
+            System.out.println("Card not found!");
+        }
+
+        Deck whatdeck = deckRepository.findByUrl("http://netrunnerdb.com/api//en/decklist/20162");
+        if (whatdeck != null) {
+            System.out.println(whatdeck.toString());
+        } else {
+            System.out.println("Deck not found!");
+        }
     }
 
     public void loadNetrunnerDbDeck() {
-        netrunnerDBBroker.readDeck(2556);
+        Deck deck = netrunnerDBBroker.readDeck(20162);
+        System.out.println(deck.toString());
+        deckRepository.save(deck);
     }
 }
