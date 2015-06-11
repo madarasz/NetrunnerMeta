@@ -82,7 +82,6 @@ public class Application implements CommandLineRunner {
 
             switch (op) {
                 case loadnetrunnerdb: operations.loadNetrunnerDB(); break;
-                case testdb: operations.testDb(); break;
                 case loadnetrunnerdbdeck: operations.loadNetrunnerDbDeck(20162); break;
                 case loadacoodeck: operations.loadAcooDeck(10890); break;
                 case cleandb: operations.cleanDB(); break;
@@ -95,14 +94,11 @@ public class Application implements CommandLineRunner {
 
     }
     public static void main(String[] args) throws Exception {
-        if (args[0].equals(PossibleOperations.deletedb)) {
-            FileUtils.deleteRecursively(new File("netrunner.db"));
-        }
         SpringApplication.run(Application.class, args);
     }
 
     public enum PossibleOperations {
-        cleandb, deletedb, loadnetrunnerdb, testdb,
+        cleandb, loadnetrunnerdb,
         loadnetrunnerdbdeck, loadacoodeck, none
     }
 }

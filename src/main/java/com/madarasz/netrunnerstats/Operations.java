@@ -59,7 +59,7 @@ public class Operations {
         for (CardPack cardPack : allCardPacks) {
             if (cardPackRepository.findByCode(cardPack.getCode()) == null) {
                 cardPackRepository.save(cardPack);
-                System.out.println("Found pack: " + cardPack.toString());
+//                System.out.println("Found pack: " + cardPack.toString());
                 found++;
             }
         }
@@ -70,43 +70,11 @@ public class Operations {
         for (Card card : allCards) {
             if (cardRepository.findByTitle(card.getTitle()) == null) {
                 cardRepository.save(card);
-                System.out.println("Found card: " + card.toString());
+//                System.out.println("Found card: " + card.toString());
                 found++;
             }
         }
         System.out.println("Found new cards: " + found);
-    }
-
-    public void testDb() {
-        logDBCount();
-
-        CardPack whatset = cardPackRepository.findByName("Core Set");
-        if (whatset != null) {
-            System.out.println(whatset.toString());
-        } else {
-            System.out.println("Card pack not found!");
-        }
-
-        Card whatcard = cardRepository.findByTitle("Account Siphon");
-        if (whatcard != null) {
-            System.out.println(whatcard.toString());
-        } else {
-            System.out.println("Card not found!");
-        }
-
-        Deck whatdeck = deckRepository.findByUrl("http://netrunnerdb.com/api//en/decklist/20162");
-        if (whatdeck != null) {
-            System.out.println(whatdeck.toString());
-        } else {
-            System.out.println("NetrunnerDB Deck not found!");
-        }
-
-        Deck whatdeck2 = deckRepository.findByUrl("http://www.acoo.net/deck/10890");
-        if (whatdeck2 != null) {
-            System.out.println(whatdeck2.toString());
-        } else {
-            System.out.println("Acoo deck not found!");
-        }
     }
 
     public void loadNetrunnerDbDeck(int deckId) {
