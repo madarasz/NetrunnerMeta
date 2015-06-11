@@ -28,15 +28,39 @@ public class TestDB {
     Neo4jOperations template;
 
     @Test
-    public void TestDB() {
+    public void createDB() {
+        // populate DB
         operations.cleanDB();
-        operations.loadNetrunnerDB(false);
+        operations.loadNetrunnerDB();
         operations.loadAcooDeck(10890);
         operations.loadNetrunnerDbDeck(20162);
         operations.logDBCount();
         Assert.assertTrue("No cards in DB.", template.count(Card.class) > 0);
-        Assert.assertTrue("No card Packs in DB.", template.count(CardPack.class) > 0);
+        Assert.assertTrue("No card packs in DB.", template.count(CardPack.class) > 0);
         Assert.assertTrue("No decks in DB.", template.count(Deck.class) > 0);
         Assert.assertTrue("No deck-card relationships in DB.", template.count(DeckHasCard.class) > 0);
+    }
+
+    @Test
+    public void updateDB() {
+        // populate DB
+        operations.cleanDB();
+        operations.loadNetrunnerDB();
+        operations.loadAcooDeck(10890);
+        operations.loadNetrunnerDbDeck(20162);
+        operations.logDBCount();
+        long countCard = template.count(Card.class);
+        long countCardPack = template.count(CardPack.class);
+        long countDeck = template.count(Deck.class);
+        long countDeckHasCard = template.count(DeckHasCard.class);
+        // try readding same data
+        operations.loadNetrunnerDB();
+        operations.loadAcooDeck(10890);
+        operations.loadNetrunnerDbDeck(20162);
+        operations.logDBCount();
+        Assert.assertTrue("New cards should not be added.", countCard == template.count(Card.class));
+        Assert.assertTrue("New card packs should not be added.", countCardPack == template.count(CardPack.class));
+        Assert.assertTrue("New decks should not be added.", countDeck == template.count(Deck.class));
+        Assert.assertTrue("New deck-card relationships should not be added.", countDeckHasCard == template.count(DeckHasCard.class));
     }
 }

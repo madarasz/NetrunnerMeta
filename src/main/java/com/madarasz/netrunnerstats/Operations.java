@@ -53,11 +53,11 @@ public class Operations {
                 template.count(Card.class), template.count(CardPack.class), template.count(Deck.class), template.count(DeckHasCard.class)));
     }
 
-    public void loadNetrunnerDB(boolean merge) {
+    public void loadNetrunnerDB() {
         Set<CardPack> allCardPacks = netrunnerDBBroker.readSets();
         int found = 0;
         for (CardPack cardPack : allCardPacks) {
-            if ((!merge) || (cardPackRepository.findByCode(cardPack.getCode()) == null)) {
+            if (cardPackRepository.findByCode(cardPack.getCode()) == null) {
                 cardPackRepository.save(cardPack);
                 System.out.println("Found pack: " + cardPack.toString());
                 found++;
@@ -68,7 +68,7 @@ public class Operations {
         Set<Card> allCards = netrunnerDBBroker.readCards();
         found = 0;
         for (Card card : allCards) {
-            if ((!merge) || (cardRepository.findByTitle(card.getTitle()) == null)) {
+            if (cardRepository.findByTitle(card.getTitle()) == null) {
                 cardRepository.save(card);
                 System.out.println("Found card: " + card.toString());
                 found++;
@@ -111,13 +111,25 @@ public class Operations {
 
     public void loadNetrunnerDbDeck(int deckId) {
         Deck deck = netrunnerDBBroker.readDeck(deckId);
-        System.out.println(deck.toString());
-        deckRepository.save(deck);
+        Deck exists = deckRepository.findByUrl(deck.getUrl());
+        if (exists != null) {
+            System.out.println("Deck is already in DB. Not saving!");
+        } else {
+            System.out.println("Saving new deck!");
+            System.out.println(deck.toString());
+            deckRepository.save(deck);
+        }
     }
 
     public void loadAcooDeck(int deckId) {
         Deck deck = acooBroker.readDeck(deckId);
-        System.out.println(deck.toString());
-        deckRepository.save(deck);
+        Deck exists = deckRepository.findByUrl(deck.getUrl());
+        if (exists != null) {
+            System.out.println("Deck is already in DB. Not saving!");
+        } else {
+            System.out.println("Saving new deck!");
+            System.out.println(deck.toString());
+            deckRepository.save(deck);
+        }
     }
 }

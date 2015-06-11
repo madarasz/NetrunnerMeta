@@ -81,8 +81,7 @@ public class Application implements CommandLineRunner {
         try {
 
             switch (op) {
-                case loadnetrunnerdb: operations.loadNetrunnerDB(false); break;
-                case updatenetrunnerdb: operations.loadNetrunnerDB(true); break;
+                case loadnetrunnerdb: operations.loadNetrunnerDB(); break;
                 case testdb: operations.testDb(); break;
                 case loadnetrunnerdbdeck: operations.loadNetrunnerDbDeck(20162); break;
                 case loadacoodeck: operations.loadAcooDeck(10890); break;
@@ -103,7 +102,7 @@ public class Application implements CommandLineRunner {
     }
 
     public enum PossibleOperations {
-        cleandb, deletedb, loadnetrunnerdb, updatenetrunnerdb, testdb,
+        cleandb, deletedb, loadnetrunnerdb, testdb,
         loadnetrunnerdbdeck, loadacoodeck, none
     }
 }

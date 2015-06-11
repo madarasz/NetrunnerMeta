@@ -15,7 +15,7 @@ public class Deck {
     @RelatedToVia(type = "HAS_CARD") @Fetch private Set<DeckHasCard> cards;
     private String name;
     private String player;
-    private String url;
+    @Indexed(unique=true) private String url;
     @RelatedTo(type = "IDENTITY") @Fetch private Card identity;
     @RelatedTo(type = "UP_TO") @Fetch private CardPack upto;
 
