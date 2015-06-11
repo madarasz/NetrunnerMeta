@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @Transactional
-public class TestDB {
+public class DatabaseTest {
 
     @Autowired
     Operations operations;
