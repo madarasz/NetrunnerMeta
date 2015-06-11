@@ -25,6 +25,8 @@ import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -66,7 +68,7 @@ public class Application implements CommandLineRunner {
     GraphDatabase graphDatabase;
 
     @Autowired
-    private Neo4jOperations template;
+    Neo4jOperations template;
 
     public void run(String... args) throws Exception {
 
@@ -82,6 +84,7 @@ public class Application implements CommandLineRunner {
                 case testdb: testDb(); break;
                 case loadnetrunnerdbdeck: loadNetrunnerDbDeck(); break;
                 case loadacoodeck: loadAcooDeck(); break;
+                case cleandb: cleanDB(); break;
             }
 
             tx.success();
@@ -98,8 +101,20 @@ public class Application implements CommandLineRunner {
     }
 
     public enum PossibleOperations {
-        deletedb, loadnetrunnerdb, updatenetrunnerdb, testdb,
+        cleandb, deletedb, loadnetrunnerdb, updatenetrunnerdb, testdb,
         loadnetrunnerdbdeck, loadacoodeck
+    }
+
+    public void cleanDB() {
+        System.out.println("Cleaning DB.");
+        Map<String, Object> emptyparams = new HashMap<String, Object>();
+        template.query("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
+        logDBCount();
+    }
+
+    public void logDBCount() {
+        System.out.println(String.format("Cards: %d, CardPacks: %d, Decks: %d, Deck-card relations: %d",
+                template.count(Card.class), template.count(CardPack.class), template.count(Deck.class), template.count(DeckHasCard.class)));
     }
 
     public void loadNetrunnerDB(boolean merge) {
@@ -127,6 +142,8 @@ public class Application implements CommandLineRunner {
     }
 
     public void testDb() {
+        logDBCount();
+
         CardPack whatset = cardPackRepository.findByName("Core Set");
         if (whatset != null) {
             System.out.println(whatset.toString());
@@ -160,17 +177,11 @@ public class Application implements CommandLineRunner {
         Deck deck = netrunnerDBBroker.readDeck(20162);
         System.out.println(deck.toString());
         deckRepository.save(deck);
-        for (DeckHasCard deckHasCard : deck.getCards()) {
-            template.save(deckHasCard);
-        }
     }
 
     public void loadAcooDeck() {
         Deck deck = acooBroker.readDeck(10890);
         System.out.println(deck.toString());
         deckRepository.save(deck);
-        for (DeckHasCard deckHasCard : deck.getCards()) {
-            template.save(deckHasCard);
-        }
     }
 }
