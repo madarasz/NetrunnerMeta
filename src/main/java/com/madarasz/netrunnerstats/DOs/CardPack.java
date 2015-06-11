@@ -3,9 +3,8 @@ package com.madarasz.netrunnerstats.DOs;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
-import java.util.Set;
-
 /**
+ * Node for Netrunner data packs
  * Created by madarasz on 2015-06-08.
  */
 @NodeEntity

@@ -5,6 +5,7 @@ import com.madarasz.netrunnerstats.DOs.Deck;
 import org.springframework.data.neo4j.annotation.*;
 
 /**
+ * Relationship for decks having cards
  * Created by madarasz on 2015-06-09.
  */
 @RelationshipEntity(type = "HAS_CARD")

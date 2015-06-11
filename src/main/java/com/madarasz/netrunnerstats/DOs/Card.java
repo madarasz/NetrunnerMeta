@@ -3,6 +3,7 @@ package com.madarasz.netrunnerstats.DOs;
 import org.springframework.data.neo4j.annotation.*;
 
 /**
+ * Node for Netrunner cards
  * Created by madarasz on 2015-06-08.
  */
 @NodeEntity

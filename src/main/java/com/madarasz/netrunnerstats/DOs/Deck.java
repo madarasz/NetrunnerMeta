@@ -2,11 +2,11 @@ package com.madarasz.netrunnerstats.DOs;
 
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
 import org.springframework.data.neo4j.annotation.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Node for Netrunner decks
  * Created by madarasz on 2015-06-09.
  */
 @NodeEntity

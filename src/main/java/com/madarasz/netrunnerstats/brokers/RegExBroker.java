@@ -1,11 +1,11 @@
 package com.madarasz.netrunnerstats.brokers;
 
 import org.springframework.stereotype.Component;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Handling general regex parsing
  * Created by madarasz on 10/06/15.
  */
 @Component

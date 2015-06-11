@@ -9,12 +9,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 /**
+ * Handling netrunnerdb.com stuff
  * Created by madarasz on 2015-06-09.
  */
 @Component

@@ -5,10 +5,10 @@ import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 
 /**
+ * Handling acoo.net stuff
  * Created by madarasz on 10/06/15.
  */
 @Component

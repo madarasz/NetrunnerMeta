@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Handling all the possible operations of the application.
  * Created by istvan on 2015-06-11.
  */
 @Component

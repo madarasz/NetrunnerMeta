@@ -10,10 +10,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
+ * Loading from http and parsing html
  * Created by madarasz on 05/06/15.
  */
 public final class HttpBroker {

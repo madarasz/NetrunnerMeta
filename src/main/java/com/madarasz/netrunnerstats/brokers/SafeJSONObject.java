@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
+ * Creating safe JSONObject class which does not throw exception on empty values
  * Created by madarasz on 2015-06-09.
  */
 public class SafeJSONObject {
