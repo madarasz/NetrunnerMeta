@@ -109,14 +109,14 @@ public class Operations {
         }
     }
 
-    public void loadNetrunnerDbDeck() {
-        Deck deck = netrunnerDBBroker.readDeck(20162);
+    public void loadNetrunnerDbDeck(int deckId) {
+        Deck deck = netrunnerDBBroker.readDeck(deckId);
         System.out.println(deck.toString());
         deckRepository.save(deck);
     }
 
-    public void loadAcooDeck() {
-        Deck deck = acooBroker.readDeck(10890);
+    public void loadAcooDeck(int deckId) {
+        Deck deck = acooBroker.readDeck(deckId);
         System.out.println(deck.toString());
         deckRepository.save(deck);
     }

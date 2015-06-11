@@ -69,7 +69,12 @@ public class Application implements CommandLineRunner {
 
     public void run(String... args) throws Exception {
 
-        PossibleOperations op = PossibleOperations.valueOf(args[0]);
+        PossibleOperations op;
+        if (args.length > 0) {
+            op = PossibleOperations.valueOf(args[0]);
+        } else {
+            op = PossibleOperations.none;
+        }
 
         Transaction tx = graphDatabase.beginTx();
 
@@ -79,8 +84,8 @@ public class Application implements CommandLineRunner {
                 case loadnetrunnerdb: operations.loadNetrunnerDB(false); break;
                 case updatenetrunnerdb: operations.loadNetrunnerDB(true); break;
                 case testdb: operations.testDb(); break;
-                case loadnetrunnerdbdeck: operations.loadNetrunnerDbDeck(); break;
-                case loadacoodeck: operations.loadAcooDeck(); break;
+                case loadnetrunnerdbdeck: operations.loadNetrunnerDbDeck(20162); break;
+                case loadacoodeck: operations.loadAcooDeck(10890); break;
                 case cleandb: operations.cleanDB(); break;
             }
 
@@ -99,6 +104,6 @@ public class Application implements CommandLineRunner {
 
     public enum PossibleOperations {
         cleandb, deletedb, loadnetrunnerdb, updatenetrunnerdb, testdb,
-        loadnetrunnerdbdeck, loadacoodeck
+        loadnetrunnerdbdeck, loadacoodeck, none
     }
 }
