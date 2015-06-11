@@ -11,7 +11,7 @@ import org.springframework.data.neo4j.annotation.*;
 public class DeckHasCard {
     @GraphId Long id;
     @StartNode @Fetch Deck deck;
-    @EndNode Card card;
+    @EndNode @Fetch Card card;
     private int quantity;
 
     public DeckHasCard() {

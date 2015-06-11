@@ -12,12 +12,12 @@ import java.util.Set;
 @NodeEntity
 public class Deck {
     @GraphId Long id;
-    @RelatedToVia(type = "HAS_CARD") private @Fetch Set<DeckHasCard> cards;
+    @RelatedToVia(type = "HAS_CARD") @Fetch private Set<DeckHasCard> cards;
     private String name;
     private String player;
     private String url;
-    @RelatedTo(type = "IDENTITY") private @Fetch Card identity;
-    @RelatedTo(type = "UP_TO") private @Fetch CardPack upto;
+    @RelatedTo(type = "IDENTITY") @Fetch private Card identity;
+    @RelatedTo(type = "UP_TO") @Fetch private CardPack upto;
 
     public Deck() {
         cards = new HashSet<DeckHasCard>();
