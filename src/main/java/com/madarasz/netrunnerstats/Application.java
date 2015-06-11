@@ -19,7 +19,6 @@ import org.springframework.data.neo4j.config.Neo4jConfiguration;
 import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 
-
 /**
  * Main application class
  * Created by madarasz on 2015-06-08.
