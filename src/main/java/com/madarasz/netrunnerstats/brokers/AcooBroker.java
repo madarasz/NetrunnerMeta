@@ -81,16 +81,15 @@ public class AcooBroker {
         String url = tournamentUrlFromId(tournamentId);
         HttpBroker.parseHtml(url);
         String titlebar = HttpBroker.textFromHtml(JSOUP_TITLE);
-        String[] titleparts = titlebar.split(" (|)");
+        String[] titleparts = titlebar.split(" \\(|\\)");
         Date date = null;
         try {
             date = format.parse(titleparts[1]);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        CardPack pool = cardPackRepository.findByName(HttpBroker.textFromHtml(JSOUP_DECK_CARDS));
-//        return new Tournament(tournamentId, titleparts[0], date, pool, url);
-        return new Tournament();
+        CardPack pool = cardPackRepository.findByName(HttpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL));
+        return new Tournament(tournamentId, titleparts[0], date, pool, url);
     }
 
     public ArrayList<Integer> loadTournamentDeckIds(int tournamentId) {
