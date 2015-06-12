@@ -7,14 +7,14 @@ import org.springframework.data.neo4j.annotation.*;
 /** Relataionship between tournaments and decks
  * Created by madarasz on 2015-06-12.
  */
-@RelationshipEntity(type = "HAS_DECK")
+@RelationshipEntity(type = "RANKING")
 public class TournamentHasDeck {
     @GraphId Long id;
     @StartNode @Fetch private Tournament tournament;
     @EndNode @Fetch private Deck deck;
     private int rank;
     private String side_code;
-
+//
     public TournamentHasDeck() {
     }
 

@@ -79,8 +79,9 @@ public class Application implements CommandLineRunner {
 
             switch (op) {
                 case loadnetrunnerdb: operations.loadNetrunnerDB(); break;
-                case loadnetrunnerdbdeck: operations.loadNetrunnerDbDeck(20162); break;
-                case loadacoodeck: operations.loadAcooDeck(10890); break;
+                case netrunnerdbloaddeck: operations.loadNetrunnerDbDeck(20162); break;
+                case acooloaddeck: operations.loadAcooDeck(10890); break;
+                case acooloadtournament: operations.loadAcooTournament(526); break;
                 case cleandb: operations.cleanDB(); break;
             }
 
@@ -96,6 +97,7 @@ public class Application implements CommandLineRunner {
 
     public enum PossibleOperations {
         cleandb, loadnetrunnerdb,
-        loadnetrunnerdbdeck, loadacoodeck, none
+        netrunnerdbloaddeck, acooloaddeck, acooloadtournament,
+        none
     }
 }

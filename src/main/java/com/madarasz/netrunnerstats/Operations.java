@@ -3,6 +3,7 @@ package com.madarasz.netrunnerstats;
 import com.madarasz.netrunnerstats.DOs.Card;
 import com.madarasz.netrunnerstats.DOs.CardPack;
 import com.madarasz.netrunnerstats.DOs.Deck;
+import com.madarasz.netrunnerstats.DOs.Tournament;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
@@ -99,5 +100,10 @@ public class Operations {
             System.out.println(deck.toString());
             deckRepository.save(deck);
         }
+    }
+
+    public void loadAcooTournament(int tournamentId) {
+        Tournament tournament = acooBroker.readTournament(tournamentId);
+        System.out.println(tournament.toString());
     }
 }

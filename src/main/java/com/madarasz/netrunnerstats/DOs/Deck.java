@@ -126,10 +126,9 @@ public class Deck {
         return result;
     }
 
-    // TODO
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return id != null ? id.hashCode() : super.hashCode();
     }
 
     @Override
