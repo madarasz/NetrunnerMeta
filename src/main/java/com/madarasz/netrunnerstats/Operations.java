@@ -12,7 +12,6 @@ import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
