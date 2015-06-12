@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 @Component
 public class RegExBroker {
     private static final String REGEX_QUANTITY = "^\\d{1}x";
+    private static final String REGEX_FIRST_NUMBER = "^\\d*";
 
     public int getQuantity(String line) {
         Pattern pattern = Pattern.compile(REGEX_QUANTITY);
@@ -28,6 +29,16 @@ public class RegExBroker {
             return splits[1];
         } else {
             return splits[0];
+        }
+    }
+
+    public int getNumberFromBeginning(String line) {
+        Pattern pattern = Pattern.compile(REGEX_FIRST_NUMBER);
+        Matcher matcher = pattern.matcher(line);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(0));
+        } else {
+            return 0;
         }
     }
 

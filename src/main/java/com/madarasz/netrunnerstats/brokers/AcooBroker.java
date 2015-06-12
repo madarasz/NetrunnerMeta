@@ -25,6 +25,7 @@ import java.util.Set;
 public class AcooBroker {
     private final static String ACOO_URL = "http://www.acoo.net/";
     private final static String JSOUP_DECK_CARDS = "div.deck-display-type > ul > li";
+    private final static String JSOUP_TOURNAMENT_DESC = "div.section > p";
     private final static String JSOUP_TOURNAMENT_POOL = "div.section > p > a";
     private final static String JSOUP_TITLE = "h1";
     private final static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -82,6 +83,8 @@ public class AcooBroker {
         HttpBroker.parseHtml(url);
         String titlebar = HttpBroker.textFromHtml(JSOUP_TITLE);
         String[] titleparts = titlebar.split(" \\(|\\)");
+        String decription = HttpBroker.textFromHtml(JSOUP_TOURNAMENT_DESC);
+        int playerNumber = regExBroker.getNumberFromBeginning(decription);
         Date date = null;
         try {
             date = format.parse(titleparts[1]);
@@ -89,7 +92,7 @@ public class AcooBroker {
             e.printStackTrace();
         }
         CardPack pool = cardPackRepository.findByName(HttpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL));
-        return new Tournament(tournamentId, titleparts[0], date, pool, url);
+        return new Tournament(tournamentId, titleparts[0], date, pool, url, playerNumber);
     }
 
     public ArrayList<Integer> loadTournamentDeckIds(int tournamentId) {

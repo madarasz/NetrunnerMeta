@@ -14,6 +14,7 @@ public class TournamentHasDeck {
     @EndNode @Fetch private Deck deck;
     private int rank;
     private String side_code;
+    private boolean impact = true;
 //
     public TournamentHasDeck() {
     }
@@ -39,6 +40,10 @@ public class TournamentHasDeck {
 
     public String getSide_code() {
         return side_code;
+    }
+
+    public void calculateImpact() {
+        impact = true; // TODO
     }
 
     @Override

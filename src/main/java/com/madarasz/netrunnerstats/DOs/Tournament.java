@@ -20,6 +20,7 @@ public class Tournament {
     private int id;
     private String name;
     private Date date;
+    private int playerNumber;
     @Indexed(unique=true) private String url;
     @RelatedTo(type = "POOL") private @Fetch CardPack cardpool;
     @RelatedToVia(type = "RANKING") @Fetch private Set<TournamentHasDeck> decks;
@@ -27,12 +28,13 @@ public class Tournament {
     public Tournament() {
     }
 
-    public Tournament(int id, String name, Date date, CardPack cardpool, String url) {
+    public Tournament(int id, String name, Date date, CardPack cardpool, String url, int playerNumber) {
         this.id = id;
         this.name = name;
         this.date = date;
         this.cardpool = cardpool;
         this.url = url;
+        this.playerNumber = playerNumber;
         decks = new HashSet<TournamentHasDeck>();
     }
 
@@ -65,6 +67,6 @@ public class Tournament {
     @Override
     public String toString() {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return String.format("%s (%s) - cardpool: %s", name, format.format(date), cardpool.getName());
+        return String.format("%s (%s) - %d players - cardpool: %s", name, format.format(date), playerNumber, cardpool.getName());
     }
 }
