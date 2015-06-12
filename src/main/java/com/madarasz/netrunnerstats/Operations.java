@@ -79,11 +79,12 @@ public class Operations {
     }
 
     public void loadNetrunnerDbDeck(int deckId) {
-        Deck deck = netrunnerDBBroker.readDeck(deckId);
-        Deck exists = deckRepository.findByUrl(deck.getUrl());
+        String url = netrunnerDBBroker.deckUrlFromId(deckId);
+        Deck exists = deckRepository.findByUrl(url);
         if (exists != null) {
             System.out.println("Deck is already in DB. Not saving!");
         } else {
+            Deck deck = netrunnerDBBroker.readDeck(deckId);
             System.out.println("Saving new deck!");
             System.out.println(deck.toString());
             deckRepository.save(deck);
@@ -91,11 +92,12 @@ public class Operations {
     }
 
     public void loadAcooDeck(int deckId) {
-        Deck deck = acooBroker.readDeck(deckId);
-        Deck exists = deckRepository.findByUrl(deck.getUrl());
+        String url = acooBroker.deckUrlFromId(deckId);
+        Deck exists = deckRepository.findByUrl(url);
         if (exists != null) {
             System.out.println("Deck is already in DB. Not saving!");
         } else {
+            Deck deck = acooBroker.readDeck(deckId);
             System.out.println("Saving new deck!");
             System.out.println(deck.toString());
             deckRepository.save(deck);
