@@ -100,7 +100,6 @@ public class AcooBroker {
         String url = tournamentUrlFromId(tournamentId);
         HttpBroker.parseHtml(url);
         String titlebar = HttpBroker.textFromHtml(JSOUP_TITLE);
-        String[] titleparts = titlebar.split(" (|)");
         return result;
     }
 

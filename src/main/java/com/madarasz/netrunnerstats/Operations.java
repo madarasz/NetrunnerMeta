@@ -8,6 +8,7 @@ import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
 import com.madarasz.netrunnerstats.DRs.DeckRepository;
+import com.madarasz.netrunnerstats.DRs.TournamentRepository;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class Operations {
 
     @Autowired
     DeckRepository deckRepository;
+
+    @Autowired
+    TournamentRepository tournamentRepository;
 
     @Autowired
     NetrunnerDBBroker netrunnerDBBroker;
@@ -105,7 +109,15 @@ public class Operations {
     }
 
     public void loadAcooTournament(int tournamentId) {
-        Tournament tournament = acooBroker.readTournament(tournamentId);
-        System.out.println(tournament.toString());
+        String url = acooBroker.tournamentUrlFromId(tournamentId);
+        Tournament exists = tournamentRepository.findByUrl(url);
+        if (exists != null) {
+            System.out.println("Tournament is already in DB. Not saving!");
+        } else {
+            Tournament tournament = acooBroker.readTournament(tournamentId);
+            System.out.println("Saving new tournament!");
+            System.out.println(tournament.toString());
+            tournamentRepository.save(tournament);
+        }
     }
 }

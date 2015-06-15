@@ -2,6 +2,7 @@ import com.madarasz.netrunnerstats.Application;
 import com.madarasz.netrunnerstats.DOs.Card;
 import com.madarasz.netrunnerstats.DOs.CardPack;
 import com.madarasz.netrunnerstats.DOs.Deck;
+import com.madarasz.netrunnerstats.DOs.Tournament;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
@@ -39,6 +40,11 @@ public class DatabaseTest {
     @Autowired
     Neo4jOperations template;
 
+    /**
+     * Checking that DB can be populated.
+     * NetrunnerDB: cards, card packs, decks
+     * Acoo: decks, tournaments
+     */
     @Test
     public void createDB() {
         // populate DB
@@ -46,12 +52,18 @@ public class DatabaseTest {
         populateDB();
         Assert.assertTrue("No cards in DB.", template.count(Card.class) > 0);
         Assert.assertTrue("No card packs in DB.", template.count(CardPack.class) > 0);
-        Assert.assertTrue("No decks in DB.", template.count(Deck.class) > 0);
+        Assert.assertTrue("No decks in DB.", template.count(Deck.class) > 1);
         Assert.assertTrue("No deck-card relationships in DB.", template.count(DeckHasCard.class) > 0);
+        Assert.assertTrue("No tournaments in DB.", template.count(Tournament.class) > 0);
     }
 
+    /**
+     * Checking that duplicates are not saved.
+     * NetrunnerDB: cards, card packs, decks
+     * Acoo: decks, tournaments
+     */
     @Test
-    public void updateDB() {
+    public void duplicatesDB() {
         // populate DB
         operations.cleanDB();
         populateDB();
@@ -59,13 +71,15 @@ public class DatabaseTest {
         long countCardPack = template.count(CardPack.class);
         long countDeck = template.count(Deck.class);
         long countDeckHasCard = template.count(DeckHasCard.class);
+        long countTournaments = template.count(Tournament.class);
         // try readding same data
         populateDB();
 
-        Assert.assertTrue("New cards should not be added.", countCard == template.count(Card.class));
-        Assert.assertTrue("New card packs should not be added.", countCardPack == template.count(CardPack.class));
-        Assert.assertTrue("New decks should not be added.", countDeck == template.count(Deck.class));
-        Assert.assertTrue("New deck-card relationships should not be added.", countDeckHasCard == template.count(DeckHasCard.class));
+        Assert.assertTrue("Duplicate cards should not be added.", countCard == template.count(Card.class));
+        Assert.assertTrue("Duplicate card packs should not be added.", countCardPack == template.count(CardPack.class));
+        Assert.assertTrue("Duplicate decks should not be added.", countDeck == template.count(Deck.class));
+        Assert.assertTrue("Duplicate deck-card relationships should not be added.", countDeckHasCard == template.count(DeckHasCard.class));
+        Assert.assertTrue("Duplicate tournaments should not be added.", countTournaments == template.count(Tournament.class));
     }
 
     @Test
@@ -89,6 +103,7 @@ public class DatabaseTest {
         operations.loadNetrunnerDB();
         operations.loadAcooDeck(10890);
         operations.loadNetrunnerDbDeck(20162);
+        operations.loadAcooTournament(526);
         operations.logDBCount();
     }
 }

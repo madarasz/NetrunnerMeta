@@ -67,6 +67,6 @@ public class Tournament {
     @Override
     public String toString() {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return String.format("%s (%s) - %d players - cardpool: %s", name, format.format(date), playerNumber, cardpool.getName());
+        return String.format("%s (%s) - %d players - cardpool: %s - %s", name, format.format(date), playerNumber, cardpool.getName(), url);
     }
 }
