@@ -5,6 +5,7 @@ import com.madarasz.netrunnerstats.DOs.CardPack;
 import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DOs.Tournament;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
+import com.madarasz.netrunnerstats.DOs.relationships.TournamentHasDeck;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
 import com.madarasz.netrunnerstats.DRs.DeckRepository;
@@ -54,9 +55,9 @@ public class Operations {
     }
 
     public void logDBCount() {
-        System.out.println(String.format("Cards: %d, CardPacks: %d, Decks: %d, Deck-card relations: %d, Tournaments: %d",
+        System.out.println(String.format("Cards: %d, CardPacks: %d, Decks: %d, Deck-card relations: %d, Tournaments: %d, Tournament-deck relations: %d",
                 template.count(Card.class), template.count(CardPack.class), template.count(Deck.class),
-                template.count(DeckHasCard.class), template.count(Tournament.class)));
+                template.count(DeckHasCard.class), template.count(Tournament.class), template.count(TournamentHasDeck.class)));
     }
 
     public void loadNetrunnerDB() {
@@ -83,47 +84,55 @@ public class Operations {
         System.out.println("Found new cards: " + found);
     }
 
-    public void loadNetrunnerDbDeck(int deckId) {
+    public Deck loadNetrunnerDbDeck(int deckId) {
         String url = netrunnerDBBroker.deckUrlFromId(deckId);
         Deck exists = deckRepository.findByUrl(url);
         if (exists != null) {
             System.out.println("Deck is already in DB. Not saving!");
+            return exists;
         } else {
             Deck deck = netrunnerDBBroker.readDeck(deckId);
             System.out.println("Saving new deck! - " + deck.toString());
             deckRepository.save(deck);
+            return deck;
         }
     }
 
-    public void loadAcooDeck(int deckId) {
+    public Deck loadAcooDeck(int deckId) {
         String url = acooBroker.deckUrlFromId(deckId);
         Deck exists = deckRepository.findByUrl(url);
         if (exists != null) {
             System.out.println("Deck is already in DB. Not saving!");
+            return exists;
         } else {
             Deck deck = acooBroker.readDeck(deckId);
             System.out.println("Saving new deck! - " + deck.toString());
             deckRepository.save(deck);
+            return deck;
         }
     }
 
-    public void loadAcooTournament(int tournamentId) {
+    public Tournament loadAcooTournament(int tournamentId) {
         String url = acooBroker.tournamentUrlFromId(tournamentId);
         Tournament exists = tournamentRepository.findByUrl(url);
         if (exists != null) {
             System.out.println("Tournament is already in DB. Not saving!");
+            return exists;
         } else {
             Tournament tournament = acooBroker.readTournament(tournamentId);
             System.out.println("Saving new tournament! - " + tournament.toString());
             tournamentRepository.save(tournament);
+            return tournament;
         }
     }
 
     public void loadAcooTournamentDecks(int tournamentId) {
+        Tournament tournament = loadAcooTournament(tournamentId);
         Set<Integer> deckIds = acooBroker.loadTournamentDeckIds(tournamentId);
         for (Integer deckId : deckIds) {
-            loadAcooDeck(deckId);
+            Deck deck = loadAcooDeck(deckId);
+            tournament.hasDeck(deck, 0, deck.getIdentity().getSide_code());  // TODO: rank
         }
-        // TODO tournament - deck
+        tournamentRepository.save(tournament);
     }
 }

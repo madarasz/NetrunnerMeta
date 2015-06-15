@@ -4,6 +4,7 @@ import com.madarasz.netrunnerstats.DOs.CardPack;
 import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DOs.Tournament;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
+import com.madarasz.netrunnerstats.DOs.relationships.TournamentHasDeck;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
 import com.madarasz.netrunnerstats.DRs.DeckRepository;
@@ -21,6 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
+ * Unit tests for DB
  * Created by madarasz on 2015-06-11.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -141,6 +143,28 @@ public class DatabaseTest {
         Card card = cardRepository.findByTitle("I've had worse");
         Assert.assertTrue("Could not retrive card by worng case.", card != null);
         System.out.println("Retrieved card: " + card.toString());
+    }
+
+    @Test
+    public void acooTournament() {
+        operations.cleanDB();
+        operations.loadNetrunnerDB();
+        operations.loadAcooTournamentDecks(526);
+        operations.logDBCount();
+        long countDecks = template.count(Deck.class);
+        long countTournament = template.count(Tournament.class);
+        long countTournamentHasDeck = template.count(TournamentHasDeck.class);
+
+        Assert.assertTrue("Did not load any decks.", countDecks > 0);
+        Assert.assertTrue("Did not load any tournaments.", countTournament > 0);
+        Assert.assertTrue("Did not load any tournament-deck relations.", countTournamentHasDeck > 0);
+
+        // duplicate checks
+        operations.loadAcooTournamentDecks(526);
+        operations.logDBCount();
+        Assert.assertTrue("Duplicate decks should not be added.", countDecks == template.count(Deck.class));
+        Assert.assertTrue("Duplicate tournaments should not be added.", countTournament == template.count(Tournament.class));
+        Assert.assertTrue("Duplicate tournament-deck relations should not be added.", countTournamentHasDeck == template.count(TournamentHasDeck.class));
     }
 
     private void populateDB() {

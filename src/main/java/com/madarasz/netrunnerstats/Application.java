@@ -83,6 +83,7 @@ public class Application implements CommandLineRunner {
                 case acooloaddeck: operations.loadAcooDeck(10890); break;
                 case acooloadtournament: operations.loadAcooTournament(526); break;
                 case acooloadtournamentdecks: operations.loadAcooTournamentDecks(526); break;
+                case logdbcount: operations.logDBCount(); break;
                 case cleandb: operations.cleanDB(); break;
             }
 
@@ -97,7 +98,7 @@ public class Application implements CommandLineRunner {
     }
 
     public enum PossibleOperations {
-        cleandb, loadnetrunnerdb,
+        cleandb, loadnetrunnerdb, logdbcount,
         netrunnerdbloaddeck, acooloaddeck, acooloadtournament, acooloadtournamentdecks,
         none
     }
