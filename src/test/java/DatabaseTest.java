@@ -7,7 +7,10 @@ import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
 import com.madarasz.netrunnerstats.DRs.DeckRepository;
+import com.madarasz.netrunnerstats.DRs.TournamentRepository;
 import com.madarasz.netrunnerstats.Operations;
+import com.madarasz.netrunnerstats.brokers.AcooBroker;
+import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +39,15 @@ public class DatabaseTest {
 
     @Autowired
     DeckRepository deckRepository;
+
+    @Autowired
+    TournamentRepository tournamentRepository;
+
+    @Autowired
+    NetrunnerDBBroker netrunnerDBBroker;
+
+    @Autowired
+    AcooBroker acooBroker;
 
     @Autowired
     Neo4jOperations template;
@@ -88,11 +100,32 @@ public class DatabaseTest {
         operations.cleanDB();
         populateDB();
 
+        Card card = cardRepository.findByTitle("Account Siphon");
+        CardPack cardPack = cardPackRepository.findByName("Core Set");
+        Deck deck_nrdb = deckRepository.findByUrl(netrunnerDBBroker.deckUrlFromId(20162));
+        Deck deck_acoo = deckRepository.findByUrl(acooBroker.deckUrlFromId(10890));
+        Tournament tournament = tournamentRepository.findByUrl(acooBroker.tournamentUrlFromId(526));
+
         // positive assertions
-        Assert.assertTrue("Could not retrieve card.", cardRepository.findByTitle("Account Siphon") != null);
-        Assert.assertTrue("Could not retrieve card pack.", cardPackRepository.findByName("Core Set") != null);
-        Assert.assertTrue("Could not retrieve deck.", deckRepository.findByUrl("http://netrunnerdb.com/api//en/decklist/20162") != null);
-        Assert.assertTrue("Could not retrieve deck.", deckRepository.findByUrl("http://www.acoo.net/deck/10890") != null);
+        Assert.assertTrue("Could not retrieve card.", card != null);
+        Assert.assertTrue("Could not retrieve card pack.", cardPack != null);
+        Assert.assertTrue("Could not retrieve NetrunnerDB deck.", deck_nrdb != null);
+        Assert.assertTrue("Could not retrieve Acoo deck.", deck_acoo != null);
+        Assert.assertTrue("Could not retrieve Acoo tournament.", tournament != null);
+
+        // value assertions
+        System.out.println("Retrieved card: " + card.toString());
+        System.out.println("Retrieved card pack: " + cardPack.toString());
+        System.out.println("Retrieved NetrunnerDB deck: " + deck_nrdb.toString());
+        System.out.println("Retrieved Acoo deck: " + deck_acoo.toString());
+        System.out.println("Retrieved tournament: " + tournament.toString());
+        Assert.assertTrue("NetrunnerDB deck info is not correct.",
+                deck_nrdb.toString().equals("RP with the flow (Jinteki: Replicating Perfection) - 49 cards (15 inf) up to: The Source - http://netrunnerdb.com/api/decklist/20162"));
+        Assert.assertTrue("Acoo deck info is not correct",
+                deck_acoo.toString().equals("Everything (The Professor: Keeper of Knowledge) - 45 cards (1 inf) up to: The Valley - http://www.acoo.net/deck/10890"));
+        Assert.assertTrue("Tournament info is not correct",
+                tournament.toString().equals("Regional Paris Ludiworld (2015-06-07) - 47 players - cardpool: Breaker Bay - http://www.acoo.net/anr-tournament/526"));
+
         // negative assertions
         Assert.assertTrue("Could retrieve non-existent card.", cardRepository.findByTitle("I love Siphon") == null);
         Assert.assertTrue("Could not retrieve non-existent card pack.", cardPackRepository.findByName("No such pack") == null);

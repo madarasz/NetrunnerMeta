@@ -54,8 +54,9 @@ public class Operations {
     }
 
     public void logDBCount() {
-        System.out.println(String.format("Cards: %d, CardPacks: %d, Decks: %d, Deck-card relations: %d",
-                template.count(Card.class), template.count(CardPack.class), template.count(Deck.class), template.count(DeckHasCard.class)));
+        System.out.println(String.format("Cards: %d, CardPacks: %d, Decks: %d, Deck-card relations: %d, Tournaments: %d",
+                template.count(Card.class), template.count(CardPack.class), template.count(Deck.class),
+                template.count(DeckHasCard.class), template.count(Tournament.class)));
     }
 
     public void loadNetrunnerDB() {

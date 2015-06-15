@@ -73,7 +73,7 @@ public final class NetrunnerDBBroker {
 
     public Deck readDeck(int deckid) {
         JSONObject deckData = new JSONObject(HttpBroker.readFromUrl(deckUrlFromId(deckid), false));
-        Deck resultDeck = new Deck(deckData.getString("name"), deckData.getString("username"), NETRUNNERDB_API_URL + "/en/decklist/" + deckid);
+        Deck resultDeck = new Deck(deckData.getString("name"), deckData.getString("username"), deckUrlFromId(deckid));
 
         JSONObject cards = deckData.getJSONObject("cards");
         Iterator<?> cardData = cards.keys();
