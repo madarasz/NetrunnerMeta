@@ -70,6 +70,14 @@ public final class HttpBroker {
         return document.select(jsoupExpression).first().text();
     }
 
+    public static String attirubuteFromHhtml(String jsoupExpression, String attribute) {
+        return document.select(jsoupExpression).first().attr(attribute);
+    }
+
+    public static Elements elementsFromHtml(String jsoupExpression) {
+        return document.select(jsoupExpression);
+    }
+
     public static ArrayList<String> textsFromHtml(String jsoupExpression) {
         ArrayList<String> result = new ArrayList<String>();
         Elements elements = document.select(jsoupExpression);

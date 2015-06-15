@@ -90,8 +90,7 @@ public class Operations {
             System.out.println("Deck is already in DB. Not saving!");
         } else {
             Deck deck = netrunnerDBBroker.readDeck(deckId);
-            System.out.println("Saving new deck!");
-            System.out.println(deck.toString());
+            System.out.println("Saving new deck! - " + deck.toString());
             deckRepository.save(deck);
         }
     }
@@ -103,8 +102,7 @@ public class Operations {
             System.out.println("Deck is already in DB. Not saving!");
         } else {
             Deck deck = acooBroker.readDeck(deckId);
-            System.out.println("Saving new deck!");
-            System.out.println(deck.toString());
+            System.out.println("Saving new deck! - " + deck.toString());
             deckRepository.save(deck);
         }
     }
@@ -116,9 +114,16 @@ public class Operations {
             System.out.println("Tournament is already in DB. Not saving!");
         } else {
             Tournament tournament = acooBroker.readTournament(tournamentId);
-            System.out.println("Saving new tournament!");
-            System.out.println(tournament.toString());
+            System.out.println("Saving new tournament! - " + tournament.toString());
             tournamentRepository.save(tournament);
         }
+    }
+
+    public void loadAcooTournamentDecks(int tournamentId) {
+        Set<Integer> deckIds = acooBroker.loadTournamentDeckIds(tournamentId);
+        for (Integer deckId : deckIds) {
+            loadAcooDeck(deckId);
+        }
+        // TODO tournament - deck
     }
 }

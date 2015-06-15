@@ -6,6 +6,8 @@ import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DOs.Tournament;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,7 @@ public class AcooBroker {
     private final static String JSOUP_DECK_CARDS = "div.deck-display-type > ul > li";
     private final static String JSOUP_TOURNAMENT_DESC = "div.section > p";
     private final static String JSOUP_TOURNAMENT_POOL = "div.section > p > a";
+    private final static String JSOUP_TOURNAMENT_DECK = "div.rank-list > table > tbody > tr > td > a";
     private final static String JSOUP_TITLE = "h1";
     private final static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -68,6 +71,9 @@ public class AcooBroker {
             int quantity = regExBroker.getQuantity(line);
             String title = regExBroker.getCardFromLine(line);
             Card card = cardRepository.findByTitle(title);
+            if (card == null) {
+                System.out.println("ERROR - no such card: " + title);
+            }
             if (quantity == 0) {    // identity
                 result.setIdentity(card);
             } else {    // other card
@@ -95,11 +101,16 @@ public class AcooBroker {
         return new Tournament(tournamentId, titleparts[0], date, pool, url, playerNumber);
     }
 
-    public ArrayList<Integer> loadTournamentDeckIds(int tournamentId) {
-        ArrayList<Integer> result = new ArrayList<Integer>();
+    public Set<Integer> loadTournamentDeckIds(int tournamentId) {
+        Set<Integer> result = new HashSet<Integer>();
         String url = tournamentUrlFromId(tournamentId);
         HttpBroker.parseHtml(url);
-        String titlebar = HttpBroker.textFromHtml(JSOUP_TITLE);
+        Elements decks = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK);
+        for (Element deck : decks) {
+            String[] hrefparts = deck.attr("href").split("/");
+            int deckId = Integer.valueOf(hrefparts[2]);
+            result.add(deckId);
+        }
         return result;
     }
 

@@ -84,7 +84,7 @@ public class DatabaseTest {
         long countDeck = template.count(Deck.class);
         long countDeckHasCard = template.count(DeckHasCard.class);
         long countTournaments = template.count(Tournament.class);
-        // try readding same data
+        // try reading same data
         populateDB();
 
         Assert.assertTrue("Duplicate cards should not be added.", countCard == template.count(Card.class));
@@ -100,7 +100,7 @@ public class DatabaseTest {
         operations.cleanDB();
         populateDB();
 
-        Card card = cardRepository.findByTitle("Account Siphon");
+        Card card = cardRepository.findByTitle("Déjà Vu");
         CardPack cardPack = cardPackRepository.findByName("Core Set");
         Deck deck_nrdb = deckRepository.findByUrl(netrunnerDBBroker.deckUrlFromId(20162));
         Deck deck_acoo = deckRepository.findByUrl(acooBroker.deckUrlFromId(10890));
@@ -130,6 +130,17 @@ public class DatabaseTest {
         Assert.assertTrue("Could retrieve non-existent card.", cardRepository.findByTitle("I love Siphon") == null);
         Assert.assertTrue("Could not retrieve non-existent card pack.", cardPackRepository.findByName("No such pack") == null);
         Assert.assertTrue("Could not retrieve non-existent deck.", deckRepository.findByUrl("http://www.google.com") == null);
+    }
+
+    @Test
+    public void cardCaseCheck() {
+        // populate DB
+        operations.cleanDB();
+        populateDB();
+
+        Card card = cardRepository.findByTitle("I've had worse");
+        Assert.assertTrue("Could not retrive card by worng case.", card != null);
+        System.out.println("Retrieved card: " + card.toString());
     }
 
     private void populateDB() {
