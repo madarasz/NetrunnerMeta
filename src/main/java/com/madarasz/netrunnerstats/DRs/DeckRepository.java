@@ -18,5 +18,8 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
     List<Deck> filterByFaction(String faction_code);
 
     @Query("MATCH (d:Deck)-[:IDENTITY]->(i:Card) WHERE (i.title={0}) return d")
-    List<Deck> filterByIdentity(String faction_code);
+    List<Deck> filterByIdentity(String title);
+
+    @Query("MATCH (p:CardPack)<-[:UP_TO]-(d:Deck)-[:IDENTITY]->(i:Card) WHERE (i.title={0}) AND (p.name={1}) return d")
+    List<Deck> filterByIdentityAndCardPool(String title, String cardpoolname);
 }

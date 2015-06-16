@@ -1,8 +1,5 @@
 import com.madarasz.netrunnerstats.Application;
-import com.madarasz.netrunnerstats.DOs.Card;
-import com.madarasz.netrunnerstats.DOs.CardPack;
-import com.madarasz.netrunnerstats.DOs.Deck;
-import com.madarasz.netrunnerstats.DOs.Tournament;
+import com.madarasz.netrunnerstats.DOs.*;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.DOs.relationships.TournamentHasDeck;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
@@ -203,15 +200,25 @@ public class DatabaseTest {
         Tournament tournament = tournamentRepository.findByUrl("http://www.acoo.net/anr-tournament/480");
         Assert.assertTrue("Could not load deck from last page", deck != null);
         Assert.assertTrue("Could not load tournament from last page", tournament != null);
+    }
+
+    @Test
+    public void archetypes() {
+        populateDB(true, false);
+        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true);
 
         // filter decks by faction
         List<Deck> jintekiDecks = deckRepository.filterByFaction("jinteki");
-        List<Deck> prDecks = deckRepository.filterByIdentity("Jinteki: Replicating Perfection");
+        List<Deck> rpDecks = deckRepository.filterByIdentityAndCardPool("Jinteki: Replicating Perfection", "Breaker Bay");
         int jsize = jintekiDecks.size();
-        int rpsize = prDecks.size();
+        int rpsize = rpDecks.size();
         System.out.println(String.format("Jinteki decks: %d, Jinteki RP decks: %d", jsize, rpsize));
         Assert.assertTrue("Could not find RP decks.", rpsize > 0);
         Assert.assertTrue("There should be more Jinteki decks than RP decks.", jsize >= rpsize);
+
+        // archetype check
+        Archetype RP = new Archetype("RP", rpDecks);
+        System.out.println(RP.toString());
     }
 
     private void populateDB(boolean cleanDb, boolean loadExamples) {

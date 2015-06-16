@@ -1,9 +1,6 @@
 package com.madarasz.netrunnerstats;
 
-import com.madarasz.netrunnerstats.DOs.Card;
-import com.madarasz.netrunnerstats.DOs.CardPack;
-import com.madarasz.netrunnerstats.DOs.Deck;
-import com.madarasz.netrunnerstats.DOs.Tournament;
+import com.madarasz.netrunnerstats.DOs.*;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.DOs.relationships.TournamentHasDeck;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
@@ -15,10 +12,7 @@ import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Handling all the possible operations of the application.
@@ -153,4 +147,9 @@ public class Operations {
         }
     }
 
+    public void generateArchetype(String name, String cardpool, String identity) {
+        List<Deck> deckList = deckRepository.filterByIdentityAndCardPool(identity,cardpool);
+        Archetype archetype = new Archetype(name,deckList);
+        System.out.println(archetype.toString());
+    }
 }
