@@ -63,9 +63,7 @@ public class DatabaseTest {
      */
     @Test
     public void createDB() {
-        // populate DB
-        operations.cleanDB();
-        populateDB();
+        populateDB(true, true);
         Assert.assertTrue("No cards in DB.", template.count(Card.class) > 0);
         Assert.assertTrue("No card packs in DB.", template.count(CardPack.class) > 0);
         Assert.assertTrue("No decks in DB.", template.count(Deck.class) > 1);
@@ -81,15 +79,14 @@ public class DatabaseTest {
     @Test
     public void duplicatesDB() {
         // populate DB
-        operations.cleanDB();
-        populateDB();
+        populateDB(true, true);
         long countCard = template.count(Card.class);
         long countCardPack = template.count(CardPack.class);
         long countDeck = template.count(Deck.class);
         long countDeckHasCard = template.count(DeckHasCard.class);
         long countTournaments = template.count(Tournament.class);
         // try reading same data
-        populateDB();
+        populateDB(false, true);
 
         Assert.assertTrue("Duplicate cards should not be added.", countCard == template.count(Card.class));
         Assert.assertTrue("Duplicate card packs should not be added.", countCardPack == template.count(CardPack.class));
@@ -100,9 +97,7 @@ public class DatabaseTest {
 
     @Test
     public void retrieveData() {
-        // populate DB
-        operations.cleanDB();
-        populateDB();
+        populateDB(true, true);
 
         Card card = cardRepository.findByTitle("Déjà Vu");
         CardPack cardPack = cardPackRepository.findByName("Core Set");
@@ -138,9 +133,7 @@ public class DatabaseTest {
 
     @Test
     public void cardCaseCheck() {
-        // populate DB
-        operations.cleanDB();
-        populateDB();
+        populateDB(true, false);
 
         Card card = cardRepository.findByTitle("I've had worse");
         Assert.assertTrue("Could not retrive card by worng case.", card != null);
@@ -149,8 +142,7 @@ public class DatabaseTest {
 
     @Test
     public void acooTournament() {
-        operations.cleanDB();
-        operations.loadNetrunnerDB();
+        populateDB(true, false);
         operations.loadAcooTournamentDecks(429);
         operations.logDBCount();
         long countDecks = template.count(Deck.class);
@@ -178,17 +170,16 @@ public class DatabaseTest {
 
     @Test
     public void unicodeRemoval() {
-        operations.cleanDB();
-        operations.loadNetrunnerDB();
+        populateDB(true, false);
         Deck deck = operations.loadAcooDeck(11282);
+        System.out.println(deck.toString());
         Card card = cardRepository.findByTitle("Tori Hanzō");
         System.out.println(card.toString());
     }
 
     @Test
     public void tournamentPage() {
-        operations.cleanDB();
-        operations.loadNetrunnerDB();
+        populateDB(true, false);
         operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/chrome-city/1/", false);
 
         long countDecks = template.count(Deck.class);
@@ -207,11 +198,16 @@ public class DatabaseTest {
         Assert.assertTrue("Duplicate tournament-deck relations should not be added.", countTournamentHasDeck == template.count(TournamentHasDeck.class));
     }
 
-    private void populateDB() {
+    private void populateDB(boolean cleanDb, boolean loadExamples) {
+        if (cleanDb) {
+            operations.cleanDB();
+        }
         operations.loadNetrunnerDB();
-        operations.loadAcooDeck(10890);
-        operations.loadNetrunnerDbDeck(20162);
-        operations.loadAcooTournament(526);
+        if (loadExamples) {
+            operations.loadAcooDeck(10890);
+            operations.loadNetrunnerDbDeck(20162);
+            operations.loadAcooTournament(526);
+        }
         operations.logDBCount();
     }
 }

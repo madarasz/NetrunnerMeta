@@ -45,7 +45,7 @@ public class AcooBroker {
         Deck resultDeck = parseDeck(HttpBroker.textsFromHtml(JSOUP_DECK_CARDS));
 
         String titlebar = HttpBroker.textFromHtml(JSOUP_TITLE);
-        String[] titleparts = titlebar.split(", \\d*\\w* | - ");    // TODO: th place, tournament
+        String[] titleparts = titlebar.split(", \\d*\\w* | - ");
         resultDeck.setName(titleparts[2]);
         resultDeck.setPlayer(titleparts[1]);
         resultDeck.setUrl(url);
