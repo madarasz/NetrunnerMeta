@@ -180,7 +180,7 @@ public class DatabaseTest {
     @Test
     public void tournamentPage() {
         populateDB(true, false);
-        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/chrome-city/1/", false);
+        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true);
 
         long countDecks = template.count(Deck.class);
         long countTournament = template.count(Tournament.class);
@@ -192,10 +192,16 @@ public class DatabaseTest {
 
         // duplicate checks
         operations.logDBCount();
-        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/chrome-city/1/", false);
+        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true);
         Assert.assertTrue("Duplicate decks should not be added.", countDecks == template.count(Deck.class));
         Assert.assertTrue("Duplicate tournaments should not be added.", countTournament == template.count(Tournament.class));
         Assert.assertTrue("Duplicate tournament-deck relations should not be added.", countTournamentHasDeck == template.count(TournamentHasDeck.class));
+
+        // get tournament, deck from last page
+        Deck deck = deckRepository.findByUrl("http://www.acoo.net/deck/10423");
+        Tournament tournament = tournamentRepository.findByUrl("http://www.acoo.net/anr-tournament/480");
+        Assert.assertTrue("Could not load deck from last page", deck != null);
+        Assert.assertTrue("Could not load tournament from last page", tournament != null);
     }
 
     private void populateDB(boolean cleanDb, boolean loadExamples) {

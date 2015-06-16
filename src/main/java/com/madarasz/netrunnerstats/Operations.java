@@ -134,7 +134,7 @@ public class Operations {
         while (iterator.hasNext()) {
             Map.Entry pair = (Map.Entry) iterator.next();
             int rank = (Integer)pair.getValue();
-            System.out.println("Rank: " + rank);
+            System.out.print("Rank: " + rank + " - ");
             Deck deck = loadAcooDeck((Integer)pair.getKey());
             tournament.hasDeck(deck, rank, deck.getIdentity().getSide_code());
         }
@@ -142,10 +142,14 @@ public class Operations {
     }
 
     public void loadAcooTournamentsFromUrl(String url, boolean paging) {
+        System.out.println("*** Reading tournaments on page: " + url);
         Set<Integer> tournamentIds = acooBroker.loadTournamentIdsFromUrl(url);
         for (int tournamentId : tournamentIds) {
-            System.out.println("*** Reading tournament: " + tournamentId);
             loadAcooTournamentDecks(tournamentId);
+        }
+        String pagination = acooBroker.getTournamentPageNextLink(url);
+        if ((paging) && (!pagination.equals(""))) {
+            loadAcooTournamentsFromUrl(acooBroker.ACOO_URL + pagination, true);
         }
     }
 

@@ -84,7 +84,7 @@ public class Application implements CommandLineRunner {
                 case acooloadtournament: operations.loadAcooTournament(526); break;
                 case acooloadtournamentdecks: operations.loadAcooTournamentDecks(526); break;
                 case logdbcount: operations.logDBCount(); break;
-                case acooloadpage: operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/chrome-city/1/", false); break;
+                case acooloadpage: operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true); break;
                 case cleandb: operations.cleanDB(); break;
             }
 

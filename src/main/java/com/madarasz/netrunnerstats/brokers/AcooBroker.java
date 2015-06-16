@@ -21,12 +21,13 @@ import java.util.*;
  */
 @Component
 public class AcooBroker {
-    private final static String ACOO_URL = "http://www.acoo.net/";
+    public final static String ACOO_URL = "http://www.acoo.net/";
     private final static String JSOUP_DECK_CARDS = "div.deck-display-type > ul > li";
     private final static String JSOUP_TOURNAMENT_DESC = "div.section > p";
     private final static String JSOUP_TOURNAMENT_POOL = "div.section > p > a";
     private final static String JSOUP_TOURNAMENT_DECK = "div.rank-list > table > tbody > tr";
     private final static String JSOUP_TOURNAMENT_LIST = "div.tournament-list > table > tbody > tr";
+    private final static String JSOUP_PAGINATION = "div.pagination > a";
     private final static String JSOUP_TITLE = "h1";
     private final static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -133,4 +134,21 @@ public class AcooBroker {
         }
         return result;
     }
+
+    public String getTournamentPageNextLink(String url) {
+        HttpBroker.parseHtml(url);
+        String result = "";
+        Elements links = HttpBroker.elementsFromHtml(JSOUP_PAGINATION);
+        for (Element link : links) {
+            if (link.text().equals("next »")) {
+                result = link.attr("href");
+                break;
+            }
+        }
+        if (!result.equals("")) {
+            result = result.substring(1);
+        }
+        return result;
+    }
+
 }
