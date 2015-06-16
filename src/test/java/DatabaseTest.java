@@ -20,12 +20,13 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Set;
+import java.util.Set;//
 
 /**
  * Unit tests for DB
  * Created by madarasz on 2015-06-11.
  */
+// TODO: do commits
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @Transactional
@@ -173,6 +174,37 @@ public class DatabaseTest {
         for (TournamentHasDeck tournamentHasDeck : tournamentHasDecks) {
             Assert.assertTrue("Deck rank is incorrect.", tournamentHasDeck.getRank() == 13);       // both decks are 13th
         }
+    }
+
+    @Test
+    public void unicodeRemoval() {
+        operations.cleanDB();
+        operations.loadNetrunnerDB();
+        Deck deck = operations.loadAcooDeck(11282);
+        Card card = cardRepository.findByTitle("Tori Hanzō");
+        System.out.println(card.toString());
+    }
+
+    @Test
+    public void tournamentPage() {
+        operations.cleanDB();
+        operations.loadNetrunnerDB();
+        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/chrome-city/1/", false);
+
+        long countDecks = template.count(Deck.class);
+        long countTournament = template.count(Tournament.class);
+        long countTournamentHasDeck = template.count(TournamentHasDeck.class);
+
+        Assert.assertTrue("Did not load any decks.", countDecks > 0);
+        Assert.assertTrue("Did not load any tournaments.", countTournament > 0);
+        Assert.assertTrue("Did not load any tournament-deck relations.", countTournamentHasDeck > 0);
+
+        // duplicate checks
+        operations.logDBCount();
+        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/chrome-city/1/", false);
+        Assert.assertTrue("Duplicate decks should not be added.", countDecks == template.count(Deck.class));
+        Assert.assertTrue("Duplicate tournaments should not be added.", countTournament == template.count(Tournament.class));
+        Assert.assertTrue("Duplicate tournament-deck relations should not be added.", countTournamentHasDeck == template.count(TournamentHasDeck.class));
     }
 
     private void populateDB() {

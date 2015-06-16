@@ -15,6 +15,7 @@ import java.util.ArrayList;
  * Loading from http and parsing html
  * Created by madarasz on 05/06/15.
  */
+// TODO: refactor as component
 public final class HttpBroker {
 
     private static Document document;
@@ -39,10 +40,13 @@ public final class HttpBroker {
             while ((read = reader.read(chars)) != -1)
                 buffer.append(chars, 0, read);
 
+            // remove unicode characters
+            String result = buffer.toString().replaceAll("\\p{C}", "");
+
             if (fixJson) {
-                return "{\"input\": " + buffer.toString() + "}";
+                return "{\"input\": " + result + "}";
             } else {
-                return buffer.toString();
+                return result;
             }
 
         } catch (Exception ex) {
@@ -67,7 +71,7 @@ public final class HttpBroker {
     }
 
     public static String textFromHtml(String jsoupExpression) {
-        return document.select(jsoupExpression).first().text();
+        return document.select(jsoupExpression).first().text().replaceAll("\\p{C}", "");    // removing unicode characters as well
     }
 
     public static String attirubuteFromHhtml(String jsoupExpression, String attribute) {
@@ -82,7 +86,7 @@ public final class HttpBroker {
         ArrayList<String> result = new ArrayList<String>();
         Elements elements = document.select(jsoupExpression);
         for(Element element : elements) {
-            result.add(element.text());
+            result.add(element.text().replaceAll("\\p{C}", ""));    // removing unicode characters as well
         }
         return result;
     }

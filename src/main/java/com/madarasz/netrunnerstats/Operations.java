@@ -133,9 +133,20 @@ public class Operations {
         Iterator iterator = decks.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry pair = (Map.Entry) iterator.next();
+            int rank = (Integer)pair.getValue();
+            System.out.println("Rank: " + rank);
             Deck deck = loadAcooDeck((Integer)pair.getKey());
-            tournament.hasDeck(deck, (Integer)pair.getValue(), deck.getIdentity().getSide_code());
+            tournament.hasDeck(deck, rank, deck.getIdentity().getSide_code());
         }
         tournamentRepository.save(tournament);
     }
+
+    public void loadAcooTournamentsFromUrl(String url, boolean paging) {
+        Set<Integer> tournamentIds = acooBroker.loadTournamentIdsFromUrl(url);
+        for (int tournamentId : tournamentIds) {
+            System.out.println("*** Reading tournament: " + tournamentId);
+            loadAcooTournamentDecks(tournamentId);
+        }
+    }
+
 }

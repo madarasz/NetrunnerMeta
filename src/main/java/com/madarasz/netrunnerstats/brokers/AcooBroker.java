@@ -26,6 +26,7 @@ public class AcooBroker {
     private final static String JSOUP_TOURNAMENT_DESC = "div.section > p";
     private final static String JSOUP_TOURNAMENT_POOL = "div.section > p > a";
     private final static String JSOUP_TOURNAMENT_DECK = "div.rank-list > table > tbody > tr";
+    private final static String JSOUP_TOURNAMENT_LIST = "div.tournament-list > table > tbody > tr";
     private final static String JSOUP_TITLE = "h1";
     private final static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -116,6 +117,19 @@ public class AcooBroker {
                     result.put(deckId, rank);
                 }
             }
+        }
+        return result;
+    }
+
+    public Set<Integer> loadTournamentIdsFromUrl(String url) {
+        Set<Integer> result = new HashSet<Integer>();
+        HttpBroker.parseHtml(url);
+        Elements rows = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_LIST);
+        for (Element row : rows) {
+            Element cell = row.select("td").first().select("a").first();
+            String[] hrefparts = cell.attr("href").split("/");
+            int deckId = Integer.valueOf(hrefparts[2]);
+            result.add(deckId);
         }
         return result;
     }

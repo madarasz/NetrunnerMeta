@@ -84,6 +84,7 @@ public class Application implements CommandLineRunner {
                 case acooloadtournament: operations.loadAcooTournament(526); break;
                 case acooloadtournamentdecks: operations.loadAcooTournamentDecks(526); break;
                 case logdbcount: operations.logDBCount(); break;
+                case acooloadpage: operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/chrome-city/1/", false); break;
                 case cleandb: operations.cleanDB(); break;
             }
 
@@ -99,7 +100,8 @@ public class Application implements CommandLineRunner {
 
     public enum PossibleOperations {
         cleandb, loadnetrunnerdb, logdbcount,
-        netrunnerdbloaddeck, acooloaddeck, acooloadtournament, acooloadtournamentdecks,
+        netrunnerdbloaddeck,
+        acooloaddeck, acooloadtournament, acooloadtournamentdecks, acooloadpage,
         none
     }
 }
