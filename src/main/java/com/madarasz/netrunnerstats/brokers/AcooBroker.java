@@ -10,14 +10,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Handling acoo.net stuff
@@ -29,7 +25,7 @@ public class AcooBroker {
     private final static String JSOUP_DECK_CARDS = "div.deck-display-type > ul > li";
     private final static String JSOUP_TOURNAMENT_DESC = "div.section > p";
     private final static String JSOUP_TOURNAMENT_POOL = "div.section > p > a";
-    private final static String JSOUP_TOURNAMENT_DECK = "div.rank-list > table > tbody > tr > td > a";
+    private final static String JSOUP_TOURNAMENT_DECK = "div.rank-list > table > tbody > tr";
     private final static String JSOUP_TITLE = "h1";
     private final static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -98,26 +94,28 @@ public class AcooBroker {
             e.printStackTrace();
         }
         CardPack pool = cardPackRepository.findByName(HttpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL));
+        if (pool == null) {
+            System.out.println("ERROR - no card pack found: " + HttpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL));
+        }
         return new Tournament(tournamentId, titleparts[0], date, pool, url, playerNumber);
     }
 
-    public Set<Integer> loadTournamentDeckIds(int tournamentId) {
-        Set<Integer> result = new HashSet<Integer>();
+    public Map<Integer, Integer> loadTournamentDeckIds(int tournamentId) {
+        Map<Integer, Integer> result = new HashMap<Integer, Integer>();
         String url = tournamentUrlFromId(tournamentId);
         HttpBroker.parseHtml(url);
-        Elements decks = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK);
-        for (Element deck : decks) {
-            String[] hrefparts = deck.attr("href").split("/");
-            int deckId = Integer.valueOf(hrefparts[2]);
-            result.add(deckId);
-        }
-        return result;
-    }
-
-    public Set<Deck> loadTourmanetDecks(ArrayList<Integer> deckIds) {
-        Set<Deck> result = new HashSet<Deck>();
-        for (Integer deckId : deckIds) {
-            result.add(readDeck(deckId.intValue()));
+        Elements rows = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK);
+        for (Element row : rows) {
+            String rankString = row.select("td").first().text();
+            int rank = regExBroker.getNumberFromBeginning(rankString);
+            Elements decks = row.select("td > a");
+            for (Element deck : decks) {
+                String[] hrefparts = deck.attr("href").split("/");
+                int deckId = Integer.valueOf(hrefparts[2]);
+                if (!result.containsKey(deckId)) {  // prioritize "Top results" over "Swiss"
+                    result.put(deckId, rank);
+                }
+            }
         }
         return result;
     }

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -128,10 +129,12 @@ public class Operations {
 
     public void loadAcooTournamentDecks(int tournamentId) {
         Tournament tournament = loadAcooTournament(tournamentId);
-        Set<Integer> deckIds = acooBroker.loadTournamentDeckIds(tournamentId);
-        for (Integer deckId : deckIds) {
-            Deck deck = loadAcooDeck(deckId);
-            tournament.hasDeck(deck, 0, deck.getIdentity().getSide_code());  // TODO: rank
+        Map<Integer, Integer> decks = acooBroker.loadTournamentDeckIds(tournamentId);
+        Iterator iterator = decks.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry pair = (Map.Entry) iterator.next();
+            Deck deck = loadAcooDeck((Integer)pair.getKey());
+            tournament.hasDeck(deck, (Integer)pair.getValue(), deck.getIdentity().getSide_code());
         }
         tournamentRepository.save(tournament);
     }

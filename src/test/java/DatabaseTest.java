@@ -20,6 +20,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Set;
 
 /**
  * Unit tests for DB
@@ -149,7 +150,7 @@ public class DatabaseTest {
     public void acooTournament() {
         operations.cleanDB();
         operations.loadNetrunnerDB();
-        operations.loadAcooTournamentDecks(526);
+        operations.loadAcooTournamentDecks(429);
         operations.logDBCount();
         long countDecks = template.count(Deck.class);
         long countTournament = template.count(Tournament.class);
@@ -160,11 +161,18 @@ public class DatabaseTest {
         Assert.assertTrue("Did not load any tournament-deck relations.", countTournamentHasDeck > 0);
 
         // duplicate checks
-        operations.loadAcooTournamentDecks(526);
         operations.logDBCount();
+        operations.loadAcooTournamentDecks(429);
         Assert.assertTrue("Duplicate decks should not be added.", countDecks == template.count(Deck.class));
         Assert.assertTrue("Duplicate tournaments should not be added.", countTournament == template.count(Tournament.class));
         Assert.assertTrue("Duplicate tournament-deck relations should not be added.", countTournamentHasDeck == template.count(TournamentHasDeck.class));
+
+        // check tournament-deck relations
+        Tournament tournament = tournamentRepository.findByUrl(acooBroker.tournamentUrlFromId(429));
+        Set<TournamentHasDeck> tournamentHasDecks = tournament.getDecks();
+        for (TournamentHasDeck tournamentHasDeck : tournamentHasDecks) {
+            Assert.assertTrue("Deck rank is incorrect.", tournamentHasDeck.getRank() == 13);       // both decks are 13th
+        }
     }
 
     private void populateDB() {
