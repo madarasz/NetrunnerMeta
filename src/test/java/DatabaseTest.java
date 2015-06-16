@@ -20,7 +20,8 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Set;//
+import java.util.List;
+import java.util.Set;
 
 /**
  * Unit tests for DB
@@ -202,6 +203,15 @@ public class DatabaseTest {
         Tournament tournament = tournamentRepository.findByUrl("http://www.acoo.net/anr-tournament/480");
         Assert.assertTrue("Could not load deck from last page", deck != null);
         Assert.assertTrue("Could not load tournament from last page", tournament != null);
+
+        // filter decks by faction
+        List<Deck> jintekiDecks = deckRepository.filterByFaction("jinteki");
+        List<Deck> prDecks = deckRepository.filterByIdentity("Jinteki: Replicating Perfection");
+        int jsize = jintekiDecks.size();
+        int rpsize = prDecks.size();
+        System.out.println(String.format("Jinteki decks: %d, Jinteki RP decks: %d", jsize, rpsize));
+        Assert.assertTrue("Could not find RP decks.", rpsize > 0);
+        Assert.assertTrue("There should be more Jinteki decks than RP decks.", jsize >= rpsize);
     }
 
     private void populateDB(boolean cleanDb, boolean loadExamples) {
