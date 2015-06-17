@@ -12,43 +12,49 @@ public class Archetype {
 
     private String name;
     // TODO: model
-    private Map<Card, Integer> cards;
+    private Map<Card, Integer> cardcount;   // how many cards overall
+    private Map<Card, Integer> cardisused;  // how many decks use the card
     private CardMapValueComparator comparator;
     private int deckcount;
     private Card identity;
 
     public Archetype() {
-        cards = new HashMap<Card, Integer>();
-        comparator = new CardMapValueComparator(cards);
+        cardcount = new HashMap<Card, Integer>();
+        cardisused = new HashMap<Card, Integer>();
+        comparator = new CardMapValueComparator(cardcount);
     }
 
     public Archetype(String name, List<Deck> deckList, Card identity) {
-        Map<Card, Integer> stats = new HashMap<Card, Integer>();
+        Map<Card, Integer> ccount = new HashMap<Card, Integer>();
+        Map<Card, Integer> dcount = new HashMap<Card, Integer>();
         for (Deck deck : deckList) {
             Set<DeckHasCard> cardSet = deck.getCards();
             for (DeckHasCard deckHasCard : cardSet) {
                 Card card = deckHasCard.getCard();
                 int quantity = deckHasCard.getQuantity();
-                if (stats.containsKey(card)) {
-                    stats.put(card, stats.get(card) + quantity);
+                if (ccount.containsKey(card)) {
+                    ccount.put(card, ccount.get(card) + quantity);
+                    dcount.put(card, dcount.get(card) + 1);
                 } else {
-                    stats.put(card, quantity);
+                    ccount.put(card, quantity);
+                    dcount.put(card, 1);
                 }
             }
         }
         this.deckcount = deckList.size();
-        this.cards = stats;
+        this.cardcount = new HashMap<Card, Integer>(ccount);
+        this.cardisused = new HashMap<Card, Integer>(dcount);
         this.name = name;
         this.identity = identity;
-        this.comparator = new CardMapValueComparator(cards);
+        this.comparator = new CardMapValueComparator(cardcount);
     }
 
     public TreeMap<Card, Integer> getOrderedCardSubset(String filter) {
         TreeMap<Card, Integer> sortedmap = new TreeMap<Card, Integer>(comparator);
         if (filter.equals("")) {
-            sortedmap.putAll(cards);
+            sortedmap.putAll(cardcount);
         } else {
-            Iterator iterator = cards.entrySet().iterator();
+            Iterator iterator = cardcount.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry pair = (Map.Entry) iterator.next();
                 int quantity = (Integer) pair.getValue();
@@ -61,6 +67,12 @@ public class Archetype {
         return sortedmap;
     }
 
+    /**
+     * Providing statistics for a filtered card set.
+     * Stats provided: percentage of deck using, average number of cards if used
+     * @param filter filter for card type or containing subtype, empty filter uses all cards
+     * @return
+     */
     public String getStatsForFilter(String filter) {
         String resultString = "";
         if (!filter.equals("")) {
@@ -71,9 +83,10 @@ public class Archetype {
         Iterator iterator = sortedmap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry pair = (Map.Entry) iterator.next();
-            int quantity = Integer.valueOf((Integer)pair.getValue());
+            int quantity = (Integer)pair.getValue();
             Card card = (Card)pair.getKey();
-            resultString += String.format("%s: %d\n", card, quantity);
+            int usage = cardisused.get(card);
+            resultString += String.format("%30s - %3.0f%% - AIU: %4.2f\n", card.toString(), (float)usage/deckcount*100, (float)quantity/usage);
         }
         return resultString;
     }
