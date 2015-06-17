@@ -115,6 +115,10 @@ public class Card {
         return agendapoints;
     }
 
+    public String getSubtype_code() {
+        return subtype_code;
+    }
+
     public boolean isIdentity() {
         return type_code.equals("identity");
     }

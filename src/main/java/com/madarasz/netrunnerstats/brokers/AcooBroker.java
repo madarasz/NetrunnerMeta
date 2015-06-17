@@ -122,15 +122,18 @@ public class AcooBroker {
         return result;
     }
 
-    public Set<Integer> loadTournamentIdsFromUrl(String url) {
+    public Set<Integer> loadTournamentIdsFromUrl(String url, boolean filterempty) {
         Set<Integer> result = new HashSet<Integer>();
         HttpBroker.parseHtml(url);
         Elements rows = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_LIST);
         for (Element row : rows) {
-            Element cell = row.select("td").first().select("a").first();
-            String[] hrefparts = cell.attr("href").split("/");
-            int deckId = Integer.valueOf(hrefparts[2]);
-            result.add(deckId);
+            int decknumber = Integer.valueOf(row.select("td:eq(5)").text());
+            if ((!filterempty) || (decknumber > 0)) {
+                Element cell = row.select("td").first().select("a").first();
+                String[] hrefparts = cell.attr("href").split("/");
+                int tournamentId = Integer.valueOf(hrefparts[2]);
+                result.add(tournamentId);
+            }
         }
         return result;
     }

@@ -84,7 +84,7 @@ public class Application implements CommandLineRunner {
                 case acooloadtournament: operations.loadAcooTournament(526); break;
                 case acooloadtournamentdecks: operations.loadAcooTournamentDecks(526); break;
                 case logdbcount: operations.logDBCount(); break;
-                case acooloadpage: operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true); break;
+                case acooloadpage: operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true, true); break;
                 case archetype: operations.generateArchetype("RP","Breaker Bay", "Jinteki: Replicating Perfection"); break;
                 case cleandb: operations.cleanDB(); break;
             }

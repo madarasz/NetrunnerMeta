@@ -1,4 +1,4 @@
-package com.madarasz.netrunnerstats.brokers;
+package com.madarasz.netrunnerstats.helper;
 
 import org.json.JSONException;
 import org.json.JSONObject;

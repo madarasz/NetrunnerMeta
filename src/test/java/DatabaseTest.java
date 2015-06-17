@@ -178,7 +178,7 @@ public class DatabaseTest {
     @Test
     public void tournamentPage() {
         populateDB(true, false);
-        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true);
+        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true, true);
 
         long countDecks = template.count(Deck.class);
         long countTournament = template.count(Tournament.class);
@@ -190,7 +190,7 @@ public class DatabaseTest {
 
         // duplicate checks
         operations.logDBCount();
-        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true);
+        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true, true);
         Assert.assertTrue("Duplicate decks should not be added.", countDecks == template.count(Deck.class));
         Assert.assertTrue("Duplicate tournaments should not be added.", countTournament == template.count(Tournament.class));
         Assert.assertTrue("Duplicate tournament-deck relations should not be added.", countTournamentHasDeck == template.count(TournamentHasDeck.class));
@@ -205,7 +205,7 @@ public class DatabaseTest {
     @Test
     public void archetypes() {
         populateDB(true, false);
-        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true);
+        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true, true);
 
         // filter decks by faction
         List<Deck> jintekiDecks = deckRepository.filterByFaction("jinteki");
@@ -217,8 +217,10 @@ public class DatabaseTest {
         Assert.assertTrue("There should be more Jinteki decks than RP decks.", jsize >= rpsize);
 
         // archetype check
-        Archetype RP = new Archetype("RP", rpDecks);
-        System.out.println(RP.toString());
+        Archetype RP = new Archetype("RP", rpDecks, cardRepository.findByTitle("Jinteki: Replicating Perfection"));
+        String output = RP.toString();
+        System.out.println(output);
+        Assert.assertTrue("RP Architype should have Nisei.", output.contains("Nisei MK II"));
     }
 
     private void populateDB(boolean cleanDb, boolean loadExamples) {

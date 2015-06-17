@@ -135,21 +135,21 @@ public class Operations {
         tournamentRepository.save(tournament);
     }
 
-    public void loadAcooTournamentsFromUrl(String url, boolean paging) {
+    public void loadAcooTournamentsFromUrl(String url, boolean paging, boolean filterempty) {
         System.out.println("*** Reading tournaments on page: " + url);
-        Set<Integer> tournamentIds = acooBroker.loadTournamentIdsFromUrl(url);
+        Set<Integer> tournamentIds = acooBroker.loadTournamentIdsFromUrl(url, filterempty);
         for (int tournamentId : tournamentIds) {
             loadAcooTournamentDecks(tournamentId);
         }
         String pagination = acooBroker.getTournamentPageNextLink(url);
         if ((paging) && (!pagination.equals(""))) {
-            loadAcooTournamentsFromUrl(acooBroker.ACOO_URL + pagination, true);
+            loadAcooTournamentsFromUrl(acooBroker.ACOO_URL + pagination, true, filterempty);
         }
     }
 
     public void generateArchetype(String name, String cardpool, String identity) {
         List<Deck> deckList = deckRepository.filterByIdentityAndCardPool(identity,cardpool);
-        Archetype archetype = new Archetype(name,deckList);
+        Archetype archetype = new Archetype(name, deckList, cardRepository.findByTitle(identity));
         System.out.println(archetype.toString());
     }
 }
