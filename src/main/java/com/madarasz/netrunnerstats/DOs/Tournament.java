@@ -38,8 +38,8 @@ public class Tournament {
         decks = new HashSet<TournamentHasDeck>();
     }
 
-    public TournamentHasDeck hasDeck(Deck deck, int rank, String side_code) {
-        TournamentHasDeck tournamentHasDeck = new TournamentHasDeck(this, deck, rank, side_code);
+    public TournamentHasDeck hasDeck(Deck deck, int rank, String side_code, boolean topdeck) {
+        TournamentHasDeck tournamentHasDeck = new TournamentHasDeck(this, deck, rank, side_code, topdeck);
         this.decks.add(tournamentHasDeck);
         return tournamentHasDeck;
     }
@@ -62,6 +62,10 @@ public class Tournament {
 
     public Set<TournamentHasDeck> getDecks() {
         return decks;
+    }
+
+    public int getPlayerNumber() {
+        return playerNumber;
     }
 
     @Override

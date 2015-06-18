@@ -12,8 +12,10 @@ import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.neo4j.graphdb.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +55,9 @@ public class DatabaseTest {
 
     @Autowired
     Neo4jOperations template;
+
+    @Autowired
+    GraphDatabase graphDatabase;
 
     /**
      * Checking that DB can be populated.
@@ -204,23 +209,42 @@ public class DatabaseTest {
 
     @Test
     public void archetypes() {
+        Transaction tx = graphDatabase.beginTx();
         populateDB(true, false);
         operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true, true);
+        tx.success();
+        operations.logDBCount();
+
+        long decknum = template.count(Deck.class);
+        long tournamenthasdecknum = template.count(TournamentHasDeck.class);
+        Assert.assertTrue("Deck and Tournament-deck relation numbers are different.", decknum == tournamenthasdecknum);
 
         // filter decks by faction
         List<Deck> jintekiDecks = deckRepository.filterByFaction("jinteki");
         List<Deck> rpDecks = deckRepository.filterByIdentityAndCardPool("Jinteki: Replicating Perfection", "Breaker Bay");
+        List<Deck> rpTopDecks = deckRepository.filterTopByIdentityAndCardPool("Jinteki: Replicating Perfection", "Breaker Bay");
+        List<Deck> andyTopDecks = deckRepository.filterTopByIdentityAndCardPool("Andromeda: Dispossessed Ristie", "Breaker Bay");
         int jsize = jintekiDecks.size();
         int rpsize = rpDecks.size();
-        System.out.println(String.format("Jinteki decks: %d, Jinteki RP decks: %d", jsize, rpsize));
+        int rptopsize = rpTopDecks.size();
+        int andytopsize = andyTopDecks.size();
+        System.out.println(String.format("Jinteki decks: %d, Jinteki RP decks: %d, Jinteki RP top decks: %d, Andy top decks: %d",
+                jsize, rpsize, rptopsize, andytopsize));
         Assert.assertTrue("Could not find RP decks.", rpsize > 0);
         Assert.assertTrue("There should be more Jinteki decks than RP decks.", jsize >= rpsize);
+        Assert.assertTrue("There should be more RP decks than RP top decks.", rpsize >= rptopsize);
+        Assert.assertTrue("Could not find Andy decks.", andytopsize > 0);
 
         // archetype check
-        Archetype RP = new Archetype("RP", rpDecks, cardRepository.findByTitle("Jinteki: Replicating Perfection"));
+        Archetype RP = new Archetype("RP Top", rpTopDecks, cardRepository.findByTitle("Jinteki: Replicating Perfection"));
         String output = RP.toString();
         System.out.println(output);
         Assert.assertTrue("RP Architype should have Nisei.", output.contains("Nisei MK II"));
+        Archetype andy = new Archetype("Andy Top", andyTopDecks, cardRepository.findByTitle("Andromeda: Dispossessed Ristie"));
+        output = andy.toString();
+        System.out.println(output);
+        Assert.assertTrue("Andy Architype should have Cloak.", output.contains("Cloak"));
+        tx.close();
     }
 
     private void populateDB(boolean cleanDb, boolean loadExamples) {

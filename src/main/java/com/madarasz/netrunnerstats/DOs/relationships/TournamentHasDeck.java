@@ -14,16 +14,17 @@ public class TournamentHasDeck {
     @EndNode @Fetch private Deck deck;
     private int rank;
     private String side_code;
-    private boolean impact = true;
-//
+    private boolean topdeck;
+
     public TournamentHasDeck() {
     }
 
-    public TournamentHasDeck(Tournament tournament, Deck deck, int rank, String side_code) {
+    public TournamentHasDeck(Tournament tournament, Deck deck, int rank, String side_code, boolean topdeck) {
         this.tournament = tournament;
         this.deck = deck;
         this.rank = rank;
         this.side_code = side_code;
+        this.topdeck = topdeck;
     }
 
     public Tournament getTournament() {
@@ -42,8 +43,12 @@ public class TournamentHasDeck {
         return side_code;
     }
 
-    public void calculateImpact() {
-        impact = true; // TODO
+    public boolean isTopdeck() {
+        return topdeck;
+    }
+
+    public void setTopdeck(boolean topdeck) {
+        this.topdeck = topdeck;
     }
 
     @Override

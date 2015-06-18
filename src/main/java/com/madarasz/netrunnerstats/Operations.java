@@ -50,9 +50,9 @@ public class Operations {
     }
 
     public void logDBCount() {
-        System.out.println(String.format("Cards: %d, CardPacks: %d, Decks: %d, Deck-card relations: %d, Tournaments: %d, Tournament-deck relations: %d",
-                template.count(Card.class), template.count(CardPack.class), template.count(Deck.class),
-                template.count(DeckHasCard.class), template.count(Tournament.class), template.count(TournamentHasDeck.class)));
+        System.out.println(String.format("Cards: %d, CardPacks: %d, Decks: %d, Tournaments: %d, Deck-card relations: %d, Tournament-deck relations: %d",
+                template.count(Card.class), template.count(CardPack.class), template.count(Deck.class), template.count(Tournament.class),
+                template.count(DeckHasCard.class), template.count(TournamentHasDeck.class)));
     }
 
     public void loadNetrunnerDB() {
@@ -129,8 +129,12 @@ public class Operations {
             Map.Entry pair = (Map.Entry) iterator.next();
             int rank = (Integer)pair.getValue();
             System.out.print("Rank: " + rank + " - ");
+            boolean topdeck = rank <= tournament.getPlayerNumber()*0.3;    // top 30% of decks
+            if (topdeck) {
+                System.out.print("TOP - ");
+            }
             Deck deck = loadAcooDeck((Integer)pair.getKey());
-            tournament.hasDeck(deck, rank, deck.getIdentity().getSide_code());
+            tournament.hasDeck(deck, rank, deck.getIdentity().getSide_code(), topdeck);
         }
         tournamentRepository.save(tournament);
     }
@@ -147,8 +151,13 @@ public class Operations {
         }
     }
 
-    public void generateArchetype(String name, String cardpool, String identity) {
-        List<Deck> deckList = deckRepository.filterByIdentityAndCardPool(identity,cardpool);
+    public void generateArchetype(String name, String cardpool, String identity, boolean filtertop) {
+        List<Deck> deckList;
+        if (filtertop) {
+            deckList = deckRepository.filterTopByIdentityAndCardPool(identity, cardpool);
+        } else {
+            deckList = deckRepository.filterByIdentityAndCardPool(identity, cardpool);
+        }
         Archetype archetype = new Archetype(name, deckList, cardRepository.findByTitle(identity));
         System.out.println(archetype.toString());
     }

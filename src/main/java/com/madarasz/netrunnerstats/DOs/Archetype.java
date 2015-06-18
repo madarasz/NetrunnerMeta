@@ -8,10 +8,10 @@ import java.util.*;
  * Statistics for archetype
  * Created by madarasz on 2015-06-16.
  */
+// TODO: refactor as DB component
 public class Archetype {
 
     private String name;
-    // TODO: model
     private Map<Card, Integer> cardcount;   // how many cards overall
     private Map<Card, Integer> cardisused;  // how many decks use the card
     private CardMapValueComparator comparator;
@@ -49,6 +49,12 @@ public class Archetype {
         this.comparator = new CardMapValueComparator(cardcount);
     }
 
+    /**
+     * Returns card usage subset filtered on card type or subtype.
+     * If filtered from "program" type, cards with "icebreaker" subtype will be not included.
+     * @param filter
+     * @return
+     */
     public TreeMap<Card, Integer> getOrderedCardSubset(String filter) {
         TreeMap<Card, Integer> sortedmap = new TreeMap<Card, Integer>(comparator);
         if (filter.equals("")) {
@@ -59,7 +65,13 @@ public class Archetype {
                 Map.Entry pair = (Map.Entry) iterator.next();
                 int quantity = (Integer) pair.getValue();
                 Card card = (Card) pair.getKey();
-                if ((card.getType_code().equals(filter)) || (card.getSubtype_code().contains(filter))) {
+
+                // "program" special case, has to filter out icebreakers
+                if (filter.equals("program")) {
+                    if ((card.getType_code().equals(filter)) && (!card.getSubtype_code().contains("icebreaker"))) {
+                        sortedmap.put(card, quantity);
+                    }
+                } else if ((card.getType_code().equals(filter)) || (card.getSubtype_code().contains(filter))) { // normal filtering
                     sortedmap.put(card, quantity);
                 }
             }
@@ -69,35 +81,36 @@ public class Archetype {
 
     /**
      * Providing statistics for a filtered card set.
-     * Stats provided: percentage of deck using, average number of cards if used
+     * Stats provided: percentage of deck using, average number of cards if used, average number
      * @param filter filter for card type or containing subtype, empty filter uses all cards
      * @return
      */
     public String getStatsForFilter(String filter) {
         String resultString = "";
-        if (!filter.equals("")) {
-            resultString += String.format("\n*** %s *** \n", filter);
-        }
         TreeMap<Card, Integer> sortedmap = new TreeMap<Card, Integer>(comparator);
         sortedmap.putAll(getOrderedCardSubset(filter));
+        if ((!filter.equals("")) && (sortedmap.size() > 0)) {
+            resultString += String.format("\n************************* %s *************************\n", filter);
+        }
+
         Iterator iterator = sortedmap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry pair = (Map.Entry) iterator.next();
             int quantity = (Integer)pair.getValue();
             Card card = (Card)pair.getKey();
             int usage = cardisused.get(card);
-            resultString += String.format("%30s - %3.0f%% - AIU: %4.2f\n", card.toString(), (float)usage/deckcount*100, (float)quantity/usage);
+            resultString += String.format("%30s - %3.0f%% - AIU: %4.2f - A: %4.2f\n", card.toString(), (float)usage/deckcount*100, (float)quantity/usage, (float)quantity/deckcount);
         }
         return resultString;
     }
 
     public String getStandardStats() {
-        String resultString = String.format("--- Archetype %s (%d decks) ---\n", name, deckcount);
+        String resultString = String.format("------------- Archetype %s (%d decks) -------------\n", name, deckcount);
         ArrayList<String> categories;
         if (identity.getSide_code().equals("runner")) {
             categories = new ArrayList<String>(Arrays.asList("event", "hardware", "icebreaker", "program", "resource"));
         } else {
-            categories = new ArrayList<String>(Arrays.asList("agenda", "asset", "ice", "operation", "upgrade"));
+            categories = new ArrayList<String>(Arrays.asList("agenda", "asset", "operation", "upgrade", "barrier", "code gate", "sentry", "mythic", "trap"));
         }
         for (String category: categories) {
             resultString += getStatsForFilter(category);
