@@ -86,6 +86,12 @@ public class Application implements CommandLineRunner {
                 case logdbcount: operations.logDBCount(); break;
                 case acooloadpage: operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true, true); break;
                 case archetype: operations.generateArchetype("Andy","Breaker Bay", "Andromeda: Dispossessed Ristie", true); break;
+                case acooall:
+                    operations.cleanDB();
+                    operations.loadNetrunnerDB();
+                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/anr-tournament-archive/1", true, true);
+                    operations.logDBCount();
+                    break;
                 case cleandb: operations.cleanDB(); break;
             }
 
@@ -102,7 +108,7 @@ public class Application implements CommandLineRunner {
     public enum PossibleOperations {
         cleandb, loadnetrunnerdb, logdbcount,
         netrunnerdbloaddeck,
-        acooloaddeck, acooloadtournament, acooloadtournamentdecks, acooloadpage,
+        acooloaddeck, acooloadtournament, acooloadtournamentdecks, acooloadpage, acooall,
         archetype,
         none
     }

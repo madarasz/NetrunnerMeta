@@ -47,8 +47,14 @@ public class AcooBroker {
 
         String titlebar = HttpBroker.textFromHtml(JSOUP_TITLE);
         String[] titleparts = titlebar.split(", \\d*\\w* | - ");
-        resultDeck.setName(titleparts[2]);
-        resultDeck.setPlayer(titleparts[1]);
+        try {
+            resultDeck.setName(titleparts[2]);
+            resultDeck.setPlayer(titleparts[1]);
+        } catch (Exception e) {
+            System.out.println("ERROR - cannot parse title: " + titlebar + "// deckid: " + id);
+            resultDeck.setName(titlebar);
+            resultDeck.setPlayer("");
+        }
         resultDeck.setUrl(url);
 
         return resultDeck;
@@ -92,12 +98,13 @@ public class AcooBroker {
         Date date = null;
         try {
             date = format.parse(titleparts[1]);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("ERROR - cannot parse date from: " + titlebar + " // tournament id: " + tournamentId);
+            date = new Date(0);
         }
         CardPack pool = cardPackRepository.findByName(HttpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL));
         if (pool == null) {
-            System.out.println("ERROR - no card pack found: " + HttpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL));
+            System.out.println("ERROR - no card pack found: " + HttpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL) + " // tournament id: " + tournamentId);
         }
         return new Tournament(tournamentId, titleparts[0], date, pool, url, playerNumber);
     }
@@ -127,7 +134,13 @@ public class AcooBroker {
         HttpBroker.parseHtml(url);
         Elements rows = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_LIST);
         for (Element row : rows) {
-            int decknumber = Integer.valueOf(row.select("td:eq(5)").text());
+            int decknumber = 0;
+            String decknumbertext = row.select("td:eq(5)").first().text();
+            try {
+                decknumber = Integer.valueOf(decknumbertext);
+            } catch (Exception e) {
+                System.out.println("ERROR - unable to parse deck number for: " + decknumbertext + "// tournament: " + url);
+            }
             if ((!filterempty) || (decknumber > 0)) {
                 Element cell = row.select("td").first().select("a").first();
                 String[] hrefparts = cell.attr("href").split("/");

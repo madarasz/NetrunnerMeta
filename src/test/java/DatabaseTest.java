@@ -26,7 +26,8 @@ import java.util.Set;
  * Unit tests for DB
  * Created by madarasz on 2015-06-11.
  */
-// TODO: do commits
+// TODO: DB commits
+// TODO: separate DB
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @Transactional

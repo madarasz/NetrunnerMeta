@@ -57,7 +57,11 @@ public class Tournament {
     }
 
     public CardPack getCardpool() {
-        return cardpool;
+        if (cardpool != null) {
+            return cardpool;
+        } else {        // TODO: better error handling
+            return new CardPack("ERROR", "ERROR", 0, 0);
+        }
     }
 
     public Set<TournamentHasDeck> getDecks() {
@@ -71,6 +75,6 @@ public class Tournament {
     @Override
     public String toString() {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return String.format("%s (%s) - %d players - cardpool: %s - %s", name, format.format(date), playerNumber, cardpool.getName(), url);
+        return String.format("%s (%s) - %d players - cardpool: %s - %s", name, format.format(date), playerNumber, getCardpool().getName(), url);
     }
 }
