@@ -126,6 +126,58 @@ public class Deck {
         return result;
     }
 
+    public boolean isValidDeck() {
+        boolean validity = true;
+
+        // deck size
+        int decksize = cards.size();
+        if (decksize < identity.getMinimumdecksize()) {
+            validity = false;
+            System.out.println(String.format("ERROR - card count: %d", decksize));
+        }
+
+        // influence check
+        int influence = getInfluenceCount();
+        if (getInfluenceCount() > identity.getInfluencelimit()) {
+            validity = false;
+            System.out.println(String.format("ERROR - influence count: %d", influence));
+        }
+
+        String side = identity.getSide_code();
+        int agendaCount = 0;
+        for (DeckHasCard deckHasCard : cards) {
+            int quantity = deckHasCard.getQuantity();
+            Card card = deckHasCard.getCard();
+
+            // card quantity
+            if ((quantity > 3) || (quantity < 1)) {
+                validity = false;
+                System.out.println(String.format("ERROR - illegal card quantity - %dx %s", quantity, card.getTitle()));
+            }
+
+            // same side
+            if (!card.getSide_code().equals(side)) {
+                validity = false;
+                System.out.println(String.format("ERROR - illegal side - %s", card.getTitle()));
+            }
+
+            // agenda count
+            if (card.getType_code().equals("agenda")) {
+                agendaCount += card.getAgendapoints();
+            }
+        }
+
+        // agenda count
+        if ((side.equals("corp")) && (agendaCount >= cards.size()/5*2+2) && (agendaCount <= cards.size()/5*2+3)) {
+            validity = false;
+            System.out.println(String.format("ERROR - deck size: %d - agenda count: %d", cards.size(), agendaCount));
+        }
+
+        return validity;
+    }
+
+
+    // TODO: reimplement
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : super.hashCode();

@@ -92,6 +92,7 @@ public class Application implements CommandLineRunner {
                     operations.loadAcooTournamentsFromUrl("http://www.acoo.net/anr-tournament-archive/1", true, true);
                     operations.logDBCount();
                     break;
+                case checkdata: operations.checkDataValidity(); break;
                 case cleandb: operations.cleanDB(); break;
             }
 
@@ -106,7 +107,7 @@ public class Application implements CommandLineRunner {
     }
 
     public enum PossibleOperations {
-        cleandb, loadnetrunnerdb, logdbcount,
+        cleandb, checkdata, loadnetrunnerdb, logdbcount,
         netrunnerdbloaddeck,
         acooloaddeck, acooloadtournament, acooloadtournamentdecks, acooloadpage, acooall,
         archetype,

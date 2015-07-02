@@ -161,4 +161,14 @@ public class Operations {
         Archetype archetype = new Archetype(name, deckList, cardRepository.findByTitle(identity));
         System.out.println(archetype.toString());
     }
+
+    public void checkDataValidity() {
+        List<Deck> decks = deckRepository.getAllDecks();
+        for (Deck deck: decks) {
+            System.out.println(String.format("Checking validity: %s", deck.toString()));
+            if (deck.isValidDeck()) {
+                System.out.println("OK");
+            }
+        }
+    }
 }

@@ -25,4 +25,7 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
 
     @Query("MATCH (d:Deck)-[:IDENTITY]->(i:Card), (p:CardPack)<-[:POOL]-(:Tournament)-[h:RANKING]->(d:Deck) WHERE (i.title={0}) AND (p.name={1}) AND (h.topdeck=true) return d")
     List<Deck> filterTopByIdentityAndCardPool(String title, String cardpoolname);
+
+    @Query("MATCH (d:Deck) return d")
+    List<Deck> getAllDecks();
 }
