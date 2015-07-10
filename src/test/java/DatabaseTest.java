@@ -9,6 +9,7 @@ import com.madarasz.netrunnerstats.DRs.TournamentRepository;
 import com.madarasz.netrunnerstats.Operations;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
+import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,6 +60,9 @@ public class DatabaseTest {
 
     @Autowired
     GraphDatabase graphDatabase;
+
+    @Autowired
+    MultiDimensionalScaling multiDimensionalScaling;
 
     /**
      * Checking that DB can be populated.
@@ -247,6 +251,20 @@ public class DatabaseTest {
         Assert.assertTrue("Andy Architype should have Cloak.", output.contains("Cloak"));
         tx.close();
     }
+
+    @Test
+    public void MDS() {
+        // the very same decks at 1st and 4th place
+        Deck signature_kate = deckRepository.findByUrl(acooBroker.deckUrlFromId(11949));
+        Deck signature_kate2 = deckRepository.findByUrl(acooBroker.deckUrlFromId(11879));
+        Assert.assertTrue("Distance of the same decks should be zero.", multiDimensionalScaling.getDeckDistance(signature_kate, signature_kate2) == 0);
+
+        // two very similar butchershops
+        Deck butcher1 = deckRepository.findByUrl(acooBroker.deckUrlFromId(12022));
+        Deck butcher2 = deckRepository.findByUrl(acooBroker.deckUrlFromId(11852));
+        Assert.assertTrue("Distance of the same decks should be zero.", multiDimensionalScaling.getDeckDistance(butcher1, butcher2) == 4);
+    }
+
 
     private void populateDB(boolean cleanDb, boolean loadExamples) {
         if (cleanDb) {

@@ -64,12 +64,30 @@ public class Tournament {
         }
     }
 
+    public void setCardpool(CardPack cardpool) {
+        this.cardpool = cardpool;
+    }
+
     public Set<TournamentHasDeck> getDecks() {
         return decks;
     }
 
     public int getPlayerNumber() {
         return playerNumber;
+    }
+
+    /**
+     * Tries to guess tournament cardpool based on cards used.
+     * @return latest card pack used in tournament
+     */
+    public CardPack guessCardPool() {
+        CardPack result = new CardPack("dummy", "dummy", 0, 0);
+        for (TournamentHasDeck tournamentHasDeck : decks) {
+            if (tournamentHasDeck.getDeck().getUpto().later(result)) {
+                result = tournamentHasDeck.getDeck().getUpto();
+            }
+        }
+        return result;
     }
 
     @Override

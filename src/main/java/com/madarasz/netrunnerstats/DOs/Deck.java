@@ -98,6 +98,10 @@ public class Deck {
         return result;
     }
 
+    /**
+     * Count deck influence
+     * @return influence count
+     */
     public int getInfluenceCount() {
         if (identity == null) return 0;
         int result = 0;
@@ -126,6 +130,10 @@ public class Deck {
         return result;
     }
 
+    /**
+     * Check deck validity
+     * @return validity
+     */
     public boolean isValidDeck() {
         boolean validity = true;
 

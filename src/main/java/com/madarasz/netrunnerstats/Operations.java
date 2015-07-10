@@ -163,12 +163,33 @@ public class Operations {
     }
 
     public void checkDataValidity() {
+        // check decks
         List<Deck> decks = deckRepository.getAllDecks();
-        for (Deck deck: decks) {
+        for (Deck deck : decks) {
             System.out.println(String.format("Checking validity: %s", deck.toString()));
             if (deck.isValidDeck()) {
                 System.out.println("OK");
             }
         }
+
+        // check tournaments
+        List<Tournament> tournaments = tournamentRepository.getAllTournaments();
+        Date nulldate = new Date(0);
+        for (Tournament tournament : tournaments) {
+            // check wrong date
+            if (tournament.getDate().equals(nulldate)) {
+                System.out.println(String.format("ERROR - Wrong date: %s", tournament.toString()));
+            }
+            // check wrong cardpool
+            if (tournament.getCardpool().getName().equals("ERROR")) {
+                System.out.println(String.format("ERROR - Wrong cardpool: %s", tournament.toString()));
+                CardPack fix = tournament.guessCardPool();
+                System.out.println(String.format("Overwriting cardpool with: %s", fix.toString()));
+                tournament.setCardpool(fix);
+                tournamentRepository.save(tournament);
+            }
+        }
+
+        // TODO: check for same decks
     }
 }
