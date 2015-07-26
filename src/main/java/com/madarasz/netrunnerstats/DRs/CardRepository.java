@@ -4,6 +4,7 @@ import com.madarasz.netrunnerstats.DOs.Card;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.neo4j.repository.RelationshipOperationsRepository;
+import java.util.List;
 
 /**
  * Repository for card nodes
@@ -17,5 +18,8 @@ public interface CardRepository extends GraphRepository<Card>, RelationshipOpera
     @Query("MATCH (n:Card) WHERE (UPPER(n.title)=UPPER({0})) return n")
     Card findByTitle(String title);
 
-    Iterable<Card> findByCardPackCode(String code);
+    @Query("MATCH (n:Card {type_code: 'identity'}) return n")
+    List<Card> findIdentities();
+
+    List<Card> findByCardPackCode(String code);
 }

@@ -93,6 +93,7 @@ public class Application implements CommandLineRunner {
                     operations.logDBCount();
                     break;
                 case checkdata: operations.checkDataValidity(); break;
+                case getpackstats: operations.getPackStats("Breaker Bay"); break;
                 case cleandb: operations.cleanDB(); break;
             }
 
@@ -110,7 +111,7 @@ public class Application implements CommandLineRunner {
         cleandb, checkdata, loadnetrunnerdb, logdbcount,
         netrunnerdbloaddeck,
         acooloaddeck, acooloadtournament, acooloadtournamentdecks, acooloadpage, acooall,
-        archetype,
+        archetype, getpackstats,
         none
     }
 }

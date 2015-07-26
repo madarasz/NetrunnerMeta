@@ -254,6 +254,12 @@ public class DatabaseTest {
 
     @Test
     public void MDS() {
+        populateDB(true, false);
+        operations.loadAcooTournament(11949);
+        operations.loadAcooTournament(11879);
+        operations.loadAcooTournament(12022);
+        operations.loadAcooTournament(11852);
+
         // the very same decks at 1st and 4th place
         Deck signature_kate = deckRepository.findByUrl(acooBroker.deckUrlFromId(11949));
         Deck signature_kate2 = deckRepository.findByUrl(acooBroker.deckUrlFromId(11879));

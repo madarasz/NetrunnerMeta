@@ -3,12 +3,10 @@ package com.madarasz.netrunnerstats.helper;
 import com.madarasz.netrunnerstats.DOs.Card;
 import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
+import mdsj.MDSJ;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by madarasz on 2015.07.10..
@@ -47,5 +45,24 @@ public class MultiDimensionalScaling {
         }
 
         return distance;
+    }
+
+    public double[][] getDistanceMatrix(ArrayList<Deck> decks) {
+        int size = decks.size();
+        double[][] result = new double[size][size];
+        int i = 0;
+        int u = 0;
+        for (Deck deck1 : decks) {
+            for (Deck deck2 : decks) {
+                result[i][u] = getDeckDistance(deck1, deck2);
+                u++;
+            }
+            i++;
+        }
+        return result;
+    }
+
+    public double[][] calculateMDS(double[][] input) {
+        return MDSJ.classicalScaling(input);
     }
 }

@@ -192,4 +192,17 @@ public class Operations {
 
         // TODO: check for same decks
     }
+
+    public void getPackStats(String cardpack) {
+        List<Card> identities = cardRepository.findIdentities();
+        for (Card card : identities) {
+            int count = deckRepository.countByIdentity(card);
+            if (count > 0) {
+                System.out.println(String.format("%s: %d", card.getTitle(), count));
+            }
+        }
+
+        List<Deck> decks = deckRepository.filterByIdentityAndCardPool("Near-Earth Hub: Broadcast Center", "Breaker Bay");
+        System.out.println("*** Getting stats for NEH: " + decks.size());
+    }
 }
