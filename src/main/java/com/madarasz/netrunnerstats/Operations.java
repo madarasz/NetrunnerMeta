@@ -9,6 +9,7 @@ import com.madarasz.netrunnerstats.DRs.DeckRepository;
 import com.madarasz.netrunnerstats.DRs.TournamentRepository;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
+import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
@@ -41,6 +42,9 @@ public class Operations {
 
     @Autowired
     Neo4jOperations template;
+
+    @Autowired
+    MultiDimensionalScaling multiDimensionalScaling;
 
     public void cleanDB() {
         System.out.println("Cleaning DB.");
@@ -202,7 +206,12 @@ public class Operations {
             }
         }
 
-        List<Deck> decks = deckRepository.filterByIdentityAndCardPool("Near-Earth Hub: Broadcast Center", "Breaker Bay");
+        ArrayList<Deck> decks = new ArrayList<Deck>(deckRepository.filterByIdentityAndCardPool("Near-Earth Hub: Broadcast Center", "Breaker Bay"));
         System.out.println("*** Getting stats for NEH: " + decks.size());
+        double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
+        double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
+        for (int i = 0; i < decks.size(); i++) {
+            System.out.println(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
+        }
     }
 }

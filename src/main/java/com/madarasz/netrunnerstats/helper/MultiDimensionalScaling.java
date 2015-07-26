@@ -15,7 +15,13 @@ import java.util.*;
 @Component
 public class MultiDimensionalScaling {
 
-    public int getDeckDistance(Deck decka, Deck deckb) {
+    public double getDeckDistance(Deck decka, Deck deckb) {
+        String factionA = decka.getIdentity().getFaction_code();
+        String factionB = deckb.getIdentity().getFaction_code();
+        double influenceSensitivity = 1.2; // cards costing influence result in bigger distance
+        if (!factionA.equals(factionB)) {
+            influenceSensitivity = 1;
+        }
 
         // get all cards
         Set<DeckHasCard> deckACards = decka.getCards();
@@ -33,14 +39,22 @@ public class MultiDimensionalScaling {
         }
 
         // calculate Manhattan distance
-        int distance = 0;
+        double distance = 0;
         for (Card card : cards) {
+            int difference;
             if (!deckAMap.containsKey(card)) {
-                distance += deckBMap.get(card);
+                difference = deckBMap.get(card);
             } else if (!deckBMap.containsKey(card)) {
-                distance += deckAMap.get(card);
+                difference = deckAMap.get(card);
             } else {
-                distance += Math.abs(deckAMap.get(card)-deckBMap.get(card));
+                difference = Math.abs(deckAMap.get(card)-deckBMap.get(card));
+            }
+
+            // calculate additional influence sensitivity
+            if (card.getFaction_code().equals(factionA)) {
+                distance += difference;
+            } else {
+                distance += difference * Math.pow(influenceSensitivity, card.getFactioncost());
             }
         }
 
@@ -51,8 +65,8 @@ public class MultiDimensionalScaling {
         int size = decks.size();
         double[][] result = new double[size][size];
         int i = 0;
-        int u = 0;
         for (Deck deck1 : decks) {
+            int u = 0;
             for (Deck deck2 : decks) {
                 result[i][u] = getDeckDistance(deck1, deck2);
                 u++;
