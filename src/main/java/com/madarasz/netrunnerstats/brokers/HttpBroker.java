@@ -63,11 +63,17 @@ public final class HttpBroker {
     }
 
     public static void parseHtml(String url) {
-        try {
-            document = Jsoup.connect(url).get();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // TODO: avoid infinite loop
+        boolean readok = true;
+        do {
+            readok = true;
+            try {
+                document = Jsoup.connect(url).get();
+            } catch (IOException e) {
+                System.out.println("ERROR - could not read HTML - retrying");
+                readok = false;
+            }
+        } while (!readok);
     }
 
     public static String textFromHtml(String jsoupExpression) {
