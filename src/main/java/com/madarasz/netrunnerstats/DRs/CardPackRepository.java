@@ -13,4 +13,6 @@ public interface CardPackRepository extends GraphRepository<CardPack>, Relations
     CardPack findByName(String name);
 
     CardPack findByCode(String code);
+
+    CardPack findByCyclenumberAndNumber(int cyclenumber, int number);
 }

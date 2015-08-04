@@ -131,13 +131,13 @@ public class Operations {
         Iterator iterator = decks.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry pair = (Map.Entry) iterator.next();
-            int rank = (Integer)pair.getValue();
+            int rank = (Integer) pair.getValue();
             System.out.print("Rank: " + rank + " - ");
-            boolean topdeck = rank <= tournament.getPlayerNumber()*0.3;    // top 30% of decks
+            boolean topdeck = rank <= tournament.getPlayerNumber() * 0.3;    // top 30% of decks
             if (topdeck) {
                 System.out.print("TOP - ");
             }
-            Deck deck = loadAcooDeck((Integer)pair.getKey());
+            Deck deck = loadAcooDeck((Integer) pair.getKey());
             tournament.hasDeck(deck, rank, deck.getIdentity().getSide_code(), topdeck);
         }
         tournamentRepository.save(tournament);
@@ -212,6 +212,72 @@ public class Operations {
         double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
         for (int i = 0; i < decks.size(); i++) {
             System.out.println(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
+        }
+    }
+
+    public void getAllStats() {
+        List<Card> identities = cardRepository.findIdentities();
+        long totalDecks = deckRepository.count();
+        System.out.println("*********************************************************************");
+        System.out.println(String.format("Number of all decks: %d", totalDecks));
+        for (Factions faction : Factions.values()) {
+            String factionName = faction.toString().replaceAll("_", "-");
+            int factionCount = deckRepository.countByFaction(factionName);
+            if (factionCount > 0) {
+                System.out.println(String.format("* %s: %d", factionName, factionCount));
+                for (Card card : identities) {
+                    if (card.getFaction_code().equals(factionName)) {
+                        int identityCount = deckRepository.countByIdentity(card);
+                        if (identityCount > 0) {
+                            System.out.println(String.format("** %s: %d", card.getTitle(), identityCount));
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("*********************************************************************");
+        for (CardCycles cardCycle : CardCycles.values()) {
+            String cycleName = cardCycle.toString().replaceAll("_"," ");
+            int cyclenumber = cardCycle.getCycleNumber();
+            int cycleCount = deckRepository.countByCycle(cyclenumber);
+            if (cycleCount > 0) {
+                System.out.println(String.format("* %s: %d", cycleName, cycleCount));
+                int number = 0;
+                do {
+                    number++;
+                    CardPack cardPack = cardPackRepository.findByCyclenumberAndNumber(cyclenumber, number);
+                    if (cardPack == null) {
+                        break;
+                    } else {
+                        String cardPackName = cardPack.getName();
+                        int cardpackCount = deckRepository.countByCardPack(cardPackName);
+                        if (cardpackCount > 0) {
+                            System.out.println(String.format("** %s: %d", cardPackName, cardpackCount));
+                        }
+                    }
+                } while(true);
+            }
+        }
+        System.out.println("*********************************************************************");
+    }
+
+    // TODO: put these enums somewhere general
+    public enum Factions {
+        neutral, shaper, criminal, anarch, jinteki, haas_bioroid, weyland_consortium, nbn;
+    }
+
+    public enum CardCycles {
+        Promos(0), Core_Set(1), Genesis(2), Creation_and_Control(3), Spin(4), Honor_and_Profit(5), Lunar(6),
+        Order_and_Chaos(7), SanSan(8), Data_and_Destiny(9);
+
+        private final int cycleNumber;
+
+        CardCycles(int cycleNumber) {
+            this.cycleNumber = cycleNumber;
+        }
+
+        public int getCycleNumber() {
+            return this.cycleNumber;
         }
     }
 }

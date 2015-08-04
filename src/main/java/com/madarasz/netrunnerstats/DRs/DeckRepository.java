@@ -1,6 +1,7 @@
 package com.madarasz.netrunnerstats.DRs;
 
 import com.madarasz.netrunnerstats.DOs.Card;
+import com.madarasz.netrunnerstats.DOs.CardPack;
 import com.madarasz.netrunnerstats.DOs.Deck;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
@@ -36,4 +37,13 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
     List<Deck> getAllDecks();
 
     int countByIdentity(Card card);
+
+    @Query("MATCH (d:Deck)-[:IDENTITY]->(i:Card) WHERE (i.faction_code={0}) RETURN COUNT(d)")
+    int countByFaction(String faction);
+
+    @Query("MATCH (p:CardPack)<-[:POOL]-(:Tournament)-[:RANKING]->(d:Deck) WHERE (p.cyclenumber={0}) RETURN COUNT(d)")
+    int countByCycle(int cycleNumber);
+
+    @Query("MATCH (p:CardPack)<-[:POOL]-(:Tournament)-[:RANKING]->(d:Deck) WHERE (p.name={0}) RETURN COUNT(d)")
+    int countByCardPack(String cardpackName);
 }
