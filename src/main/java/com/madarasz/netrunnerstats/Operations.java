@@ -200,13 +200,22 @@ public class Operations {
     public void getPackStats(String cardpack) {
         List<Card> identities = cardRepository.findIdentities();
         for (Card card : identities) {
-            int count = deckRepository.countByIdentity(card);
+            String identityTitle = card.getTitle();
+            int count = deckRepository.countByCardPackAndIdentity(cardpack, identityTitle);
             if (count > 0) {
-                System.out.println(String.format("%s: %d", card.getTitle(), count));
+                int topcount = deckRepository.countTopByCardPackAndIdentity(cardpack, identityTitle);
+                System.out.println(String.format("*** %s: %d (top: %d)", identityTitle, count, topcount));
             }
         }
+    }
 
-        ArrayList<Deck> decks = new ArrayList<Deck>(deckRepository.filterByIdentityAndCardPool("Near-Earth Hub: Broadcast Center", "Breaker Bay"));
+    public void getPackMath(String identityName, String cardpackName, boolean top) {
+        ArrayList<Deck> decks;
+        if (top) {
+            decks = new ArrayList<Deck>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
+        } else {
+            decks = new ArrayList<Deck>(deckRepository.filterByIdentityAndCardPool(identityName, cardpackName));
+        }
         System.out.println("*** Getting stats for NEH: " + decks.size());
         double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
         double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
@@ -235,7 +244,9 @@ public class Operations {
                 }
             }
         }
+
         System.out.println("*********************************************************************");
+
         for (CardCycles cardCycle : CardCycles.values()) {
             String cycleName = cardCycle.toString().replaceAll("_"," ");
             int cyclenumber = cardCycle.getCycleNumber();
@@ -253,11 +264,13 @@ public class Operations {
                         int cardpackCount = deckRepository.countByCardPack(cardPackName);
                         if (cardpackCount > 0) {
                             System.out.println(String.format("** %s: %d", cardPackName, cardpackCount));
+                            getPackStats(cardPackName);
                         }
                     }
                 } while(true);
             }
         }
+
         System.out.println("*********************************************************************");
     }
 

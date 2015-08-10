@@ -79,4 +79,19 @@ public class MultiDimensionalScaling {
     public double[][] calculateMDS(double[][] input) {
         return MDSJ.classicalScaling(input);
     }
+
+    public ArrayList<ArrayList<Deck>> calculateKMeans(ArrayList<Deck> decks, int k) {
+        int decksize = decks.size();
+
+        ArrayList<Deck> centers = new ArrayList<Deck>();
+        Random randomGenerator = new Random();
+        int index = randomGenerator.nextInt(decksize);
+
+        ArrayList<ArrayList<Deck>> result = new ArrayList<ArrayList<Deck>>();
+        for (int i = 0; i < k; i++) {
+            ArrayList<Deck> newset = new ArrayList<Deck>();
+            result.add(newset);
+        }
+        return result;
+    }
 }
