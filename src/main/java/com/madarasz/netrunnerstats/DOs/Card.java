@@ -123,6 +123,10 @@ public class Card {
         return type_code.equals("identity");
     }
 
+    public boolean isRunner() {
+        return side_code.equals("runner");
+    }
+
     @Override
     public String toString() {
 //        return String.format("%s (%s) - %s", title, code, cardPack.toString());

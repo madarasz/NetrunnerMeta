@@ -1,6 +1,5 @@
 package com.madarasz.netrunnerstats.DOs;
 
-import com.madarasz.netrunnerstats.DOs.relationships.TournamentHasDeck;
 import org.springframework.data.neo4j.annotation.*;
 
 import java.text.DateFormat;
@@ -23,7 +22,7 @@ public class Tournament {
     private int playerNumber;
     @Indexed(unique=true) private String url;
     @RelatedTo(type = "POOL") private @Fetch CardPack cardpool;
-    @RelatedToVia(type = "RANKING") @Fetch private Set<TournamentHasDeck> decks;
+    @RelatedTo(type = "IS_STANDING") @Fetch private Set<Standing> standings;
 
     public Tournament() {
     }
@@ -35,13 +34,25 @@ public class Tournament {
         this.cardpool = cardpool;
         this.url = url;
         this.playerNumber = playerNumber;
-        decks = new HashSet<TournamentHasDeck>();
+        standings = new HashSet<Standing>();
     }
 
-    public TournamentHasDeck hasDeck(Deck deck, int rank, String side_code, boolean topdeck) {
-        TournamentHasDeck tournamentHasDeck = new TournamentHasDeck(this, deck, rank, side_code, topdeck);
-        this.decks.add(tournamentHasDeck);
-        return tournamentHasDeck;
+    public Standing hasStanding(int rank, Card identity, boolean top_deck, boolean is_runner) {
+        Standing standing = new Standing(this, rank, identity, top_deck, is_runner);
+        this.standings.add(standing);
+        return standing;
+    }
+
+    public Standing hasStanding(int rank, Card identity, boolean top_deck, boolean is_runner, Deck deck) {
+        Standing standing = new Standing(this, rank, identity, top_deck, is_runner, deck);
+        this.standings.add(standing);
+        return standing;
+    }
+
+    public void hasStandings(Set<Standing> standings) {
+        for (Standing standing : standings) {
+            this.standings.add(standing);
+        }
     }
 
     public int getId() {
@@ -68,8 +79,8 @@ public class Tournament {
         this.cardpool = cardpool;
     }
 
-    public Set<TournamentHasDeck> getDecks() {
-        return decks;
+    public Set<Standing> getStandings() {
+        return standings;
     }
 
     public int getPlayerNumber() {
@@ -82,9 +93,11 @@ public class Tournament {
      */
     public CardPack guessCardPool() {
         CardPack result = new CardPack("dummy", "dummy", 0, 0);
-        for (TournamentHasDeck tournamentHasDeck : decks) {
-            if (tournamentHasDeck.getDeck().getUpto().later(result)) {
-                result = tournamentHasDeck.getDeck().getUpto();
+        for (Standing standing : standings) {
+            if (standing.getDeck() != null) {
+                if (standing.getDeck().getUpto().later(result)) {
+                    result = standing.getDeck().getUpto();
+                }
             }
         }
         return result;

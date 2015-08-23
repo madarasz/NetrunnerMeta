@@ -21,7 +21,7 @@ public class AcooBroker {
     private final static String JSOUP_DECK_CARDS = "div.deck-display-type > ul > li";
     private final static String JSOUP_TOURNAMENT_DESC = "div.section > p";
     private final static String JSOUP_TOURNAMENT_POOL = "div.section > p > a";
-    private final static String JSOUP_TOURNAMENT_DECK = "div.rank-list > table > tbody > tr";
+    private final static String JSOUP_TOURNAMENT_DECK_ROW = "div.rank-list > table > tbody > tr";
     private final static String JSOUP_TOURNAMENT_LIST = "div.tournament-list > table > tbody > tr";
     private final static String JSOUP_PAGINATION = "div.pagination > a";
     private final static String JSOUP_TITLE = "h1";
@@ -39,6 +39,11 @@ public class AcooBroker {
     @Autowired
     CardPackRepository cardPackRepository;
 
+    /**
+     * Reads Deck information from Acoo. Also adds deck metadata.
+     * @param id Acoo deck ID
+     * @return deck
+     */
     public Deck readDeck(int id) {
         String url = deckUrlFromId(id);
         HttpBroker.parseHtml(url);
@@ -67,6 +72,11 @@ public class AcooBroker {
         return ACOO_URL + "anr-tournament/" + id;
     }
 
+    /**
+     * Reads card data for Acoo deck
+     * @param lines card lines from html
+     * @return deck without metadata, just cards
+     */
     public Deck parseDeck(ArrayList<String> lines) {
 
         Deck result = new Deck();
@@ -87,6 +97,11 @@ public class AcooBroker {
         return result;
     }
 
+    /**
+     * Reads tournament metadata
+     * @param tournamentId Acoo tournament ID
+     * @return tournament without standings, decks
+     */
     public Tournament readTournament(int tournamentId) {
         String url = tournamentUrlFromId(tournamentId);
         HttpBroker.parseHtml(url);
@@ -108,26 +123,12 @@ public class AcooBroker {
         return new Tournament(tournamentId, titleparts[0], date, pool, url, playerNumber);
     }
 
-    public Map<Integer, Integer> loadTournamentDeckIds(int tournamentId) {
-        Map<Integer, Integer> result = new HashMap<Integer, Integer>();
-        String url = tournamentUrlFromId(tournamentId);
-        HttpBroker.parseHtml(url);
-        Elements rows = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK);
-        for (Element row : rows) {
-            String rankString = row.select("td").first().text();
-            int rank = regExBroker.getNumberFromBeginning(rankString);
-            Elements decks = row.select("td > a");
-            for (Element deck : decks) {
-                String[] hrefparts = deck.attr("href").split("/");
-                int deckId = Integer.valueOf(hrefparts[2]);
-                if (!result.containsKey(deckId)) {  // prioritize "Top results" over "Swiss"
-                    result.put(deckId, rank);
-                }
-            }
-        }
-        return result;
-    }
-
+    /**
+     * Loads tournament IDs from tournament list page
+     * @param url page URL
+     * @param filterempty filter out tournaments with 0 decklists
+     * @return Acoo tournament IDS
+     */
     public Set<Integer> loadTournamentIdsFromUrl(String url, boolean filterempty) {
         Set<Integer> result = new HashSet<Integer>();
         HttpBroker.parseHtml(url);
@@ -186,19 +187,204 @@ public class AcooBroker {
         }
     }
 
-    // TODO
-    public Set<Standing> loadTournamentStatistics(String url) {
+    /**
+     * Loads standings and decks from tournament
+     * @param url Acoo tournament url
+     * @param tournament tournament
+     * @return standings with decks
+     */
+    public Set<Standing> loadTournamentStandings(String url, Tournament tournament) {
         Set<Standing> standings = new HashSet<Standing>();
         HttpBroker.parseHtml(url);
         Elements lists = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_RANKLIST);
 
         // just swiss
         if (lists.size() == 1) {
+            Elements rows = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK_ROW);
+            for (Element row : rows) {
+                // extract rank
+                String rankString = row.select("td").first().text();
+                int rank = regExBroker.getNumberFromBeginning(rankString);
+                Elements ids = row.select("td > img");
+                for (Element id : ids) {
+                    // extract standing
+                    String[] hrefparts = id.attr("src").split("/");
+                    Card identity = cardRepository.findByTitle(iconToIdentity(hrefparts[4]));
+                    boolean topdeck = rank <= tournament.getPlayerNumber() * 0.3;    // top 30% of decks
 
+                    // extract deck
+                    Elements deckpart = id.parent().select("a");
+                    if (deckpart.isEmpty()) {
+                        standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner()));
+                    } else {
+                        System.out.print("Rank: " + rank + " - ");
+                        hrefparts = deckpart.first().attr("href").split("/");
+                        int deckId = Integer.valueOf(hrefparts[2]);
+                        Deck deck = readDeck(deckId);
+                        System.out.println("Saving new deck! - " + deck.toString());
+                        standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner(), deck));
+                    }
+                }
+            }
         // swiss + top X
         } else {
-
+            // TODO
+            System.out.println("ERROR - Cannot do tournament with top X");
         }
         return standings;
+    }
+
+    /**
+     * Translates Acoo identity icon name to identity card title
+     * @param filename filename
+     * @return card title
+     */
+    private String iconToIdentity(String filename) {
+        String identityName;
+        switch (filename) {
+            case "icon-andromeda.jpg" :
+                identityName = "Andromeda: Dispossessed Ristie";
+                break;
+            case "icon-argus-security.png" :
+                identityName = "Argus Security: Protection Guaranteed";
+                break;
+            case "icon-armand.jpg" :
+                identityName = "Armand \"Geist\" Walker: Tech Lord";
+                break;
+            case "icon-blue-sun.jpg" :
+                identityName = "Blue Sun: Powering the Future";
+                break;
+            case "icon-cerebral-imaging.jpg" :
+                identityName = "Cerebral Imaging: Infinite Frontiers";
+                break;
+            case "icon-chaos-theory.jpg" :
+                identityName = "Chaos Theory: Wünderkind";
+                break;
+            case "icon-custom-biotics.jpg" :
+                identityName = "Custom Biotics: Engineered for Success";
+                break;
+            case "???" :
+                identityName = "Cybernetics Division: Humanity Upgraded";
+                break;
+            case "icon-edward-kim.png" :
+                identityName = "Edward Kim: Humanity's Hammer";
+                break;
+            case "icon-exile-streethawk.jpg" :
+                identityName = "Exile: Streethawk";
+                break;
+            case "icon-gabriel-santiago.jpg" :
+                identityName = "Gabriel Santiago: Consummate Professional";
+                break;
+            case "icon-gagarin-deep-space.png" :
+                identityName = "Gagarin Deep Space: Expanding the Horizon";
+                break;
+            case "icon-grndl.jpg" :
+                identityName = "GRNDL: Power Unleashed";
+                break;
+            case "????" :
+                identityName = "Haarpsichord Studios";
+                break;
+            case "hb-etf-icon.png" :
+                identityName = "Haas-Bioroid: Engineering the Future";
+                break;
+            case "icon-stronger-together.jpg" :
+                identityName = "Haas-Bioroid: Stronger Together";
+                break;
+            case "icon-harmony-medtech.jpg" :
+                identityName = "Harmony Medtech: Biomedical Pioneer";
+                break;
+            case "icon-hayley-kaplan.png" :
+                identityName = "Hayley Kaplan: Universal Scholar";
+                break;
+            case "icon-iain-stirling.png" :
+                identityName = "Iain Stirling: Retired Spook";
+                break;
+            case "icon-industrial-genomics.jpg" :
+                identityName = "Industrial Genomics: Growing Solutions";
+                break;
+            case "icon-jinteki-biotech-life.png" :
+                identityName = "Jinteki Biotech: Life Imagined";
+                break;
+            case "jinteki-pe-icon.png" :
+                identityName = "Jinteki: Personal Evolution";
+                break;
+            case "icon-jinteki-rp.jpg" :
+                identityName = "Jinteki: Replicating Perfection";
+                break;
+            case "kate-icon.png" :
+                identityName = "Kate \"Mac\" McCaffrey: Digital Tinker";
+                break;
+            case "icon-ken-tenma.png" :
+                identityName = "Ken \"Express\" Tenma: Disappeared Clone";
+                break;
+            case "iconr-leela-patel.jpg" :
+                identityName = "Leela Patel: Trained Pragmatist";
+                break;
+            case "icon-maxx.png" :
+                identityName = "MaxX: Maximum Punk Rock";
+                break;
+            case "nasir-icon.jpg" :
+                identityName = "Nasir Meidan: Cyber Explorer";
+                break;
+            case "icon-nbn-mn.jpg" :
+                identityName = "NBN: Making News";
+                break;
+            case "icon-nbn-twiy.jpg" :
+                identityName = "NBN: The World is Yours*";
+                break;
+            case "Near-earth-hub-icon.png" :
+                identityName = "Near-Earth Hub: Broadcast Center";
+                break;
+            case "icon-next-design.jpg" :
+                identityName = "NEXT Design: Guarding the Net";
+                break;
+            case "icon-nisei-division.png" :
+                identityName = "Nisei Division: The Next Generation";
+                break;
+            case "noise-icon.png" :
+                identityName = "Noise: Hacker Extraordinaire";
+                break;
+            case "quetzal-icon.png" :
+                identityName = "Quetzal: Free Spirit";
+                break;
+            case "icon-reina-roja.jpg" :
+                identityName = "Reina Roja: Freedom Fighter";
+                break;
+            case "icon-rielle-kit-.jpg" :
+                identityName = "Rielle \"Kit\" Peddler: Transhuman";
+                break;
+            case "icon-silhouette.jpg" :
+                identityName = "Silhouette: Stealth Operative";
+                break;
+            case "icon-tennin-institute.png" :
+                identityName = "Tennin Institute: The Secrets Within";
+                break;
+            case "icon-the-foundry.jpg" :
+                identityName = "The Foundry: Refining the Process";
+                break;
+            case "icon-the-professor.jpg" :
+                identityName = "The Professor: Keeper of Knowledge";
+                break;
+            case "icon-titan-transnational.png" :
+                identityName = "Titan Transnational: Investing In Your Future";
+                break;
+            case "icon-valencia-estevez.png" :
+                identityName = "Valencia Estevez: The Angel of Cayambe";
+                break;
+            case "?????" :
+                identityName = "Weyland Consortium: Because We Built It";
+                break;
+            case "icon-weyland-consortium-babw.jpg" :
+                identityName = "Weyland Consortium: Building a Better World";
+                break;
+            case "icon-whizzard.jpg" :
+                identityName = "Whizzard: Master Gamer";
+                break;
+
+            default:
+                System.out.println(String.format("ERROR - Unknown ID for icon: %s", filename));
+                identityName = "The Collective: Williams, Wu, et al.";  // fallback ID
+        }
+        return identityName;
     }
 }

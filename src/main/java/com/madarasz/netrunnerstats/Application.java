@@ -81,8 +81,8 @@ public class Application implements CommandLineRunner {
                 case loadnetrunnerdb: operations.loadNetrunnerDB(); break;
                 case netrunnerdbloaddeck: operations.loadNetrunnerDbDeck(20162); break;
                 case acooloaddeck: operations.loadAcooDeck(10890); break;
-                case acooloadtournament: operations.loadAcooTournament(526); break;
-                case acooloadtournamentdecks: operations.loadAcooTournamentDecks(526); break;
+                case acooloadtournament: operations.loadAcooTournament(673); break;
+                case acooloadtournamentdecks: operations.loadAcooTournamentDecks(673); break;
                 case logdbcount: operations.logDBCount(); break;
                 case acooloadpage: operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true, true); break;
                 case archetype: operations.generateArchetype("Andy","Breaker Bay", "Andromeda: Dispossessed Ristie", true); break;
