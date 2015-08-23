@@ -2,7 +2,6 @@ package com.madarasz.netrunnerstats;
 
 import com.madarasz.netrunnerstats.DOs.*;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
-import com.madarasz.netrunnerstats.DOs.relationships.TournamentHasDeck;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
 import com.madarasz.netrunnerstats.DRs.DeckRepository;
@@ -60,9 +59,9 @@ public class Operations {
      * Logs DB node, relationship count
      */
     public void logDBCount() {
-        System.out.println(String.format("Cards: %d, CardPacks: %d, Decks: %d, Tournaments: %d, Deck-card relations: %d, Tournament-deck relations: %d",
-                template.count(Card.class), template.count(CardPack.class), template.count(Deck.class), template.count(Tournament.class),
-                template.count(DeckHasCard.class), template.count(TournamentHasDeck.class)));
+        System.out.println(String.format("Cards: %d, CardPacks: %d, Decks: %d, Standings: %d, Tournaments: %d, Deck-card relations: %d",
+                template.count(Card.class), template.count(CardPack.class), template.count(Deck.class), template.count(Standing.class), template.count(Tournament.class),
+                template.count(DeckHasCard.class)));
     }
 
     /**
@@ -137,6 +136,7 @@ public class Operations {
      * @param tournamentId tournamentID in Acoo
      * @return tournament object
      */
+    // TODO: Tournament is not refreshed if already exists
     public Tournament loadAcooTournament(int tournamentId) {
         String url = acooBroker.tournamentUrlFromId(tournamentId);
         Tournament exists = tournamentRepository.findByUrl(url);
@@ -153,23 +153,30 @@ public class Operations {
 
     /**
      * Loads decks from tournament from Acoo. Saves decks in DB if not already present.
+     * Also saves Standings.
      * @param tournamentId tournamentID in ACoo
      */
     public void loadAcooTournamentDecks(int tournamentId) {
+        String url = acooBroker.tournamentUrlFromId(tournamentId);
+        // load tournament metadata
         Tournament tournament = loadAcooTournament(tournamentId);
-        Map<Integer, Integer> decks = acooBroker.loadTournamentDeckIds(tournamentId);
-        Iterator iterator = decks.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry pair = (Map.Entry) iterator.next();
-            int rank = (Integer) pair.getValue();
-            System.out.print("Rank: " + rank + " - ");
-            boolean topdeck = rank <= tournament.getPlayerNumber() * 0.3;    // top 30% of decks
-            if (topdeck) {
-                System.out.print("TOP - ");
-            }
-            Deck deck = loadAcooDeck((Integer) pair.getKey());
-            tournament.hasDeck(deck, rank, deck.getIdentity().getSide_code(), topdeck);
-        }
+        // load tournament standings with decks
+        Set<Standing> standings = acooBroker.loadTournamentStandings(url, tournament);
+        tournament.hasStandings(standings);
+
+//        Map<Integer, Integer> decks = acooBroker.loadTournamentDeckIds(tournamentId);
+//        Iterator iterator = decks.entrySet().iterator();
+//        while (iterator.hasNext()) {
+//            Map.Entry pair = (Map.Entry) iterator.next();
+//            int rank = (Integer) pair.getValue();
+//            System.out.print("Rank: " + rank + " - ");
+//            boolean topdeck = rank <= tournament.getPlayerNumber() * 0.3;    // top 30% of decks
+//            if (topdeck) {
+//                System.out.print("TOP - ");
+//            }
+////            Deck deck = loadAcooDeck((Integer) pair.getKey());
+//            tournament.hasDeck(deck, rank, deck.getIdentity().getSide_code(), topdeck);
+//        }
         tournamentRepository.save(tournament);
     }
 
