@@ -1,9 +1,6 @@
 package com.madarasz.netrunnerstats.brokers;
 
-import com.madarasz.netrunnerstats.DOs.Card;
-import com.madarasz.netrunnerstats.DOs.CardPack;
-import com.madarasz.netrunnerstats.DOs.Deck;
-import com.madarasz.netrunnerstats.DOs.Tournament;
+import com.madarasz.netrunnerstats.DOs.*;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
 import org.jsoup.nodes.Element;
@@ -11,7 +8,6 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -29,6 +25,9 @@ public class AcooBroker {
     private final static String JSOUP_TOURNAMENT_LIST = "div.tournament-list > table > tbody > tr";
     private final static String JSOUP_PAGINATION = "div.pagination > a";
     private final static String JSOUP_TITLE = "h1";
+    private final static String JSOUP_TOURNAMENT_DECK_ID = "div.rank-list > table > tbody > tr > td > img";
+    private final static String JSOUP_TOURNAMENT_DECK_ID2 = "div.rank-list(2) > table > tbody > tr > td > img";
+    private final static String JSOUP_TOURNAMENT_RANKLIST = "div.rank-list";
     private final static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
@@ -167,4 +166,39 @@ public class AcooBroker {
         return result;
     }
 
+    /**
+     * Counts number of defined identities in tournament
+     * @param url url of tournament
+     * @return number of defined indentities
+     */
+    public int getTournamentIdentityCount(String url) {
+        HttpBroker.parseHtml(url);
+        Elements lists = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_RANKLIST);
+
+        // just swiss
+        if (lists.size() == 1) {
+            Elements ids = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK_ID);
+            return ids.size();
+        // swiss + top X
+        } else {
+            Elements ids = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK_ID2);
+            return ids.size();
+        }
+    }
+
+    // TODO
+    public Set<Standing> loadTournamentStatistics(String url) {
+        Set<Standing> standings = new HashSet<Standing>();
+        HttpBroker.parseHtml(url);
+        Elements lists = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_RANKLIST);
+
+        // just swiss
+        if (lists.size() == 1) {
+
+        // swiss + top X
+        } else {
+
+        }
+        return standings;
+    }
 }

@@ -46,6 +46,9 @@ public class Operations {
     @Autowired
     MultiDimensionalScaling multiDimensionalScaling;
 
+    /**
+     * Wipes DB clean
+     */
     public void cleanDB() {
         System.out.println("Cleaning DB.");
         Map<String, Object> emptyparams = new HashMap<String, Object>();
@@ -53,13 +56,20 @@ public class Operations {
         logDBCount();
     }
 
+    /**
+     * Logs DB node, relationship count
+     */
     public void logDBCount() {
         System.out.println(String.format("Cards: %d, CardPacks: %d, Decks: %d, Tournaments: %d, Deck-card relations: %d, Tournament-deck relations: %d",
                 template.count(Card.class), template.count(CardPack.class), template.count(Deck.class), template.count(Tournament.class),
                 template.count(DeckHasCard.class), template.count(TournamentHasDeck.class)));
     }
 
+    /**
+     * Loads card pack and card information to DB from NetrunnerDB
+     */
     public void loadNetrunnerDB() {
+        // load and save card packs
         Set<CardPack> allCardPacks = netrunnerDBBroker.readSets();
         int found = 0;
         for (CardPack cardPack : allCardPacks) {
@@ -71,6 +81,7 @@ public class Operations {
         }
         System.out.println("Found new card packs: " + found);
 
+        // load and save cards
         Set<Card> allCards = netrunnerDBBroker.readCards();
         found = 0;
         for (Card card : allCards) {
@@ -83,6 +94,11 @@ public class Operations {
         System.out.println("Found new cards: " + found);
     }
 
+    /**
+     * Loads deck from NetrunnerDB
+     * @param deckId deckID in NetrunnerDB
+     * @return deck object
+     */
     public Deck loadNetrunnerDbDeck(int deckId) {
         String url = netrunnerDBBroker.deckUrlFromId(deckId);
         Deck exists = deckRepository.findByUrl(url);
@@ -97,6 +113,11 @@ public class Operations {
         }
     }
 
+    /**
+     * Loads deck from Acoo
+     * @param deckId deckID in Acoo
+     * @return deck object
+     */
     public Deck loadAcooDeck(int deckId) {
         String url = acooBroker.deckUrlFromId(deckId);
         Deck exists = deckRepository.findByUrl(url);
@@ -111,6 +132,11 @@ public class Operations {
         }
     }
 
+    /**
+     * Loads tournament data from Acoo. Saves in DB if not already present.
+     * @param tournamentId tournamentID in Acoo
+     * @return tournament object
+     */
     public Tournament loadAcooTournament(int tournamentId) {
         String url = acooBroker.tournamentUrlFromId(tournamentId);
         Tournament exists = tournamentRepository.findByUrl(url);
@@ -125,6 +151,10 @@ public class Operations {
         }
     }
 
+    /**
+     * Loads decks from tournament from Acoo. Saves decks in DB if not already present.
+     * @param tournamentId tournamentID in ACoo
+     */
     public void loadAcooTournamentDecks(int tournamentId) {
         Tournament tournament = loadAcooTournament(tournamentId);
         Map<Integer, Integer> decks = acooBroker.loadTournamentDeckIds(tournamentId);
@@ -143,6 +173,12 @@ public class Operations {
         tournamentRepository.save(tournament);
     }
 
+    /**
+     * Loads and saves tournament and deck data from Acco.
+     * @param url Acoo tournament list URL to start from
+     * @param paging use paging to access all preceeding tournament lists
+     * @param filterempty do not save tournaments with no decks
+     */
     public void loadAcooTournamentsFromUrl(String url, boolean paging, boolean filterempty) {
         System.out.println("*** Reading tournaments on page: " + url);
         Set<Integer> tournamentIds = acooBroker.loadTournamentIdsFromUrl(url, filterempty);
@@ -155,6 +191,7 @@ public class Operations {
         }
     }
 
+    // TODO: not to be used
     public void generateArchetype(String name, String cardpool, String identity, boolean filtertop) {
         List<Deck> deckList;
         if (filtertop) {
@@ -166,6 +203,10 @@ public class Operations {
         System.out.println(archetype.toString());
     }
 
+    /**
+     * Checks DB and solves errors.
+     * Checks decks validity. Check tournament data. Calculate tournament cardpool validity if not defined.
+     */
     public void checkDataValidity() {
         // check decks
         List<Deck> decks = deckRepository.getAllDecks();
@@ -197,6 +238,10 @@ public class Operations {
         // TODO: check for same decks
     }
 
+    /**
+     * Log statistics about deck count for each identity for a cardpool legality
+     * @param cardpack name of last legal card pack
+     */
     public void getPackStats(String cardpack) {
         List<Card> identities = cardRepository.findIdentities();
         for (Card card : identities) {
@@ -209,6 +254,12 @@ public class Operations {
         }
     }
 
+    /**
+     * Generate multidimensional scaling for identity and cardpool legality
+     * @param identityName filter for identity
+     * @param cardpackName filter for cardpool
+     * @param top filter for top decks
+     */
     public void getPackMath(String identityName, String cardpackName, boolean top) {
         ArrayList<Deck> decks;
         if (top) {
@@ -224,6 +275,9 @@ public class Operations {
         }
     }
 
+    /**
+     * Log statistics about deck count for each identitz for all cardpool legality
+     */
     public void getAllStats() {
         List<Card> identities = cardRepository.findIdentities();
         long totalDecks = deckRepository.count();

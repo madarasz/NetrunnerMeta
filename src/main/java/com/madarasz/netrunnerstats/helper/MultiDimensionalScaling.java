@@ -80,6 +80,7 @@ public class MultiDimensionalScaling {
         return MDSJ.classicalScaling(input);
     }
 
+    // TODO
     public ArrayList<ArrayList<Deck>> calculateKMeans(ArrayList<Deck> decks, int k) {
         int decksize = decks.size();
 
