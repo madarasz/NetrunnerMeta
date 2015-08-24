@@ -89,7 +89,7 @@ public class Application implements CommandLineRunner {
                 case acooall:
                     operations.cleanDB();
                     operations.loadNetrunnerDB();
-                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/anr-tournament-archive/1", true, true);
+                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/anr-tournament-archive/1", true, false);
                     operations.logDBCount();
                     break;
                 case checkdata: operations.checkDataValidity(); break;

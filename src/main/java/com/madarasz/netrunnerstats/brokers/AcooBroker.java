@@ -21,12 +21,13 @@ public class AcooBroker {
     private final static String JSOUP_DECK_CARDS = "div.deck-display-type > ul > li";
     private final static String JSOUP_TOURNAMENT_DESC = "div.section > p";
     private final static String JSOUP_TOURNAMENT_POOL = "div.section > p > a";
-    private final static String JSOUP_TOURNAMENT_DECK_ROW = "div.rank-list > table > tbody > tr";
+    private final static String JSOUP_TOURNAMENT_DECK_ROW = "div.rank-list:lt(1) > table > tbody > tr";
+    private final static String JSOUP_TOURNAMENT_DECK_ROW2 = "div.rank-list:gt(0) > table > tbody > tr:gt(%d)";    // skipping the first %d+1 rows
     private final static String JSOUP_TOURNAMENT_LIST = "div.tournament-list > table > tbody > tr";
     private final static String JSOUP_PAGINATION = "div.pagination > a";
     private final static String JSOUP_TITLE = "h1";
     private final static String JSOUP_TOURNAMENT_DECK_ID = "div.rank-list > table > tbody > tr > td > img";
-    private final static String JSOUP_TOURNAMENT_DECK_ID2 = "div.rank-list(2) > table > tbody > tr > td > img";
+    private final static String JSOUP_TOURNAMENT_DECK_ID2 = "div.rank-list:gt(0) > table > tbody > tr > td > img";
     private final static String JSOUP_TOURNAMENT_RANKLIST = "div.rank-list";
     private final static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -135,8 +136,9 @@ public class AcooBroker {
         Elements rows = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_LIST);
         for (Element row : rows) {
             int decknumber = 0;
-            String decknumbertext = row.select("td:eq(5)").first().text();
+            String decknumbertext = "";
             try {
+                decknumbertext = row.select("td:eq(5)").first().text();
                 decknumber = Integer.valueOf(decknumbertext);
             } catch (Exception e) {
                 System.out.println("ERROR - unable to parse deck number for: " + decknumbertext + "// tournament: " + url);
@@ -198,38 +200,52 @@ public class AcooBroker {
         HttpBroker.parseHtml(url);
         Elements lists = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_RANKLIST);
 
-        // just swiss
-        if (lists.size() == 1) {
-            Elements rows = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK_ROW);
-            for (Element row : rows) {
-                // extract rank
-                String rankString = row.select("td").first().text();
-                int rank = regExBroker.getNumberFromBeginning(rankString);
-                Elements ids = row.select("td > img");
-                for (Element id : ids) {
-                    // extract standing
-                    String[] hrefparts = id.attr("src").split("/");
-                    Card identity = cardRepository.findByTitle(iconToIdentity(hrefparts[4]));
-                    boolean topdeck = rank <= tournament.getPlayerNumber() * 0.3;    // top 30% of decks
+        // extract top X or all swiss (if there was no top X)
+        Elements rows = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK_ROW);
+        standings.addAll(standingsFromRows(tournament, rows));
 
-                    // extract deck
-                    Elements deckpart = id.parent().select("a");
-                    if (deckpart.isEmpty()) {
-                        standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner()));
-                    } else {
-                        System.out.print("Rank: " + rank + " - ");
-                        hrefparts = deckpart.first().attr("href").split("/");
-                        int deckId = Integer.valueOf(hrefparts[2]);
-                        Deck deck = readDeck(deckId);
-                        System.out.println("Saving new deck! - " + deck.toString());
-                        standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner(), deck));
-                    }
+        // extract top X minus swiss
+        if (lists.size() == 2) {
+            HttpBroker.parseHtml(url);
+            int toskip = standings.size() / 2 - 1;  // skipping top X results from swiss
+            rows = HttpBroker.elementsFromHtml(String.format(JSOUP_TOURNAMENT_DECK_ROW2, toskip));
+            standings.addAll(standingsFromRows(tournament, rows));
+        }
+        return standings;
+    }
+
+    /**
+     * Helper for extracting Standings and Decks from tournament html rows.
+     * @param tournament tournament
+     * @param rows html table rows
+     * @return standings with decks
+     */
+    private Set<Standing> standingsFromRows(Tournament tournament, Elements rows) {
+        Set<Standing> standings = new HashSet<Standing>();
+        for (Element row : rows) {
+            // extract rank
+            String rankString = row.select("td").first().text();
+            int rank = regExBroker.getNumberFromBeginning(rankString);
+            Elements ids = row.select("td > img");
+            for (Element id : ids) {
+                // extract standing
+                String[] hrefparts = id.attr("src").split("/");
+                Card identity = cardRepository.findByTitle(iconToIdentity(hrefparts[4]));
+                boolean topdeck = rank <= tournament.getPlayerNumber() * 0.3;    // top 30% of decks
+
+                // extract deck
+                Elements deckpart = id.parent().select("a");
+                if (deckpart.isEmpty()) {
+                    standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner()));
+                } else {
+                    System.out.print("Rank: " + rank + " - ");
+                    hrefparts = deckpart.first().attr("href").split("/");
+                    int deckId = Integer.valueOf(hrefparts[2]);
+                    Deck deck = readDeck(deckId);
+                    System.out.println("Saving new deck! - " + deck.toString());
+                    standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner(), deck));
                 }
             }
-        // swiss + top X
-        } else {
-            // TODO
-            System.out.println("ERROR - Cannot do tournament with top X");
         }
         return standings;
     }
@@ -263,7 +279,7 @@ public class AcooBroker {
             case "icon-custom-biotics.jpg" :
                 identityName = "Custom Biotics: Engineered for Success";
                 break;
-            case "???" :
+            case "icon-cybernetics-division.png" :
                 identityName = "Cybernetics Division: Humanity Upgraded";
                 break;
             case "icon-edward-kim.png" :
@@ -278,10 +294,10 @@ public class AcooBroker {
             case "icon-gagarin-deep-space.png" :
                 identityName = "Gagarin Deep Space: Expanding the Horizon";
                 break;
-            case "icon-grndl.jpg" :
+            case "icon-grdnl.jpg" :
                 identityName = "GRNDL: Power Unleashed";
                 break;
-            case "????" :
+            case "icon-haarpsichord.png" :
                 identityName = "Haarpsichord Studios";
                 break;
             case "hb-etf-icon.png" :
@@ -371,7 +387,7 @@ public class AcooBroker {
             case "icon-valencia-estevez.png" :
                 identityName = "Valencia Estevez: The Angel of Cayambe";
                 break;
-            case "?????" :
+            case "icon-weyland-BWBi.jpg" :
                 identityName = "Weyland Consortium: Because We Built It";
                 break;
             case "icon-weyland-consortium-babw.jpg" :
