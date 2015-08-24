@@ -2,10 +2,8 @@ package com.madarasz.netrunnerstats;
 
 import com.madarasz.netrunnerstats.DOs.*;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
-import com.madarasz.netrunnerstats.DRs.CardPackRepository;
-import com.madarasz.netrunnerstats.DRs.CardRepository;
-import com.madarasz.netrunnerstats.DRs.DeckRepository;
-import com.madarasz.netrunnerstats.DRs.TournamentRepository;
+import com.madarasz.netrunnerstats.DOs.result.StatCounts;
+import com.madarasz.netrunnerstats.DRs.*;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
@@ -32,6 +30,9 @@ public class Operations {
 
     @Autowired
     TournamentRepository tournamentRepository;
+
+    @Autowired
+    StandingRepository standingRepository;
 
     @Autowired
     NetrunnerDBBroker netrunnerDBBroker;
@@ -158,25 +159,13 @@ public class Operations {
      */
     public void loadAcooTournamentDecks(int tournamentId) {
         String url = acooBroker.tournamentUrlFromId(tournamentId);
+
         // load tournament metadata
         Tournament tournament = loadAcooTournament(tournamentId);
         // load tournament standings with decks
         Set<Standing> standings = acooBroker.loadTournamentStandings(url, tournament);
         tournament.hasStandings(standings);
 
-//        Map<Integer, Integer> decks = acooBroker.loadTournamentDeckIds(tournamentId);
-//        Iterator iterator = decks.entrySet().iterator();
-//        while (iterator.hasNext()) {
-//            Map.Entry pair = (Map.Entry) iterator.next();
-//            int rank = (Integer) pair.getValue();
-//            System.out.print("Rank: " + rank + " - ");
-//            boolean topdeck = rank <= tournament.getPlayerNumber() * 0.3;    // top 30% of decks
-//            if (topdeck) {
-//                System.out.print("TOP - ");
-//            }
-////            Deck deck = loadAcooDeck((Integer) pair.getKey());
-//            tournament.hasDeck(deck, rank, deck.getIdentity().getSide_code(), topdeck);
-//        }
         tournamentRepository.save(tournament);
     }
 
@@ -286,53 +275,58 @@ public class Operations {
      * Log statistics about deck count for each identitz for all cardpool legality
      */
     public void getAllStats() {
-        List<Card> identities = cardRepository.findIdentities();
-        long totalDecks = deckRepository.count();
-        System.out.println("*********************************************************************");
-        System.out.println(String.format("Number of all decks: %d", totalDecks));
-        for (Factions faction : Factions.values()) {
-            String factionName = faction.toString().replaceAll("_", "-");
-            int factionCount = deckRepository.countByFaction(factionName);
-            if (factionCount > 0) {
-                System.out.println(String.format("* %s: %d", factionName, factionCount));
-                for (Card card : identities) {
-                    if (card.getFaction_code().equals(factionName)) {
-                        int identityCount = deckRepository.countByIdentity(card);
-                        if (identityCount > 0) {
-                            System.out.println(String.format("** %s: %d", card.getTitle(), identityCount));
-                        }
-                    }
-                }
-            }
+        List<StatCounts> stats = standingRepository.getTopIdentityStatsByCardPool("Old Hollywood");
+        for (StatCounts stat : stats) {
+            String identity = stat.getIdentity().getTitle();
+            System.out.println(String.format("%s - %d (%d)", identity, stat.getCount(), deckRepository.countTopByCardPackAndIdentity("Old Hollywood", identity)));
         }
-
-        System.out.println("*********************************************************************");
-
-        for (CardCycles cardCycle : CardCycles.values()) {
-            String cycleName = cardCycle.toString().replaceAll("_"," ");
-            int cyclenumber = cardCycle.getCycleNumber();
-            int cycleCount = deckRepository.countByCycle(cyclenumber);
-            if (cycleCount > 0) {
-                System.out.println(String.format("* %s: %d", cycleName, cycleCount));
-                int number = 0;
-                do {
-                    number++;
-                    CardPack cardPack = cardPackRepository.findByCyclenumberAndNumber(cyclenumber, number);
-                    if (cardPack == null) {
-                        break;
-                    } else {
-                        String cardPackName = cardPack.getName();
-                        int cardpackCount = deckRepository.countByCardPack(cardPackName);
-                        if (cardpackCount > 0) {
-                            System.out.println(String.format("** %s: %d", cardPackName, cardpackCount));
-                            getPackStats(cardPackName);
-                        }
-                    }
-                } while(true);
-            }
-        }
-
-        System.out.println("*********************************************************************");
+//        List<Card> identities = cardRepository.findIdentities();
+//        long totalDecks = deckRepository.count();
+//        System.out.println("*********************************************************************");
+//        System.out.println(String.format("Number of all decks: %d", totalDecks));
+//        for (Factions faction : Factions.values()) {
+//            String factionName = faction.toString().replaceAll("_", "-");
+//            int factionCount = deckRepository.countByFaction(factionName);
+//            if (factionCount > 0) {
+//                System.out.println(String.format("* %s: %d", factionName, factionCount));
+//                for (Card card : identities) {
+//                    if (card.getFaction_code().equals(factionName)) {
+//                        int identityCount = deckRepository.countByIdentity(card);
+//                        if (identityCount > 0) {
+//                            System.out.println(String.format("** %s: %d", card.getTitle(), identityCount));
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        System.out.println("*********************************************************************");
+//
+//        for (CardCycles cardCycle : CardCycles.values()) {
+//            String cycleName = cardCycle.toString().replaceAll("_"," ");
+//            int cyclenumber = cardCycle.getCycleNumber();
+//            int cycleCount = deckRepository.countByCycle(cyclenumber);
+//            if (cycleCount > 0) {
+//                System.out.println(String.format("* %s: %d", cycleName, cycleCount));
+//                int number = 0;
+//                do {
+//                    number++;
+//                    CardPack cardPack = cardPackRepository.findByCyclenumberAndNumber(cyclenumber, number);
+//                    if (cardPack == null) {
+//                        break;
+//                    } else {
+//                        String cardPackName = cardPack.getName();
+//                        int cardpackCount = deckRepository.countByCardPack(cardPackName);
+//                        if (cardpackCount > 0) {
+//                            System.out.println(String.format("** %s: %d", cardPackName, cardpackCount));
+//                            getPackStats(cardPackName);
+//                        }
+//                    }
+//                } while(true);
+//            }
+//        }
+//
+//        System.out.println("*********************************************************************");
     }
 
     // TODO: put these enums somewhere general
