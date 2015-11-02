@@ -1,6 +1,7 @@
 package com.madarasz.netrunnerstats.DOs;
 
 import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 /**
@@ -10,7 +11,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 @NodeEntity
 public class CardPack {
     @GraphId Long id;
-    private String name;
+    @Indexed(unique=true) private String name;
     private String code;
     private int number;
     private int cyclenumber;

@@ -48,7 +48,7 @@ public class AcooBroker {
     public Deck readDeck(int id) {
         String url = deckUrlFromId(id);
         HttpBroker.parseHtml(url);
-        Deck resultDeck = parseDeck(HttpBroker.textsFromHtml(JSOUP_DECK_CARDS));
+        Deck resultDeck = parseDeck(HttpBroker.linesFromHtml(JSOUP_DECK_CARDS));
 
         String titlebar = HttpBroker.textFromHtml(JSOUP_TITLE);
         String[] titleparts = titlebar.split(", \\d*\\w* | - ");
@@ -86,7 +86,11 @@ public class AcooBroker {
             String title = regExBroker.getCardFromLine(line);
             Card card = cardRepository.findByTitle(title);
             if (card == null) {
-                System.out.println("ERROR - no such card: " + title);
+                title = title.split(":")[0];
+                card = cardRepository.findByTitle(title);
+                if (card == null) {
+                    System.out.println("ERROR - no such card: " + title);
+                }
             }
             if (quantity == 0) {    // identity
                 result.setIdentity(card);
@@ -258,8 +262,14 @@ public class AcooBroker {
     private String iconToIdentity(String filename) {
         String identityName;
         switch (filename) {
+            case "icon-adam.png" :  // not sure
+                identityName = "Adam: Compulsive Hacker";
+                break;
             case "icon-andromeda.jpg" :
                 identityName = "Andromeda: Dispossessed Ristie";
+                break;
+            case "icon-apex.png" :
+                identityName = "Apex: Invasive Predator";
                 break;
             case "icon-argus-security.png" :
                 identityName = "Argus Security: Protection Guaranteed";
@@ -275,6 +285,9 @@ public class AcooBroker {
                 break;
             case "icon-chaos-theory.jpg" :
                 identityName = "Chaos Theory: Wünderkind";
+                break;
+            case "icon-chronos-protocol.png" :
+                identityName = "Chronos Protocol: Selective Mind-mapping";
                 break;
             case "icon-custom-biotics.jpg" :
                 identityName = "Custom Biotics: Engineered for Success";
@@ -333,6 +346,9 @@ public class AcooBroker {
             case "icon-ken-tenma.png" :
                 identityName = "Ken \"Express\" Tenma: Disappeared Clone";
                 break;
+            case "icon-laramy-fisk.png" :
+                identityName = "Laramy Fisk: Savvy Investor";
+                break;
             case "iconr-leela-patel.jpg" :
                 identityName = "Leela Patel: Trained Pragmatist";
                 break;
@@ -350,6 +366,9 @@ public class AcooBroker {
                 break;
             case "Near-earth-hub-icon.png" :
                 identityName = "Near-Earth Hub: Broadcast Center";
+                break;
+            case "icon-sol.png" :   // not sure
+                identityName = "New Angeles Sol: Your News";
                 break;
             case "icon-next-design.jpg" :
                 identityName = "NEXT Design: Guarding the Net";
@@ -371,6 +390,15 @@ public class AcooBroker {
                 break;
             case "icon-silhouette.jpg" :
                 identityName = "Silhouette: Stealth Operative";
+                break;
+            case "icon-spark.png" :  // not sure
+                identityName = "Spark Agency: Worldswide Reach";
+                break;
+            case "icon-sunny.png" :  // not sure
+                identityName = "Sunny Lebeau: Security Specialist";
+                break;
+            case "icon-sync.png" :  // not sure
+                identityName = "SYNC: Everything, Everywhere";
                 break;
             case "icon-tennin-institute.png" :
                 identityName = "Tennin Institute: The Secrets Within";

@@ -1,6 +1,8 @@
 package com.madarasz.netrunnerstats.brokers;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -63,21 +65,29 @@ public final class HttpBroker {
     }
 
     public static void parseHtml(String url) {
-        // TODO: avoid infinite loop
+        int retry = 0;
         boolean readok = true;
         do {
             readok = true;
             try {
-                document = Jsoup.connect(url).get();
+//                Connection.Response response = Jsoup.connect(url).userAgent("Mozilla").followRedirects(true).execute();
+//                System.out.println(response.url());
+                document = Jsoup.connect(url).userAgent("Mozilla").followRedirects(true).get();
             } catch (IOException e) {
-                System.out.println("ERROR - could not read HTML - retrying");
+                System.out.println(String.format("ERROR - could not read HTML - %s - retrying", url));
+                retry++;
                 readok = false;
+                if (retry == 5) e.printStackTrace();
             }
-        } while (!readok);
+        } while ((!readok) && (retry < 5));
     }
 
     public static String textFromHtml(String jsoupExpression) {
         return document.select(jsoupExpression).first().text().replaceAll("\\p{C}", "");    // removing unicode characters as well
+    }
+
+    public static String htmlFromHtml(String jsoupExpression) {
+        return document.select(jsoupExpression).first().html().replaceAll("\\p{C}", "");    // removing unicode characters as well
     }
 
     public static String attirubuteFromHhtml(String jsoupExpression, String attribute) {
@@ -88,7 +98,7 @@ public final class HttpBroker {
         return document.select(jsoupExpression);
     }
 
-    public static ArrayList<String> textsFromHtml(String jsoupExpression) {
+    public static ArrayList<String> linesFromHtml(String jsoupExpression) {
         ArrayList<String> result = new ArrayList<String>();
         Elements elements = document.select(jsoupExpression);
         for(Element element : elements) {

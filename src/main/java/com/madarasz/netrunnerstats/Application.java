@@ -89,14 +89,22 @@ public class Application implements CommandLineRunner {
                 case acooall:
                     operations.cleanDB();
                     operations.loadNetrunnerDB();
-                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/anr-tournament-archive/1", true, false);
+                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/the-universe-of-tomorrow/1/", true, false);
+                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/old-hollywood/1/", true, false);
+//                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/anr-tournament-archive/1", true, false);
                     operations.logDBCount();
                     break;
                 case checkdata: operations.checkDataValidity(); break;
                 case getpackstats: operations.getPackStats("Breaker Bay"); break;
-                case getallstats: operations.getAllStats(); break;
-                case getpackmath: operations.getPackMath("Near-Earth Hub: Broadcast Center", "Order and Chaos", true); break;
+                case getallstats:
+                    operations.getAllStats("The Universe of Tomorrow");
+                    operations.getAllStats("Old Hollywood");
+                    break;
+                case getpackmath: operations.getPackMath("Near-Earth Hub: Broadcast Center", "Old Hollywood", true); break;
                 case cleandb: operations.cleanDB(); break;
+                case stimhackdecks:
+                    operations.loadStimhackDeck("http://stimhack.com/national-warsaw-poland-72-players/");
+                    break;
             }
 
             tx.success();
@@ -113,6 +121,7 @@ public class Application implements CommandLineRunner {
         cleandb, checkdata, loadnetrunnerdb, logdbcount,
         netrunnerdbloaddeck,
         acooloaddeck, acooloadtournament, acooloadtournamentdecks, acooloadpage, acooall,
+        stimhackdecks,
         archetype, getpackstats, getallstats, getpackmath,
         none
     }

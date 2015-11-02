@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  */
 @Component
 public class RegExBroker {
-    private static final String REGEX_QUANTITY = "^\\d{1}x";
+    private static final String REGEX_QUANTITY = "\\d{1}x";
     private static final String REGEX_FIRST_NUMBER = "\\d*";
 
     public int getQuantity(String line) {
@@ -20,6 +20,16 @@ public class RegExBroker {
             return Character.getNumericValue(matcher.group(0).charAt(0));
         } else {
             return 0;
+        }
+    }
+
+    public String getSecondQuantity(String line) {
+        Pattern pattern = Pattern.compile("[0-9]+");
+        Matcher matcher = pattern.matcher(line);
+        if ((matcher.find()) && (matcher.find())) {
+            return matcher.group(0);
+        } else {
+            return "";
         }
     }
 

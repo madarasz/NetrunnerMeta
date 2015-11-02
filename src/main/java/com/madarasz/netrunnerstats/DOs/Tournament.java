@@ -98,6 +98,10 @@ public class Tournament {
                 if (standing.getDeck().getUpto().later(result)) {
                     result = standing.getDeck().getUpto();
                 }
+            } else {
+                if (standing.getIdentity().getCardPack().later(result)) {
+                    result = standing.getIdentity().getCardPack();
+                }
             }
         }
         return result;

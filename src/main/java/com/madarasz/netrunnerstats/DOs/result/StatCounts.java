@@ -9,8 +9,8 @@ import org.springframework.data.neo4j.annotation.ResultColumn;
  */
 @QueryResult
 public interface StatCounts{
-    @ResultColumn("identity")
-    public Card getIdentity();
+    @ResultColumn("category")
+    public String getCategory();
     @ResultColumn("count")
     public int getCount();
 }

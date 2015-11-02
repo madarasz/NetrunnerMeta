@@ -6,6 +6,7 @@ import com.madarasz.netrunnerstats.DOs.result.StatCounts;
 import com.madarasz.netrunnerstats.DRs.*;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
+import com.madarasz.netrunnerstats.brokers.StimhackBroker;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
@@ -39,6 +40,9 @@ public class Operations {
 
     @Autowired
     AcooBroker acooBroker;
+
+    @Autowired
+    StimhackBroker stimhackBroker;
 
     @Autowired
     Neo4jOperations template;
@@ -133,6 +137,26 @@ public class Operations {
     }
 
     /**
+     * Loads deck from Stimhack
+     * @param url deck url
+     * @return deck object
+     */
+    public Set<Deck> loadStimhackDeck(String url) {
+        Deck exists = deckRepository.findByUrl(url+"1");
+        if (exists != null) {
+            System.out.println("Deck is already in DB. Not saving!");
+            return new HashSet<Deck>();
+        } else {
+            Set<Deck> decks = stimhackBroker.readDeck(url);
+            for (Deck deck : decks) {
+                System.out.println("Saving new deck! - " + deck.toString());
+                deckRepository.save(deck);
+            }
+            return decks;
+        }
+    }
+
+    /**
      * Loads tournament data from Acoo. Saves in DB if not already present.
      * @param tournamentId tournamentID in Acoo
      * @return tournament object
@@ -222,10 +246,10 @@ public class Operations {
                 System.out.println(String.format("ERROR - Wrong date: %s", tournament.toString()));
             }
             // check wrong cardpool
-            if (tournament.getCardpool().getName().equals("ERROR")) {
-                System.out.println(String.format("ERROR - Wrong cardpool: %s", tournament.toString()));
-                CardPack fix = tournament.guessCardPool();
-                System.out.println(String.format("Overwriting cardpool with: %s", fix.toString()));
+            String oldname = tournament.getCardpool().getName();
+            CardPack fix = tournament.guessCardPool();
+            if ((!oldname.equals(fix.getName())) && (fix.later(tournament.getCardpool()))) {
+                System.out.println(String.format("ERROR - Wrong cardpool: %s - new cardpool: %s", tournament.toString(), fix.getName()));
                 tournament.setCardpool(fix);
                 tournamentRepository.save(tournament);
             }
@@ -274,11 +298,22 @@ public class Operations {
     /**
      * Log statistics about deck count for each identitz for all cardpool legality
      */
-    public void getAllStats() {
-        List<StatCounts> stats = standingRepository.getTopIdentityStatsByCardPool("Old Hollywood");
+    public void getAllStats(String cardpackName) {
+        System.out.println("*********************************************************************");
+        System.out.println(String.format("Stats for cardpool: %s", cardpackName));
+        System.out.println("*********************************************************************");
+        List<StatCounts> stats = standingRepository.getTopIdentityStatsByCardPool(cardpackName);
         for (StatCounts stat : stats) {
-            String identity = stat.getIdentity().getTitle();
-            System.out.println(String.format("%s - %d (%d)", identity, stat.getCount(), deckRepository.countTopByCardPackAndIdentity("Old Hollywood", identity)));
+            String identity = stat.getCategory();
+            System.out.println(String.format("%s - %d (%d)", identity, stat.getCount(), deckRepository.countTopByCardPackAndIdentity(cardpackName, identity)));
+        }
+
+        System.out.println("*********************************************************************");
+
+        stats = standingRepository.getTopFactionStatsByCardPool(cardpackName);
+        for (StatCounts stat : stats) {
+            String faction = stat.getCategory();
+            System.out.println(String.format("%s - %d (%d)", faction, stat.getCount(), deckRepository.countTopByCardPackAndFaction(cardpackName, faction)));
         }
 //        List<Card> identities = cardRepository.findIdentities();
 //        long totalDecks = deckRepository.count();
