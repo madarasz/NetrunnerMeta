@@ -55,6 +55,16 @@
             <artifactId>javax.el-api</artifactId>
             <version>2.2.4</version>
         </dependency>
+
+        <!--  Algorithmics Group. MDSJ: Java Library for Multidimensional Scaling (Version 0.2).
+        Available at http://www.inf.uni-konstanz.de/algo/software/mdsj/. University of Konstanz, 2009. -->
+        <dependency>
+            <groupId>MDSJ</groupId>
+            <artifactId>com.MDSJ</artifactId>
+            <version>0.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/mdsj.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
