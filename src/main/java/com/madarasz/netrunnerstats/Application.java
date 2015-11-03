@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.neo4j.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.config.Neo4jConfiguration;
 import org.springframework.data.neo4j.core.GraphDatabase;
@@ -24,6 +26,7 @@ import org.springframework.data.neo4j.template.Neo4jOperations;
  * Created by madarasz on 2015-06-08.
  */
 @SpringBootApplication
+@ConfigurationProperties(prefix = "maindb")
 public class Application implements CommandLineRunner {
 
     @Configuration
@@ -35,8 +38,16 @@ public class Application implements CommandLineRunner {
         }
 
         @Bean
+        @Primary
+        @ConfigurationProperties(prefix = "maindb")
         GraphDatabaseService graphDatabaseService() {
             return new GraphDatabaseFactory().newEmbeddedDatabase("netrunner.db");
+        }
+
+        @Bean
+        @ConfigurationProperties(prefix = "testdb")
+        GraphDatabaseService graphTestDatabaseService() {
+            return new GraphDatabaseFactory().newEmbeddedDatabase("test.db");
         }
     }
 
@@ -87,8 +98,8 @@ public class Application implements CommandLineRunner {
                 case acooloadpage: operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true, true); break;
                 case archetype: operations.generateArchetype("Andy","Breaker Bay", "Andromeda: Dispossessed Ristie", true); break;
                 case acooall:
-                    operations.cleanDB();
-                    operations.loadNetrunnerDB();
+//                    operations.cleanDB();
+//                    operations.loadNetrunnerDB();
                     operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/the-universe-of-tomorrow/1/", true, false);
                     operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/old-hollywood/1/", true, false);
 //                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/anr-tournament-archive/1", true, false);

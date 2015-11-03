@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.neo4j.graphdb.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.data.neo4j.template.Neo4jOperations;
@@ -31,6 +32,7 @@ import java.util.Set;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @Transactional
+@ConfigurationProperties(prefix = "testdb")
 public class DatabaseTest {
 
     @Autowired
