@@ -69,4 +69,9 @@ public class Standing {
     public void setDeck(Deck deck) {
         this.deck = deck;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s - #%d %s", tournament.getUrl(), rank, identity.getTitle());
+    }
 }

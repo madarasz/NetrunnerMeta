@@ -141,10 +141,10 @@ public class Operations {
      * @param url deck url
      * @return deck object
      */
-    public Set<Deck> loadStimhackDeck(String url) {
-        Deck exists = deckRepository.findByUrl(url+"1");
+    public Set<Deck> loadStimhackDecks(String url) {
+        Deck exists = deckRepository.findByUrl(url+"#1");
         if (exists != null) {
-            System.out.println("Deck is already in DB. Not saving!");
+            System.out.println("Decks are already in DB. Not saving!");
             return new HashSet<Deck>();
         } else {
             Set<Deck> decks = stimhackBroker.readDeck(url);
@@ -157,7 +157,36 @@ public class Operations {
     }
 
     /**
+     * Loads tournament from Stimhack.
+     * Saves tournament, standing for the top1 and decks in DB.
+     * @param url tournament url
+     * @return tournament object
+     */
+    public Tournament loadStimhackTournament(String url) {
+        Tournament exists = tournamentRepository.findByUrl(url);
+        if (exists != null) {
+            System.out.println("Tournament is already in DB. Not saving!");
+            return exists;
+        } else {
+            // decks
+            Set<Deck> decks = loadStimhackDecks(url);
+            // tournament
+            Tournament tournament = stimhackBroker.readTournament(url);
+            System.out.println("Saving new tournament! - " + tournament.toString());
+            // standings for top1
+            for (Deck deck : decks) {
+                Standing standing = new Standing(tournament, 1, deck.getIdentity(), true, deck.getIdentity().isRunner(), deck);
+                System.out.println("Saving standing! - " + standing.toString());
+                standingRepository.save(standing);
+            }
+            tournamentRepository.save(tournament);
+            return tournament;
+        }
+    }
+
+    /**
      * Loads tournament data from Acoo. Saves in DB if not already present.
+     * Does not save standing and deck information.
      * @param tournamentId tournamentID in Acoo
      * @return tournament object
      */
@@ -186,9 +215,23 @@ public class Operations {
 
         // load tournament metadata
         Tournament tournament = loadAcooTournament(tournamentId);
+
         // load tournament standings with decks
-        Set<Standing> standings = acooBroker.loadTournamentStandings(url, tournament);
-        tournament.hasStandings(standings);
+        Set<Standing> standings = acooBroker.loadTournamentStandingsAndDecks(url, tournament);
+//        System.out.println("Total available standings: " + standings.size());
+        // remove already existing standings
+        Set<Standing> savestandings = new HashSet<Standing>(standings);
+        for (Standing standing : standings) {
+            Standing exists = standingRepository.findByTournamentURLIdentity(tournament.getUrl(), standing.getRank(), standing.getIdentity().getTitle());
+            if (exists != null) {
+                savestandings.remove(standing);
+            } else {
+//                System.out.println("Saving stanging: " + standing.toString());
+                standingRepository.save(standing);
+            }
+
+        }
+        System.out.println(String.format("Saving new standings: %d", savestandings.size()));
 
         tournamentRepository.save(tournament);
     }

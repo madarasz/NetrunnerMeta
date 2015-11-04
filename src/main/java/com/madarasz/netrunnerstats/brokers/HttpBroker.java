@@ -72,7 +72,7 @@ public final class HttpBroker {
             try {
 //                Connection.Response response = Jsoup.connect(url).userAgent("Mozilla").followRedirects(true).execute();
 //                System.out.println(response.url());
-                document = Jsoup.connect(url).userAgent("Mozilla").followRedirects(true).get();
+                document = Jsoup.connect(url).userAgent("Mozilla").followRedirects(true).timeout(5000).get();
             } catch (IOException e) {
                 System.out.println(String.format("ERROR - could not read HTML - %s - retrying", url));
                 retry++;

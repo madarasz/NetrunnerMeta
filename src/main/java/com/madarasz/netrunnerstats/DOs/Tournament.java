@@ -16,13 +16,13 @@ import java.util.Set;
 public class Tournament {
     @GraphId
     Long graphid;
-    private int id;
+    private int id;  // -1 for Stimhack tournaments
     private String name;
     private Date date;
     private int playerNumber;
     @Indexed(unique=true) private String url;
     @RelatedTo(type = "POOL") private @Fetch CardPack cardpool;
-    @RelatedTo(type = "IS_STANDING") @Fetch private Set<Standing> standings;
+    @RelatedTo(type = "IS_STANDING") @Fetch private Set<Standing> standings;  // TODO: is this needed? Standing has IN_TOURNAMENT
 
     public Tournament() {
     }
@@ -34,26 +34,26 @@ public class Tournament {
         this.cardpool = cardpool;
         this.url = url;
         this.playerNumber = playerNumber;
-        standings = new HashSet<Standing>();
+//        standings = new HashSet<Standing>();
     }
 
-    public Standing hasStanding(int rank, Card identity, boolean top_deck, boolean is_runner) {
-        Standing standing = new Standing(this, rank, identity, top_deck, is_runner);
-        this.standings.add(standing);
-        return standing;
-    }
-
-    public Standing hasStanding(int rank, Card identity, boolean top_deck, boolean is_runner, Deck deck) {
-        Standing standing = new Standing(this, rank, identity, top_deck, is_runner, deck);
-        this.standings.add(standing);
-        return standing;
-    }
-
-    public void hasStandings(Set<Standing> standings) {
-        for (Standing standing : standings) {
-            this.standings.add(standing);
-        }
-    }
+//    public Standing hasStanding(int rank, Card identity, boolean top_deck, boolean is_runner) {
+//        Standing standing = new Standing(this, rank, identity, top_deck, is_runner);
+//        this.standings.add(standing);
+//        return standing;
+//    }
+//
+//    public Standing hasStanding(int rank, Card identity, boolean top_deck, boolean is_runner, Deck deck) {
+//        Standing standing = new Standing(this, rank, identity, top_deck, is_runner, deck);
+//        this.standings.add(standing);
+//        return standing;
+//    }
+//
+//    public void hasStandings(Set<Standing> standings) {
+//        for (Standing standing : standings) {
+//            this.standings.add(standing);
+//        }
+//    }
 
     public int getId() {
         return id;
@@ -67,11 +67,16 @@ public class Tournament {
         return date;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
     public CardPack getCardpool() {
         if (cardpool != null) {
             return cardpool;
-        } else {        // TODO: better error handling
-            return new CardPack("ERROR", "ERROR", 0, 0);
+        } else {
+            cardpool = guessCardPool();
+            return cardpool;
         }
     }
 
@@ -79,9 +84,9 @@ public class Tournament {
         this.cardpool = cardpool;
     }
 
-    public Set<Standing> getStandings() {
-        return standings;
-    }
+//    public Set<Standing> getStandings() {
+//        return standings;
+//    }
 
     public int getPlayerNumber() {
         return playerNumber;
@@ -91,6 +96,7 @@ public class Tournament {
      * Tries to guess tournament cardpool based on cards used.
      * @return latest card pack used in tournament
      */
+    // TODO: Refactor on IS_STANDING vs IN_TOURNAMENT
     public CardPack guessCardPool() {
         CardPack result = new CardPack("dummy", "dummy", 0, 0);
         for (Standing standing : standings) {

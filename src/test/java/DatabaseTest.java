@@ -1,18 +1,16 @@
 import com.madarasz.netrunnerstats.Application;
 import com.madarasz.netrunnerstats.DOs.*;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
-import com.madarasz.netrunnerstats.DRs.CardPackRepository;
-import com.madarasz.netrunnerstats.DRs.CardRepository;
-import com.madarasz.netrunnerstats.DRs.DeckRepository;
-import com.madarasz.netrunnerstats.DRs.TournamentRepository;
+import com.madarasz.netrunnerstats.DRs.*;
 import com.madarasz.netrunnerstats.Operations;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
+import com.madarasz.netrunnerstats.brokers.StimhackBroker;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.neo4j.graphdb.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -20,6 +18,8 @@ import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +28,6 @@ import java.util.Set;
  * Created by madarasz on 2015-06-11.
  */
 // TODO: DB commits
-// TODO: separate DB
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @Transactional
@@ -51,10 +50,16 @@ public class DatabaseTest {
     TournamentRepository tournamentRepository;
 
     @Autowired
+    StandingRepository standingRepository;
+
+    @Autowired
     NetrunnerDBBroker netrunnerDBBroker;
 
     @Autowired
     AcooBroker acooBroker;
+
+    @Autowired
+    StimhackBroker stimhackBroker;
 
     @Autowired
     Neo4jOperations template;
@@ -65,152 +70,183 @@ public class DatabaseTest {
     @Autowired
     MultiDimensionalScaling multiDimensionalScaling;
 
-    /**
-     * Checking that DB can be populated.
-     * NetrunnerDB: cards, card packs, decks
-     * Acoo: decks, tournaments
-     */
-    @Test
-    public void createDB() {
-        populateDB(true, true);
-        Assert.assertTrue("No cards in DB.", template.count(Card.class) > 0);
-        Assert.assertTrue("No card packs in DB.", template.count(CardPack.class) > 0);
-        Assert.assertTrue("No decks in DB.", template.count(Deck.class) > 1);
-        Assert.assertTrue("No deck-card relationships in DB.", template.count(DeckHasCard.class) > 0);
-        Assert.assertTrue("No tournaments in DB.", template.count(Tournament.class) > 0);
-    }
+    @Before
+    public void prepareDB() {
+        // clean DB
+        operations.cleanDB();
+        // TODO: proper DB wipe
+//        Assert.assertTrue("Card count is not 0 after DB wipe.", template.count(Card.class) == 0);
+//        Assert.assertTrue("Card pack count is not 0 after DB wipe.", template.count(CardPack.class) == 0);
+//        Assert.assertTrue("Deck count is not 0 after DB wipe.", template.count(Deck.class) == 0);
+//        Assert.assertTrue("Tournament count is not 0 after DB wipe.", template.count(Tournament.class) == 0);
+//        Assert.assertTrue("Standing count is not 0 after DB wipe.", template.count(Standing.class) == 0);
+//        Assert.assertTrue("Deck-card relationship count is not 0 after DB wipe.", template.count(DeckHasCard.class) == 0);
 
-    /**
-     * Checking that duplicates are not saved.
-     * NetrunnerDB: cards, card packs, decks
-     * Acoo: decks, tournaments
-     */
-    @Test
-    public void duplicatesDB() {
-        // populate DB
-        populateDB(true, true);
-        long countCard = template.count(Card.class);
-        long countCardPack = template.count(CardPack.class);
-        long countDeck = template.count(Deck.class);
-        long countDeckHasCard = template.count(DeckHasCard.class);
-        long countTournaments = template.count(Tournament.class);
-        // try reading same data
-        populateDB(false, true);
-
-        Assert.assertTrue("Duplicate cards should not be added.", countCard == template.count(Card.class));
-        Assert.assertTrue("Duplicate card packs should not be added.", countCardPack == template.count(CardPack.class));
-        Assert.assertTrue("Duplicate decks should not be added.", countDeck == template.count(Deck.class));
-        Assert.assertTrue("Duplicate deck-card relationships should not be added.", countDeckHasCard == template.count(DeckHasCard.class));
-        Assert.assertTrue("Duplicate tournaments should not be added.", countTournaments == template.count(Tournament.class));
+        // load Netrunner DB cards and card packs
+        operations.loadNetrunnerDB();
+        Assert.assertTrue("Card count is 0 after Netrunner DB import.", template.count(Card.class) > 0);
+        Assert.assertTrue("Card pack count is 0 after Netrunner DB import", template.count(CardPack.class) > 0);
     }
 
     @Test
-    public void retrieveData() {
-        populateDB(true, true);
+    public void loadDecks() {
+        long decknum = template.count(Deck.class);
+        Set<Deck> decks = new HashSet<Deck>();
+        decks.add(operations.loadAcooDeck(10890));
+        decks.add(operations.loadNetrunnerDbDeck(20162));
+        decks.addAll(operations.loadStimhackDecks("http://stimhack.com/gnk-game-kastle-santa-clara-11-players/")); // netrunnerdb import
+        // TODO: different Stimhack formats - Netdeck, meteor, acoo
 
-        Card card = cardRepository.findByTitle("Déjà Vu");
-        CardPack cardPack = cardPackRepository.findByName("Core Set");
-        Deck deck_nrdb = deckRepository.findByUrl(netrunnerDBBroker.deckUrlFromId(20162));
-        Deck deck_acoo = deckRepository.findByUrl(acooBroker.deckUrlFromId(10890));
-        Tournament tournament = tournamentRepository.findByUrl(acooBroker.tournamentUrlFromId(526));
+        // count check
+        Assert.assertEquals("Deck count wrong after deck imports.", template.count(Deck.class) - decknum, 4);
+        Assert.assertTrue("Deck-card relationship count is 0 after deck imports.", template.count(DeckHasCard.class) > 0);
 
-        // positive assertions
-        Assert.assertTrue("Could not retrieve card.", card != null);
-        Assert.assertTrue("Could not retrieve card pack.", cardPack != null);
-        Assert.assertTrue("Could not retrieve NetrunnerDB deck.", deck_nrdb != null);
-        Assert.assertTrue("Could not retrieve Acoo deck.", deck_acoo != null);
-        Assert.assertTrue("Could not retrieve Acoo tournament.", tournament != null);
+        // validity check
+        for (Deck deck : decks) {
+            Assert.assertTrue("Imported deck not valid" + deck.getUrl(), deck.isValidDeck());
+        }
 
-        // value assertions
-        System.out.println("Retrieved card: " + card.toString());
-        System.out.println("Retrieved card pack: " + cardPack.toString());
-        System.out.println("Retrieved NetrunnerDB deck: " + deck_nrdb.toString());
-        System.out.println("Retrieved Acoo deck: " + deck_acoo.toString());
-        System.out.println("Retrieved tournament: " + tournament.toString());
-        Assert.assertTrue("NetrunnerDB deck info is not correct.",
-                deck_nrdb.toString().equals("RP with the flow (Jinteki: Replicating Perfection) - 49 cards (15 inf) up to: The Source - http://netrunnerdb.com/api/decklist/20162"));
-        Assert.assertTrue("Acoo deck info is not correct",
-                deck_acoo.toString().equals("Everything (The Professor: Keeper of Knowledge) - 45 cards (1 inf) up to: The Valley - http://www.acoo.net/deck/10890"));
-        Assert.assertTrue("Tournament info is not correct",
-                tournament.toString().equals("Regional Paris Ludiworld (2015-06-07) - 47 players - cardpool: Breaker Bay - http://www.acoo.net/anr-tournament/526"));
-
-        // negative assertions
-        Assert.assertTrue("Could retrieve non-existent card.", cardRepository.findByTitle("I love Siphon") == null);
-        Assert.assertTrue("Could not retrieve non-existent card pack.", cardPackRepository.findByName("No such pack") == null);
-        Assert.assertTrue("Could not retrieve non-existent deck.", deckRepository.findByUrl("http://www.google.com") == null);
+        // deck multiple reentry check
+        operations.loadAcooDeck(10890);
+        operations.loadNetrunnerDbDeck(20162);
+        operations.loadStimhackDecks("http://stimhack.com/gnk-game-kastle-santa-clara-11-players/");
+        Assert.assertEquals("Deck count wrong after deck reimports.", template.count(Deck.class) - decknum, 4);
     }
 
     @Test
-    public void cardCaseCheck() {
-        populateDB(true, false);
+    public void loadTournaments() {
+        long decknum = template.count(Deck.class);
+        long tournamentnum = template.count(Tournament.class);
+        Tournament stournament = operations.loadStimhackTournament("http://stimhack.com/store-champs-gamespace-kashiwagi-tokyo-9-players/"); // this imports decks as well
+        Tournament atournament = operations.loadAcooTournament(784); // just swiss - this does not import decks
 
-        Card card = cardRepository.findByTitle("I've had worse");
-        Assert.assertTrue("Could not retrive card by worng case.", card != null);
-        System.out.println("Retrieved card: " + card.toString());
+        // count check
+        Assert.assertEquals("Tournament count wrong after tournament imports.", template.count(Tournament.class) - tournamentnum, 2);
+        Assert.assertEquals("Deck count wrong after tournament imports.", template.count(Deck.class) - decknum, 2);
+
+        // validity check
+        Assert.assertEquals("Stimhack tournament import, wrong player number", stournament.getPlayerNumber(), 9);
+        Assert.assertEquals("Stimhack tournament import, wrong cardpool", stournament.getCardpool().getName(), "The Universe of Tomorrow");
+        Assert.assertEquals("Stimhack tournament import, wrong tournament name", stournament.getName(), "Store Champs – Gamespace Kashiwagi, Tokyo");
+        Assert.assertEquals("Stimhack tournament import, wrong tournament url", stournament.getUrl(), "http://stimhack.com/store-champs-gamespace-kashiwagi-tokyo-9-players/");
+        Assert.assertEquals("Acoo tournament import, wrong player number", atournament.getPlayerNumber(), 14);
+        Assert.assertEquals("Acoo tournament import, wrong cardpool", atournament.getCardpool().getName(), "The Universe of Tomorrow");
+        Assert.assertEquals("Acoo tournament import, wrong tournament name", atournament.getName(), "Moscow GNK 2015-11-01");
+        Assert.assertEquals("Acoo tournament import, wrong tournament urk", atournament.getUrl(), acooBroker.tournamentUrlFromId(784));
+
+        // tournament multiple reentry check
+        operations.loadStimhackTournament("http://stimhack.com/store-champs-gamespace-kashiwagi-tokyo-9-players/");
+        operations.loadAcooTournament(784);
+        Assert.assertEquals("Tournament count wrong after tournament reimports.", template.count(Tournament.class) - tournamentnum, 2);
+        Assert.assertEquals("Deck count wrong after tournament reimports.", template.count(Deck.class) - decknum, 2);
     }
+
+    @Test
+    public void loadTournamentStandings() {
+        long decknum = template.count(Deck.class);
+        long tournamentnum = template.count(Tournament.class);
+        long standingsnum = template.count(Standing.class);
+
+        // count check
+        operations.loadAcooTournamentDecks(476); // swiss + top, 24 standings (lot missing), 14 decks
+        Assert.assertEquals("Tournament count wrong after tournament imports.", template.count(Tournament.class) - tournamentnum, 1);
+        Assert.assertEquals("Deck count wrong after tournament imports.", template.count(Deck.class) - decknum, 14);
+        Assert.assertEquals("Standings count wrong after tournament imports.", template.count(Standing.class) - standingsnum, 24);
+        Assert.assertEquals("Tournament having incorrect number of standings",
+                standingRepository.countByTournamentURL(acooBroker.tournamentUrlFromId(476)), 24);
+
+        operations.loadAcooTournamentDecks(744); // swiss + top, 2x12 standings, 0 decks
+        Assert.assertEquals("Tournament count wrong after tournament imports.", template.count(Tournament.class) - tournamentnum, 2);
+        Assert.assertEquals("Deck count wrong after tournament imports.", template.count(Deck.class) - decknum, 14);
+        Assert.assertEquals("Standings count wrong after tournament imports.", template.count(Standing.class) - standingsnum, 48);
+        Assert.assertEquals("Tournament having incorrect number of standings",
+                standingRepository.countByTournamentURL(acooBroker.tournamentUrlFromId(744)), 24);
+
+        operations.loadAcooTournamentDecks(439); // just swiss, 2x10 standings, 6 decks
+        Assert.assertEquals("Tournament count wrong after tournament imports.", template.count(Tournament.class) - tournamentnum, 3);
+        Assert.assertEquals("Deck count wrong after tournament imports.", template.count(Deck.class) - decknum, 20);
+        Assert.assertEquals("Standings count wrong after tournament imports.", template.count(Standing.class) - standingsnum, 68);
+        Assert.assertEquals("Tournament having incorrect number of standings",
+                standingRepository.countByTournamentURL(acooBroker.tournamentUrlFromId(439)), 20);
+
+        operations.loadStimhackTournament("http://stimhack.com/anr-pro-circuit-austin-tx-20-players/");
+        Assert.assertEquals("Tournament count wrong after tournament imports.", template.count(Tournament.class) - tournamentnum, 4);
+        Assert.assertEquals("Deck count wrong after tournament imports.", template.count(Deck.class) - decknum, 22);
+        Assert.assertEquals("Standings count wrong after tournament imports.", template.count(Standing.class) - standingsnum, 70);
+        Assert.assertEquals("Tournament having incorrect number of standings",
+                standingRepository.countByTournamentURL("http://stimhack.com/anr-pro-circuit-austin-tx-20-players/"), 2);
+
+        // validity
+        Standing standing = standingRepository.findByTournamentURLIdentity(
+                acooBroker.tournamentUrlFromId(476), 1, "Jinteki Biotech: Life Imagined");
+        Standing standing2 = standingRepository.findByTournamentURLIdentity(
+                "http://stimhack.com/anr-pro-circuit-austin-tx-20-players/", 1, "Andromeda: Dispossessed Ristie");
+        Standing standing3 = standingRepository.findByTournamentURLIdentity(
+                acooBroker.tournamentUrlFromId(744), 11, "Whizzard: Master Gamer");
+        Assert.assertNotNull("Standing save is not succesfull.", standing);
+        Assert.assertEquals("Runner side is incorrect in Standing save", standing.is_runner(), false);
+        Assert.assertEquals("Topdeck is incorrect in Standing save", standing.isTopdeck(), true);
+        Assert.assertNotNull("Standing save is not succesfull.", standing2);
+        Assert.assertEquals("Runner side is incorrect in Standing save", standing2.is_runner(), true);
+        Assert.assertEquals("Topdeck is incorrect in Standing save", standing2.isTopdeck(), true);
+        Assert.assertNotNull("Standing save is not succesfull.", standing3);
+        Assert.assertEquals("Runner side is incorrect in Standing save", standing3.is_runner(), true);
+        Assert.assertEquals("Topdeck is incorrect in Standing save", standing3.isTopdeck(), false);
+
+        // tournament multiple reentry check
+        operations.loadAcooTournamentDecks(476);
+        operations.loadAcooTournamentDecks(744);
+        operations.loadAcooTournamentDecks(439);
+        operations.loadStimhackTournament("http://stimhack.com/anr-pro-circuit-austin-tx-20-players/");
+        Assert.assertEquals("Tournament count wrong after tournament imports.", template.count(Tournament.class) - tournamentnum, 4);
+        Assert.assertEquals("Deck count wrong after tournament imports.", template.count(Deck.class) - decknum, 22);
+        Assert.assertEquals("Standings count wrong after tournament imports.", template.count(Standing.class) - standingsnum, 70);
+    }
+
+    @Test
+    public void loadAcooTournamentPage() {
+        long decknum = template.count(Deck.class);
+        long tournamentnum = template.count(Tournament.class);
+        long standingsnum = template.count(Standing.class);
+
+        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/old-hollywood/1/", true, true);
+        operations.logDBCount();
+        long decknum2 = template.count(Deck.class);
+        long tournamentnum2 = template.count(Tournament.class);
+        long standingsnum2 = template.count(Standing.class);
+
+        Assert.assertTrue("Not enough decks after tournament page import", decknum2 - decknum >= 123);
+        Assert.assertTrue("Not enough tournaments after tournament page import", tournamentnum2 - tournamentnum >= 19);
+        Assert.assertTrue("Not enough standings after tournament page import", standingsnum2 - standingsnum >= 958);
+
+        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/old-hollywood/1/", true, false);
+        operations.logDBCount();
+        long decknum3 = template.count(Deck.class);
+        long tournamentnum3 = template.count(Tournament.class);
+        long standingsnum3 = template.count(Standing.class);
+
+        Assert.assertEquals("No new deck should be readded", decknum2, decknum3);
+        Assert.assertTrue("Tournament number not OK after readd", tournamentnum3 - tournamentnum2 >= 18);
+        Assert.assertTrue("Standing number not OK after readd", standingsnum3 - standingsnum2 >= 464);
+    }
+}
 
 //    @Test
-//    public void acooTournament() {
+//    public void cardCaseCheck() {
 //        populateDB(true, false);
-//        operations.loadAcooTournamentDecks(429);
-//        operations.logDBCount();
-//        long countDecks = template.count(Deck.class);
-//        long countTournament = template.count(Tournament.class);
-//        long countTournamentHasDeck = template.count(TournamentHasDeck.class);
 //
-//        Assert.assertTrue("Did not load any decks.", countDecks > 0);
-//        Assert.assertTrue("Did not load any tournaments.", countTournament > 0);
-//        Assert.assertTrue("Did not load any tournament-deck relations.", countTournamentHasDeck > 0);
-//
-//        // duplicate checks
-//        operations.logDBCount();
-//        operations.loadAcooTournamentDecks(429);
-//        Assert.assertTrue("Duplicate decks should not be added.", countDecks == template.count(Deck.class));
-//        Assert.assertTrue("Duplicate tournaments should not be added.", countTournament == template.count(Tournament.class));
-//        Assert.assertTrue("Duplicate tournament-deck relations should not be added.", countTournamentHasDeck == template.count(TournamentHasDeck.class));
-//
-//        // check tournament-deck relations
-//        Tournament tournament = tournamentRepository.findByUrl(acooBroker.tournamentUrlFromId(429));
-//        Set<TournamentHasDeck> tournamentHasDecks = tournament.getDecks();
-//        for (TournamentHasDeck tournamentHasDeck : tournamentHasDecks) {
-//            Assert.assertTrue("Deck rank is incorrect.", tournamentHasDeck.getRank() == 13);       // both decks are 13th
-//        }
+//        Card card = cardRepository.findByTitle("I've had worse");
+//        Assert.assertTrue("Could not retrive card by worng case.", card != null);
+//        System.out.println("Retrieved card: " + card.toString());
 //    }
 
-    @Test
-    public void unicodeRemoval() {
-        populateDB(true, false);
-        Deck deck = operations.loadAcooDeck(11282);
-        System.out.println(deck.toString());
-        Card card = cardRepository.findByTitle("Tori Hanzō");
-        System.out.println(card.toString());
-    }
-
 //    @Test
-//    public void tournamentPage() {
+//    public void unicodeRemoval() {
 //        populateDB(true, false);
-//        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true, true);
-//
-//        long countDecks = template.count(Deck.class);
-//        long countTournament = template.count(Tournament.class);
-//        long countTournamentHasDeck = template.count(TournamentHasDeck.class);
-//
-//        Assert.assertTrue("Did not load any decks.", countDecks > 0);
-//        Assert.assertTrue("Did not load any tournaments.", countTournament > 0);
-//        Assert.assertTrue("Did not load any tournament-deck relations.", countTournamentHasDeck > 0);
-//
-//        // duplicate checks
-//        operations.logDBCount();
-//        operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true, true);
-//        Assert.assertTrue("Duplicate decks should not be added.", countDecks == template.count(Deck.class));
-//        Assert.assertTrue("Duplicate tournaments should not be added.", countTournament == template.count(Tournament.class));
-//        Assert.assertTrue("Duplicate tournament-deck relations should not be added.", countTournamentHasDeck == template.count(TournamentHasDeck.class));
-//
-//        // get tournament, deck from last page
-//        Deck deck = deckRepository.findByUrl("http://www.acoo.net/deck/10423");
-//        Tournament tournament = tournamentRepository.findByUrl("http://www.acoo.net/anr-tournament/480");
-//        Assert.assertTrue("Could not load deck from last page", deck != null);
-//        Assert.assertTrue("Could not load tournament from last page", tournament != null);
+//        Deck deck = operations.loadAcooDeck(11282);
+//        System.out.println(deck.toString());
+//        Card card = cardRepository.findByTitle("Tori Hanzō");
+//        System.out.println(card.toString());
 //    }
 
 //    @Test
@@ -253,36 +289,21 @@ public class DatabaseTest {
 //        tx.close();
 //    }
 
-    @Test
-    public void MDS() {
-        populateDB(true, false);
-        operations.loadAcooTournament(11949);
-        operations.loadAcooTournament(11879);
-        operations.loadAcooTournament(12022);
-        operations.loadAcooTournament(11852);
-
-        // the very same decks at 1st and 4th place
-        Deck signature_kate = deckRepository.findByUrl(acooBroker.deckUrlFromId(11949));
-        Deck signature_kate2 = deckRepository.findByUrl(acooBroker.deckUrlFromId(11879));
-        Assert.assertTrue("Distance of the same decks should be zero.", multiDimensionalScaling.getDeckDistance(signature_kate, signature_kate2) == 0);
-
-        // two very similar butchershops
-        Deck butcher1 = deckRepository.findByUrl(acooBroker.deckUrlFromId(12022));
-        Deck butcher2 = deckRepository.findByUrl(acooBroker.deckUrlFromId(11852));
-        Assert.assertTrue("Distance of the same decks should be zero.", multiDimensionalScaling.getDeckDistance(butcher1, butcher2) == 4);
-    }
-
-
-    private void populateDB(boolean cleanDb, boolean loadExamples) {
-        if (cleanDb) {
-            operations.cleanDB();
-        }
-        operations.loadNetrunnerDB();
-        if (loadExamples) {
-            operations.loadAcooDeck(10890);
-            operations.loadNetrunnerDbDeck(20162);
-            operations.loadAcooTournament(526);
-        }
-        operations.logDBCount();
-    }
-}
+//    @Test
+//    public void MDS() {
+//        populateDB(true, false);
+//        operations.loadAcooTournament(11949);
+//        operations.loadAcooTournament(11879);
+//        operations.loadAcooTournament(12022);
+//        operations.loadAcooTournament(11852);
+//
+//        // the very same decks at 1st and 4th place
+//        Deck signature_kate = deckRepository.findByUrl(acooBroker.deckUrlFromId(11949));
+//        Deck signature_kate2 = deckRepository.findByUrl(acooBroker.deckUrlFromId(11879));
+//        Assert.assertTrue("Distance of the same decks should be zero.", multiDimensionalScaling.getDeckDistance(signature_kate, signature_kate2) == 0);
+//
+//        // two very similar butchershops
+//        Deck butcher1 = deckRepository.findByUrl(acooBroker.deckUrlFromId(12022));
+//        Deck butcher2 = deckRepository.findByUrl(acooBroker.deckUrlFromId(11852));
+//        Assert.assertTrue("Distance of the same decks should be zero.", multiDimensionalScaling.getDeckDistance(butcher1, butcher2) == 4);
+//    }

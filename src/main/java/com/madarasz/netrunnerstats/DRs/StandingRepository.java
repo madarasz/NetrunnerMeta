@@ -14,12 +14,18 @@ import java.util.List;
  */
 public interface StandingRepository extends GraphRepository<Standing>, RelationshipOperationsRepository<Standing> {
 
-    @Query("MATCH (s:Standing)<-[:IN_TOURNAMENT]-(t:Tournament) WHERE (t.url={0}) RETURN COUNT(d)")
+    @Query("MATCH (t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing) WHERE (t.url={0}) RETURN COUNT(s)")
     int countByTournamentURL(String tournamentURL);
 
-    @Query("MATCH (p:CardPack)<-[:POOL]-(t:Tournament)-[:IS_STANDING]->(s:Standing)-[:IS_IDENTITY]->(c:Card) WHERE (p.name={0}) AND (s.topdeck=TRUE) RETURN c.title as category, COUNT(*) as count ORDER BY count DESC")
+    @Query("MATCH (p:CardPack)<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card) WHERE (p.name={0}) AND (s.topdeck=TRUE) RETURN c.title as category, COUNT(*) as count ORDER BY count DESC")
     List<StatCounts> getTopIdentityStatsByCardPool(String cardpoolName);
 
-    @Query("MATCH (p:CardPack)<-[:POOL]-(t:Tournament)-[:IS_STANDING]->(s:Standing)-[:IS_IDENTITY]->(c:Card) WHERE (p.name={0}) AND (s.topdeck=TRUE) RETURN c.faction_code as category, COUNT(*) as count ORDER BY count DESC")
+    @Query("MATCH (p:CardPack)<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card) WHERE (p.name={0}) AND (s.topdeck=TRUE) RETURN c.faction_code as category, COUNT(*) as count ORDER BY count DESC")
     List<StatCounts> getTopFactionStatsByCardPool(String cardpoolName);
+
+    @Query("MATCH (t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card) WHERE (t.url={0}) AND (s.rank={1}) AND (c.title={2}) RETURN s LIMIT 1")
+    Standing findByTournamentURLIdentity(String url, int rank, String identityname);
+
+    @Query("MATCH (s:Standing) return s")
+    List<Standing> getAllStanding();
 }

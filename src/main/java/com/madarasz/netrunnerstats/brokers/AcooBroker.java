@@ -3,6 +3,8 @@ package com.madarasz.netrunnerstats.brokers;
 import com.madarasz.netrunnerstats.DOs.*;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
+import com.madarasz.netrunnerstats.DRs.DeckRepository;
+import com.madarasz.netrunnerstats.DRs.StandingRepository;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,12 @@ public class AcooBroker {
 
     @Autowired
     CardPackRepository cardPackRepository;
+
+    @Autowired
+    DeckRepository deckRepository;
+
+    @Autowired
+    StandingRepository standingRepository;
 
     /**
      * Reads Deck information from Acoo. Also adds deck metadata.
@@ -86,10 +94,10 @@ public class AcooBroker {
             String title = regExBroker.getCardFromLine(line);
             Card card = cardRepository.findByTitle(title);
             if (card == null) {
-                title = title.split(":")[0];
+                title = alternateTitle(title);
                 card = cardRepository.findByTitle(title);
                 if (card == null) {
-                    System.out.println("ERROR - no such card: " + title);
+                    System.out.println("ERROR - no such card");
                 }
             }
             if (quantity == 0) {    // identity
@@ -199,7 +207,7 @@ public class AcooBroker {
      * @param tournament tournament
      * @return standings with decks
      */
-    public Set<Standing> loadTournamentStandings(String url, Tournament tournament) {
+    public Set<Standing> loadTournamentStandingsAndDecks(String url, Tournament tournament) {
         Set<Standing> standings = new HashSet<Standing>();
         HttpBroker.parseHtml(url);
         Elements lists = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_RANKLIST);
@@ -234,7 +242,11 @@ public class AcooBroker {
             for (Element id : ids) {
                 // extract standing
                 String[] hrefparts = id.attr("src").split("/");
-                Card identity = cardRepository.findByTitle(iconToIdentity(hrefparts[4]));
+                String identitystring = iconToIdentity(hrefparts[4]);
+                Card identity = cardRepository.findByTitle(identitystring);
+                if (identity == null) {
+                    System.out.println("ERROR - can't find identity for title: " + identitystring);
+                }
                 boolean topdeck = rank <= tournament.getPlayerNumber() * 0.3;    // top 30% of decks
 
                 // extract deck
@@ -245,9 +257,15 @@ public class AcooBroker {
                     System.out.print("Rank: " + rank + " - ");
                     hrefparts = deckpart.first().attr("href").split("/");
                     int deckId = Integer.valueOf(hrefparts[2]);
-                    Deck deck = readDeck(deckId);
-                    System.out.println("Saving new deck! - " + deck.toString());
-                    standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner(), deck));
+                    Deck exists = deckRepository.findByUrl(deckUrlFromId(deckId));
+                    if (exists == null) {
+                        Deck deck = readDeck(deckId);
+                        System.out.println("Saving new deck! - " + deck.toString());
+                        standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner(), deck));
+                    } else {
+                        System.out.println("Already added");
+                        standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner()));
+                    }
                 }
             }
         }
@@ -311,7 +329,7 @@ public class AcooBroker {
                 identityName = "GRNDL: Power Unleashed";
                 break;
             case "icon-haarpsichord.png" :
-                identityName = "Haarpsichord Studios";
+                identityName = "Haarpsichord Studios: Entertainment Unleashed";
                 break;
             case "hb-etf-icon.png" :
                 identityName = "Haas-Bioroid: Engineering the Future";
@@ -430,5 +448,18 @@ public class AcooBroker {
                 identityName = "The Collective: Williams, Wu, et al.";  // fallback ID
         }
         return identityName;
+    }
+
+    // TODO: refactor this to another class
+    private String alternateTitle(String title) {
+        String newtitle = "";
+        switch (title) {
+            case "Haarpsichord Studios: Entertainement Unleached" :
+                newtitle = "Haarpsichord Studios: Entertainment Unleashed";
+                break;
+            default:
+                System.out.println(String.format("ERROR - Unknown card title: %s", title));
+        }
+        return newtitle;
     }
 }

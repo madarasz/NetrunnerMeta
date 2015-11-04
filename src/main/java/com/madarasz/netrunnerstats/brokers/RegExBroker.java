@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 @Component
 public class RegExBroker {
     private static final String REGEX_QUANTITY = "\\d{1}x";
-    private static final String REGEX_FIRST_NUMBER = "\\d*";
+    private static final String REGEX_FIRST_NUMBER = "\\d+";
 
     public int getQuantity(String line) {
         Pattern pattern = Pattern.compile(REGEX_QUANTITY);
@@ -49,7 +49,8 @@ public class RegExBroker {
             try {
                 return Integer.parseInt(matcher.group(0));
             } catch (Exception e) {
-                return 666; // conversion problem
+                System.out.println("Couldn't find the first number in line: " + line);
+                return -1; // conversion problem
             }
         } else {
             return 0;

@@ -114,7 +114,10 @@ public class Application implements CommandLineRunner {
                 case getpackmath: operations.getPackMath("Near-Earth Hub: Broadcast Center", "Old Hollywood", true); break;
                 case cleandb: operations.cleanDB(); break;
                 case stimhackdecks:
-                    operations.loadStimhackDeck("http://stimhack.com/national-warsaw-poland-72-players/");
+                    operations.loadStimhackDecks("http://stimhack.com/national-warsaw-poland-72-players/");
+                    break;
+                case stimhacktournament:
+                    operations.loadStimhackTournament("http://stimhack.com/national-warsaw-poland-72-players/");
                     break;
             }
 
@@ -132,7 +135,7 @@ public class Application implements CommandLineRunner {
         cleandb, checkdata, loadnetrunnerdb, logdbcount,
         netrunnerdbloaddeck,
         acooloaddeck, acooloadtournament, acooloadtournamentdecks, acooloadpage, acooall,
-        stimhackdecks,
+        stimhackdecks, stimhacktournament,
         archetype, getpackstats, getallstats, getpackmath,
         none
     }
