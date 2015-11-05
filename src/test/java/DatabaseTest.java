@@ -20,7 +20,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -89,28 +88,73 @@ public class DatabaseTest {
     }
 
     @Test
+    public void loadCards() {
+        Card idcard = cardRepository.findByTitle("Andromeda: Dispossessed Ristie");
+        Assert.assertEquals("Card read error - side", idcard.isRunner(), true);
+        Assert.assertEquals("Card read error - type_code", idcard.getType_code(), "identity");
+        Assert.assertEquals("Card read error - code", idcard.getCode(), "02083");
+        Assert.assertEquals("Card read error - subtype_code", idcard.getSubtype_code(), "natural");
+        Assert.assertEquals("Card read error - faction_code", idcard.getFaction_code(), "criminal");
+        Assert.assertEquals("Card read error - influence_limit", idcard.getInfluencelimit(), 15);
+        Assert.assertEquals("Card read error - minimumdecksize", idcard.getMinimumdecksize(), 45);
+        Assert.assertEquals("Card read error - baselink", idcard.getBaselink(), 1);
+        Assert.assertEquals("Card read error - limited", idcard.isLimited(), false);
+        Assert.assertEquals("Card read error - text", idcard.getText(), "You draw a starting hand of 9 cards.");
+        Assert.assertEquals("Card read error - card pack", idcard.getCardPack().getName(), "Humanity's Shadow");
+
+        Card agendacard = cardRepository.findByCode("06030");
+        Assert.assertEquals("Card read error - side", agendacard.isRunner(), false);
+        Assert.assertEquals("Card read error - title", agendacard.getTitle(), "Eden Fragment");
+        Assert.assertEquals("Card read error - type_code", agendacard.getType_code(), "agenda");
+        Assert.assertEquals("Card read error - agendapoints", agendacard.getAgendapoints(), 3);
+        Assert.assertEquals("Card read error - advancementcost", agendacard.getAdvancementcost(), 5);
+        Assert.assertEquals("Card read error - limited", agendacard.isLimited(), true);
+        Assert.assertEquals("Card read error - card pack", agendacard.getCardPack().getName(), "The Spaces Between");
+
+        Card icecard = cardRepository.findByTitle("Matrix Analyzer");
+        Assert.assertEquals("Card read error - cost", icecard.getCost(), 1);
+        Assert.assertEquals("Card read error - strength", icecard.getStrength(), 3);
+        Assert.assertEquals("Card read error - type_code", icecard.getType_code(), "ice");
+        Assert.assertEquals("Card read error - uniqueness", icecard.isUniquene(), false);
+        Assert.assertEquals("Card read error - faction_cost", icecard.getFactioncost(), 2);
+        Assert.assertEquals("Card read error - subtype_code", icecard.getSubtype_code(), "sentry - tracer - observer");
+
+        Card upgradecard = cardRepository.findByTitle("Marcus Batty");
+        Assert.assertEquals("Card read error - type_code", upgradecard.getType_code(), "upgrade");
+        Assert.assertEquals("Card read error - uniqueness", upgradecard.isUniquene(), true);
+        Assert.assertEquals("Card read error - trash", upgradecard.getTrash(), 1);
+
+        Card programcard = cardRepository.findByTitle("Corroder");
+        Assert.assertEquals("Card read error - memoryunits", programcard.getMemoryunits(), 1);
+    }
+
+    @Test
     public void loadDecks() {
         long decknum = template.count(Deck.class);
         Set<Deck> decks = new HashSet<Deck>();
         decks.add(operations.loadAcooDeck(10890));
         decks.add(operations.loadNetrunnerDbDeck(20162));
         decks.addAll(operations.loadStimhackDecks("http://stimhack.com/gnk-game-kastle-santa-clara-11-players/")); // netrunnerdb import
-        // TODO: different Stimhack formats - Netdeck, meteor, acoo
+        decks.addAll(operations.loadStimhackDecks("http://stimhack.com/gnk-madison-wi-14-players/"));   // netrunnerdb old import
+        decks.addAll(operations.loadStimhackDecks("http://stimhack.com/gnk-waylands-forge-birmingham-uk-21-players/"));   // meteor import
+        decks.addAll(operations.loadStimhackDecks("http://stimhack.com/anr-pro-circuit-san-antonio-10-players/"));   // net deck import
+        decks.addAll(operations.loadStimhackDecks("http://stimhack.com/the-psi-games-44-players/"));   // acoo import
 
         // count check
-        Assert.assertEquals("Deck count wrong after deck imports.", template.count(Deck.class) - decknum, 4);
-        Assert.assertTrue("Deck-card relationship count is 0 after deck imports.", template.count(DeckHasCard.class) > 0);
+        operations.logDBCount();
+        Assert.assertEquals("Deck count wrong after deck imports.", template.count(Deck.class) - decknum, 12);
+        Assert.assertTrue("Deck-card relationship count is 0 after deck imports.", template.count(DeckHasCard.class) >= 276);
 
         // validity check
         for (Deck deck : decks) {
-            Assert.assertTrue("Imported deck not valid" + deck.getUrl(), deck.isValidDeck());
+            Assert.assertTrue("Imported deck not valid: " + deck.getUrl(), deck.isValidDeck());
         }
 
         // deck multiple reentry check
         operations.loadAcooDeck(10890);
         operations.loadNetrunnerDbDeck(20162);
         operations.loadStimhackDecks("http://stimhack.com/gnk-game-kastle-santa-clara-11-players/");
-        Assert.assertEquals("Deck count wrong after deck reimports.", template.count(Deck.class) - decknum, 4);
+        Assert.assertEquals("Deck count wrong after deck reimports.", template.count(Deck.class) - decknum, 12);
     }
 
     @Test

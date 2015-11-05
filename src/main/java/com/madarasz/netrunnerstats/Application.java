@@ -117,7 +117,7 @@ public class Application implements CommandLineRunner {
                     operations.loadStimhackDecks("http://stimhack.com/national-warsaw-poland-72-players/");
                     break;
                 case stimhacktournament:
-                    operations.loadStimhackTournament("http://stimhack.com/national-warsaw-poland-72-players/");
+                    operations.loadStimhackTournament("http://stimhack.com/gnk-madison-wi-14-players/");
                     break;
             }
 

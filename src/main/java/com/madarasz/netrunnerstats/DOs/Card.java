@@ -71,6 +71,10 @@ public class Card {
         this.trash = trash;
     }
 
+    public boolean isUniquene() {
+        return uniqueness;
+    }
+
     public String getCode() {
         return code;
     }
@@ -125,6 +129,34 @@ public class Card {
 
     public boolean isRunner() {
         return side_code.equals("runner");
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public int getTrash() {
+        return trash;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public int getBaselink() {
+        return baselink;
+    }
+
+    public int getMemoryunits() {
+        return memoryunits;
+    }
+
+    public int getAdvancementcost() {
+        return advancementcost;
     }
 
     @Override

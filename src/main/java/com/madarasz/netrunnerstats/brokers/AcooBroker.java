@@ -90,7 +90,7 @@ public class AcooBroker {
 
         Deck result = new Deck();
         for (String line : lines) {
-            int quantity = regExBroker.getQuantity(line);
+            int quantity = regExBroker.getCardQuantity(line);
             String title = regExBroker.getCardFromLine(line);
             Card card = cardRepository.findByTitle(title);
             if (card == null) {

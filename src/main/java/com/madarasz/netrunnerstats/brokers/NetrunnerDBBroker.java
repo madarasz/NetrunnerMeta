@@ -59,9 +59,9 @@ public final class NetrunnerDBBroker {
 
             Card card = new Card(cardData.getString("code"), cardData.getString("title"), cardData.getString("type_code"), cardData.getString("subtype_code"),
                     cardData.getString("text"), cardData.getString("faction_code"), cardData.getString("side_code"), cardData.getBoolean("uniqueness"),
-                    cardData.getBoolean("limited"), cardPack, cardData.getInt("baselink"), cardData.getInt("influencelimit"), cardData.getInt("minnimumdecksize"),
-                    cardData.getInt("cost"), cardData.getInt("factioncost"), cardData.getInt("memoryunits"), cardData.getInt("strenght"),
-                    cardData.getInt("advancementcost"), cardData.getInt("agengapoints"), cardData.getInt("trash"));
+                    cardData.getBoolean("limited"), cardPack, cardData.getInt("baselink"), cardData.getInt("influencelimit"), cardData.getInt("minimumdecksize"),
+                    cardData.getInt("cost"), cardData.getInt("factioncost"), cardData.getInt("memoryunits"), cardData.getInt("strength"),
+                    cardData.getInt("advancementcost"), cardData.getInt("agendapoints"), cardData.getInt("trash"));
             resultSet.add(card);
         }
 

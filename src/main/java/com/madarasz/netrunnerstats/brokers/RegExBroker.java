@@ -10,11 +10,11 @@ import java.util.regex.Pattern;
  */
 @Component
 public class RegExBroker {
-    private static final String REGEX_QUANTITY = "\\d{1}x";
+    private static final String REGEX_CARD_QUANTITY = "^\\d{1}x?";
     private static final String REGEX_FIRST_NUMBER = "\\d+";
 
-    public int getQuantity(String line) {
-        Pattern pattern = Pattern.compile(REGEX_QUANTITY);
+    public int getCardQuantity(String line) {
+        Pattern pattern = Pattern.compile(REGEX_CARD_QUANTITY);
         Matcher matcher = pattern.matcher(line);
         if (matcher.find()) {
             return Character.getNumericValue(matcher.group(0).charAt(0));
@@ -55,6 +55,10 @@ public class RegExBroker {
         } else {
             return 0;
         }
+    }
+
+    public String sanitizeText(String text) {
+        return text.replaceAll("“", "\"").replaceAll("”", "\"");
     }
 
 }

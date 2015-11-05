@@ -138,7 +138,11 @@ public class Deck {
         boolean validity = true;
 
         // deck size
-        int decksize = cards.size();
+        int decksize = 0;
+        for (DeckHasCard card : cards)
+        {
+            decksize += card.getQuantity();
+        }
         if (decksize < identity.getMinimumdecksize()) {
             validity = false;
             System.out.println(String.format("ERROR - card count: %d", decksize));
@@ -157,6 +161,7 @@ public class Deck {
             int quantity = deckHasCard.getQuantity();
             Card card = deckHasCard.getCard();
 
+            // TODO: limited cards
             // card quantity
             if ((quantity > 3) || (quantity < 1)) {
                 validity = false;

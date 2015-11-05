@@ -6,6 +6,7 @@ import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DOs.Tournament;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
+import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,6 @@ import org.jsoup.nodes.Element;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -67,30 +67,52 @@ public class StimhackBroker {
         String decktitle = "";
         String identity = "";
         try {
-            decktitle = lines[0].split("[<>]")[2];
-            identity = lines[2].split("[<>]")[2];
+            decktitle = Jsoup.parse(lines[0]).text();
+            identity = Jsoup.parse(lines[2]).text().split(" \\(")[0];
         } catch (Exception e) {
-            // TODO: parse different stimhack formats
-            System.out.println("ERROR - cannot parse decktitle - url: " + url);
+            System.out.println("ERROR - cannot parse deck title or identity- url: " + url);
         }
 
+        // acoo import case
+        if (identity.equals("")) {
+            decktitle = "";
+            identity = Jsoup.parse(lines[1]).text().split(" \\(")[0];
+        }
+        identity = regExBroker.sanitizeText(identity);
 
         Deck result = new Deck();
         result.setIdentity(cardRepository.findByTitle(identity));
+        if (result.getIdentity() == null) {
+            System.out.println("ERROR - can't parse identity: " + identity);
+        }
         result.setName(decktitle);
         result.setPlayer(playername);
         result.setUrl(url);
 
         for (String line : lines) {
-            int quantity = regExBroker.getQuantity(line);
-            String code = regExBroker.getSecondQuantity(line);
-            if ((quantity > 0) && (code.length() > 0)) {
+            line = line.trim();
+            // read quantity
+            int quantity = regExBroker.getCardQuantity(line);
+
+            if (quantity > 0) {
+                // read card
+                String code = regExBroker.getSecondQuantity(line);
                 Card card = cardRepository.findByCode(code);
-//                System.out.println(String.format("%dx %s", quantity, card.getTitle()));
+                String cardtitle = "";
+
+                if (card == null) {
+                    String[] chop = Jsoup.parse(line).text().split("^\\dx? | •| \\(");
+                    if (chop.length > 1) {
+                        cardtitle = regExBroker.sanitizeText(chop[1]);
+                        card = cardRepository.findByTitle(cardtitle);
+                    }
+                }
+
                 if (card != null) {
+//                    System.out.println(String.format("%dx %s", quantity, card.getTitle()));
                     result.hasCard(card, quantity);
                 } else {
-                    System.out.println("ERROR - no such card code: " + code);
+//                    System.out.println("ERROR - Can't parse card name: " + cardtitle);
                 }
             }
         }
