@@ -298,8 +298,7 @@ public class DatabaseTest {
     }
 
     @Test
-    @Ignore
-    // TODO
+    @Ignore // TODO: make it work for ALL Stimhack tournaments
     public void loadALLStimhackTournaments() {
         operations.loadStimhackPackTournaments("");
         List<Deck> decks = deckRepository.getAllDecks();

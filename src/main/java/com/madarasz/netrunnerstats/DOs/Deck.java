@@ -157,13 +157,15 @@ public class Deck {
 
         String side = identity.getSide_code();
         int agendaCount = 0;
+        boolean isApex = identity.getTitle().equals("Apex: Invasive Predator");
         for (DeckHasCard deckHasCard : cards) {
             int quantity = deckHasCard.getQuantity();
             Card card = deckHasCard.getCard();
 
-            // TODO: limited cards
             // card quantity
-            if ((quantity > 3) || (quantity < 1)) {
+            if ((quantity <1) ||
+                    ((!card.isLimited()) && (quantity > 3)) ||
+                    ((card.isLimited()) && (quantity > 1))) {
                 validity = false;
                 System.out.println(String.format("ERROR - illegal card quantity - %dx %s", quantity, card.getTitle()));
             }
@@ -177,6 +179,13 @@ public class Deck {
             // agenda count
             if (card.getType_code().equals("agenda")) {
                 agendaCount += card.getAgendapoints() * quantity;
+            }
+
+            // Apex limitation
+            if ((isApex) && (card.getType_code().equals("resource"))
+                    && (!card.getSubtype_code().contains("virtual"))) {
+                validity = false;
+                System.out.println(String.format("ERROR - Apex can only have virtual resources - %s", card.getTitle()));
             }
         }
 

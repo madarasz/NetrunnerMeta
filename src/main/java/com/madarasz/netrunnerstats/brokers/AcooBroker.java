@@ -44,6 +44,9 @@ public class AcooBroker {
 
     @Autowired
     TitleGuesser titleGuesser;
+    
+    @Autowired
+    HttpBroker httpBroker;
 
 
     /**
@@ -53,10 +56,10 @@ public class AcooBroker {
      */
     public Deck readDeck(int id) {
         String url = deckUrlFromId(id);
-        HttpBroker.parseHtml(url);
-        Deck resultDeck = parseDeck(HttpBroker.linesFromHtml(JSOUP_DECK_CARDS));
+        httpBroker.parseHtml(url);
+        Deck resultDeck = parseDeck(httpBroker.linesFromHtml(JSOUP_DECK_CARDS));
 
-        String titlebar = HttpBroker.textFromHtml(JSOUP_TITLE);
+        String titlebar = httpBroker.textFromHtml(JSOUP_TITLE);
         String[] titleparts = titlebar.split(", \\d*\\w* | - ");
         try {
             resultDeck.setName(titleparts[2]);
@@ -115,15 +118,15 @@ public class AcooBroker {
      */
     public Tournament readTournament(int tournamentId) {
         String url = tournamentUrlFromId(tournamentId);
-        HttpBroker.parseHtml(url);
-        String titlebar = HttpBroker.textFromHtml(JSOUP_TITLE);
+        httpBroker.parseHtml(url);
+        String titlebar = httpBroker.textFromHtml(JSOUP_TITLE);
         String[] titleparts = titlebar.split(" \\(|\\)");
-        String decription = HttpBroker.textFromHtml(JSOUP_TOURNAMENT_DESC);
+        String decription = httpBroker.textFromHtml(JSOUP_TOURNAMENT_DESC);
         int playerNumber = regExBroker.getNumberFromBeginning(decription);
         Date date = regExBroker.parseDate(titleparts[1]);
-        CardPack pool = cardPackRepository.findByName(HttpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL));
+        CardPack pool = cardPackRepository.findByName(httpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL));
         if (pool == null) {
-            System.out.println("ERROR - no card pack found: " + HttpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL) + " // tournament id: " + tournamentId);
+            System.out.println("ERROR - no card pack found: " + httpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL) + " // tournament id: " + tournamentId);
         }
         return new Tournament(tournamentId, titleparts[0], date, pool, url, playerNumber);
     }
@@ -136,8 +139,8 @@ public class AcooBroker {
      */
     public Set<Integer> loadTournamentIdsFromUrl(String url, boolean filterempty) {
         Set<Integer> result = new HashSet<Integer>();
-        HttpBroker.parseHtml(url);
-        Elements rows = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_LIST);
+        httpBroker.parseHtml(url);
+        Elements rows = httpBroker.elementsFromHtml(JSOUP_TOURNAMENT_LIST);
         for (Element row : rows) {
             int decknumber = 0;
             String decknumbertext = "";
@@ -158,9 +161,9 @@ public class AcooBroker {
     }
 
     public String getTournamentPageNextLink(String url) {
-        HttpBroker.parseHtml(url);
+        httpBroker.parseHtml(url);
         String result = "";
-        Elements links = HttpBroker.elementsFromHtml(JSOUP_PAGINATION);
+        Elements links = httpBroker.elementsFromHtml(JSOUP_PAGINATION);
         for (Element link : links) {
             if (link.text().equals("next »")) {
                 result = link.attr("href");
@@ -179,16 +182,16 @@ public class AcooBroker {
      * @return number of defined indentities
      */
     public int getTournamentIdentityCount(String url) {
-        HttpBroker.parseHtml(url);
-        Elements lists = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_RANKLIST);
+        httpBroker.parseHtml(url);
+        Elements lists = httpBroker.elementsFromHtml(JSOUP_TOURNAMENT_RANKLIST);
 
         // just swiss
         if (lists.size() == 1) {
-            Elements ids = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK_ID);
+            Elements ids = httpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK_ID);
             return ids.size();
         // swiss + top X
         } else {
-            Elements ids = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK_ID2);
+            Elements ids = httpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK_ID2);
             return ids.size();
         }
     }
@@ -201,18 +204,18 @@ public class AcooBroker {
      */
     public Set<Standing> loadTournamentStandingsAndDecks(String url, Tournament tournament) {
         Set<Standing> standings = new HashSet<Standing>();
-        HttpBroker.parseHtml(url);
-        Elements lists = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_RANKLIST);
+        httpBroker.parseHtml(url);
+        Elements lists = httpBroker.elementsFromHtml(JSOUP_TOURNAMENT_RANKLIST);
 
         // extract top X or all swiss (if there was no top X)
-        Elements rows = HttpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK_ROW);
+        Elements rows = httpBroker.elementsFromHtml(JSOUP_TOURNAMENT_DECK_ROW);
         standings.addAll(standingsFromRows(tournament, rows));
 
         // extract top X minus swiss
         if (lists.size() == 2) {
-            HttpBroker.parseHtml(url);
+            httpBroker.parseHtml(url);
             int toskip = standings.size() / 2 - 1;  // skipping top X results from swiss
-            rows = HttpBroker.elementsFromHtml(String.format(JSOUP_TOURNAMENT_DECK_ROW2, toskip));
+            rows = httpBroker.elementsFromHtml(String.format(JSOUP_TOURNAMENT_DECK_ROW2, toskip));
             standings.addAll(standingsFromRows(tournament, rows));
         }
         return standings;

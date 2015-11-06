@@ -6,6 +6,7 @@ import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,13 +18,10 @@ import java.util.ArrayList;
  * Loading from http and parsing html
  * Created by madarasz on 05/06/15.
  */
-// TODO: refactor as component
-public final class HttpBroker {
+@Component
+public class HttpBroker {
 
-    private static Document document;
-
-    private HttpBroker() {
-    }
+    private Document document;
 
     /**
      * Reads contents from URL
@@ -31,7 +29,7 @@ public final class HttpBroker {
      * @param fixJson whether to add JSON fix to contents
      * @return
      */
-    public static String readFromUrl(String urlString, boolean fixJson) {
+    public String readFromUrl(String urlString, boolean fixJson) {
         BufferedReader reader = null;
         try {
             URL url = new URL(urlString);
@@ -64,7 +62,7 @@ public final class HttpBroker {
         }
     }
 
-    public static void parseHtml(String url) {
+    public void parseHtml(String url) {
         int retry = 0;
         boolean readok = true;
         do {
@@ -82,23 +80,23 @@ public final class HttpBroker {
         } while ((!readok) && (retry < 5));
     }
 
-    public static String textFromHtml(String jsoupExpression) {
+    public String textFromHtml(String jsoupExpression) {
         return document.select(jsoupExpression).first().text().replaceAll("\\p{C}", "");    // removing unicode characters as well
     }
 
-    public static String htmlFromHtml(String jsoupExpression) {
+    public String htmlFromHtml(String jsoupExpression) {
         return document.select(jsoupExpression).first().html().replaceAll("\\p{C}", "");    // removing unicode characters as well
     }
 
-    public static String attirubuteFromHhtml(String jsoupExpression, String attribute) {
+    public String attirubuteFromHhtml(String jsoupExpression, String attribute) {
         return document.select(jsoupExpression).first().attr(attribute);
     }
 
-    public static Elements elementsFromHtml(String jsoupExpression) {
+    public Elements elementsFromHtml(String jsoupExpression) {
         return document.select(jsoupExpression);
     }
 
-    public static ArrayList<String> linesFromHtml(String jsoupExpression) {
+    public ArrayList<String> linesFromHtml(String jsoupExpression) {
         ArrayList<String> result = new ArrayList<String>();
         Elements elements = document.select(jsoupExpression);
         for(Element element : elements) {
@@ -107,7 +105,7 @@ public final class HttpBroker {
         return result;
     }
 
-    public static int countFromHtml(String jsoupExpression) {
+    public int countFromHtml(String jsoupExpression) {
         Elements elements = document.select(jsoupExpression);
         return elements.size();
     }

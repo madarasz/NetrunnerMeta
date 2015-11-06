@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.jsoup.nodes.Element;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,6 +42,9 @@ public class StimhackBroker {
 
     @Autowired
     CardPackRepository cardPackRepository;
+    
+    @Autowired
+    HttpBroker httpBroker;
 
     /**
      * Reads Deck information from Acoo. Also adds deck metadata.
@@ -51,12 +52,12 @@ public class StimhackBroker {
      * @return deck
      */
     public Set<Deck> readDeck(String url) {
-        HttpBroker.parseHtml(url);
-        String info = HttpBroker.htmlFromHtml(HTML_INFO_BOX);
+        httpBroker.parseHtml(url);
+        String info = httpBroker.htmlFromHtml(HTML_INFO_BOX);
         String[] infoparts = info.split(SPLITTER_INFO);
         String playerName = infoparts[1];
-        String firstDeck = HttpBroker.htmlFromHtml(HTML_FIRST_DECK);
-        String secondDeck = HttpBroker.htmlFromHtml(HTML_SECOND_DECK);
+        String firstDeck = httpBroker.htmlFromHtml(HTML_FIRST_DECK);
+        String secondDeck = httpBroker.htmlFromHtml(HTML_SECOND_DECK);
 
         Set<Deck> resultDecks = new HashSet<Deck>();
         resultDecks.add(parseDeck(firstDeck, playerName, url + "#1"));
@@ -142,18 +143,18 @@ public class StimhackBroker {
      */
     public Tournament readTournament(String url) {
         // gather info
-        HttpBroker.parseHtml(url);
-        String titletext = HttpBroker.textFromHtml(HTML_TITLE);
+        httpBroker.parseHtml(url);
+        String titletext = httpBroker.textFromHtml(HTML_TITLE);
         String name = titletext.split("\\(")[0].trim();
         int playernumber = regExBroker.getNumberFromBeginning(titletext);
 
         // get date
-        String datestring = HttpBroker.htmlFromHtml(HTML_INFO_BOX).split(SLITTER_DATE)[1];
+        String datestring = httpBroker.htmlFromHtml(HTML_INFO_BOX).split(SLITTER_DATE)[1];
         Date date = regExBroker.parseDate(datestring);
 
         // get cardpool
         CardPack cardpool = new CardPack();
-        Elements tags = HttpBroker.elementsFromHtml(HTML_TAGS);
+        Elements tags = httpBroker.elementsFromHtml(HTML_TAGS);
         for (Element tag : tags) {
             cardpool = cardPackRepository.findByName(tag.text());
             if (cardpool != null) {
@@ -167,8 +168,8 @@ public class StimhackBroker {
 
     public Set<String> getTournamentURLs(String cardpoolName) {
         Set<String> result = new HashSet<String>();
-        HttpBroker.parseHtml(URL_TOURNAMENTS);
-        Elements rows = HttpBroker.elementsFromHtml("tbody.list > tr");
+        httpBroker.parseHtml(URL_TOURNAMENTS);
+        Elements rows = httpBroker.elementsFromHtml("tbody.list > tr");
         for (Element row : rows) {
             if ((cardpoolName.equals("")) || (row.child(0).text().equals(cardpoolName))) {
                 result.add(row.child(1).child(0).attr("href"));
