@@ -119,6 +119,9 @@ public class Application implements CommandLineRunner {
                 case stimhacktournament:
                     operations.loadStimhackTournament("http://stimhack.com/gnk-madison-wi-14-players/");
                     break;
+                case stimhackpacktournament:
+                    operations.loadStimhackPackTournaments("The Source");
+                    break;
             }
 
             tx.success();
@@ -135,7 +138,7 @@ public class Application implements CommandLineRunner {
         cleandb, checkdata, loadnetrunnerdb, logdbcount,
         netrunnerdbloaddeck,
         acooloaddeck, acooloadtournament, acooloadtournamentdecks, acooloadpage, acooall,
-        stimhackdecks, stimhacktournament,
+        stimhackdecks, stimhacktournament, stimhackpacktournament,
         archetype, getpackstats, getallstats, getpackmath,
         none
     }

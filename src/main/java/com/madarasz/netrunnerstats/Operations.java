@@ -168,6 +168,7 @@ public class Operations {
             System.out.println("Tournament is already in DB. Not saving!");
             return exists;
         } else {
+            System.out.println("Parsing tournament at: " + url);
             // decks
             Set<Deck> decks = loadStimhackDecks(url);
             // tournament
@@ -182,6 +183,22 @@ public class Operations {
             tournamentRepository.save(tournament);
             return tournament;
         }
+    }
+
+    /**
+     * Loads tournament urls from stimhack.com specific to a cardpool legality.
+     * Does not work on the "Older lists" part. (Works from "The source" card pack.)
+     * @param cardpoolName name of card pack
+     * @return list of URLs
+     */
+    public Set<Tournament> loadStimhackPackTournaments(String cardpoolName) {
+        Set<Tournament> result = new HashSet<Tournament>();
+        Set<String> urls = stimhackBroker.getTournamentURLs(cardpoolName);
+        System.out.println(String.format("%d stimhack tournaments found for cardpool: %s", urls.size(), cardpoolName));
+        for (String url : urls) {
+            result.add(loadStimhackTournament(url));
+        }
+        return result;
     }
 
     /**

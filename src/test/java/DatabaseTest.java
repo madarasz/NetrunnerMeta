@@ -139,11 +139,12 @@ public class DatabaseTest {
         decks.addAll(operations.loadStimhackDecks("http://stimhack.com/gnk-waylands-forge-birmingham-uk-21-players/"));   // meteor import
         decks.addAll(operations.loadStimhackDecks("http://stimhack.com/anr-pro-circuit-san-antonio-10-players/"));   // net deck import
         decks.addAll(operations.loadStimhackDecks("http://stimhack.com/the-psi-games-44-players/"));   // acoo import
+        decks.addAll(operations.loadStimhackDecks("http://stimhack.com/casual-orebro-sweden-11-players/"));   // newest
 
         // count check
         operations.logDBCount();
-        Assert.assertEquals("Deck count wrong after deck imports.", template.count(Deck.class) - decknum, 12);
-        Assert.assertTrue("Deck-card relationship count is 0 after deck imports.", template.count(DeckHasCard.class) >= 276);
+        Assert.assertEquals("Deck count wrong after deck imports.", template.count(Deck.class) - decknum, 14);
+        Assert.assertTrue("Deck-card relationship count is 0 after deck imports.", template.count(DeckHasCard.class) >= 320);
 
         // validity check
         for (Deck deck : decks) {
@@ -154,7 +155,7 @@ public class DatabaseTest {
         operations.loadAcooDeck(10890);
         operations.loadNetrunnerDbDeck(20162);
         operations.loadStimhackDecks("http://stimhack.com/gnk-game-kastle-santa-clara-11-players/");
-        Assert.assertEquals("Deck count wrong after deck reimports.", template.count(Deck.class) - decknum, 12);
+        Assert.assertEquals("Deck count wrong after deck reimports.", template.count(Deck.class) - decknum, 14);
     }
 
     @Test
@@ -272,6 +273,26 @@ public class DatabaseTest {
         Assert.assertEquals("No new deck should be readded", decknum2, decknum3);
         Assert.assertTrue("Tournament number not OK after readd", tournamentnum3 - tournamentnum2 >= 18);
         Assert.assertTrue("Standing number not OK after readd", standingsnum3 - standingsnum2 >= 464);
+    }
+
+    @Test
+    public void loadStimhackTournamentPage() {
+        long decknum = template.count(Deck.class);
+        long tournamentnum = template.count(Tournament.class);
+        long standingsnum = template.count(Standing.class);
+
+//        operations.loadStimhackPackTournaments("The Source"); TODO
+        operations.loadStimhackPackTournaments("The Universe of Tomorrow");
+        operations.logDBCount();
+
+        long decknum2 = template.count(Deck.class);
+        long tournamentnum2 = template.count(Tournament.class);
+        long standingsnum2 = template.count(Standing.class);
+        Assert.assertTrue("Not enough decks after tournament page import",
+                decknum2 - decknum >= 2 * (tournamentnum2 - tournamentnum));
+        Assert.assertTrue("Not enough tournaments after tournament page import", tournamentnum2 - tournamentnum >= 23);
+        Assert.assertTrue("Not enough standings after tournament page import",
+                standingsnum2 - standingsnum == decknum2 - decknum);
     }
 }
 

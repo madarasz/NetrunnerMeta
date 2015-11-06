@@ -176,16 +176,21 @@ public class Deck {
 
             // agenda count
             if (card.getType_code().equals("agenda")) {
-                agendaCount += card.getAgendapoints();
+                agendaCount += card.getAgendapoints() * quantity;
             }
         }
 
         // agenda count
-        if ((side.equals("corp")) && (agendaCount >= cards.size()/5*2+2) && (agendaCount <= cards.size()/5*2+3)) {
-            validity = false;
-            System.out.println(String.format("ERROR - deck size: %d - agenda count: %d", cards.size(), agendaCount));
+        if (side.equals("corp")) {
+            int size = (int) Math.floor((decksize - 40) / 5);
+            int top = size * 2 + 19;
+            int bottom = size * 2 + 18;
+            if ((agendaCount < bottom) || (agendaCount > top)) {
+                validity = false;
+                System.out.println(String.format("ERROR - deck size: %d - agenda count: %d (%d-%d)",
+                        decksize, agendaCount, bottom, top));
+            }
         }
-
         return validity;
     }
 

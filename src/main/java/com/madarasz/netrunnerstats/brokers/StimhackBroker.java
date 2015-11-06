@@ -25,6 +25,17 @@ import java.util.Set;
 @Component
 public class StimhackBroker {
 
+    public static final String HTML_INFO_BOX = "div.wc-shortcodes-box";
+    public static final String HTML_FIRST_DECK = "div.wc-shortcodes-column-first";
+    public static final String HTML_SECOND_DECK = "div.wc-shortcodes-column-last";
+    public static final String HTML_LINE_BREAK = "<br class=\"break\">|</p><p>";
+    public static final String HTML_TAGS = "span.footer-tags > a";
+    public static final String HTML_TITLE = "h1.entry-title";
+    public static final String SPLITTER_INFO = ": |</strong>";
+    public static final String SLITTER_CARD_NAME = "^\\dx? | •| \\(";
+    public static final String SLITTER_DATE = "Date: ";
+    public static final String URL_TOURNAMENTS = "http://stimhack.com/tournament-decklists/";
+
     @Autowired
     RegExBroker regExBroker;
 
@@ -43,11 +54,11 @@ public class StimhackBroker {
      */
     public Set<Deck> readDeck(String url) {
         HttpBroker.parseHtml(url);
-        String info = HttpBroker.htmlFromHtml("div.wc-shortcodes-box");
-        String[] infoparts = info.split(": |</strong>");
+        String info = HttpBroker.htmlFromHtml(HTML_INFO_BOX);
+        String[] infoparts = info.split(SPLITTER_INFO);
         String playerName = infoparts[1];
-        String firstDeck = HttpBroker.htmlFromHtml("div.wc-shortcodes-column-first");
-        String secondDeck = HttpBroker.htmlFromHtml("div.wc-shortcodes-column-last");
+        String firstDeck = HttpBroker.htmlFromHtml(HTML_FIRST_DECK);
+        String secondDeck = HttpBroker.htmlFromHtml(HTML_SECOND_DECK);
 
         Set<Deck> resultDecks = new HashSet<Deck>();
         resultDecks.add(parseDeck(firstDeck, playerName, url + "#1"));
@@ -63,28 +74,33 @@ public class StimhackBroker {
      */
     public Deck parseDeck(String text, String playername, String url) {
 
-        String[] lines = text.split("<br class=\"break\">");
+        String[] lines = text.split(HTML_LINE_BREAK);
         String decktitle = "";
-        String identity = "";
+        String identitytext = "";
         try {
             decktitle = Jsoup.parse(lines[0]).text();
-            identity = Jsoup.parse(lines[2]).text().split(" \\(")[0];
+            identitytext = Jsoup.parse(lines[2]).text().split(" \\(")[0];
         } catch (Exception e) {
             System.out.println("ERROR - cannot parse deck title or identity- url: " + url);
         }
 
         // acoo import case
-        if (identity.equals("")) {
+        if (identitytext.equals("")) {
             decktitle = "";
-            identity = Jsoup.parse(lines[1]).text().split(" \\(")[0];
+            identitytext = Jsoup.parse(lines[1]).text().split(" \\(")[0];
         }
-        identity = regExBroker.sanitizeText(identity);
+        identitytext = regExBroker.sanitizeText(identitytext);
 
         Deck result = new Deck();
-        result.setIdentity(cardRepository.findByTitle(identity));
-        if (result.getIdentity() == null) {
-            System.out.println("ERROR - can't parse identity: " + identity);
+        Card identity = cardRepository.findByTitle(identitytext);
+        if (identity == null) {
+            identitytext = Jsoup.parse(lines[0]).text().split(" \\(")[0];
+            identity = cardRepository.findByTitle(identitytext);
         }
+        if (identity == null) {
+            System.out.println("ERROR - can't parse identity: " + identitytext);
+        }
+        result.setIdentity(identity);
         result.setName(decktitle);
         result.setPlayer(playername);
         result.setUrl(url);
@@ -96,16 +112,17 @@ public class StimhackBroker {
 
             if (quantity > 0) {
                 // read card
-                String code = regExBroker.getSecondQuantity(line);
-                Card card = cardRepository.findByCode(code);
+                Card card = null;
                 String cardtitle = "";
+                String[] chop = Jsoup.parse(line).text().split(SLITTER_CARD_NAME);
+                if (chop.length > 1) {
+                    cardtitle = regExBroker.sanitizeText(chop[1].trim());
+                    card = cardRepository.findByTitle(cardtitle);
+                }
 
                 if (card == null) {
-                    String[] chop = Jsoup.parse(line).text().split("^\\dx? | •| \\(");
-                    if (chop.length > 1) {
-                        cardtitle = regExBroker.sanitizeText(chop[1]);
-                        card = cardRepository.findByTitle(cardtitle);
-                    }
+                    String code = regExBroker.getSecondQuantity(line);
+                    card = cardRepository.findByCode(code);
                 }
 
                 if (card != null) {
@@ -128,15 +145,15 @@ public class StimhackBroker {
     public Tournament readTournament(String url) {
         // gather info
         HttpBroker.parseHtml(url);
-        String titletext = HttpBroker.textFromHtml("h1.entry-title");
+        String titletext = HttpBroker.textFromHtml(HTML_TITLE);
         String name = titletext.split("\\(")[0].trim();
         int playernumber = regExBroker.getNumberFromBeginning(titletext);
 
         // get date
         Date date = null;
-        String datestring = HttpBroker.htmlFromHtml("div.wc-shortcodes-box").split("Date: ")[1];
+        String datestring = HttpBroker.htmlFromHtml(HTML_INFO_BOX).split(SLITTER_DATE)[1];
         try {
-            date = format.parse(datestring);
+            date = format.parse(datestring); // add date format: MMMM dd, yyyy / mm/dd/yyyy
         } catch (Exception e) {
             System.out.println("ERROR - cannot parse date from: " + datestring + " // tournament url: " + url);
             date = new Date(0);
@@ -144,7 +161,7 @@ public class StimhackBroker {
 
         // get cardpool
         CardPack cardpool = new CardPack();
-        Elements tags = HttpBroker.elementsFromHtml("span.footer-tags > a");
+        Elements tags = HttpBroker.elementsFromHtml(HTML_TAGS);
         for (Element tag : tags) {
             cardpool = cardPackRepository.findByName(tag.text());
             if (cardpool != null) {
@@ -154,5 +171,18 @@ public class StimhackBroker {
 
         Tournament tournament = new Tournament(-1, name, date, cardpool, url, playernumber);
         return tournament;
+    }
+
+    public Set<String> getTournamentURLs(String cardpoolName) {
+        Set<String> result = new HashSet<String>();
+        HttpBroker.parseHtml(URL_TOURNAMENTS);
+        Elements rows = HttpBroker.elementsFromHtml("tbody.list > tr");
+        for (Element row : rows) {
+            if (row.child(0).text().equals(cardpoolName)) {
+                result.add(row.child(1).child(0).attr("href"));
+            }
+        }
+        return result;
+
     }
 }
