@@ -4,13 +4,11 @@ import com.madarasz.netrunnerstats.DOs.*;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
 import com.madarasz.netrunnerstats.DRs.DeckRepository;
-import com.madarasz.netrunnerstats.DRs.StandingRepository;
+import com.madarasz.netrunnerstats.helper.TitleGuesser;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -31,7 +29,6 @@ public class AcooBroker {
     private final static String JSOUP_TOURNAMENT_DECK_ID = "div.rank-list > table > tbody > tr > td > img";
     private final static String JSOUP_TOURNAMENT_DECK_ID2 = "div.rank-list:gt(0) > table > tbody > tr > td > img";
     private final static String JSOUP_TOURNAMENT_RANKLIST = "div.rank-list";
-    private final static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     RegExBroker regExBroker;
@@ -46,7 +43,8 @@ public class AcooBroker {
     DeckRepository deckRepository;
 
     @Autowired
-    StandingRepository standingRepository;
+    TitleGuesser titleGuesser;
+
 
     /**
      * Reads Deck information from Acoo. Also adds deck metadata.
@@ -94,7 +92,7 @@ public class AcooBroker {
             String title = regExBroker.getCardFromLine(line);
             Card card = cardRepository.findByTitle(title);
             if (card == null) {
-                title = alternateTitle(title);
+                title = titleGuesser.alternateTitle(title);
                 card = cardRepository.findByTitle(title);
                 if (card == null) {
                     System.out.println("ERROR - no such card");
@@ -122,13 +120,7 @@ public class AcooBroker {
         String[] titleparts = titlebar.split(" \\(|\\)");
         String decription = HttpBroker.textFromHtml(JSOUP_TOURNAMENT_DESC);
         int playerNumber = regExBroker.getNumberFromBeginning(decription);
-        Date date = null;
-        try {
-            date = format.parse(titleparts[1]);
-        } catch (Exception e) {
-            System.out.println("ERROR - cannot parse date from: " + titlebar + " // tournament id: " + tournamentId);
-            date = new Date(0);
-        }
+        Date date = regExBroker.parseDate(titleparts[1]);
         CardPack pool = cardPackRepository.findByName(HttpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL));
         if (pool == null) {
             System.out.println("ERROR - no card pack found: " + HttpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL) + " // tournament id: " + tournamentId);
@@ -450,16 +442,4 @@ public class AcooBroker {
         return identityName;
     }
 
-    // TODO: refactor this to another class
-    private String alternateTitle(String title) {
-        String newtitle = "";
-        switch (title) {
-            case "Haarpsichord Studios: Entertainement Unleached" :
-                newtitle = "Haarpsichord Studios: Entertainment Unleashed";
-                break;
-            default:
-                System.out.println(String.format("ERROR - Unknown card title: %s", title));
-        }
-        return newtitle;
-    }
 }

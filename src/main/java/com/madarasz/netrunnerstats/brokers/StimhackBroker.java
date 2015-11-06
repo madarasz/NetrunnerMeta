@@ -25,16 +25,16 @@ import java.util.Set;
 @Component
 public class StimhackBroker {
 
-    public static final String HTML_INFO_BOX = "div.wc-shortcodes-box";
-    public static final String HTML_FIRST_DECK = "div.wc-shortcodes-column-first";
-    public static final String HTML_SECOND_DECK = "div.wc-shortcodes-column-last";
-    public static final String HTML_LINE_BREAK = "<br class=\"break\">|</p><p>";
-    public static final String HTML_TAGS = "span.footer-tags > a";
-    public static final String HTML_TITLE = "h1.entry-title";
-    public static final String SPLITTER_INFO = ": |</strong>";
-    public static final String SLITTER_CARD_NAME = "^\\dx? | •| \\(";
-    public static final String SLITTER_DATE = "Date: ";
-    public static final String URL_TOURNAMENTS = "http://stimhack.com/tournament-decklists/";
+    private static final String HTML_INFO_BOX = "div.wc-shortcodes-box";
+    private static final String HTML_FIRST_DECK = "div.wc-shortcodes-column-first";
+    private static final String HTML_SECOND_DECK = "div.wc-shortcodes-column-last";
+    private static final String HTML_LINE_BREAK = "<br class=\"break\">|</p><p>";
+    private static final String HTML_TAGS = "span.footer-tags > a";
+    private static final String HTML_TITLE = "h1.entry-title";
+    private static final String SPLITTER_INFO = ": |</strong>";
+    private static final String SLITTER_CARD_NAME = "^\\dx? | •| \\(";
+    private static final String SLITTER_DATE = "Date: ";
+    private static final String URL_TOURNAMENTS = "http://stimhack.com/tournament-decklists/";
 
     @Autowired
     RegExBroker regExBroker;
@@ -44,8 +44,6 @@ public class StimhackBroker {
 
     @Autowired
     CardPackRepository cardPackRepository;
-
-    private final static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * Reads Deck information from Acoo. Also adds deck metadata.
@@ -150,14 +148,8 @@ public class StimhackBroker {
         int playernumber = regExBroker.getNumberFromBeginning(titletext);
 
         // get date
-        Date date = null;
         String datestring = HttpBroker.htmlFromHtml(HTML_INFO_BOX).split(SLITTER_DATE)[1];
-        try {
-            date = format.parse(datestring); // add date format: MMMM dd, yyyy / mm/dd/yyyy
-        } catch (Exception e) {
-            System.out.println("ERROR - cannot parse date from: " + datestring + " // tournament url: " + url);
-            date = new Date(0);
-        }
+        Date date = regExBroker.parseDate(datestring);
 
         // get cardpool
         CardPack cardpool = new CardPack();
@@ -178,7 +170,7 @@ public class StimhackBroker {
         HttpBroker.parseHtml(URL_TOURNAMENTS);
         Elements rows = HttpBroker.elementsFromHtml("tbody.list > tr");
         for (Element row : rows) {
-            if (row.child(0).text().equals(cardpoolName)) {
+            if ((cardpoolName.equals("")) || (row.child(0).text().equals(cardpoolName))) {
                 result.add(row.child(1).child(0).attr("href"));
             }
         }

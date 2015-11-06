@@ -9,6 +9,7 @@ import com.madarasz.netrunnerstats.brokers.StimhackBroker;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -294,6 +296,18 @@ public class DatabaseTest {
         Assert.assertTrue("Not enough standings after tournament page import",
                 standingsnum2 - standingsnum == decknum2 - decknum);
     }
+
+    @Test
+    @Ignore
+    // TODO
+    public void loadALLStimhackTournaments() {
+        operations.loadStimhackPackTournaments("");
+        List<Deck> decks = deckRepository.getAllDecks();
+        for (Deck deck : decks) {
+            Assert.assertTrue("Imported deck not valid: " + deck.getUrl(), deck.isValidDeck());
+        }
+    }
+
 }
 
 //    @Test

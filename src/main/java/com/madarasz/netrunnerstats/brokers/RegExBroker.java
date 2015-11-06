@@ -1,6 +1,10 @@
 package com.madarasz.netrunnerstats.brokers;
 
 import org.springframework.stereotype.Component;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,6 +16,7 @@ import java.util.regex.Pattern;
 public class RegExBroker {
     private static final String REGEX_CARD_QUANTITY = "^\\d{1}x?";
     private static final String REGEX_FIRST_NUMBER = "\\d+";
+    private static final String[] DATE_FORMATS = {"yyyy-MM-dd", "MMMM dd, yyyy", "MM/dd/yyyy", "dd.MM.yyyy"};
 
     public int getCardQuantity(String line) {
         Pattern pattern = Pattern.compile(REGEX_CARD_QUANTITY);
@@ -59,6 +64,18 @@ public class RegExBroker {
 
     public String sanitizeText(String text) {
         return text.replaceAll("“", "\"").replaceAll("”", "\"");
+    }
+
+    public Date parseDate(String datetext) {
+        for (String format : DATE_FORMATS) {
+            try {
+                return new SimpleDateFormat(format).parse(datetext);
+            } catch (ParseException e) {
+            }
+        }
+
+        System.out.println("ERROR - could not format date: " + datetext);
+        return new Date(0);
     }
 
 }
