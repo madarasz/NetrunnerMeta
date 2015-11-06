@@ -203,16 +203,23 @@ public class Deck {
         return validity;
     }
 
-
-    // TODO: reimplement
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public boolean equals(Deck deck) {
+        if (!identity.getCode().equals(deck.getIdentity().getCode())) {
+            return false;
+        }
+        Set<DeckHasCard> deck1 = new HashSet<DeckHasCard>(cards);
+        Set<DeckHasCard> deck2 = new HashSet<DeckHasCard>(deck.getCards());
+        for (DeckHasCard hasCard : cards) {
+            for (DeckHasCard hasCard2 : deck.getCards()) {
+                if ((hasCard.getCard().getCode().equals(hasCard2.getCard().getCode())) &&
+                        (hasCard.getQuantity() == hasCard2.getQuantity())) {
+                    deck1.remove(hasCard);
+                    deck2.remove(hasCard2);
+                }
+            }
+        }
+        return ((deck1.isEmpty())) &&
+                (deck2.isEmpty());
     }
 
     @Override

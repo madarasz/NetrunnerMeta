@@ -46,7 +46,7 @@ public class Card {
     public Card() {
     }
 
-    public Card(String code, String title, String type_code, String subtype_code, String text, String faction_code, String side_code, boolean uniqueness, boolean limited,
+    public Card(String code, String title, String type_code, String subtype_code, String text, String faction_code, String side_code, boolean uniqueness, int limited,
                 CardPack cardPack, int baselink, int influencelimit, int minimumdecksize, int cost, int factioncost, int memoryunits, int strength, int advancementcost,
                 int agendapoints, int trash) {
         this.code = code;
@@ -57,7 +57,7 @@ public class Card {
         this.faction_code = faction_code;
         this.side_code = side_code;
         this.uniqueness = uniqueness;
-        this.limited = limited;
+        this.limited = limited == 1;
         this.cardPack = cardPack;
         this.baselink = baselink;
         this.influencelimit = influencelimit;

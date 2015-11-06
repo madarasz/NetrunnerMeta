@@ -307,6 +307,14 @@ public class DatabaseTest {
         }
     }
 
+    @Test
+    public void deckDuplication() {
+        operations.loadStimhackDecks("http://stimhack.com/national-warsaw-poland-72-players/");
+        Deck stimhack = deckRepository.findByUrl("http://stimhack.com/national-warsaw-poland-72-players/#1");
+        Deck netrunnerdb = operations.loadNetrunnerDbDeck(25678);
+        Assert.assertTrue("Deck duplication not detected.", stimhack.equals(netrunnerdb));
+    }
+
 }
 
 //    @Test
