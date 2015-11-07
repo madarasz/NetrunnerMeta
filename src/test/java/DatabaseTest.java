@@ -308,11 +308,24 @@ public class DatabaseTest {
     }
 
     @Test
-    public void deckDuplication() {
+    public void dataValidityChecks() {
+        // deck duplication
         operations.loadStimhackDecks("http://stimhack.com/national-warsaw-poland-72-players/");
+        operations.loadStimhackDecks("http://stimhack.com/store-champs-gamespace-kashiwagi-tokyo-9-players/");
         Deck stimhack = deckRepository.findByUrl("http://stimhack.com/national-warsaw-poland-72-players/#1");
+        Deck stimhack2 = deckRepository.findByUrl("http://stimhack.com/store-champs-gamespace-kashiwagi-tokyo-9-players/#1");
         Deck netrunnerdb = operations.loadNetrunnerDbDeck(25678);
         Assert.assertTrue("Deck duplication not detected.", stimhack.equals(netrunnerdb));
+        Assert.assertFalse("Deck duplication incorrectly detected.", stimhack2.equals(netrunnerdb));
+
+        // tournament cardpool correction
+        Tournament tournament =
+                operations.loadStimhackTournament("http://stimhack.com/store-champs-gamespace-kashiwagi-tokyo-9-players/");
+        tournament.setCardpool(cardPackRepository.findByName("Old Hollywood"));
+        operations.checkDataValidity();
+        tournament = tournamentRepository.findByUrl("http://stimhack.com/store-champs-gamespace-kashiwagi-tokyo-9-players/");
+        Assert.assertEquals("Tournament cardpool correction not working",
+                "The Universe of Tomorrow", tournament.getCardpool().getName());
     }
 
 }

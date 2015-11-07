@@ -6,6 +6,7 @@ import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DOs.Tournament;
 import com.madarasz.netrunnerstats.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.DRs.CardRepository;
+import com.madarasz.netrunnerstats.helper.TitleGuesser;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ public class StimhackBroker {
     
     @Autowired
     HttpBroker httpBroker;
+
+    @Autowired
+    TitleGuesser titleGuesser;
 
     /**
      * Reads Deck information from Acoo. Also adds deck metadata.
@@ -122,6 +126,10 @@ public class StimhackBroker {
                 if (card == null) {
                     String code = regExBroker.getSecondQuantity(line);
                     card = cardRepository.findByCode(code);
+                }
+
+                if (card == null) {
+                    card = cardRepository.findByTitle(titleGuesser.alternateTitle(cardtitle));
                 }
 
                 if (card != null) {

@@ -1,5 +1,6 @@
 package com.madarasz.netrunnerstats.DOs;
 
+import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.*;
 
 import java.text.DateFormat;
@@ -22,7 +23,8 @@ public class Tournament {
     private int playerNumber;
     @Indexed(unique=true) private String url;
     @RelatedTo(type = "POOL") private @Fetch CardPack cardpool;
-    @RelatedTo(type = "IS_STANDING") @Fetch private Set<Standing> standings;  // TODO: is this needed? Standing has IN_TOURNAMENT
+    @RelatedTo(type = "IN_TOURNAMENT", direction = Direction.INCOMING) @Fetch
+    private Set<Standing> standings;
 
     public Tournament() {
     }
@@ -34,26 +36,7 @@ public class Tournament {
         this.cardpool = cardpool;
         this.url = url;
         this.playerNumber = playerNumber;
-//        standings = new HashSet<Standing>();
     }
-
-//    public Standing hasStanding(int rank, Card identity, boolean top_deck, boolean is_runner) {
-//        Standing standing = new Standing(this, rank, identity, top_deck, is_runner);
-//        this.standings.add(standing);
-//        return standing;
-//    }
-//
-//    public Standing hasStanding(int rank, Card identity, boolean top_deck, boolean is_runner, Deck deck) {
-//        Standing standing = new Standing(this, rank, identity, top_deck, is_runner, deck);
-//        this.standings.add(standing);
-//        return standing;
-//    }
-//
-//    public void hasStandings(Set<Standing> standings) {
-//        for (Standing standing : standings) {
-//            this.standings.add(standing);
-//        }
-//    }
 
     public int getId() {
         return id;
@@ -84,10 +67,6 @@ public class Tournament {
         this.cardpool = cardpool;
     }
 
-//    public Set<Standing> getStandings() {
-//        return standings;
-//    }
-
     public int getPlayerNumber() {
         return playerNumber;
     }
@@ -96,7 +75,6 @@ public class Tournament {
      * Tries to guess tournament cardpool based on cards used.
      * @return latest card pack used in tournament
      */
-    // TODO: Refactor on IS_STANDING vs IN_TOURNAMENT
     public CardPack guessCardPool() {
         CardPack result = new CardPack("dummy", "dummy", 0, 0);
         for (Standing standing : standings) {

@@ -75,6 +75,9 @@ public class Application implements CommandLineRunner {
     @Autowired
     Operations operations;
 
+    @Autowired
+    Statistics statistics;
+
     public void run(String... args) throws Exception {
 
         PossibleOperations op;
@@ -101,17 +104,18 @@ public class Application implements CommandLineRunner {
 //                    operations.cleanDB();
 //                    operations.loadNetrunnerDB();
                     operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/the-universe-of-tomorrow/1/", true, false);
-                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/old-hollywood/1/", true, false);
+//                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/old-hollywood/1/", true, false);
 //                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/anr-tournament-archive/1", true, false);
                     operations.logDBCount();
                     break;
                 case checkdata: operations.checkDataValidity(); break;
-                case getpackstats: operations.getPackStats("Breaker Bay"); break;
-                case getallstats:
-                    operations.getAllStats("The Universe of Tomorrow");
-                    operations.getAllStats("Old Hollywood");
+                case getpackstats:
+                    statistics.getPackStats("The Universe of Tomorrow");
                     break;
-                case getpackmath: operations.getPackMath("Near-Earth Hub: Broadcast Center", "Old Hollywood", true); break;
+                case getallstats:
+                    statistics.getAllStats();
+                    break;
+                case getpackmath: statistics.getPackMath("Near-Earth Hub: Broadcast Center", "Old Hollywood", true); break;
                 case cleandb: operations.cleanDB(); break;
                 case stimhackdecks:
                     operations.loadStimhackDecks("http://stimhack.com/national-warsaw-poland-72-players/");
@@ -120,7 +124,7 @@ public class Application implements CommandLineRunner {
                     operations.loadStimhackTournament("http://stimhack.com/gnk-madison-wi-14-players/");
                     break;
                 case stimhackpacktournament:
-                    operations.loadStimhackPackTournaments("The Source");
+                    operations.loadStimhackPackTournaments("The Universe of Tomorrow");
                     break;
             }
 
@@ -139,7 +143,7 @@ public class Application implements CommandLineRunner {
         netrunnerdbloaddeck,
         acooloaddeck, acooloadtournament, acooloadtournamentdecks, acooloadpage, acooall,
         stimhackdecks, stimhacktournament, stimhackpacktournament,
-        archetype, getpackstats, getallstats, getpackmath,
+        archetype, getpackstats, getpackmath, getallstats,
         none
     }
 }

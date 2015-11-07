@@ -13,4 +13,6 @@ public interface StatCounts{
     public String getCategory();
     @ResultColumn("count")
     public int getCount();
+    @ResultColumn("side_code")
+    public String getSideCode();
 }

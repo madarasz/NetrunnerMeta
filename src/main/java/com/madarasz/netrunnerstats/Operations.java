@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 /**
- * Handling all the possible operations of the application.
+ * Handling all database loading, manupilating operations of the application.
  * Created by istvan on 2015-06-11.
  */
 @Component
@@ -46,9 +46,6 @@ public class Operations {
 
     @Autowired
     Neo4jOperations template;
-
-    @Autowired
-    MultiDimensionalScaling multiDimensionalScaling;
 
     /**
      * Wipes DB clean
@@ -288,12 +285,15 @@ public class Operations {
      * Checks decks validity. Check tournament data. Calculate tournament cardpool validity if not defined.
      */
     public void checkDataValidity() {
+        logDBCount();
+        System.out.println("Checking data validity");
+
         // check decks
         List<Deck> decks = deckRepository.getAllDecks();
         for (Deck deck : decks) {
-            System.out.println(String.format("Checking validity: %s", deck.toString()));
+//            System.out.println(String.format("Checking validity: %s", deck.toString()));
             if (deck.isValidDeck()) {
-                System.out.println("OK");
+//                System.out.println("OK");
             }
         }
 
@@ -315,132 +315,18 @@ public class Operations {
             }
         }
 
-        // TODO: check for same decks
-    }
-
-    /**
-     * Log statistics about deck count for each identity for a cardpool legality
-     * @param cardpack name of last legal card pack
-     */
-    public void getPackStats(String cardpack) {
-        List<Card> identities = cardRepository.findIdentities();
-        for (Card card : identities) {
-            String identityTitle = card.getTitle();
-            int count = deckRepository.countByCardPackAndIdentity(cardpack, identityTitle);
-            if (count > 0) {
-                int topcount = deckRepository.countTopByCardPackAndIdentity(cardpack, identityTitle);
-                System.out.println(String.format("*** %s: %d (top: %d)", identityTitle, count, topcount));
+        // checking for duplicated decks
+        List<Deck> decks2 = new ArrayList<Deck>(decks);
+        for (Deck deck : decks) {
+            decks2.remove(deck);
+            for (Deck deck2 : decks2) {
+                if (deck.equals(deck2)) {
+                    System.out.println("WARNING - matching decks:");
+                    System.out.println(deck.toString());
+                    System.out.println(deck2.toString());
+                }
             }
         }
     }
 
-    /**
-     * Generate multidimensional scaling for identity and cardpool legality
-     * @param identityName filter for identity
-     * @param cardpackName filter for cardpool
-     * @param top filter for top decks
-     */
-    public void getPackMath(String identityName, String cardpackName, boolean top) {
-        ArrayList<Deck> decks;
-        if (top) {
-            decks = new ArrayList<Deck>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
-        } else {
-            decks = new ArrayList<Deck>(deckRepository.filterByIdentityAndCardPool(identityName, cardpackName));
-        }
-        System.out.println("*** Getting stats for NEH: " + decks.size());
-        double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
-        double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
-        for (int i = 0; i < decks.size(); i++) {
-            System.out.println(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
-        }
-    }
-
-    /**
-     * Log statistics about deck count for each identitz for all cardpool legality
-     */
-    public void getAllStats(String cardpackName) {
-        System.out.println("*********************************************************************");
-        System.out.println(String.format("Stats for cardpool: %s", cardpackName));
-        System.out.println("*********************************************************************");
-        List<StatCounts> stats = standingRepository.getTopIdentityStatsByCardPool(cardpackName);
-        for (StatCounts stat : stats) {
-            String identity = stat.getCategory();
-            System.out.println(String.format("%s - %d (%d)", identity, stat.getCount(), deckRepository.countTopByCardPackAndIdentity(cardpackName, identity)));
-        }
-
-        System.out.println("*********************************************************************");
-
-        stats = standingRepository.getTopFactionStatsByCardPool(cardpackName);
-        for (StatCounts stat : stats) {
-            String faction = stat.getCategory();
-            System.out.println(String.format("%s - %d (%d)", faction, stat.getCount(), deckRepository.countTopByCardPackAndFaction(cardpackName, faction)));
-        }
-//        List<Card> identities = cardRepository.findIdentities();
-//        long totalDecks = deckRepository.count();
-//        System.out.println("*********************************************************************");
-//        System.out.println(String.format("Number of all decks: %d", totalDecks));
-//        for (Factions faction : Factions.values()) {
-//            String factionName = faction.toString().replaceAll("_", "-");
-//            int factionCount = deckRepository.countByFaction(factionName);
-//            if (factionCount > 0) {
-//                System.out.println(String.format("* %s: %d", factionName, factionCount));
-//                for (Card card : identities) {
-//                    if (card.getFaction_code().equals(factionName)) {
-//                        int identityCount = deckRepository.countByIdentity(card);
-//                        if (identityCount > 0) {
-//                            System.out.println(String.format("** %s: %d", card.getTitle(), identityCount));
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        System.out.println("*********************************************************************");
-//
-//        for (CardCycles cardCycle : CardCycles.values()) {
-//            String cycleName = cardCycle.toString().replaceAll("_"," ");
-//            int cyclenumber = cardCycle.getCycleNumber();
-//            int cycleCount = deckRepository.countByCycle(cyclenumber);
-//            if (cycleCount > 0) {
-//                System.out.println(String.format("* %s: %d", cycleName, cycleCount));
-//                int number = 0;
-//                do {
-//                    number++;
-//                    CardPack cardPack = cardPackRepository.findByCyclenumberAndNumber(cyclenumber, number);
-//                    if (cardPack == null) {
-//                        break;
-//                    } else {
-//                        String cardPackName = cardPack.getName();
-//                        int cardpackCount = deckRepository.countByCardPack(cardPackName);
-//                        if (cardpackCount > 0) {
-//                            System.out.println(String.format("** %s: %d", cardPackName, cardpackCount));
-//                            getPackStats(cardPackName);
-//                        }
-//                    }
-//                } while(true);
-//            }
-//        }
-//
-//        System.out.println("*********************************************************************");
-    }
-
-    // TODO: put these enums somewhere general
-    public enum Factions {
-        neutral, shaper, criminal, anarch, jinteki, haas_bioroid, weyland_consortium, nbn;
-    }
-
-    public enum CardCycles {
-        Promos(0), Core_Set(1), Genesis(2), Creation_and_Control(3), Spin(4), Honor_and_Profit(5), Lunar(6),
-        Order_and_Chaos(7), SanSan(8), Data_and_Destiny(9);
-
-        private final int cycleNumber;
-
-        CardCycles(int cycleNumber) {
-            this.cycleNumber = cycleNumber;
-        }
-
-        public int getCycleNumber() {
-            return this.cycleNumber;
-        }
-    }
 }

@@ -16,8 +16,11 @@ public class TitleGuesser {
             case "Haarpsichord Studios: Entertainement Unleached" :
                 newtitle = "Haarpsichord Studios: Entertainment Unleashed";
                 break;
-            default:
-                System.out.println(String.format("ERROR - Unknown card title: %s", title));
+            case "Deja Vu" :
+                newtitle = "Déjà Vu";
+                break;
+//            default:
+//                System.out.println(String.format("ERROR - Unknown card title: %s", title));
         }
         return newtitle;
     }

@@ -200,6 +200,10 @@ public class Deck {
                         decksize, agendaCount, bottom, top));
             }
         }
+
+        if (!validity) {
+            System.out.println("Validity error occurred with deck: " + url);
+        }
         return validity;
     }
 
