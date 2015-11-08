@@ -4,9 +4,12 @@ import com.madarasz.netrunnerstats.DOs.Card;
 import com.madarasz.netrunnerstats.DOs.CardPack;
 import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DOs.result.StatCounts;
+import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.DRs.*;
 import com.madarasz.netrunnerstats.helper.Enums;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,14 +41,23 @@ public class Statistics {
     /**
      * Log statistics about deck count for each identity for all cardpool legality
      */
-    public void getPackStats(String cardpackName) {
+    public DPStatistics getPackStats(String cardpackName) {
+        DPStatistics statistics = new DPStatistics(cardpackName, deckRepository.countByCardPack(cardpackName), standingRepository.countByCardPool(cardpackName));
         System.out.println("*********************************************************************");
         System.out.println(String.format("Stats for cardpool: %s (%d decks, %d standings)",
                 cardpackName, deckRepository.countByCardPack(cardpackName), standingRepository.countByCardPool(cardpackName)));
         System.out.println("*********************************************************************");
+
         List<StatCounts> stats = standingRepository.getTopIdentityStatsByCardPool(cardpackName);
         for (StatCounts stat : stats) {
             String identity = stat.getCategory();
+            if (stat.getSideCode().equals("runner")) {
+                statistics.addRunnerIdentity(identity, stat.getCount(),
+                        deckRepository.countTopByCardPackAndIdentity(cardpackName, identity));
+            } else {
+                statistics.addCorpIdentity(identity, stat.getCount(),
+                        deckRepository.countTopByCardPackAndIdentity(cardpackName, identity));
+            }
             System.out.println(String.format("%s - %d (%d)", identity, stat.getCount(),
                     deckRepository.countTopByCardPackAndIdentity(cardpackName, identity)));
         }
@@ -55,10 +67,16 @@ public class Statistics {
         stats = standingRepository.getTopFactionStatsByCardPool(cardpackName);
         for (StatCounts stat : stats) {
             String faction = stat.getCategory();
+            if (stat.getSideCode().equals("runner")) {
+                statistics.addRunnerFaction(faction, stat.getCount(), deckRepository.countTopByCardPackAndFaction(cardpackName, faction));
+            } else {
+                statistics.addCorpFaction(faction, stat.getCount(), deckRepository.countTopByCardPackAndFaction(cardpackName, faction));
+            }
             System.out.println(String.format("%s - %d (%d)", faction, stat.getCount(), deckRepository.countTopByCardPackAndFaction(cardpackName, faction)));
         }
 
         System.out.println("*********************************************************************");
+        return statistics;
     }
 
     public void getAllStats() {
