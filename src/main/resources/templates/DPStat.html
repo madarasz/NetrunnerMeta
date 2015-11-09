@@ -15,20 +15,25 @@
 
       function drawCharts() {
         var baseurl = "http://localhost:8080/DataTable/DPStats/";
+        var baseurlcolor = "http://localhost:8080/Color/DPStats/";
         var url1 = baseurl + "Top/runner/faction/" + encodeURIComponent([[${DPname}]]);
         var url2 = baseurl + "Top/corp/faction/" + encodeURIComponent([[${DPname}]]);
         var url3 = baseurl + "Top/runner/identity/" + encodeURIComponent([[${DPname}]]);
         var url4 = baseurl + "Top/corp/identity/" + encodeURIComponent([[${DPname}]]);
-        drawChart(url1, 'Top runner factions', 'chart_div1');
-        drawChart(url2, 'Top corp factions', 'chart_div2');
-        drawChart(url3, 'Top runner identities', 'chart_div3');
-        drawChart(url4, 'Top runner identities', 'chart_div4');
+        var url1color = baseurlcolor + "Top/runner/faction/" + encodeURIComponent([[${DPname}]]);
+        var url2color = baseurlcolor + "Top/corp/faction/" + encodeURIComponent([[${DPname}]]);
+        var url3color = baseurlcolor + "Top/runner/identity/" + encodeURIComponent([[${DPname}]]);
+        var url4color = baseurlcolor + "Top/corp/identity/" + encodeURIComponent([[${DPname}]]);
+        drawChart(url1, url1color, 'Top runner factions', 'chart_div1');
+        drawChart(url2, url2color, 'Top corp factions', 'chart_div2');
+        drawChart(url3, url3color, 'Top runner identities', 'chart_div3');
+        drawChart(url4, url4color, 'Top runner identities', 'chart_div4');
       }
 
       // Callback that creates and populates a data table,
       // instantiates the pie chart, passes in the data and
       // draws it.
-      function drawChart(urlvalue, title, elementid) {
+      function drawChart(urlvalue, urlcolor, title, elementid) {
 
         var jsonData = $.ajax({
           url: urlvalue,
@@ -37,7 +42,7 @@
           }).responseText;
 
         var color = $.ajax({
-          url: "http://localhost:8080/Color",
+          url: urlcolor,
           dataType: "json",
           async: false
           }).responseText;

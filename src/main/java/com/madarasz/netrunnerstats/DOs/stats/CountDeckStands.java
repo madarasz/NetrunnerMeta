@@ -8,13 +8,11 @@ public class CountDeckStands {
     private String title;
     private int decknum;
     private int standingnum;
-    private String colorcode;
 
     public CountDeckStands(String title, int decknum, int standingnum, String colorcode) {
         this.title = title;
         this.decknum = decknum;
         this.standingnum = standingnum;
-        this.colorcode = colorcode;
     }
 
     public String getTitle() {
@@ -27,9 +25,5 @@ public class CountDeckStands {
 
     public int getStandingnum() {
         return standingnum;
-    }
-
-    public String getColorcode() {
-        return colorcode;
     }
 }

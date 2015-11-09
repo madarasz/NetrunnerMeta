@@ -16,11 +16,24 @@ import java.util.List;
 @Component
 public class DPStatsToGchart {
 
-    public JSONArray colorRunnerFactions(DPStatistics stats) {
-        JSONArray result = new JSONArray();
-        result.put("#FF0000");
-        result.put("#FF0000");
-        result.put("#FF0000");
+    public List<String> colorConverter(DPStatistics stats, String sidecode, String stattype) {
+        List<String> result = new ArrayList<String>();
+        for (CountDeckStands info : filter(stats, sidecode, stattype)) {
+            switch (info.getTitle()) {
+                case "shaper":
+                    result.add("#00FF00");
+                    break;
+                case "criminal":
+                    result.add("#0000FF");
+                    break;
+                case "anarch":
+                    result.add("#FF0000");
+                    break;
+                default:
+                    result.add("#000000");
+                    break;
+            }
+        }
         return result;
     }
 
@@ -30,30 +43,9 @@ public class DPStatsToGchart {
         columns.add(new Column("", "player number", "", "number"));
         List<Row> rows = new ArrayList<Row>();
 
-        List<CountDeckStands> data;
-        if (sidecode.equals("runner")) {
-            if (stattype.equals("identity")) {
-                data = stats.getRunnerIdentities();
-            } else if (stattype.equals("faction")){
-                data = stats.getRunnerFactions();
-            } else {
-                return new DataTable();
-            }
-        } else if (sidecode.equals("corp")) {
-            if (stattype.equals("identity")) {
-                data = stats.getCorpIdentities();
-            } else if (stattype.equals("faction")){
-                data = stats.getCorpFactions();
-            } else {
-                return new DataTable();
-            }
-        } else {
-            return new DataTable();
-        }
-
-        for (CountDeckStands faction : data) {
-            CellString title = new CellString(faction.getTitle());
-            CellNumber count = new CellNumber(faction.getStandingnum());
+        for (CountDeckStands info : filter(stats, sidecode, stattype)) {
+            CellString title = new CellString(info.getTitle());
+            CellNumber count = new CellNumber(info.getStandingnum());
             List<Cell> rowdata = new ArrayList<Cell>();
             rowdata.add(title);
             rowdata.add(count);
@@ -61,4 +53,29 @@ public class DPStatsToGchart {
         }
         return new DataTable(columns, rows);
     }
+
+    private List<CountDeckStands> filter (DPStatistics stats, String sidecode, String stattype){
+        List<CountDeckStands> data;
+        if (sidecode.equals("runner")) {
+            if (stattype.equals("identity")) {
+                data = stats.getRunnerIdentities();
+            } else if (stattype.equals("faction")){
+                data = stats.getRunnerFactions();
+            } else {
+                return new ArrayList<CountDeckStands>();
+            }
+        } else if (sidecode.equals("corp")) {
+            if (stattype.equals("identity")) {
+                data = stats.getCorpIdentities();
+            } else if (stattype.equals("faction")){
+                data = stats.getCorpFactions();
+            } else {
+                return new ArrayList<CountDeckStands>();
+            }
+        } else {
+            return new ArrayList<CountDeckStands>();
+        }
+        return data;
+    }
+
 }
