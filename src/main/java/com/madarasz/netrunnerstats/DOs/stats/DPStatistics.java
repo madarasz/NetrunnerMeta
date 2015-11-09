@@ -25,20 +25,20 @@ public class DPStatistics {
         corpIdentities = new ArrayList<CountDeckStands>();
     }
 
-    public void addRunnerFaction(String title, int decks, int standings) {
-        runnerFactions.add(new CountDeckStands(title, decks, standings, "#FF0000"));
+    public void addRunnerFaction(String title, int decks, int standings, String colorcode) {
+        runnerFactions.add(new CountDeckStands(title, decks, standings, colorcode));
     }
 
-    public void addCorpFaction(String title, int decks, int standings) {
-        corpFactions.add(new CountDeckStands(title, decks, standings, "#FF0000"));
+    public void addCorpFaction(String title, int decks, int standings, String colorcode) {
+        corpFactions.add(new CountDeckStands(title, decks, standings, colorcode));
     }
 
-    public void addRunnerIdentity(String title, int decks, int standings) {
-        runnerIdentities.add(new CountDeckStands(title, decks, standings, "#FF0000"));
+    public void addRunnerIdentity(String title, int decks, int standings, String colorcode) {
+        runnerIdentities.add(new CountDeckStands(title, decks, standings, colorcode));
     }
 
-    public void addCorpIdentity(String title, int decks, int standings) {
-        corpIdentities.add(new CountDeckStands(title, decks, standings, "#FF0000"));
+    public void addCorpIdentity(String title, int decks, int standings, String colorcode) {
+        corpIdentities.add(new CountDeckStands(title, decks, standings, colorcode));
     }
 
 

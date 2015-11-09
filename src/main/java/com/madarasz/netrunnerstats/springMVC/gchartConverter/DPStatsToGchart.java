@@ -4,6 +4,7 @@ import com.madarasz.netrunnerstats.DOs.stats.CountDeckStands;
 import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.springMVC.gchart.*;
 import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -19,20 +20,7 @@ public class DPStatsToGchart {
     public List<String> colorConverter(DPStatistics stats, String sidecode, String stattype) {
         List<String> result = new ArrayList<String>();
         for (CountDeckStands info : filter(stats, sidecode, stattype)) {
-            switch (info.getTitle()) {
-                case "shaper":
-                    result.add("#00FF00");
-                    break;
-                case "criminal":
-                    result.add("#0000FF");
-                    break;
-                case "anarch":
-                    result.add("#FF0000");
-                    break;
-                default:
-                    result.add("#000000");
-                    break;
-            }
+            result.add(info.getColorcode());
         }
         return result;
     }

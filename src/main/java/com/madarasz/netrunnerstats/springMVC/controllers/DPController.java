@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -59,11 +58,5 @@ public class DPController {
     public String getDPPage(@PathVariable String DPName, Map<String, Object> model) {
         model.put("DPname", DPName);
         return "DPStat";
-    }
-
-    @RequestMapping(value="/Color")
-    public @ResponseBody List<String> getcolors() {
-        List<String> colors = Arrays.asList("#FF0000", "#00FF00", "#0000FF");
-        return colors;
     }
 }
