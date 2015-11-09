@@ -6,17 +6,28 @@ package com.madarasz.netrunnerstats.springMVC.gchart;
  */
 public abstract class Cell {
     private String f;   // formatted value
-//    private String p; - not using it now
+    private Style p;   // style properties
 
     public Cell() {
         f = null;
+        p = null;
     }
 
     public Cell(String f) {
         this.f = f;
+        p = null;
+    }
+
+    public Cell(String f, String style) {
+        this.f = f;
+        this.p = new Style(style);
     }
 
     public String getF() {
         return f;
+    }
+
+    public Style getP() {
+        return p;
     }
 }

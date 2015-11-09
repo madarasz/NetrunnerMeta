@@ -26,19 +26,19 @@ public class DPStatistics {
     }
 
     public void addRunnerFaction(String title, int decks, int standings) {
-        runnerFactions.add(new CountDeckStands(title, decks, standings));
+        runnerFactions.add(new CountDeckStands(title, decks, standings, "#FF0000"));
     }
 
     public void addCorpFaction(String title, int decks, int standings) {
-        corpFactions.add(new CountDeckStands(title, decks, standings));
+        corpFactions.add(new CountDeckStands(title, decks, standings, "#FF0000"));
     }
 
     public void addRunnerIdentity(String title, int decks, int standings) {
-        runnerIdentities.add(new CountDeckStands(title, decks, standings));
+        runnerIdentities.add(new CountDeckStands(title, decks, standings, "#FF0000"));
     }
 
     public void addCorpIdentity(String title, int decks, int standings) {
-        corpIdentities.add(new CountDeckStands(title, decks, standings));
+        corpIdentities.add(new CountDeckStands(title, decks, standings, "#FF0000"));
     }
 
 

@@ -15,10 +15,10 @@
 
       function drawCharts() {
         var baseurl = "http://localhost:8080/DataTable/DPStats/";
-        var url1 = baseurl + "TopRunnerFactions/" + encodeURIComponent([[${DPname}]]);
-        var url2 = baseurl + "TopCorpFactions/" + encodeURIComponent([[${DPname}]]);
-        var url3 = baseurl + "TopRunnerIdentities/" + encodeURIComponent([[${DPname}]]);
-        var url4 = baseurl + "TopCorpIdentities/" + encodeURIComponent([[${DPname}]]);
+        var url1 = baseurl + "Top/runner/faction/" + encodeURIComponent([[${DPname}]]);
+        var url2 = baseurl + "Top/corp/faction/" + encodeURIComponent([[${DPname}]]);
+        var url3 = baseurl + "Top/runner/identity/" + encodeURIComponent([[${DPname}]]);
+        var url4 = baseurl + "Top/corp/identity/" + encodeURIComponent([[${DPname}]]);
         drawChart(url1, 'Top runner factions', 'chart_div1');
         drawChart(url2, 'Top corp factions', 'chart_div2');
         drawChart(url3, 'Top runner identities', 'chart_div3');
@@ -36,13 +36,20 @@
           async: false
           }).responseText;
 
+        var color = $.ajax({
+          url: "http://localhost:8080/Color",
+          dataType: "json",
+          async: false
+          }).responseText;
+
         // Create our data table out of JSON data loaded from server.
         var data = new google.visualization.DataTable(jsonData);
 
         // Set chart options
         var options = {'title': title,
                        'width':400,
-                       'height':300};
+                       'height':300,
+                       'colors': $.parseJSON(color)};
 
         // Instantiate and draw our chart, passing in some options.
         var chart = new google.visualization.PieChart(document.getElementById(elementid));

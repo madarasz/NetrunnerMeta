@@ -12,6 +12,11 @@ public class CellNumber extends Cell {
         this.v = v;
     }
 
+    public CellNumber(int v, String style) {
+        super(new Integer(v).toString(), style);
+        this.v = v;
+    }
+
     public int getV() {
         return v;
     }

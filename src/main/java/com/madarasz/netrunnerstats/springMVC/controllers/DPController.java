@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,31 +35,13 @@ public class DPController {
     }
 
     // Google Chart DataTable output
-    @RequestMapping(value="/DataTable/DPStats/TopRunnerFactions/{DPName}", method = RequestMethod.GET)
-    public @ResponseBody DataTable getDPTopRunnerFactioinsDataTable(@PathVariable String DPName) {
+    @RequestMapping(value="/DataTable/DPStats/Top/{sidecode}/{stattype}/{DPName}", method = RequestMethod.GET)
+    public @ResponseBody DataTable getDPTopRunnerFactioinsDataTable(
+            @PathVariable(value = "sidecode") String sidecode,
+            @PathVariable(value = "stattype") String stattype,
+            @PathVariable(value = "DPName") String DPName) {
         DPStatistics stats = statistics.getPackStats(DPName);
-        return dpStatsToGchart.convertRunnerFactions(stats);
-    }
-
-    // Google Chart DataTable output
-    @RequestMapping(value="/DataTable/DPStats/TopCorpFactions/{DPName}", method = RequestMethod.GET)
-    public @ResponseBody DataTable getDPTopCorpFactionsDataTable(@PathVariable String DPName) {
-        DPStatistics stats = statistics.getPackStats(DPName);
-        return dpStatsToGchart.convertCorpFactions(stats);
-    }
-
-    // Google Chart DataTable output
-    @RequestMapping(value="/DataTable/DPStats/TopRunnerIdentities/{DPName}", method = RequestMethod.GET)
-    public @ResponseBody DataTable getDPTopRunnerIdentittiesDataTable(@PathVariable String DPName) {
-        DPStatistics stats = statistics.getPackStats(DPName);
-        return dpStatsToGchart.convertRunnerIdentities(stats);
-    }
-
-    // Google Chart DataTable output
-    @RequestMapping(value="/DataTable/DPStats/TopCorpIdentities/{DPName}", method = RequestMethod.GET)
-    public @ResponseBody DataTable getDPTopCorpIdentitiesDataTable(@PathVariable String DPName) {
-        DPStatistics stats = statistics.getPackStats(DPName);
-        return dpStatsToGchart.convertCorpIdentities(stats);
+        return dpStatsToGchart.converter(stats, sidecode, stattype);
     }
 
     // html output
@@ -65,5 +49,11 @@ public class DPController {
     public String getDPPage(@PathVariable String DPName, Map<String, Object> model) {
         model.put("DPname", DPName);
         return "DPStat";
+    }
+
+    @RequestMapping(value="/Color")
+    public @ResponseBody List<String> getcolors() {
+        List<String> colors = Arrays.asList("#FF0000", "#00FF00", "#0000FF");
+        return colors;
     }
 }

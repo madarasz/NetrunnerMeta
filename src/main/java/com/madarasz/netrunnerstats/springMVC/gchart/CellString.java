@@ -12,6 +12,11 @@ public class CellString extends Cell {
         this.v = v;
     }
 
+    public CellString(String v, String style) {
+        super(v, style);
+        this.v = v;
+    }
+
     public String getV() {
         return v;
     }

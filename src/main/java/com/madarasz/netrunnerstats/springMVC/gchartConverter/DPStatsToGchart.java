@@ -3,6 +3,7 @@ package com.madarasz.netrunnerstats.springMVC.gchartConverter;
 import com.madarasz.netrunnerstats.DOs.stats.CountDeckStands;
 import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.springMVC.gchart.*;
+import org.json.JSONArray;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,41 +16,39 @@ import java.util.List;
 @Component
 public class DPStatsToGchart {
 
-    public DataTable convertRunnerFactions(DPStatistics stats) {
-        return converter(stats, true, false);
+    public JSONArray colorRunnerFactions(DPStatistics stats) {
+        JSONArray result = new JSONArray();
+        result.put("#FF0000");
+        result.put("#FF0000");
+        result.put("#FF0000");
+        return result;
     }
 
-    public DataTable convertCorpFactions(DPStatistics stats) {
-        return converter(stats, false, false);
-    }
-
-    public DataTable convertRunnerIdentities(DPStatistics stats) {
-        return converter(stats, true, true);
-    }
-
-    public DataTable convertCorpIdentities(DPStatistics stats) {
-        return converter(stats, false, true);
-    }
-
-    private DataTable converter(DPStatistics stats, boolean isRunner, boolean isIdentities) {
+    public DataTable converter(DPStatistics stats, String sidecode, String stattype) {
         List<Column> columns = new ArrayList<Column>();
         columns.add(new Column("", "Faction", "", "string"));
         columns.add(new Column("", "player number", "", "number"));
         List<Row> rows = new ArrayList<Row>();
 
         List<CountDeckStands> data;
-        if (isRunner) {
-            if (isIdentities) {
+        if (sidecode.equals("runner")) {
+            if (stattype.equals("identity")) {
                 data = stats.getRunnerIdentities();
-            } else {
+            } else if (stattype.equals("faction")){
                 data = stats.getRunnerFactions();
+            } else {
+                return new DataTable();
+            }
+        } else if (sidecode.equals("corp")) {
+            if (stattype.equals("identity")) {
+                data = stats.getCorpIdentities();
+            } else if (stattype.equals("faction")){
+                data = stats.getCorpFactions();
+            } else {
+                return new DataTable();
             }
         } else {
-            if (isIdentities) {
-                data = stats.getCorpIdentities();
-            } else {
-                data = stats.getCorpFactions();
-            }
+            return new DataTable();
         }
 
         for (CountDeckStands faction : data) {

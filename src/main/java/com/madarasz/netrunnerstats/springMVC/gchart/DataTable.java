@@ -10,6 +10,9 @@ public class DataTable {
     private List<Column> cols;
     private List<Row> rows;
 
+    public DataTable() {
+    }
+
     public DataTable(List<Column> cols, List<Row> rows) {
         this.cols = cols;
         this.rows = rows;
