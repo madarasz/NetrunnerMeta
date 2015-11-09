@@ -15,7 +15,7 @@ public class DPStatistics {
     private List<CountDeckStands> corpFactions;
     private List<CountDeckStands> corpIdentities;
 
-    public DPStatistics(String DPname, int statnum, int decknum) {
+    public DPStatistics(String DPname, int decknum, int statnum) {
         this.statnum = statnum;
         this.DPname = DPname;
         this.decknum = decknum;

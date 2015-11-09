@@ -3,6 +3,7 @@
 <head>
     <!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="../static/jquery-1.11.3.min.js"></script>
     <script th:inline="javascript">
     /*<![CDATA[*/
 
@@ -17,20 +18,19 @@
       // draws it.
       function drawChart() {
 
-        // Create the data table.
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Slices');
-        data.addRows([
-          ['Mushrooms', 3],
-          ['Onions', 1],
-          ['Olives', 1],
-          ['Zucchini', 1],
-          ['Pepperoni', 2]
-        ]);
+        var urlvalue = "http://localhost:8080/DataTable/DPStats/" + encodeURIComponent([[${DPname}]]);
+
+        var jsonData = $.ajax({
+          url: urlvalue,
+          dataType: "json",
+          async: false
+          }).responseText;
+
+        // Create our data table out of JSON data loaded from server.
+        var data = new google.visualization.DataTable(jsonData);
 
         // Set chart options
-        var options = {'title':[[${DPname}]],
+        var options = {'title':'Top runner factions',
                        'width':400,
                        'height':300};
 

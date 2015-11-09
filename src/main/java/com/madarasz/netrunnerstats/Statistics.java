@@ -52,11 +52,11 @@ public class Statistics {
         for (StatCounts stat : stats) {
             String identity = stat.getCategory();
             if (stat.getSideCode().equals("runner")) {
-                statistics.addRunnerIdentity(identity, stat.getCount(),
-                        deckRepository.countTopByCardPackAndIdentity(cardpackName, identity));
+                statistics.addRunnerIdentity(identity,
+                        deckRepository.countTopByCardPackAndIdentity(cardpackName, identity), stat.getCount());
             } else {
-                statistics.addCorpIdentity(identity, stat.getCount(),
-                        deckRepository.countTopByCardPackAndIdentity(cardpackName, identity));
+                statistics.addCorpIdentity(identity,
+                        deckRepository.countTopByCardPackAndIdentity(cardpackName, identity), stat.getCount());
             }
             System.out.println(String.format("%s - %d (%d)", identity, stat.getCount(),
                     deckRepository.countTopByCardPackAndIdentity(cardpackName, identity)));
@@ -68,9 +68,9 @@ public class Statistics {
         for (StatCounts stat : stats) {
             String faction = stat.getCategory();
             if (stat.getSideCode().equals("runner")) {
-                statistics.addRunnerFaction(faction, stat.getCount(), deckRepository.countTopByCardPackAndFaction(cardpackName, faction));
+                statistics.addRunnerFaction(faction, deckRepository.countTopByCardPackAndFaction(cardpackName, faction), stat.getCount());
             } else {
-                statistics.addCorpFaction(faction, stat.getCount(), deckRepository.countTopByCardPackAndFaction(cardpackName, faction));
+                statistics.addCorpFaction(faction, deckRepository.countTopByCardPackAndFaction(cardpackName, faction), stat.getCount());
             }
             System.out.println(String.format("%s - %d (%d)", faction, stat.getCount(), deckRepository.countTopByCardPackAndFaction(cardpackName, faction)));
         }
