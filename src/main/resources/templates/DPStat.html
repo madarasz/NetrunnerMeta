@@ -11,14 +11,24 @@
       google.load('visualization', '1.0', {'packages':['corechart']});
 
       // Set a callback to run when the Google Visualization API is loaded.
-      google.setOnLoadCallback(drawChart);
+      google.setOnLoadCallback(drawCharts);
+
+      function drawCharts() {
+        var baseurl = "http://localhost:8080/DataTable/DPStats/";
+        var url1 = baseurl + "TopRunnerFactions/" + encodeURIComponent([[${DPname}]]);
+        var url2 = baseurl + "TopCorpFactions/" + encodeURIComponent([[${DPname}]]);
+        var url3 = baseurl + "TopRunnerIdentities/" + encodeURIComponent([[${DPname}]]);
+        var url4 = baseurl + "TopCorpIdentities/" + encodeURIComponent([[${DPname}]]);
+        drawChart(url1, 'Top runner factions', 'chart_div1');
+        drawChart(url2, 'Top corp factions', 'chart_div2');
+        drawChart(url3, 'Top runner identities', 'chart_div3');
+        drawChart(url4, 'Top runner identities', 'chart_div4');
+      }
 
       // Callback that creates and populates a data table,
       // instantiates the pie chart, passes in the data and
       // draws it.
-      function drawChart() {
-
-        var urlvalue = "http://localhost:8080/DataTable/DPStats/" + encodeURIComponent([[${DPname}]]);
+      function drawChart(urlvalue, title, elementid) {
 
         var jsonData = $.ajax({
           url: urlvalue,
@@ -30,12 +40,12 @@
         var data = new google.visualization.DataTable(jsonData);
 
         // Set chart options
-        var options = {'title':'Top runner factions',
+        var options = {'title': title,
                        'width':400,
                        'height':300};
 
         // Instantiate and draw our chart, passing in some options.
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        var chart = new google.visualization.PieChart(document.getElementById(elementid));
         chart.draw(data, options);
       }
     /*]]>*/
@@ -45,6 +55,9 @@
 <body>
 <p th:text="${DPname}"></p>
 <!--Div that will hold the pie chart-->
-<div id="chart_div"></div>
+<div id="chart_div1"></div>
+<div id="chart_div2"></div>
+<div id="chart_div3"></div>
+<div id="chart_div4"></div>
 </body>
 </html>

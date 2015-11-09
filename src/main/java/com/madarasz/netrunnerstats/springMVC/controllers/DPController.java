@@ -26,17 +26,38 @@ public class DPController {
     DPStatsToGchart dpStatsToGchart;
 
     // JSON output
-    @RequestMapping(value="/JSON/DPStats/{DPName}", method = RequestMethod.GET)
+    @RequestMapping(value="/JSON/DPStats/Top/{DPName}", method = RequestMethod.GET)
     public @ResponseBody DPStatistics getDPJSON(@PathVariable String DPName) {
         DPStatistics stats = statistics.getPackStats(DPName);
         return stats;
     }
 
     // Google Chart DataTable output
-    @RequestMapping(value="/DataTable/DPStats/{DPName}", method = RequestMethod.GET)
-    public @ResponseBody DataTable getDPDataTable(@PathVariable String DPName) {
+    @RequestMapping(value="/DataTable/DPStats/TopRunnerFactions/{DPName}", method = RequestMethod.GET)
+    public @ResponseBody DataTable getDPTopRunnerFactioinsDataTable(@PathVariable String DPName) {
         DPStatistics stats = statistics.getPackStats(DPName);
         return dpStatsToGchart.convertRunnerFactions(stats);
+    }
+
+    // Google Chart DataTable output
+    @RequestMapping(value="/DataTable/DPStats/TopCorpFactions/{DPName}", method = RequestMethod.GET)
+    public @ResponseBody DataTable getDPTopCorpFactionsDataTable(@PathVariable String DPName) {
+        DPStatistics stats = statistics.getPackStats(DPName);
+        return dpStatsToGchart.convertCorpFactions(stats);
+    }
+
+    // Google Chart DataTable output
+    @RequestMapping(value="/DataTable/DPStats/TopRunnerIdentities/{DPName}", method = RequestMethod.GET)
+    public @ResponseBody DataTable getDPTopRunnerIdentittiesDataTable(@PathVariable String DPName) {
+        DPStatistics stats = statistics.getPackStats(DPName);
+        return dpStatsToGchart.convertRunnerIdentities(stats);
+    }
+
+    // Google Chart DataTable output
+    @RequestMapping(value="/DataTable/DPStats/TopCorpIdentities/{DPName}", method = RequestMethod.GET)
+    public @ResponseBody DataTable getDPTopCorpIdentitiesDataTable(@PathVariable String DPName) {
+        DPStatistics stats = statistics.getPackStats(DPName);
+        return dpStatsToGchart.convertCorpIdentities(stats);
     }
 
     // html output
