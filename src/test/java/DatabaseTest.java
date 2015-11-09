@@ -18,6 +18,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
@@ -28,10 +29,10 @@ import java.util.Set;
  * Unit tests for DB
  * Created by madarasz on 2015-06-11.
  */
-// TODO: DB commits
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @Transactional
+@WebAppConfiguration
 @ConfigurationProperties(prefix = "testdb")
 public class DatabaseTest {
 
