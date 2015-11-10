@@ -1,7 +1,7 @@
 package com.madarasz.netrunnerstats.DOs;
 
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
-import com.madarasz.netrunnerstats.helper.CardMapValueComparator;
+import com.madarasz.netrunnerstats.helper.comparator.CardMapValueComparator;
 import java.util.*;
 
 /**

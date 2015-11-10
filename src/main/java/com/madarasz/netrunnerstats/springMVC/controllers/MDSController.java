@@ -15,6 +15,7 @@ import java.util.Map;
 
 /**
  * Created by madarasz on 11/10/15.
+ * Controller class for multi dimension scaling related statistics.
  */
 @Controller
 public class MDSController {

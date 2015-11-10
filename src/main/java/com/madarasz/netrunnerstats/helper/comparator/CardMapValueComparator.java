@@ -1,4 +1,4 @@
-package com.madarasz.netrunnerstats.helper;
+package com.madarasz.netrunnerstats.helper.comparator;
 
 import com.madarasz.netrunnerstats.DOs.Card;
 import java.util.Comparator;

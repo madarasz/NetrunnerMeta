@@ -16,6 +16,7 @@ import java.util.Map;
 
 /**
  * Created by madarasz on 11/9/15.
+ * Controller class for Data Pack related statistics.
  */
 @Controller
 public class DPController {
