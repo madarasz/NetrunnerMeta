@@ -6,9 +6,7 @@ import com.madarasz.netrunnerstats.springMVC.gchart.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by madarasz on 11/9/15.
@@ -42,26 +40,26 @@ public class DPStatsToGchart {
         return new DataTable(columns, rows);
     }
 
-    private Set<CountDeckStands> filter (DPStatistics stats, String sidecode, String stattype){
-        Set<CountDeckStands> data;
+    private List<CountDeckStands> filter (DPStatistics stats, String sidecode, String stattype){
+        List<CountDeckStands> data;
         if (sidecode.equals("runner")) {
             if (stattype.equals("identity")) {
-                data = stats.getRunnerIdentities();
+                data = stats.getSortedRunnerIdentities();
             } else if (stattype.equals("faction")){
-                data = stats.getRunnerFactions();
+                data = stats.getSortedRunnerFactions();
             } else {
-                return new HashSet<CountDeckStands>();
+                return new ArrayList<CountDeckStands>();
             }
         } else if (sidecode.equals("corp")) {
             if (stattype.equals("identity")) {
-                data = stats.getCorpIdentities();
+                data = stats.getSortedCorpIdentities();
             } else if (stattype.equals("faction")){
-                data = stats.getCorpFactions();
+                data = stats.getSortedCorpFactions();
             } else {
-                return new HashSet<CountDeckStands>();
+                return new ArrayList<CountDeckStands>();
             }
         } else {
-            return new HashSet<CountDeckStands>();
+            return new ArrayList<CountDeckStands>();
         }
         return data;
     }

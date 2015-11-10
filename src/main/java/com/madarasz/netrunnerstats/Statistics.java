@@ -188,11 +188,11 @@ public class Statistics {
         DPStatistics stats = getPackStats(cardpackName);
         DPIntentities result = new DPIntentities();
 
-        Set<CountDeckStands> data;
+        List<CountDeckStands> data;
         if (sidecode.equals("runner")) {
-            data = stats.getRunnerIdentities();
+            data = stats.getSortedRunnerIdentities();
         } else if (sidecode.equals("corp")) {
-            data = stats.getCorpIdentities();
+            data = stats.getSortedCorpIdentities();
         } else {
             return new DPIntentities();
         }

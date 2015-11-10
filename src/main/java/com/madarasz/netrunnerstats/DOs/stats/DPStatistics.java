@@ -1,10 +1,10 @@
 package com.madarasz.netrunnerstats.DOs.stats;
 
 import com.madarasz.netrunnerstats.DOs.stats.entries.CountDeckStands;
+import com.madarasz.netrunnerstats.helper.CountDeckStatsComparator;
 import org.springframework.data.neo4j.annotation.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by madarasz on 2015.11.08..
@@ -76,19 +76,26 @@ public class DPStatistics {
         this.statnum = statnum;
     }
 
-    public Set<CountDeckStands> getRunnerFactions() {
-        return runnerFactions;
+    public List<CountDeckStands> getSortedRunnerFactions() {
+        return sortSet(runnerFactions);
     }
 
-    public Set<CountDeckStands> getRunnerIdentities() {
-        return runnerIdentities;
+    public List<CountDeckStands> getSortedRunnerIdentities() {
+        return sortSet(runnerIdentities);
     }
 
-    public Set<CountDeckStands> getCorpFactions() {
-        return corpFactions;
+    public List<CountDeckStands> getSortedCorpFactions() {
+        return sortSet(corpFactions);
     }
 
-    public Set<CountDeckStands> getCorpIdentities() {
-        return corpIdentities;
+    public List<CountDeckStands> getSortedCorpIdentities() {
+        return sortSet(corpIdentities);
+    }
+
+    private List<CountDeckStands> sortSet(Set<CountDeckStands> inputset) {
+        CountDeckStatsComparator comparator = new CountDeckStatsComparator();
+        List<CountDeckStands> list = new ArrayList<CountDeckStands>(inputset);
+        list.sort(comparator);
+        return list;
     }
 }
