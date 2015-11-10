@@ -25,8 +25,8 @@ public class DPStatsToGchart {
 
     public DataTable converter(DPStatistics stats, String sidecode, String stattype) {
         List<Column> columns = new ArrayList<Column>();
-        columns.add(new Column("", "Faction", "", "string"));
-        columns.add(new Column("", "player number", "", "number"));
+        columns.add(new Column("Faction", "string"));
+        columns.add(new Column("player number", "number"));
         List<Row> rows = new ArrayList<Row>();
 
         for (CountDeckStands info : filter(stats, sidecode, stattype)) {

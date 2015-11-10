@@ -5,16 +5,18 @@ package com.madarasz.netrunnerstats.springMVC.gchart;
  * Object representation of the "cols" property in Google Charts.
  */
 public class Column {
-    private String id;
-    private String label;
-    private String pattern;
-    private String type;
+    private String id;  // OPTIONAL
+    private String label;   // OPTIONAL
+    private String pattern; // OPTIONAL - for formatting
+    private String role; // OPTIONAL - style
+    private String type;    // REQUIRED - boolean, number, string, date, datetime, timeofday
 
-    public Column(String id, String label, String pattern, String type) {
+    public Column(String id, String label, String pattern, String type, String role) {
         this.id = id;
         this.label = label;
         this.pattern = pattern;
         this.type = type;
+        this.role = role;
     }
 
     public Column(String label, String type) {
@@ -38,5 +40,9 @@ public class Column {
 
     public String getType() {
         return type;
+    }
+
+    public String getRole() {
+        return role;
     }
 }

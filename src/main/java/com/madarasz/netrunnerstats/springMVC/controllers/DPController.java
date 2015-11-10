@@ -1,5 +1,6 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
+import com.madarasz.netrunnerstats.DOs.stats.DPIntentities;
 import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.springMVC.gchart.DataTable;
@@ -53,10 +54,18 @@ public class DPController {
         return dpStatsToGchart.colorConverter(stats, sidecode, stattype);
     }
 
-    // html output
+    // html page output
     @RequestMapping(value="/DPStats/{DPName}", method = RequestMethod.GET)
     public String getDPPage(@PathVariable String DPName, Map<String, Object> model) {
         model.put("DPname", DPName);
         return "DPStat";
+    }
+
+    // JSON - identities in the Data Pack
+    @RequestMapping(value="/JSON/DPStats/Identities/{sidecode}/{DPName}", method = RequestMethod.GET)
+    public @ResponseBody DPIntentities getDPIdentities(
+            @PathVariable(value = "sidecode") String sidecode,
+            @PathVariable(value = "DPName") String DPName) {
+        return statistics.getIdentityLinksForDataPack(DPName);
     }
 }

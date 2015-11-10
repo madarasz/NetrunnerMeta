@@ -4,8 +4,11 @@ import com.madarasz.netrunnerstats.DOs.Card;
 import com.madarasz.netrunnerstats.DOs.CardPack;
 import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DOs.result.StatCounts;
+import com.madarasz.netrunnerstats.DOs.stats.DPIntentities;
 import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.DOs.stats.IdentityMDS;
+import com.madarasz.netrunnerstats.DOs.stats.entries.CountDeckStands;
+import com.madarasz.netrunnerstats.DOs.stats.entries.DPIdentity;
 import com.madarasz.netrunnerstats.DOs.stats.entries.MDSEntry;
 import com.madarasz.netrunnerstats.DRs.*;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
 /**
@@ -161,6 +165,10 @@ public class Statistics {
             double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
             double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
             for (int i = 0; i < decks.size(); i++) {
+                // NaN fix
+                scaling[0][i] = NaNFix(scaling[0][i]);
+                scaling[1][i] = NaNFix(scaling[1][i]);
+
                 MDSEntry mds = new MDSEntry(scaling[0][i], scaling[1][i],
                         decks.get(i).getName(), decks.get(i).getUrl(), topURLs.contains(decks.get(i).getUrl()));
                 result.addDeck(mds);
@@ -168,5 +176,29 @@ public class Statistics {
             }
         }
         return result;
+    }
+    public DPIntentities getIdentityLinksForDataPack(String cardpackName) {
+        DPStatistics stats = getPackStats(cardpackName);
+        DPIntentities result = new DPIntentities();
+        for (CountDeckStands identity : stats.getCorpIdentities()) {
+            int topdecknum = identity.getDecknum();
+            String title = identity.getTitle();
+            int decknum = deckRepository.countByIdentityAndCardPool(title, cardpackName);
+            if (decknum > 0) {
+                DPIdentity entry = new DPIdentity(title,
+                        String.format("http://localhost:8080/MDSIdentity/%s/%s", cardpackName, title),
+                        decknum, topdecknum);
+                result.addIdentitiy(entry);
+            }
+        }
+        return result;
+    }
+
+    private double NaNFix(double input) {
+        if (Double.isNaN(input)) {
+            return 0;
+        } else {
+            return input;
+        }
     }
 }
