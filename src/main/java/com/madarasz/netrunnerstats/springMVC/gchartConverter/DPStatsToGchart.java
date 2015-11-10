@@ -29,7 +29,7 @@ public class DPStatsToGchart {
         List<Column> columns = new ArrayList<Column>();
         columns.add(new Column("Faction", "string"));
         columns.add(new Column("player number", "number"));
-        columns.add(new Column("", "", "", "string", "style"));
+        columns.add(new Column("", "", "string", "style"));
         List<Row> rows = new ArrayList<Row>();
 
         for (CountDeckStands info : filter(stats, sidecode, stattype)) {

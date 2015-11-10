@@ -7,14 +7,22 @@ package com.madarasz.netrunnerstats.springMVC.gchart;
 public class Column {
     private String id;  // OPTIONAL
     private String label;   // OPTIONAL
-    private String pattern; // OPTIONAL - for formatting
+    private Formatting p; // OPTIONAL - for formatting
     private String role; // OPTIONAL - style
     private String type;    // REQUIRED - boolean, number, string, date, datetime, timeofday
 
-    public Column(String id, String label, String pattern, String type, String role) {
+    public Column(String id, String label, Formatting p, String type, String role) {
         this.id = id;
         this.label = label;
-        this.pattern = pattern;
+        this.p = p;
+        this.type = type;
+        this.role = role;
+    }
+
+    public Column(String id, String label, String type, String role) {
+        this.id = id;
+        this.label = label;
+        this.p = null;
         this.type = type;
         this.role = role;
     }
@@ -23,7 +31,8 @@ public class Column {
         this.label = label;
         this.type = type;
         this.id = "";
-        this.pattern = "";
+        this.p = null;
+        this.role = null;
     }
 
     public String getId() {
@@ -34,8 +43,8 @@ public class Column {
         return label;
     }
 
-    public String getPattern() {
-        return pattern;
+    public Formatting getP() {
+        return p;
     }
 
     public String getType() {

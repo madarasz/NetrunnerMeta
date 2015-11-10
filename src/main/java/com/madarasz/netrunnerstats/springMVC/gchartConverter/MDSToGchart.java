@@ -22,13 +22,16 @@ public class MDSToGchart {
         List<Column> columns = new ArrayList<Column>();
         columns.add(new Column("x", "number"));
         columns.add(new Column("y",  "number"));
-        columns.add(new Column("", "", "", "string", "style"));
+        columns.add(new Column("", "", "string", "style"));
+        columns.add(new Column("", "", new Formatting(true), "string", "tooltip"));
         List<Row> rows = new ArrayList<Row>();
         for (MDSEntry entry : stats.getDecks()) {
             List<Cell> rowdata = new ArrayList<Cell>();
             CellNumber x = new CellNumber(entry.getX());
             CellNumber y = new CellNumber(entry.getY());
             CellString style = null;
+            CellString tooltip = new CellString("<a href=\"" + entry.getDeckURL() + "\" target=\"_blank\">" +
+                    entry.getDeckTitle() + "</a>");
             rowdata.add(x);
             rowdata.add(y);
             if (entry.isTopdeck()) {
@@ -37,6 +40,7 @@ public class MDSToGchart {
                 style = new CellString(STYLE_NOT_TOPDECK);
             }
             rowdata.add(style);
+            rowdata.add(tooltip);
             rows.add(new Row(rowdata));
         }
         return new DataTable(columns, rows);
