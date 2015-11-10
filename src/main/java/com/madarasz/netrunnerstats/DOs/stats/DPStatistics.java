@@ -1,31 +1,38 @@
 package com.madarasz.netrunnerstats.DOs.stats;
 
 import com.madarasz.netrunnerstats.DOs.stats.entries.CountDeckStands;
+import org.springframework.data.neo4j.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by madarasz on 2015.11.08..
  * Output data for Data Pack statistics on factions and indentities
  */
+@NodeEntity
 public class DPStatistics {
-    private String DPname;
+    @GraphId
+    private Long id;
+    @Indexed(unique=true) private String dpname; // TODO: actually link to Card Pack
     private int decknum;
     private int statnum;
-    private List<CountDeckStands> runnerFactions;
-    private List<CountDeckStands> runnerIdentities;
-    private List<CountDeckStands> corpFactions;
-    private List<CountDeckStands> corpIdentities;
+    @RelatedTo(type = "RFACTION") private @Fetch Set<CountDeckStands> runnerFactions;
+    @RelatedTo(type = "RIDENTITY") private @Fetch Set<CountDeckStands> runnerIdentities;
+    @RelatedTo(type = "CFACTION") private @Fetch Set<CountDeckStands> corpFactions;
+    @RelatedTo(type = "CIDENTITY") private @Fetch Set<CountDeckStands> corpIdentities;
+
+    public DPStatistics() {
+    }
 
     public DPStatistics(String DPname, int decknum, int statnum) {
         this.statnum = statnum;
-        this.DPname = DPname;
+        this.dpname = DPname;
         this.decknum = decknum;
-        runnerFactions = new ArrayList<CountDeckStands>();
-        runnerIdentities = new ArrayList<CountDeckStands>();
-        corpFactions = new ArrayList<CountDeckStands>();
-        corpIdentities = new ArrayList<CountDeckStands>();
+        runnerFactions = new HashSet<CountDeckStands>();
+        runnerIdentities = new HashSet<CountDeckStands>();
+        corpFactions = new HashSet<CountDeckStands>();
+        corpIdentities = new HashSet<CountDeckStands>();
     }
 
     public void addRunnerFaction(String title, int decks, int standings, String colorcode) {
@@ -46,11 +53,11 @@ public class DPStatistics {
 
 
     public String getDPname() {
-        return DPname;
+        return dpname;
     }
 
-    public void setDPname(String DPname) {
-        this.DPname = DPname;
+    public void setDPname(String dpname) {
+        this.dpname = dpname;
     }
 
     public int getDecknum() {
@@ -69,19 +76,19 @@ public class DPStatistics {
         this.statnum = statnum;
     }
 
-    public List<CountDeckStands> getRunnerFactions() {
+    public Set<CountDeckStands> getRunnerFactions() {
         return runnerFactions;
     }
 
-    public List<CountDeckStands> getRunnerIdentities() {
+    public Set<CountDeckStands> getRunnerIdentities() {
         return runnerIdentities;
     }
 
-    public List<CountDeckStands> getCorpFactions() {
+    public Set<CountDeckStands> getCorpFactions() {
         return corpFactions;
     }
 
-    public List<CountDeckStands> getCorpIdentities() {
+    public Set<CountDeckStands> getCorpIdentities() {
         return corpIdentities;
     }
 }

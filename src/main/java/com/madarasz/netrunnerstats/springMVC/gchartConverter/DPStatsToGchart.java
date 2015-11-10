@@ -6,7 +6,9 @@ import com.madarasz.netrunnerstats.springMVC.gchart.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by madarasz on 11/9/15.
@@ -40,15 +42,15 @@ public class DPStatsToGchart {
         return new DataTable(columns, rows);
     }
 
-    private List<CountDeckStands> filter (DPStatistics stats, String sidecode, String stattype){
-        List<CountDeckStands> data;
+    private Set<CountDeckStands> filter (DPStatistics stats, String sidecode, String stattype){
+        Set<CountDeckStands> data;
         if (sidecode.equals("runner")) {
             if (stattype.equals("identity")) {
                 data = stats.getRunnerIdentities();
             } else if (stattype.equals("faction")){
                 data = stats.getRunnerFactions();
             } else {
-                return new ArrayList<CountDeckStands>();
+                return new HashSet<CountDeckStands>();
             }
         } else if (sidecode.equals("corp")) {
             if (stattype.equals("identity")) {
@@ -56,10 +58,10 @@ public class DPStatsToGchart {
             } else if (stattype.equals("faction")){
                 data = stats.getCorpFactions();
             } else {
-                return new ArrayList<CountDeckStands>();
+                return new HashSet<CountDeckStands>();
             }
         } else {
-            return new ArrayList<CountDeckStands>();
+            return new HashSet<CountDeckStands>();
         }
         return data;
     }

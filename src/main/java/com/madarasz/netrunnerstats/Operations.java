@@ -3,6 +3,8 @@ package com.madarasz.netrunnerstats;
 import com.madarasz.netrunnerstats.DOs.*;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.DOs.result.StatCounts;
+import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
+import com.madarasz.netrunnerstats.DOs.stats.entries.CountDeckStands;
 import com.madarasz.netrunnerstats.DRs.*;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
@@ -64,6 +66,14 @@ public class Operations {
         System.out.println(String.format("Cards: %d, CardPacks: %d, Decks: %d, Standings: %d, Tournaments: %d, Deck-card relations: %d",
                 template.count(Card.class), template.count(CardPack.class), template.count(Deck.class), template.count(Standing.class), template.count(Tournament.class),
                 template.count(DeckHasCard.class)));
+    }
+
+    /**
+     * Logs DB Stats node, relationship count
+     */
+    public void logDBStatCount() {
+        System.out.println(String.format("DP statistics: %d, CountDeckStands: %d",
+                template.count(DPStatistics.class), template.count(CountDeckStands.class)));
     }
 
     /**
@@ -327,6 +337,14 @@ public class Operations {
                 }
             }
         }
+    }
+
+    public void resetStats() {
+        logDBStatCount();
+        System.out.println("Deleting calculated Statistics from database.");
+        Map<String, Object> emptyparams = new HashMap<String, Object>();
+        template.query("MATCH (n:DPStatistics) OPTIONAL MATCH (n)-[r]-(c:CountDeckStands) DELETE n,r,c", emptyparams);
+        logDBStatCount();
     }
 
 }

@@ -126,6 +126,9 @@ public class Application implements CommandLineRunner {
                 case stimhackpacktournament:
                     operations.loadStimhackPackTournaments("The Universe of Tomorrow");
                     break;
+                case resetstats:
+                    operations.resetStats();
+                    break;
             }
 
             tx.success();
@@ -143,7 +146,7 @@ public class Application implements CommandLineRunner {
         netrunnerdbloaddeck,
         acooloaddeck, acooloadtournament, acooloadtournamentdecks, acooloadpage, acooall,
         stimhackdecks, stimhacktournament, stimhackpacktournament,
-        archetype, getpackstats, getpackmath, getallstats,
+        archetype, getpackstats, getpackmath, getallstats, resetstats,
         none
     }
 }
