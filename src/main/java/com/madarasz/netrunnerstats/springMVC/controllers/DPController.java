@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,16 +41,6 @@ public class DPController {
             @PathVariable(value = "DPName") String DPName) {
         DPStatistics stats = statistics.getPackStats(DPName);
         return dpStatsToGchart.converter(stats, sidecode, stattype);
-    }
-
-    // Google Chart color output
-    @RequestMapping(value="/Color/DPStats/Top/{sidecode}/{stattype}/{DPName}", method = RequestMethod.GET)
-    public @ResponseBody List<String> getDPTopColors(
-            @PathVariable(value = "sidecode") String sidecode,
-            @PathVariable(value = "stattype") String stattype,
-            @PathVariable(value = "DPName") String DPName) {
-        DPStatistics stats = statistics.getPackStats(DPName);
-        return dpStatsToGchart.colorConverter(stats, sidecode, stattype);
     }
 
     // html page output

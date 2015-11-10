@@ -2,7 +2,9 @@ package com.madarasz.netrunnerstats.springMVC.gchartConverter;
 
 import com.madarasz.netrunnerstats.DOs.stats.entries.CountDeckStands;
 import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
+import com.madarasz.netrunnerstats.helper.ColorPicker;
 import com.madarasz.netrunnerstats.springMVC.gchart.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -27,14 +29,17 @@ public class DPStatsToGchart {
         List<Column> columns = new ArrayList<Column>();
         columns.add(new Column("Faction", "string"));
         columns.add(new Column("player number", "number"));
+        columns.add(new Column("", "", "", "string", "style"));
         List<Row> rows = new ArrayList<Row>();
 
         for (CountDeckStands info : filter(stats, sidecode, stattype)) {
             CellString title = new CellString(info.getTitle());
             CellNumber count = new CellNumber(info.getStandingnum());
+            CellString style = new CellString(info.getColorcode());
             List<Cell> rowdata = new ArrayList<Cell>();
             rowdata.add(title);
             rowdata.add(count);
+            rowdata.add(style);
             rows.add(new Row(rowdata));
         }
         return new DataTable(columns, rows);

@@ -14,56 +14,49 @@
         google.setOnLoadCallback(drawCharts);
 
         function drawCharts() {
-            var baseurl = "http://localhost:8080/DataTable/DPStats/";
-            var baseurlcolor = "http://localhost:8080/Color/DPStats/";
-            var url1 = baseurl + "Top/runner/faction/" + encodeURIComponent([[${DPname}]]);
-            var url2 = baseurl + "Top/corp/faction/" + encodeURIComponent([[${DPname}]]);
-            var url3 = baseurl + "Top/runner/identity/" + encodeURIComponent([[${DPname}]]);
-            var url4 = baseurl + "Top/corp/identity/" + encodeURIComponent([[${DPname}]]);
-            var url1color = baseurlcolor + "Top/runner/faction/" + encodeURIComponent([[${DPname}]]);
-            var url2color = baseurlcolor + "Top/corp/faction/" + encodeURIComponent([[${DPname}]]);
-            var url3color = baseurlcolor + "Top/runner/identity/" + encodeURIComponent([[${DPname}]]);
-            var url4color = baseurlcolor + "Top/corp/identity/" + encodeURIComponent([[${DPname}]]);
-            drawChart(url1, url1color, 'Top runner factions', 'chart_div1');
-            drawChart(url2, url2color, 'Top corp factions', 'chart_div2');
-            drawChart(url3, url3color, 'Top runner identities', 'chart_div3');
-            drawChart(url4, url4color, 'Top corp identities', 'chart_div4');
-            var urlrunner = "http://localhost:8080/JSON/DPStats/Identities/runner/" + encodeURIComponent([[${DPname}]]);
-            var urlcorp = "http://localhost:8080/JSON/DPStats/Identities/corp/" + encodeURIComponent([[${DPname}]]);
-            listIdentities(urlrunner, "#text_div1");
-            listIdentities(urlcorp, "#text_div2");
-      }
+            var dpname = encodeURIComponent([[${DPname}]]);
+            var basecharts = "http://localhost:8080/DataTable/DPStats/";
+            var baselist = "http://localhost:8080/JSON/DPStats/Identities/";
+            drawChart(basecharts + "Top/runner/faction/" + dpname, 'Top runner factions', 'chart_div1');
+            drawChart(basecharts + "Top/corp/faction/" + dpname, 'Top corp factions', 'chart_div2');
+            drawChart(basecharts + "Top/runner/identity/" + dpname, 'Top runner identities', 'chart_div3');
+            drawChart(basecharts + "Top/corp/identity/" + dpname, 'Top corp identities', 'chart_div4');
+            listIdentities(baselist + "runner/" + dpname, "#text_div1");
+            listIdentities(baselist + "corp/"+ dpname, "#text_div2");
+        }
 
         // Callback that creates and populates a data table,
         // instantiates the pie chart, passes in the data and
         // draws it.
-        function drawChart(urlvalue, urlcolor, title, elementid) {
+        function drawChart(urlvalue, title, elementid) {
 
-        var jsonData = $.ajax({
-            url: urlvalue,
-            dataType: "json",
-            async: false
-        }).responseText;
+            var slices = new Array;
 
-        var color = $.ajax({
-            url: urlcolor,
-            dataType: "json",
-            async: false
-        }).responseText;
+            var jsonData = $.ajax({
+                url: urlvalue,
+                dataType: "json",
+                async: false,
+                success: function(data) {
+                    $.each(data.rows, function (index, element) {
+                        console.log(element.c[2].v);
+                        slices.push({color : element.c[2].v});
+                    });
+                }
+            }).responseText;
 
-        // Create our data table out of JSON data loaded from server.
-        var data = new google.visualization.DataTable(jsonData);
+            // Create our data table out of JSON data loaded from server.
+            var data = new google.visualization.DataTable(jsonData);
 
-        // Set chart options
-        var options = {'title': title,
+            // Set chart options
+            var options = {'title': title,
                        'width':400,
                        'height':300,
-                       'colors': $.parseJSON(color)};
+                        'slices': slices};
 
-        // Instantiate and draw our chart, passing in some options.
-        var chart = new google.visualization.PieChart(document.getElementById(elementid));
-        chart.draw(data, options);
-      }
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.PieChart(document.getElementById(elementid));
+            chart.draw(data, options);
+        }
 
       function listIdentities(urlvalue, elementid) {
           var jsonData = $.ajax({
