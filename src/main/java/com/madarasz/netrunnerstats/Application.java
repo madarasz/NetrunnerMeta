@@ -115,7 +115,7 @@ public class Application implements CommandLineRunner {
                 case getallstats:
                     statistics.getAllStats();
                     break;
-                case getpackmath: statistics.getPackMath("Near-Earth Hub: Broadcast Center", "Old Hollywood", true); break;
+                case getpackmath: statistics.getPackMath("Near-Earth Hub: Broadcast Center", "Old Hollywood"); break;
                 case cleandb: operations.cleanDB(); break;
                 case stimhackdecks:
                     operations.loadStimhackDecks("http://stimhack.com/national-warsaw-poland-72-players/");

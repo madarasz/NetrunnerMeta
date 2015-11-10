@@ -22,11 +22,21 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
     @Query("MATCH (d:Deck)-[:IDENTITY]->(i:Card) WHERE (i.title={0}) return d")
     List<Deck> filterByIdentity(String title);
 
-    @Query("MATCH (d:Deck)-[:IDENTITY]->(i:Card), (p:CardPack)<-[:POOL]-(:Tournament)<--(:Standing)-->(d:Deck) WHERE (i.title={0}) AND (p.name={1}) return d")
+    @Query("MATCH (d:Deck)-[:IDENTITY]->(i:Card), (p:CardPack)<-[:POOL]-(:Tournament)<--(:Standing)-->(d:Deck) " +
+            "WHERE (i.title={0}) AND (p.name={1}) return d")
     List<Deck> filterByIdentityAndCardPool(String title, String cardpoolname);
 
-    @Query("MATCH (d:Deck)-[:IDENTITY]->(i:Card), (p:CardPack)<-[:POOL]-(:Tournament)<--(s:Standing)-->(d:Deck) WHERE (i.title={0}) AND (p.name={1}) AND (s.topdeck=true) return d")
+    @Query("MATCH (d:Deck)-[:IDENTITY]->(i:Card), (p:CardPack)<-[:POOL]-(:Tournament)<--(s:Standing)-->(d:Deck) " +
+            "WHERE (i.title={0}) AND (p.name={1}) AND (s.topdeck=true) return d")
     List<Deck> filterTopByIdentityAndCardPool(String title, String cardpoolname);
+
+    @Query("MATCH (d:Deck)-[:IDENTITY]->(i:Card), (p:CardPack)<-[:POOL]-(:Tournament)<--(:Standing)-->(d:Deck) " +
+            "WHERE (i.title={0}) AND (p.name={1}) RETURN COUNT(d)")
+    int countByIdentityAndCardPool(String title, String cardpoolname);
+
+    @Query("MATCH (d:Deck)-[:IDENTITY]->(i:Card), (p:CardPack)<-[:POOL]-(:Tournament)<--(s:Standing)-->(d:Deck) " +
+            "WHERE (i.title={0}) AND (p.name={1}) AND (s.topdeck=true) RETURN COUNT(d)")
+    int countTopByIdentityAndCardPool(String title, String cardpoolname);
 
     @Query("MATCH (d:Deck)-[:IDENTITY]->(i:Card), (p:CardPack)<-[:POOL]-(:Tournament)<--(s:Standing)-->(d:Deck) WHERE (i.title={0}) AND (p.cyclenumber={1}) return d")
     List<Deck> filterByIdentityAndCardCycle(String title, int cyclenumber);

@@ -56,6 +56,10 @@ public class Deck {
         return identity;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -207,10 +211,15 @@ public class Deck {
         return validity;
     }
 
+    // TODO: not sure this is ok
     public boolean equals(Deck deck) {
         if (!identity.getCode().equals(deck.getIdentity().getCode())) {
             return false;
         }
+        if ((id == deck.id) || (url.equals(deck.getUrl()))) {
+            return true;
+        }
+
         Set<DeckHasCard> deck1 = new HashSet<DeckHasCard>(cards);
         Set<DeckHasCard> deck2 = new HashSet<DeckHasCard>(deck.getCards());
         for (DeckHasCard hasCard : cards) {

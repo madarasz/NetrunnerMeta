@@ -1,4 +1,4 @@
-package com.madarasz.netrunnerstats.DOs.stats;
+package com.madarasz.netrunnerstats.DOs.stats.entries;
 
 /**
  * Created by madadarasz on 2015.11.08..

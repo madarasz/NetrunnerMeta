@@ -1,10 +1,13 @@
 package com.madarasz.netrunnerstats.DOs.stats;
 
+import com.madarasz.netrunnerstats.DOs.stats.entries.CountDeckStands;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by madarasz on 2015.11.08..
+ * Output data for Data Pack statistics on factions and indentities
  */
 public class DPStatistics {
     private String DPname;

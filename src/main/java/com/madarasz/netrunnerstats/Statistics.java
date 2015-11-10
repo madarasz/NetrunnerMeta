@@ -5,6 +5,8 @@ import com.madarasz.netrunnerstats.DOs.CardPack;
 import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DOs.result.StatCounts;
 import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
+import com.madarasz.netrunnerstats.DOs.stats.IdentityMDS;
+import com.madarasz.netrunnerstats.DOs.stats.entries.MDSEntry;
 import com.madarasz.netrunnerstats.DRs.*;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
 import com.madarasz.netrunnerstats.helper.Enums;
@@ -141,20 +143,30 @@ public class Statistics {
      * Generate multidimensional scaling for identity and cardpool legality
      * @param identityName filter for identity
      * @param cardpackName filter for cardpool
-     * @param top filter for top decks
      */
-    public void getPackMath(String identityName, String cardpackName, boolean top) {
-        ArrayList<Deck> decks;
-        if (top) {
-            decks = new ArrayList<Deck>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
-        } else {
-            decks = new ArrayList<Deck>(deckRepository.filterByIdentityAndCardPool(identityName, cardpackName));
+    public IdentityMDS getPackMath(String identityName, String cardpackName) {
+        ArrayList<Deck> decks = new ArrayList<Deck>(deckRepository.filterByIdentityAndCardPool(identityName, cardpackName));
+        ArrayList<Deck> topdecks = new ArrayList<Deck>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
+
+        // TODO: better topdecks contain
+        ArrayList<String> topURLs = new ArrayList<String>();
+        for (Deck topdeck : topdecks) {
+            topURLs.add(topdeck.getUrl());
         }
-        System.out.println("*** Getting stats for NEH: " + decks.size());
-        double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
-        double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
-        for (int i = 0; i < decks.size(); i++) {
-            System.out.println(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
+
+        int decknum = deckRepository.countByIdentityAndCardPool(identityName, cardpackName);
+        int topdecknum = deckRepository.countTopByIdentityAndCardPool(identityName, cardpackName);
+        IdentityMDS result = new IdentityMDS(cardpackName, identityName, decknum, topdecknum);
+        if (decknum > 0) {
+            double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
+            double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
+            for (int i = 0; i < decks.size(); i++) {
+                MDSEntry mds = new MDSEntry(scaling[0][i], scaling[1][i],
+                        decks.get(i).getName(), decks.get(i).getUrl(), topURLs.contains(decks.get(i).getUrl()));
+                result.addDeck(mds);
+                System.out.println(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
+            }
         }
+        return result;
     }
 }

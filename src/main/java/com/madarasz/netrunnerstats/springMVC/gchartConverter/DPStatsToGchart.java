@@ -1,10 +1,8 @@
 package com.madarasz.netrunnerstats.springMVC.gchartConverter;
 
-import com.madarasz.netrunnerstats.DOs.stats.CountDeckStands;
+import com.madarasz.netrunnerstats.DOs.stats.entries.CountDeckStands;
 import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.springMVC.gchart.*;
-import org.json.JSONArray;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
