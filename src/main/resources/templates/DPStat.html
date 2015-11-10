@@ -17,12 +17,13 @@
             var dpname = encodeURIComponent([[${DPname}]]);
             var basecharts = "http://localhost:8080/DataTable/DPStats/";
             var baselist = "http://localhost:8080/JSON/DPStats/Identities/";
+            var basecompare = "http://localhost:8080/MDSIdentity/" + dpname + "/";
             drawChart(basecharts + "Top/runner/faction/" + dpname, 'Top runner factions', 'chart_div1');
             drawChart(basecharts + "Top/corp/faction/" + dpname, 'Top corp factions', 'chart_div2');
             drawChart(basecharts + "Top/runner/identity/" + dpname, 'Top runner identities', 'chart_div3');
             drawChart(basecharts + "Top/corp/identity/" + dpname, 'Top corp identities', 'chart_div4');
-            listIdentities(baselist + "runner/" + dpname, "#text_div1");
-            listIdentities(baselist + "corp/"+ dpname, "#text_div2");
+            listIdentities(baselist + "runner/" + dpname, "#text_div1", basecompare);
+            listIdentities(baselist + "corp/"+ dpname, "#text_div2", basecompare);
         }
 
         // Callback that creates and populates a data table,
@@ -58,15 +59,16 @@
             chart.draw(data, options);
         }
 
-      function listIdentities(urlvalue, elementid) {
+      function listIdentities(urlvalue, elementid, linkurl) {
           var jsonData = $.ajax({
               url: urlvalue,
               dataType: "json",
               async: false,
               success: function(data) {
                   $.each(data.identities, function(index, element) {
-                      $(elementid).append($('<div>', {
-                          text: element.title
+                      $(elementid).append($('<div>')).append($('<a>', {
+                          text: element.title + " (" + element.decknum +" decks)",
+                          href: linkurl + element.title
                       }));
                   });
               }
