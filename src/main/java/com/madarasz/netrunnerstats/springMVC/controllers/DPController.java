@@ -43,7 +43,7 @@ public class DPController {
         return dpStatsToGchart.converter(stats, sidecode, stattype);
     }
 
-    // Google Chart DataTable output
+    // Google Chart color output
     @RequestMapping(value="/Color/DPStats/Top/{sidecode}/{stattype}/{DPName}", method = RequestMethod.GET)
     public @ResponseBody List<String> getDPTopColors(
             @PathVariable(value = "sidecode") String sidecode,

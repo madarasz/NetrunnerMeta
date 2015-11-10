@@ -5,9 +5,9 @@ package com.madarasz.netrunnerstats.springMVC.gchart;
  * Object representation of the "cell" property with numeric value in Google Charts.
  */
 public class CellNumber extends Cell {
-    private int v;
+    private double v;
 
-    public CellNumber(int v) {
+    public CellNumber(double v) {
         super();
         this.v = v;
     }
@@ -17,7 +17,7 @@ public class CellNumber extends Cell {
         this.v = v;
     }
 
-    public int getV() {
+    public double getV() {
         return v;
     }
 }
