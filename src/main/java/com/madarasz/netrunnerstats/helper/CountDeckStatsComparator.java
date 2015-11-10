@@ -12,7 +12,7 @@ public class CountDeckStatsComparator implements Comparator<CountDeckStands> {
 
     @Override
     public int compare(CountDeckStands o1, CountDeckStands o2) {
-        if (o1.getDecknum() > o2.getDecknum()) {
+        if (o1.getStandingnum() > o2.getStandingnum()) {
             return -1;
         } else {
             return 1;
