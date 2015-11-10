@@ -66,6 +66,6 @@ public class DPController {
     public @ResponseBody DPIntentities getDPIdentities(
             @PathVariable(value = "sidecode") String sidecode,
             @PathVariable(value = "DPName") String DPName) {
-        return statistics.getIdentityLinksForDataPack(DPName);
+        return statistics.getIdentityLinksForDataPack(DPName, sidecode);
     }
 }

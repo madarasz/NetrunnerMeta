@@ -177,10 +177,20 @@ public class Statistics {
         }
         return result;
     }
-    public DPIntentities getIdentityLinksForDataPack(String cardpackName) {
+    public DPIntentities getIdentityLinksForDataPack(String cardpackName, String sidecode) {
         DPStatistics stats = getPackStats(cardpackName);
         DPIntentities result = new DPIntentities();
-        for (CountDeckStands identity : stats.getCorpIdentities()) {
+
+        List<CountDeckStands> data;
+        if (sidecode.equals("runner")) {
+            data = stats.getRunnerIdentities();
+        } else if (sidecode.equals("corp")) {
+            data = stats.getCorpIdentities();
+        } else {
+            return new DPIntentities();
+        }
+
+        for (CountDeckStands identity : data) {
             int topdecknum = identity.getDecknum();
             String title = identity.getTitle();
             int decknum = deckRepository.countByIdentityAndCardPool(title, cardpackName);
