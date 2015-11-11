@@ -1,7 +1,9 @@
 package com.madarasz.netrunnerstats.DOs.stats.entries;
 
+import com.madarasz.netrunnerstats.DOs.Card;
 import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
+import com.madarasz.netrunnerstats.helper.ColorPicker;
 import com.madarasz.netrunnerstats.helper.comparator.DeckHasCardComparator;
 
 import java.util.ArrayList;
@@ -74,12 +76,28 @@ public class DeckInfo {
         }
 
         Set<DeckHasCard> cards = deck.getCards();
+        String factionCode = deck.getIdentity().getFaction_code();
         for (String category : categories) {
             List<DeckHasCard> selectedCards = filterDeck(cards, category);
             String capitalized = category.substring(0, 1).toUpperCase() + category.substring(1);
             result += "<strong>" + capitalized + " ("+ countCards(selectedCards) + ")</strong><br />\n";
             for (DeckHasCard card : selectedCards) {
-                result += card.getQuantity() + "x " + card.getCard().getTitle() + "<br />\n";
+                Card thecard = card.getCard();
+                result += card.getQuantity() + "x " + thecard.getTitle();
+
+                // display faction cost
+                if (!thecard.getFaction_code().equals(factionCode)) {
+                    result += " <span style=\"color: " + colorFaction(thecard.getFaction_code()) + "\">";
+                    int times = thecard.getFactioncost() * card.getQuantity();
+                    for (int i = 0; i < times; i++) {
+                        result += "•";
+                        if ((i+1) % 5 == 0) {
+                            result += " ";
+                        }
+                    }
+                    result += "</span>";
+                }
+                result += "<br />\n";
             }
             result += "<br />\n";
         }
@@ -109,5 +127,27 @@ public class DeckInfo {
             result += card.getQuantity();
         }
         return result;
+    }
+
+    // TODO: color duplication
+    private String colorFaction(String title) {
+        switch (title) {
+            case "shaper":
+                return("#7EAC39");
+            case "criminal":
+                return("#3962AC");
+            case "anarch":
+                return("#AC5439");
+            case "jinteki":
+                return("#b43018");
+            case "haas-bioroid":
+                return("#804a82");
+            case "weyland-consortium":
+                return("#4a8272");
+            case "nbn":
+                return("#A1762B");
+            default:
+                return("#CCCCCC");
+        }
     }
 }
