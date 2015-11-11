@@ -39,7 +39,6 @@
                 async: false,
                 success: function(data) {
                     $.each(data.rows, function (index, element) {
-                        console.log(element.c[2].v);
                         slices.push({color : element.c[2].v});
                     });
                 }

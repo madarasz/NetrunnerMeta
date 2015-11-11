@@ -1,4 +1,4 @@
-package com.madarasz.netrunnerstats.DOs.stats;
+package com.madarasz.netrunnerstats.DOs.stats.entries;
 
 import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
@@ -16,6 +16,7 @@ import java.util.Set;
 public class DeckInfo {
     private String shortHtmlDigest;
     private String htmlDigest;
+    private String digest;
 
     public DeckInfo() {
     }
@@ -23,6 +24,7 @@ public class DeckInfo {
     public DeckInfo(Deck deck) {
         this.shortHtmlDigest = shortHtmlDigest(deck);
         this.htmlDigest = htmlDigest(deck);
+        this.digest = digest(deck);
     }
 
     public String getShortHtmlDigest() {
@@ -31,6 +33,19 @@ public class DeckInfo {
 
     public String getHtmlDigest() {
         return htmlDigest;
+    }
+
+    public String getDigest() {
+        return digest;
+    }
+
+    public String digest(Deck deck) {
+        String result = deck.getName();
+        if (!deck.getPlayer().equals("")) {
+            result += " by " + deck.getPlayer();
+        }
+        result += " (" + deck.countCards() + " cards)";
+        return result;
     }
 
     /**
