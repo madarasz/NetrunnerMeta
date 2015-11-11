@@ -7,43 +7,57 @@
     <script th:inline="javascript">
     /*<![CDATA[*/
 
-      // Load the Visualization API and the piechart package.
-      google.load('visualization', '1.0', {'packages':['corechart']});
+        // Load the Visualization API and the piechart package.
+        google.load('visualization', '1.0', {'packages':['corechart']});
 
-      // Set a callback to run when the Google Visualization API is loaded.
-      google.setOnLoadCallback(drawCharts);
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.setOnLoadCallback(drawCharts);
 
-      function drawCharts() {
-        var url = "http://localhost:8080/DataTable/MDSIdentity/" + encodeURIComponent([[${DPname}]]) +
-          "/" + encodeURIComponent([[${identity}]]);
-        drawChart(url, [[${identity}]], 'chart_div1');
-      }
+        function drawCharts() {
+            var url = "http://localhost:8080/DataTable/MDSIdentity/" + encodeURIComponent([[${DPname}]]) +
+                "/" + encodeURIComponent([[${identity}]]);
+            drawChart(url, [[${identity}]], 'chart_div1');
+            //setDeckInfo("http://localhost:8080/JSON/Deck?url=http%3A%2F%2Fstimhack.com%2Fanr-pro-circuit-austin-tx-20-players%2F%231");
+        }
 
-      // Callback that creates and populates a data table,
-      // instantiates the pie chart, passes in the data and
-      // draws it.
-      function drawChart(urlvalue, title, elementid) {
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart(urlvalue, title, elementid) {
 
-        var jsonData = $.ajax({
-          url: urlvalue,
-          dataType: "json",
-          async: false
-          }).responseText;
+            var jsonData = $.ajax({
+                url: urlvalue,
+                dataType: "json",
+                async: false
+            }).responseText;
 
-        // Create our data table out of JSON data loaded from server.
-        var data = new google.visualization.DataTable(jsonData);
+            // Create our data table out of JSON data loaded from server.
+            var data = new google.visualization.DataTable(jsonData);
 
-        // Set chart options
-        var options = {'title': title,
-                       'legend': {position: 'none'},
-                       'width':800,
-                       'height':600,
-                        'tooltip': {isHtml: true}};
+            // Set chart options
+            var options = {
+                'title': title,
+                'legend': {position: 'none'},
+                'width':800,
+                'height':600,
+                'tooltip': {isHtml: true}
+            };
 
-        // Instantiate and draw our chart, passing in some options.
-        var chart = new google.visualization.ScatterChart(document.getElementById(elementid));
-        chart.draw(data, options);
-      }
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.ScatterChart(document.getElementById(elementid));
+            chart.draw(data, options);
+        }
+
+        function setDeckInfo(urlvalue) {
+            var jsonData = $.ajax({
+                url: urlvalue,
+                dataType: "json",
+                async: false,
+                success: function(data) {
+                    $('#deck_data').replaceWith("<div id=\"deck_data\">" + data.htmlDigest + "</div>");
+                }
+            });
+        }
     /*]]>*/
     </script>
 </head>
@@ -52,6 +66,11 @@
 <p th:text="${DPName}"></p>
 <p th:text="${identity}"></p>
 <!--Div that will hold the pie chart-->
-<div id="chart_div1"></div>
+<table>
+    <tr>
+        <td><div id="chart_div1"></div></td>
+        <td><div id="deck_data"></div></td>
+    </tr>
+</table>
 </body>
 </html>

@@ -1,8 +1,12 @@
 package com.madarasz.netrunnerstats.springMVC.gchartConverter;
 
+import com.madarasz.netrunnerstats.DOs.Deck;
+import com.madarasz.netrunnerstats.DOs.stats.DeckInfo;
 import com.madarasz.netrunnerstats.DOs.stats.IdentityMDS;
 import com.madarasz.netrunnerstats.DOs.stats.entries.MDSEntry;
+import com.madarasz.netrunnerstats.DRs.DeckRepository;
 import com.madarasz.netrunnerstats.springMVC.gchart.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,6 +18,9 @@ import java.util.List;
  */
 @Component
 public class MDSToGchart {
+
+    @Autowired
+    DeckRepository deckRepository;
 
     private static final String STYLE_TOPDECK = "point {size: 8; shape-type: star; stroke-color: #FFFFFF;}";
     private static final String STYLE_NOT_TOPDECK = "point {stroke-color: #FFFFFF;}";
@@ -30,8 +37,8 @@ public class MDSToGchart {
             CellNumber x = new CellNumber(entry.getX());
             CellNumber y = new CellNumber(entry.getY());
             CellString style = null;
-            CellString tooltip = new CellString("<a href=\"" + entry.getDeckURL() + "\" target=\"_blank\">" +
-                    entry.getDeckTitle() + "</a>");
+            Deck deck = deckRepository.findByUrl(entry.getDeckURL());
+            CellString tooltip = new CellString(new DeckInfo(deck).getShortHtmlDigest());
             rowdata.add(x);
             rowdata.add(y);
             if (entry.isTopdeck()) {

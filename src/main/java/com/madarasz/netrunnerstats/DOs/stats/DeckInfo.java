@@ -14,40 +14,43 @@ import java.util.Set;
  * For deck information digest.
  */
 public class DeckInfo {
-    private String title;
-    private String url;
-    private String player;
+    private String shortHtmlDigest;
     private String htmlDigest;
 
     public DeckInfo() {
     }
 
     public DeckInfo(Deck deck) {
-        title = deck.getName();
-        url = deck.getUrl();
-        player = deck.getPlayer();
-        htmlDigest = htmlDigest(deck);
+        this.shortHtmlDigest = shortHtmlDigest(deck);
+        this.htmlDigest = htmlDigest(deck);
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getPlayer() {
-        return player;
+    public String getShortHtmlDigest() {
+        return shortHtmlDigest;
     }
 
     public String getHtmlDigest() {
         return htmlDigest;
     }
 
+    /**
+     * Html output with deck name, player, identity and card count
+     * @return html string
+     */
+    public String shortHtmlDigest(Deck deck) {
+        String result = "<strong>" + deck.getName() + "</strong>";
+        if (!deck.getPlayer().equals("")) {
+            result += " by " + deck.getPlayer();
+        }
+        result += "<br />\n";
+        result += "<em>" + deck.getIdentity().getTitle() + "</em> (" + deck.countCards()
+                + " cards)";
+        return result;
+    }
 
     public String htmlDigest(Deck deck) {
-        String result = "";
+        String result = shortHtmlDigest(deck) + "<br />\n<br />\n";
+
         List<String> categories;
         if (deck.getIdentity().getSide_code().equals("runner")) {
             categories = new ArrayList<String>(Arrays.asList("event", "hardware", "icebreaker", "program", "resource"));
@@ -63,7 +66,11 @@ public class DeckInfo {
             for (DeckHasCard card : selectedCards) {
                 result += card.getQuantity() + "x " + card.getCard().getTitle() + "<br />\n";
             }
+            result += "<br />\n";
         }
+
+        result += "<br />\n<a href=\"" + deck.getUrl() + "\" target=\"_blank\">" + deck.getUrl() + "</a>";
+
         return result;
     }
 
