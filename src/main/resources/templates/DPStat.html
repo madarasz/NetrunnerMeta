@@ -1,6 +1,22 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Know the Meta</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="apple-touch-icon" href="../static/apple-touch-icon.png" />
+    <style>
+        body {
+        padding-top: 50px;
+        padding-bottom: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../static/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="../static/css/main.css" />
+
     <!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="../static/jquery-1.11.3.min.js"></script>
@@ -48,10 +64,11 @@
             var data = new google.visualization.DataTable(jsonData);
 
             // Set chart options
-            var options = {'title': title,
-                       'width':400,
-                       'height':300,
-                        'slices': slices};
+            var options = {
+                'width':500,
+                'height':300,
+                'slices': slices
+            };
 
             // Instantiate and draw our chart, passing in some options.
             var chart = new google.visualization.PieChart(document.getElementById(elementid));
@@ -78,21 +95,59 @@
 </head>
 
 <body>
-<p th:text="${DPname}"></p>
-<!--Div that will hold the pie chart-->
-<table>
-    <tr>
-        <td><div id="chart_div1"></div></td>
-        <td><div id="chart_div2"></div></td>
-    </tr>
-    <tr>
-        <td><div id="chart_div3"></div></td>
-        <td><div id="chart_div4"></div></td>
-    </tr>
-    <tr>
-        <td><div id="text_div1"></div></td>
-        <td><div id="text_div2"></div></td>
-    </tr>
-</table>
+<!--[if lt IE 8]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Know the Meta</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h3 class="page-header" th:text="${DPname}"></h3>
+
+    <div class="row">
+        <div class="col-md-6">
+            <p>Top runner factions</p>
+            <div id="chart_div1"></div>
+        </div>
+        <div class="col-md-6">
+            <p>Top corp factions</p>
+            <div id="chart_div2"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <p>Top runner identities</p>
+            <div id="chart_div3"></div>
+        </div>
+        <div class="col-md-6">
+            <p>Top corp identities</p>
+            <div id="chart_div4"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <p>Runner decks</p>
+            <div id="text_div1"></div>
+        </div>
+        <div class="col-md-6">
+            <p>Corp decks</p>
+            <div id="text_div2"></div>
+        </div>
+    </div>
+
+    <hr />
+
+    <footer>
+        <p>&copy; Istvan Madarasz 2015</p>
+    </footer>
+</div>
+
+<script src="../static/js/vendor/bootstrap.min.js"></script>
+<script src="../static/js/main.js"></script>
 </body>
 </html>

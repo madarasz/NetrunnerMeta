@@ -80,7 +80,9 @@ public class DeckInfo {
         for (String category : categories) {
             List<DeckHasCard> selectedCards = filterDeck(cards, category);
             String capitalized = category.substring(0, 1).toUpperCase() + category.substring(1);
-            result += "<strong>" + capitalized + " ("+ countCards(selectedCards) + ")</strong><br />\n";
+            if (selectedCards.size() > 0) {
+                result += "<strong>" + capitalized + " (" + countCards(selectedCards) + ")</strong><br />\n";
+            }
             for (DeckHasCard card : selectedCards) {
                 Card thecard = card.getCard();
                 result += card.getQuantity() + "x " + thecard.getTitle();
@@ -99,7 +101,9 @@ public class DeckInfo {
                 }
                 result += "<br />\n";
             }
-            result += "<br />\n";
+            if (selectedCards.size() > 0) {
+                result += "<br />\n";
+            }
         }
 
         result += "<br />\n<a href=\"" + deck.getUrl() + "\" target=\"_blank\">" + deck.getUrl() + "</a>";
