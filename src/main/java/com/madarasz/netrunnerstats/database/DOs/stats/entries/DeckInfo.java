@@ -1,9 +1,8 @@
-package com.madarasz.netrunnerstats.DOs.stats.entries;
+package com.madarasz.netrunnerstats.database.DOs.stats.entries;
 
-import com.madarasz.netrunnerstats.DOs.Card;
-import com.madarasz.netrunnerstats.DOs.Deck;
-import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
-import com.madarasz.netrunnerstats.helper.ColorPicker;
+import com.madarasz.netrunnerstats.database.DOs.Card;
+import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.helper.comparator.DeckHasCardComparator;
 
 import java.util.ArrayList;

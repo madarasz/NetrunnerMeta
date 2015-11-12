@@ -1,8 +1,8 @@
 package com.madarasz.netrunnerstats.helper;
 
-import com.madarasz.netrunnerstats.DOs.Card;
-import com.madarasz.netrunnerstats.DOs.Deck;
-import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
+import com.madarasz.netrunnerstats.database.DOs.Card;
+import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import mdsj.MDSJ;
 import org.springframework.stereotype.Component;
 

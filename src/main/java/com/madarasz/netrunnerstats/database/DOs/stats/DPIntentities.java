@@ -1,6 +1,6 @@
-package com.madarasz.netrunnerstats.DOs.stats;
+package com.madarasz.netrunnerstats.database.DOs.stats;
 
-import com.madarasz.netrunnerstats.DOs.stats.entries.DPIdentity;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.DPIdentity;
 
 import java.util.ArrayList;
 import java.util.List;

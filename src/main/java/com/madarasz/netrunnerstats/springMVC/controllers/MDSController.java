@@ -1,6 +1,6 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
-import com.madarasz.netrunnerstats.DOs.stats.IdentityMDS;
+import com.madarasz.netrunnerstats.database.DOs.stats.IdentityMDS;
 import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.springMVC.gchart.DataTable;
 import com.madarasz.netrunnerstats.springMVC.gchartConverter.MDSToGchart;

@@ -1,15 +1,13 @@
 package com.madarasz.netrunnerstats;
 
-import com.madarasz.netrunnerstats.DOs.*;
-import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
-import com.madarasz.netrunnerstats.DOs.result.StatCounts;
-import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
-import com.madarasz.netrunnerstats.DOs.stats.entries.CountDeckStands;
-import com.madarasz.netrunnerstats.DRs.*;
+import com.madarasz.netrunnerstats.database.DOs.*;
+import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
+import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.CountDeckStands;
+import com.madarasz.netrunnerstats.database.DRs.*;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import com.madarasz.netrunnerstats.brokers.StimhackBroker;
-import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
-import com.madarasz.netrunnerstats.DOs.stats.DPIntentities;
-import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
+import com.madarasz.netrunnerstats.database.DOs.stats.DPIntentities;
+import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.springMVC.gchart.DataTable;
 import com.madarasz.netrunnerstats.springMVC.gchartConverter.DPStatsToGchart;

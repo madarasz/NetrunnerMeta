@@ -1,7 +1,7 @@
 package com.madarasz.netrunnerstats.helper;
 
-import com.madarasz.netrunnerstats.DOs.Card;
-import com.madarasz.netrunnerstats.DRs.CardRepository;
+import com.madarasz.netrunnerstats.database.DOs.Card;
+import com.madarasz.netrunnerstats.database.DRs.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

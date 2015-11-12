@@ -1,6 +1,6 @@
 package com.madarasz.netrunnerstats.helper.comparator;
 
-import com.madarasz.netrunnerstats.DOs.stats.entries.CountDeckStands;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.CountDeckStands;
 
 import java.util.Comparator;
 

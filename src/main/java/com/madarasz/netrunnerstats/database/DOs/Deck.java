@@ -1,6 +1,6 @@
-package com.madarasz.netrunnerstats.DOs;
+package com.madarasz.netrunnerstats.database.DOs;
 
-import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
+import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import org.springframework.data.neo4j.annotation.*;
 import java.util.HashSet;
 import java.util.Set;

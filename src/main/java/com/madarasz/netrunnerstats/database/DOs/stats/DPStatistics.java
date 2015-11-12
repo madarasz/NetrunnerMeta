@@ -1,6 +1,6 @@
-package com.madarasz.netrunnerstats.DOs.stats;
+package com.madarasz.netrunnerstats.database.DOs.stats;
 
-import com.madarasz.netrunnerstats.DOs.stats.entries.CountDeckStands;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.CountDeckStands;
 import com.madarasz.netrunnerstats.helper.comparator.CountDeckStatsComparator;
 import org.springframework.data.neo4j.annotation.*;
 

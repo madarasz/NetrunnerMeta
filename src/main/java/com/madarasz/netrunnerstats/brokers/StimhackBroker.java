@@ -1,11 +1,11 @@
 package com.madarasz.netrunnerstats.brokers;
 
-import com.madarasz.netrunnerstats.DOs.Card;
-import com.madarasz.netrunnerstats.DOs.CardPack;
-import com.madarasz.netrunnerstats.DOs.Deck;
-import com.madarasz.netrunnerstats.DOs.Tournament;
-import com.madarasz.netrunnerstats.DRs.CardPackRepository;
-import com.madarasz.netrunnerstats.DRs.CardRepository;
+import com.madarasz.netrunnerstats.database.DOs.Card;
+import com.madarasz.netrunnerstats.database.DOs.CardPack;
+import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.Tournament;
+import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
+import com.madarasz.netrunnerstats.database.DRs.CardRepository;
 import com.madarasz.netrunnerstats.helper.TitleGuesser;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;

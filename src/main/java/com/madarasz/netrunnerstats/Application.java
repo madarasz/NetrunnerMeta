@@ -1,8 +1,8 @@
 package com.madarasz.netrunnerstats;
 
-import com.madarasz.netrunnerstats.DRs.CardPackRepository;
-import com.madarasz.netrunnerstats.DRs.CardRepository;
-import com.madarasz.netrunnerstats.DRs.DeckRepository;
+import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
+import com.madarasz.netrunnerstats.database.DRs.CardRepository;
+import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -103,7 +103,8 @@ public class Application implements CommandLineRunner {
                 case acooall:
 //                    operations.cleanDB();
 //                    operations.loadNetrunnerDB();
-                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/the-universe-of-tomorrow/1/", true, false);
+                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/data-and-destiny/1/", true, false);
+//                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/the-universe-of-tomorrow/1/", true, false);
 //                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/old-hollywood/1/", true, false);
 //                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/anr-tournament-archive/1", true, false);
                     operations.logDBCount();

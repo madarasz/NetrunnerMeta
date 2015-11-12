@@ -1,6 +1,6 @@
 package com.madarasz.netrunnerstats.helper.comparator;
 
-import com.madarasz.netrunnerstats.DOs.Card;
+import com.madarasz.netrunnerstats.database.DOs.Card;
 import java.util.Comparator;
 import java.util.Map;
 

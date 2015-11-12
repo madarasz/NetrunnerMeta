@@ -1,4 +1,4 @@
-package com.madarasz.netrunnerstats.DOs;
+package com.madarasz.netrunnerstats.database.DOs;
 
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;

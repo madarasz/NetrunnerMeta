@@ -1,6 +1,6 @@
 package com.madarasz.netrunnerstats.helper.comparator;
 
-import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
+import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 
 import java.util.Comparator;
 

@@ -1,10 +1,9 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
-import com.madarasz.netrunnerstats.DOs.Deck;
-import com.madarasz.netrunnerstats.DOs.stats.DeckInfos;
-import com.madarasz.netrunnerstats.DOs.stats.IdentityMDS;
-import com.madarasz.netrunnerstats.DOs.stats.entries.DeckInfo;
-import com.madarasz.netrunnerstats.DRs.DeckRepository;
+import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.stats.DeckInfos;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.DeckInfo;
+import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

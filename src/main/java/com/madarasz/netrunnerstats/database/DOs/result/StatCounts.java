@@ -1,6 +1,5 @@
-package com.madarasz.netrunnerstats.DOs.result;
+package com.madarasz.netrunnerstats.database.DOs.result;
 
-import com.madarasz.netrunnerstats.DOs.Card;
 import org.springframework.data.neo4j.annotation.QueryResult;
 import org.springframework.data.neo4j.annotation.ResultColumn;
 

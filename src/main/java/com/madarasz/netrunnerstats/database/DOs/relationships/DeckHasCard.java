@@ -1,7 +1,7 @@
-package com.madarasz.netrunnerstats.DOs.relationships;
+package com.madarasz.netrunnerstats.database.DOs.relationships;
 
-import com.madarasz.netrunnerstats.DOs.Card;
-import com.madarasz.netrunnerstats.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.Card;
+import com.madarasz.netrunnerstats.database.DOs.Deck;
 import org.springframework.data.neo4j.annotation.*;
 
 /**

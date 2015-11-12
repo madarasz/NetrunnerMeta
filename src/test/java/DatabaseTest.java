@@ -1,7 +1,7 @@
 import com.madarasz.netrunnerstats.Application;
-import com.madarasz.netrunnerstats.DOs.*;
-import com.madarasz.netrunnerstats.DOs.relationships.DeckHasCard;
-import com.madarasz.netrunnerstats.DRs.*;
+import com.madarasz.netrunnerstats.database.DOs.*;
+import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
+import com.madarasz.netrunnerstats.database.DRs.*;
 import com.madarasz.netrunnerstats.Operations;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;

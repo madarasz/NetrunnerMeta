@@ -1,6 +1,6 @@
-package com.madarasz.netrunnerstats.DRs.stats;
+package com.madarasz.netrunnerstats.database.DRs.stats;
 
-import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
+import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.neo4j.repository.RelationshipOperationsRepository;
 

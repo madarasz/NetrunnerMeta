@@ -1,9 +1,9 @@
 package com.madarasz.netrunnerstats.brokers;
 
-import com.madarasz.netrunnerstats.DOs.*;
-import com.madarasz.netrunnerstats.DRs.CardPackRepository;
-import com.madarasz.netrunnerstats.DRs.CardRepository;
-import com.madarasz.netrunnerstats.DRs.DeckRepository;
+import com.madarasz.netrunnerstats.database.DOs.*;
+import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
+import com.madarasz.netrunnerstats.database.DRs.CardRepository;
+import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
 import com.madarasz.netrunnerstats.helper.TitleGuesser;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;

@@ -1,4 +1,4 @@
-package com.madarasz.netrunnerstats.DOs;
+package com.madarasz.netrunnerstats.database.DOs;
 
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.*;
@@ -6,7 +6,6 @@ import org.springframework.data.neo4j.annotation.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
