@@ -4,7 +4,17 @@
    Author's custom styles
    ========================================================================== */
 
+.top-buffer { margin-top:20px; }
 
+.glyphicon.glyphicon-one-fine-dot:before {
+    content: "\25cf";
+    font-size: 1.5em;
+}
+
+.glyphicon.glyphicon-one-fine-star:before {
+    content: "\2605";
+    font-size: 1.0em;
+}
 
 
 
