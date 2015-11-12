@@ -1,8 +1,11 @@
 package com.madarasz.netrunnerstats.DRs;
 
 import com.madarasz.netrunnerstats.DOs.CardPack;
+import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.neo4j.repository.RelationshipOperationsRepository;
+
+import java.util.List;
 
 /**
  * Repository for card pack nodes
@@ -15,4 +18,7 @@ public interface CardPackRepository extends GraphRepository<CardPack>, Relations
     CardPack findByCode(String code);
 
     CardPack findByCyclenumberAndNumber(int cyclenumber, int number);
+
+    @Query("MATCH (p:CardPack)<--(:Tournament)<--(s:Standing) RETURN DISTINCT p")
+    List<CardPack> findWithStandings();
 }

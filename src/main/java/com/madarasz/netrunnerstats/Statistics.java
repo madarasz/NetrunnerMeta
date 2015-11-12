@@ -4,9 +4,11 @@ import com.madarasz.netrunnerstats.DOs.Card;
 import com.madarasz.netrunnerstats.DOs.CardPack;
 import com.madarasz.netrunnerstats.DOs.Deck;
 import com.madarasz.netrunnerstats.DOs.result.StatCounts;
+import com.madarasz.netrunnerstats.DOs.stats.CardPoolStats;
 import com.madarasz.netrunnerstats.DOs.stats.DPIntentities;
 import com.madarasz.netrunnerstats.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.DOs.stats.IdentityMDS;
+import com.madarasz.netrunnerstats.DOs.stats.entries.CardPool;
 import com.madarasz.netrunnerstats.DOs.stats.entries.CountDeckStands;
 import com.madarasz.netrunnerstats.DOs.stats.entries.DPIdentity;
 import com.madarasz.netrunnerstats.DOs.stats.entries.MDSEntry;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by madarasz on 11/7/15.
@@ -37,6 +38,9 @@ public class Statistics {
 
     @Autowired
     DeckRepository deckRepository;
+
+    @Autowired
+    TournamentRepository tournamentRepository;
 
     @Autowired
     StandingRepository standingRepository;
@@ -56,10 +60,10 @@ public class Statistics {
     public DPStatistics getPackStats(String cardpackName) {
         DPStatistics statistics = dpStatsRepository.findByDpname(cardpackName);
         if (statistics == null) {
-            statistics = new DPStatistics(cardpackName, deckRepository.countByCardPack(cardpackName), standingRepository.countByCardPool(cardpackName));
+            statistics = new DPStatistics(cardpackName, deckRepository.countByCardpool(cardpackName), standingRepository.countByCardPool(cardpackName));
             System.out.println("*********************************************************************");
             System.out.println(String.format("Stats for cardpool: %s (%d decks, %d standings)",
-                    cardpackName, deckRepository.countByCardPack(cardpackName), standingRepository.countByCardPool(cardpackName)));
+                    cardpackName, deckRepository.countByCardpool(cardpackName), standingRepository.countByCardPool(cardpackName)));
             System.out.println("*********************************************************************");
 
             List<StatCounts> stats = standingRepository.getTopIdentityStatsByCardPool(cardpackName);
@@ -137,7 +141,7 @@ public class Statistics {
                         break;
                     } else {
                         String cardPackName = cardPack.getName();
-                        int cardpackCount = deckRepository.countByCardPack(cardPackName);
+                        int cardpackCount = deckRepository.countByCardpool(cardPackName);
                         if (cardpackCount > 0) {
                             System.out.println(String.format("** %s: %d", cardPackName, cardpackCount));
                             getPackStats(cardPackName);
@@ -207,6 +211,20 @@ public class Statistics {
                         decknum, topdecknum);
                 result.addIdentitiy(entry);
             }
+        }
+        return result;
+    }
+
+    public CardPoolStats getCardPoolStats() {
+        CardPoolStats result = new CardPoolStats();
+        List<CardPack> available = cardPackRepository.findWithStandings();
+        for (CardPack cardPack: available) {
+            String title = cardPack.getName();
+            int standingsnum = standingRepository.countByCardPool(title);
+            int decknum = deckRepository.countByCardpool(title);
+            int tournamentnum = tournamentRepository.countByCardpool(title);
+            CardPool cardPool = new CardPool(title, tournamentnum, decknum, standingsnum);
+            result.addCardPool(cardPool);
         }
         return result;
     }
