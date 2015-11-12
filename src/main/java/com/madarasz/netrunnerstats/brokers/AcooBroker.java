@@ -380,7 +380,7 @@ public class AcooBroker {
             case "Near-earth-hub-icon.png" :
                 identityName = "Near-Earth Hub: Broadcast Center";
                 break;
-            case "icon-sol.png" :   // not sure
+            case "icon-new-angeles-sol" :
                 identityName = "New Angeles Sol: Your News";
                 break;
             case "icon-next-design.jpg" :
@@ -404,13 +404,13 @@ public class AcooBroker {
             case "icon-silhouette.jpg" :
                 identityName = "Silhouette: Stealth Operative";
                 break;
-            case "icon-spark.png" :  // not sure
+            case "icon-spark-agency.png" :
                 identityName = "Spark Agency: Worldswide Reach";
                 break;
-            case "icon-sunny.png" :  // not sure
+            case "icon-sunny-lebeau.png" :
                 identityName = "Sunny Lebeau: Security Specialist";
                 break;
-            case "icon-sync.png" :  // not sure
+            case "icon-sync.png" :
                 identityName = "SYNC: Everything, Everywhere";
                 break;
             case "icon-tennin-institute.png" :
@@ -440,7 +440,7 @@ public class AcooBroker {
 
             default:
                 System.out.println(String.format("ERROR - Unknown ID for icon: %s", filename));
-                identityName = "The Collective: Williams, Wu, et al.";  // fallback ID
+                identityName = "The Shadow: Pulling the Strings";  // fallback ID
         }
         return identityName;
     }

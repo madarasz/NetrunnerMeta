@@ -103,9 +103,9 @@ public class Application implements CommandLineRunner {
                 case acooall:
 //                    operations.cleanDB();
 //                    operations.loadNetrunnerDB();
-                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/data-and-destiny/1/", true, false);
+//                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/data-and-destiny/1/", true, false);
 //                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/the-universe-of-tomorrow/1/", true, false);
-//                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/old-hollywood/1/", true, false);
+                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/old-hollywood/1/", true, false);
 //                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/anr-tournament-archive/1", true, false);
                     operations.logDBCount();
                     break;
@@ -125,7 +125,10 @@ public class Application implements CommandLineRunner {
                     operations.loadStimhackTournament("http://stimhack.com/gnk-madison-wi-14-players/");
                     break;
                 case stimhackpacktournament:
-                    operations.loadStimhackPackTournaments("The Universe of Tomorrow");
+                    operations.loadStimhackPackTournaments("Old Hollywood");
+//                    operations.loadStimhackPackTournaments("The Universe of Tomorrow");
+//                    operations.loadStimhackPackTournaments("Data and Destiny");
+//                    operations.loadStimhackPackTournaments("Data & Destiny");
                     break;
                 case resetstats:
                     operations.resetStats();

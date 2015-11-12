@@ -178,13 +178,13 @@ public class Operations {
             Set<Deck> decks = loadStimhackDecks(url);
             // tournament
             Tournament tournament = stimhackBroker.readTournament(url);
-            System.out.println("Saving new tournament! - " + tournament.toString());
             // standings for top1
             for (Deck deck : decks) {
                 Standing standing = new Standing(tournament, 1, deck.getIdentity(), true, deck.getIdentity().isRunner(), deck);
                 System.out.println("Saving standing! - " + standing.toString());
                 standingRepository.save(standing);
             }
+            System.out.println("Saving new tournament! - " + tournament.toString());
             tournamentRepository.save(tournament);
             return tournament;
         }
@@ -302,6 +302,15 @@ public class Operations {
 //            System.out.println(String.format("Checking validity: %s", deck.toString()));
             if (deck.isValidDeck()) {
 //                System.out.println("OK");
+            }
+        }
+
+        // check standings
+        List<Standing> standings = standingRepository.getAllStanding();
+        for (Standing standing : standings) {
+            if (standing.getIdentity().getTitle().equals("The Shadow: Pulling the Strings")) {
+                System.out.println(String.format("Unknown identity during tournament import (#%d): %s",
+                        standing.getRank(), standing.getTournament().getUrl()));
             }
         }
 

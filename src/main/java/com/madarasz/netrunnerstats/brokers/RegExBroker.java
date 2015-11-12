@@ -63,7 +63,7 @@ public class RegExBroker {
     }
 
     public String sanitizeText(String text) {
-        return text.replaceAll("“", "\"").replaceAll("”", "\"");
+        return text.replaceAll("“", "\"").replaceAll("”", "\"").replaceAll("’", "\'");
     }
 
     public Date parseDate(String datetext) {

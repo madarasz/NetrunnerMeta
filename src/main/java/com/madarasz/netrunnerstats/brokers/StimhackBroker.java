@@ -51,7 +51,7 @@ public class StimhackBroker {
     TitleGuesser titleGuesser;
 
     /**
-     * Reads Deck information from Acoo. Also adds deck metadata.
+     * Reads Deck information from Stimhack. Also adds deck metadata.
      * @param url url of deck
      * @return deck
      */
@@ -71,39 +71,33 @@ public class StimhackBroker {
     }
 
     /**
-     * Reads card data for Strimhach deck
+     * Reads card data for Strimhack deck
      * @param text html text
      * @return deck
      */
     public Deck parseDeck(String text, String playername, String url) {
 
         String[] lines = text.split(HTML_LINE_BREAK);
-        String decktitle = "";
+        String decktitle = Jsoup.parse(lines[0]).text();
+        Card identity = null;
         String identitytext = "";
-        try {
-            decktitle = Jsoup.parse(lines[0]).text();
-            identitytext = Jsoup.parse(lines[2]).text().split(" \\(")[0];
-        } catch (Exception e) {
-            System.out.println("ERROR - cannot parse deck title or identity- url: " + url);
-        }
-
-        // acoo import case
-        if (identitytext.equals("")) {
-            decktitle = "";
-            identitytext = Jsoup.parse(lines[1]).text().split(" \\(")[0];
-        }
-        identitytext = regExBroker.sanitizeText(identitytext);
-
-        Deck result = new Deck();
-        Card identity = cardRepository.findByTitle(identitytext);
-        if (identity == null) {
-            identitytext = Jsoup.parse(lines[0]).text().split(" \\(")[0];
+        int i;
+        for (i = 0; i < 3; i++) {
+            identitytext = titleGuesser.alternateTitle(
+                    regExBroker.sanitizeText(Jsoup.parse(lines[i]).text().split(" \\(")[0]));
             identity = cardRepository.findByTitle(identitytext);
+            if (identity != null) {
+                break;
+            }
+        }
+        if (i < 2) {
+            decktitle = "";
         }
         if (identity == null) {
             System.out.println("ERROR - can't parse identity: " + identitytext);
         }
-        result.setIdentity(identity);
+
+        Deck result = new Deck();
         result.setName(decktitle);
         result.setPlayer(playername);
         result.setUrl(url);
@@ -141,6 +135,21 @@ public class StimhackBroker {
             }
         }
 
+        // last chance to get identity via tags
+        if (identity == null) {
+            String side = result.getCards().iterator().next().getCard().getSide_code();
+            Elements tags = httpBroker.elementsFromHtml(HTML_TAGS);
+            for (Element tag : tags) {
+                Card card = cardRepository.findByTitle(titleGuesser.alternateTitle(tag.text()));
+                if ((card.getType_code().equals("identity")) && (card.getSide_code().equals(side))) {
+                    identity = card;
+                    System.out.println("Guessing identity from tags: " + identity.getTitle());
+                    break;
+                }
+            }
+
+        }
+        result.setIdentity(identity);
         return result;
     }
 
@@ -165,6 +174,11 @@ public class StimhackBroker {
         Elements tags = httpBroker.elementsFromHtml(HTML_TAGS);
         for (Element tag : tags) {
             cardpool = cardPackRepository.findByName(tag.text());
+
+            if (tag.text().equals("Data & Destiny")) {
+                cardpool = cardPackRepository.findByName("Data and Destiny");
+            }
+
             if (cardpool != null) {
                 break;
             }

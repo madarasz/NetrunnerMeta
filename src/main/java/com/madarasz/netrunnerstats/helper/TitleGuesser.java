@@ -11,16 +11,20 @@ import org.springframework.stereotype.Component;
 public class TitleGuesser {
 
     public String alternateTitle(String title) {
-        String newtitle = "";
+        String newtitle = title;
         switch (title) {
+            case "Kate Mac McCaffrey: Digital Tinker" :
+                newtitle = "Kate \"Mac\" McCaffrey: Digital Tinker";
+                break;
+            case "Haarpsichord Studios" :
+                newtitle = "Haarpsichord Studios: Entertainment Unleashed";
+                break;
             case "Haarpsichord Studios: Entertainement Unleached" :
                 newtitle = "Haarpsichord Studios: Entertainment Unleashed";
                 break;
             case "Deja Vu" :
                 newtitle = "Déjà Vu";
                 break;
-//            default:
-//                System.out.println(String.format("ERROR - Unknown card title: %s", title));
         }
         return newtitle;
     }

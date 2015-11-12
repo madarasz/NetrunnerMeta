@@ -143,10 +143,13 @@ public class DatabaseTest {
         decks.addAll(operations.loadStimhackDecks("http://stimhack.com/anr-pro-circuit-san-antonio-10-players/"));   // net deck import
         decks.addAll(operations.loadStimhackDecks("http://stimhack.com/the-psi-games-44-players/"));   // acoo import
         decks.addAll(operations.loadStimhackDecks("http://stimhack.com/casual-orebro-sweden-11-players/"));   // newest
+        decks.addAll(operations.loadStimhackDecks("http://stimhack.com/gnk-st-louis-6-players/"));   // some other netrunnerdb
+        decks.addAll(operations.loadStimhackDecks("http://stimhack.com/gnk-enchanted-grounds-littleton-co-usa-14-players/"));   // some other netrunnerdb
+        decks.addAll(operations.loadStimhackDecks("http://stimhack.com/anr-pro-circuit-darksphere-london-uk-32-players/"));   // identity from tags
 
         // count check
         operations.logDBCount();
-        Assert.assertEquals("Deck count wrong after deck imports.", template.count(Deck.class) - decknum, 14);
+        Assert.assertEquals("Deck count wrong after deck imports.", template.count(Deck.class) - decknum, 20);
         Assert.assertTrue("Deck-card relationship count is 0 after deck imports.", template.count(DeckHasCard.class) >= 320);
 
         // validity check
@@ -158,7 +161,7 @@ public class DatabaseTest {
         operations.loadAcooDeck(10890);
         operations.loadNetrunnerDbDeck(20162);
         operations.loadStimhackDecks("http://stimhack.com/gnk-game-kastle-santa-clara-11-players/");
-        Assert.assertEquals("Deck count wrong after deck reimports.", template.count(Deck.class) - decknum, 14);
+        Assert.assertEquals("Deck count wrong after deck reimports.", template.count(Deck.class) - decknum, 20);
     }
 
     @Test
