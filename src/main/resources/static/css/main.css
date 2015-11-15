@@ -16,6 +16,19 @@
     font-size: 1.0em;
 }
 
+/* influence bullet colors */
+.influence { font-size: 1.5em; }
+.inf-shaper { color: limegreen; }
+.inf-criminal { color: royalblue; }
+.inf-anarch { color: orangered; }
+.inf-jinteki { color: crimson; }
+.inf-haas-bioroid { color: blueviolet; }
+.inf-weyland-consortium { color: darkgreen; }
+.inf-nbn { color: darkorange; }
+.inf-neutral { color: gray; }
+.inf-apex { color: darkred; }
+.inf-sunny-lebeau { color: black; }
+.inf-adam { color: darkgoldenrod; }
 
 
 

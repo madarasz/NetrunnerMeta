@@ -94,7 +94,7 @@ public class DeckInfo {
 
                 // display faction cost
                 if (!thecard.getFaction_code().equals(factionCode)) {
-                    result += " <span style=\"color: " + colorFaction(thecard.getFaction_code()) + "\">";
+                    result += " <span class=\"influence inf-" + thecard.getFaction_code() + "\">";
                     int times = thecard.getFactioncost() * card.getQuantity();
                     for (int i = 0; i < times; i++) {
                         result += "•";
@@ -136,27 +136,5 @@ public class DeckInfo {
             result += card.getQuantity();
         }
         return result;
-    }
-
-    // TODO: color duplication
-    private String colorFaction(String title) {
-        switch (title) {
-            case "shaper":
-                return("#7EAC39");
-            case "criminal":
-                return("#3962AC");
-            case "anarch":
-                return("#AC5439");
-            case "jinteki":
-                return("#b43018");
-            case "haas-bioroid":
-                return("#804a82");
-            case "weyland-consortium":
-                return("#4a8272");
-            case "nbn":
-                return("#A1762B");
-            default:
-                return("#CCCCCC");
-        }
     }
 }
