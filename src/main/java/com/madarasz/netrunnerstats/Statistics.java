@@ -56,6 +56,9 @@ public class Statistics {
     IdentityMDSRepository identityMdsRepository;
 
     @Autowired
+    CardPoolStatsRepository cardPoolStatsRepository;
+
+    @Autowired
     ColorPicker colorPicker;
 
     /**
@@ -226,15 +229,21 @@ public class Statistics {
     }
 
     public CardPoolStats getCardPoolStats() {
-        CardPoolStats result = new CardPoolStats();
-        List<CardPack> available = cardPackRepository.findWithStandings();
-        for (CardPack cardPack: available) {
-            String title = cardPack.getName();
-            int standingsnum = standingRepository.countByCardPool(title);
-            int decknum = deckRepository.countByCardpool(title);
-            int tournamentnum = tournamentRepository.countByCardpool(title);
-            CardPool cardPool = new CardPool(title, tournamentnum, decknum, standingsnum);
-            result.addCardPool(cardPool);
+        CardPoolStats result = cardPoolStatsRepository.find();
+        if (result == null) {
+            result = new CardPoolStats();
+            List<CardPack> available = cardPackRepository.findWithStandings();
+            for (CardPack cardPack : available) {
+                String title = cardPack.getName();
+                int standingsnum = standingRepository.countByCardPool(title);
+                int decknum = deckRepository.countByCardpool(title);
+                int tournamentnum = tournamentRepository.countByCardpool(title);
+                CardPool cardPool = new CardPool(title, tournamentnum, decknum, standingsnum,
+                        cardPack.getNumber(), cardPack.getCyclenumber());
+                result.addCardPool(cardPool);
+            }
+            System.out.println("Saving Cardpool Statistics.");
+            cardPoolStatsRepository.save(result);
         }
         return result;
     }

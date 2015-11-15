@@ -86,7 +86,7 @@
             dataType: "json",
             async: false,
             success: function(data) {
-                $.each(data.cardpool, function(index, element) {
+                $.each(data, function(index, element) {
                     $("#cptable").append($('<tr>').append($('<td>').append($('<a>', {
                         text: element.title,
                         href: "http://localhost:8080/DPStats/" + encodeURIComponent(element.title)

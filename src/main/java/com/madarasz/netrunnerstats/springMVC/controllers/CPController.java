@@ -1,13 +1,14 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
-import com.madarasz.netrunnerstats.database.DOs.stats.CardPoolStats;
 import com.madarasz.netrunnerstats.Statistics;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,8 +23,8 @@ public class CPController {
     // JSON output
     @RequestMapping(value="/JSON/Cardpool", method = RequestMethod.GET)
     public @ResponseBody
-    CardPoolStats getCardPools() {
-        return statistics.getCardPoolStats();
+    List<CardPool> getCardPools() {
+        return statistics.getCardPoolStats().getSortedCardpool();
     }
 
     // html output
