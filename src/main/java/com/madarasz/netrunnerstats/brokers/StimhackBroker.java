@@ -93,9 +93,6 @@ public class StimhackBroker {
         if (i < 2) {
             decktitle = "";
         }
-        if (identity == null) {
-            System.out.println("ERROR - can't parse identity: " + identitytext);
-        }
 
         Deck result = new Deck();
         result.setName(decktitle);
@@ -147,7 +144,9 @@ public class StimhackBroker {
                     break;
                 }
             }
-
+        }
+        if (identity == null) {
+            System.out.println("ERROR - can't parse identity: " + url);
         }
         result.setIdentity(identity);
         return result;
