@@ -380,7 +380,7 @@ public class AcooBroker {
             case "Near-earth-hub-icon.png" :
                 identityName = "Near-Earth Hub: Broadcast Center";
                 break;
-            case "icon-new-angeles-sol" :
+            case "icon-new-angeles-sol.png" :
                 identityName = "New Angeles Sol: Your News";
                 break;
             case "icon-next-design.jpg" :
