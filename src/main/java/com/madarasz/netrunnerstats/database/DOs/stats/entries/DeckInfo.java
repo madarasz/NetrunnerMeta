@@ -18,6 +18,7 @@ public class DeckInfo {
     private String shortHtmlDigest;
     private String htmlDigest;
     private String digest;
+    private String url;
 
     public DeckInfo() {
     }
@@ -26,6 +27,7 @@ public class DeckInfo {
         this.shortHtmlDigest = shortHtmlDigest(deck);
         this.htmlDigest = htmlDigest(deck);
         this.digest = digest(deck);
+        this.url = deck.getUrl();
     }
 
     public String getShortHtmlDigest() {
@@ -38,6 +40,10 @@ public class DeckInfo {
 
     public String getDigest() {
         return digest;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public String digest(Deck deck) {

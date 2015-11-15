@@ -36,4 +36,7 @@ public interface StandingRepository extends GraphRepository<Standing>, Relations
 
     @Query("MATCH (s:Standing) return s")
     List<Standing> getAllStanding();
+
+    @Query("MATCH (s:Stanind)-->(d:Deck) WHERE (d.url={0}) RETURN s LIMIT 1")
+    Standing findByDeckUrl(String url);
 }

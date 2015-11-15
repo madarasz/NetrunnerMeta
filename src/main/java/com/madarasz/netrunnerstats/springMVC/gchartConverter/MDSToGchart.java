@@ -32,7 +32,7 @@ public class MDSToGchart {
         columns.add(new Column("", "", "string", "style"));
         columns.add(new Column("", "", new Formatting(true), "string", "tooltip"));
         List<Row> rows = new ArrayList<Row>();
-        for (MDSEntry entry : stats.getDecks()) {
+        for (MDSEntry entry : stats.getSortedDecks()) {
             List<Cell> rowdata = new ArrayList<Cell>();
             CellNumber x = new CellNumber(entry.getX());
             CellNumber y = new CellNumber(entry.getY());

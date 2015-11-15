@@ -14,6 +14,7 @@ import com.madarasz.netrunnerstats.database.DOs.stats.entries.DPIdentity;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.MDSEntry;
 import com.madarasz.netrunnerstats.database.DRs.*;
 import com.madarasz.netrunnerstats.database.DRs.stats.DPStatsRepository;
+import com.madarasz.netrunnerstats.database.DRs.stats.IdentityMDSRepository;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
 import com.madarasz.netrunnerstats.helper.Enums;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
@@ -50,6 +51,9 @@ public class Statistics {
 
     @Autowired
     MultiDimensionalScaling multiDimensionalScaling;
+
+    @Autowired
+    IdentityMDSRepository identityMdsRepository;
 
     @Autowired
     ColorPicker colorPicker;
@@ -160,31 +164,37 @@ public class Statistics {
      * @param cardpackName filter for cardpool
      */
     public IdentityMDS getPackMath(String identityName, String cardpackName) {
-        ArrayList<Deck> decks = new ArrayList<Deck>(deckRepository.filterByIdentityAndCardPool(identityName, cardpackName));
-        ArrayList<Deck> topdecks = new ArrayList<Deck>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
+        IdentityMDS result = identityMdsRepository.findByDpnameIdentitytitle(cardpackName, identityName);
+        if (result == null) {
+            ArrayList<Deck> decks = new ArrayList<Deck>(deckRepository.filterByIdentityAndCardPool(identityName, cardpackName));
+            ArrayList<Deck> topdecks = new ArrayList<Deck>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
 
-        // TODO: better topdecks contain
-        ArrayList<String> topURLs = new ArrayList<String>();
-        for (Deck topdeck : topdecks) {
-            topURLs.add(topdeck.getUrl());
-        }
-
-        int decknum = deckRepository.countByIdentityAndCardPool(identityName, cardpackName);
-        int topdecknum = deckRepository.countTopByIdentityAndCardPool(identityName, cardpackName);
-        IdentityMDS result = new IdentityMDS(cardpackName, identityName, decknum, topdecknum);
-        if (decknum > 0) {
-            double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
-            double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
-            for (int i = 0; i < decks.size(); i++) {
-                // NaN fix
-                scaling[0][i] = NaNFix(scaling[0][i]);
-                scaling[1][i] = NaNFix(scaling[1][i]);
-
-                MDSEntry mds = new MDSEntry(scaling[0][i], scaling[1][i],
-                        decks.get(i).getName(), decks.get(i).getUrl(), topURLs.contains(decks.get(i).getUrl()));
-                result.addDeck(mds);
-                System.out.println(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
+            // TODO: better topdecks contain
+            ArrayList<String> topURLs = new ArrayList<String>();
+            for (Deck topdeck : topdecks) {
+                topURLs.add(topdeck.getUrl());
             }
+
+            int decknum = deckRepository.countByIdentityAndCardPool(identityName, cardpackName);
+            int topdecknum = deckRepository.countTopByIdentityAndCardPool(identityName, cardpackName);
+            result = new IdentityMDS(cardpackName, identityName, decknum, topdecknum);
+            if (decknum > 0) {
+                double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
+                double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
+                for (int i = 0; i < decks.size(); i++) {
+                    // NaN fix
+                    scaling[0][i] = NaNFix(scaling[0][i]);
+                    scaling[1][i] = NaNFix(scaling[1][i]);
+
+                    MDSEntry mds = new MDSEntry(scaling[0][i], scaling[1][i],
+                            decks.get(i).getName(), decks.get(i).getUrl(), topURLs.contains(decks.get(i).getUrl()));
+                    result.addDeck(mds);
+                    System.out.println(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
+                }
+            }
+            System.out.println("*********************************************************************");
+            System.out.println("Saving MDS Statistics.");
+            identityMdsRepository.save(result);
         }
         return result;
     }
