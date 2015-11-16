@@ -1,12 +1,10 @@
 package com.madarasz.netrunnerstats.database.DOs;
 
-import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * Node for tournaments
@@ -22,8 +20,6 @@ public class Tournament {
     private int playerNumber;
     @Indexed(unique=true) private String url;
     @RelatedTo(type = "POOL") private @Fetch CardPack cardpool;
-    @RelatedTo(type = "IN_TOURNAMENT", direction = Direction.INCOMING) @Fetch
-    private Set<Standing> standings;
 
     public Tournament() {
     }
@@ -57,7 +53,7 @@ public class Tournament {
         if (cardpool != null) {
             return cardpool;
         } else {
-            cardpool = guessCardPool();
+            cardpool = new CardPack("dummy", "dummy", 0, 0);
             return cardpool;
         }
     }
@@ -68,26 +64,6 @@ public class Tournament {
 
     public int getPlayerNumber() {
         return playerNumber;
-    }
-
-    /**
-     * Tries to guess tournament cardpool based on cards used.
-     * @return latest card pack used in tournament
-     */
-    public CardPack guessCardPool() {
-        CardPack result = new CardPack("dummy", "dummy", 0, 0);
-        for (Standing standing : standings) {
-            if (standing.getDeck() != null) {
-                if (standing.getDeck().getUpto().later(result)) {
-                    result = standing.getDeck().getUpto();
-                }
-            } else {
-                if (standing.getIdentity().getCardPack().later(result)) {
-                    result = standing.getIdentity().getCardPack();
-                }
-            }
-        }
-        return result;
     }
 
     @Override

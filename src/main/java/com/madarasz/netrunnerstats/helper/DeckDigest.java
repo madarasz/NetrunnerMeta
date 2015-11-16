@@ -2,8 +2,11 @@ package com.madarasz.netrunnerstats.helper;
 
 import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.Standing;
 import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
+import com.madarasz.netrunnerstats.database.DRs.StandingRepository;
 import com.madarasz.netrunnerstats.helper.comparator.DeckHasCardComparator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -17,6 +20,9 @@ import java.util.Set;
  */
 @Component
 public class DeckDigest {
+
+    @Autowired
+    StandingRepository standingRepository;
 
     public String digest(Deck deck) {
         String result = deck.getName();
@@ -37,8 +43,9 @@ public class DeckDigest {
             result += " by " + deck.getPlayer();
         }
         result += "<br />\n";
-        result += "<em>" + deck.getIdentity().getTitle() + "</em> (" + deck.countCards()
-                + " cards)";
+        result += "<em>" + deck.getIdentity().getTitle() +
+                " (" + deck.getIdentity().getCardPack().getName() + ")</em> - "
+                + deck.countCards() + " cards";
         return result;
     }
 
@@ -84,11 +91,14 @@ public class DeckDigest {
             }
         }
 
-        result += "<br />\n<a href=\"" + deck.getUrl() + "\" target=\"_blank\">" + deck.getUrl() + "</a>";
+
+        // tournament and deck links
         if (!deck.getUrl().contains("stimhack")) {
-//            String tournamenturl = deck.getStanding().getTournament().getName();
-//            result += "<br>\n<a href=\"" + tournamenturl + "\" target=\"_blank\">" + tournamenturl + "</a>";
+            result += "<br />\n<a href=\"" + deck.getUrl() + "\" target=\"_blank\">" + deck.getUrl() + "</a>";
         }
+        Standing standing = standingRepository.findByDeckUrl(deck.getUrl());
+        result += "<br>\n<a href=\"" + standing.getTournament().getUrl() + "\" target=\"_blank\">"
+                + standing.getTournament().getName() + "</a> - rank: #" + standing.getRank();
 
         return result;
     }

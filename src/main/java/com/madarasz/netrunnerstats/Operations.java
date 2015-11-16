@@ -249,7 +249,7 @@ public class Operations {
         // remove already existing standings
         Set<Standing> savestandings = new HashSet<Standing>(standings);
         for (Standing standing : standings) {
-            Standing exists = standingRepository.findByTournamentURLIdentity(tournament.getUrl(), standing.getRank(), standing.getIdentity().getTitle());
+            Standing exists = standingRepository.findByTournamentURLRankIdentity(tournament.getUrl(), standing.getRank(), standing.getIdentity().getTitle());
             if (exists != null) {
                 savestandings.remove(standing);
             } else {
@@ -329,7 +329,7 @@ public class Operations {
             }
             // check wrong cardpool
             String oldname = tournament.getCardpool().getName();
-            CardPack fix = tournament.guessCardPool();
+            CardPack fix = guessCardPool(tournament);
             if ((!oldname.equals(fix.getName())) && (fix.later(tournament.getCardpool()))) {
                 System.out.println(String.format("ERROR - Wrong cardpool: %s - new cardpool: %s", tournament.toString(), fix.getName()));
                 tournament.setCardpool(fix);
@@ -361,4 +361,24 @@ public class Operations {
         logDBStatCount();
     }
 
+    /**
+     * Tries to guess tournament cardpool based on cards used.
+     * @return latest card pack used in tournament
+     */
+    private CardPack guessCardPool(Tournament tournament) {
+        CardPack result = new CardPack("dummy", "dummy", 0, 0);
+        List<Standing> standings = standingRepository.findByTournamentURL(tournament.getUrl());
+        for (Standing standing : standings) {
+            if (standing.getDeck() != null) {
+                if (standing.getDeck().getUpto().later(result)) {
+                    result = standing.getDeck().getUpto();
+                }
+            } else {
+                if (standing.getIdentity().getCardPack().later(result)) {
+                    result = standing.getIdentity().getCardPack();
+                }
+            }
+        }
+        return result;
+    }
 }

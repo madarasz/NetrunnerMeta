@@ -32,11 +32,14 @@ public interface StandingRepository extends GraphRepository<Standing>, Relations
 
     @Query("MATCH (t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card) WHERE (t.url={0}) AND (s.rank={1}) " +
             "AND (c.title={2}) RETURN s LIMIT 1")
-    Standing findByTournamentURLIdentity(String url, int rank, String identityname);
+    Standing findByTournamentURLRankIdentity(String url, int rank, String identityname);
 
     @Query("MATCH (s:Standing) return s")
     List<Standing> getAllStanding();
 
-    @Query("MATCH (s:Stanind)-->(d:Deck) WHERE (d.url={0}) RETURN s LIMIT 1")
+    @Query("MATCH (s:Standing)-[:IS_DECK]->(d:Deck {url: {0}}) RETURN s LIMIT 1")
     Standing findByDeckUrl(String url);
+
+    @Query("MATCH (t:Tournament {url: {0}})<-[:IN_TOURNAMENT]-(s:Standing) RETURN s")
+    List<Standing> findByTournamentURL(String url);
 }

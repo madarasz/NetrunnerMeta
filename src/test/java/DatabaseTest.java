@@ -228,11 +228,11 @@ public class DatabaseTest {
                 standingRepository.countByTournamentURL("http://stimhack.com/anr-pro-circuit-austin-tx-20-players/"), 2);
 
         // validity
-        Standing standing = standingRepository.findByTournamentURLIdentity(
+        Standing standing = standingRepository.findByTournamentURLRankIdentity(
                 acooBroker.tournamentUrlFromId(476), 1, "Jinteki Biotech: Life Imagined");
-        Standing standing2 = standingRepository.findByTournamentURLIdentity(
+        Standing standing2 = standingRepository.findByTournamentURLRankIdentity(
                 "http://stimhack.com/anr-pro-circuit-austin-tx-20-players/", 1, "Andromeda: Dispossessed Ristie");
-        Standing standing3 = standingRepository.findByTournamentURLIdentity(
+        Standing standing3 = standingRepository.findByTournamentURLRankIdentity(
                 acooBroker.tournamentUrlFromId(744), 11, "Whizzard: Master Gamer");
         Assert.assertNotNull("Standing save is not succesfull.", standing);
         Assert.assertEquals("Runner side is incorrect in Standing save", standing.is_runner(), false);
