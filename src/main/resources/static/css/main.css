@@ -17,7 +17,7 @@
 }
 
 /* influence bullet colors */
-.influence { font-size: 1.5em; }
+.influence { font-size: 1.0em; }
 .inf-shaper { color: limegreen; }
 .inf-criminal { color: royalblue; }
 .inf-anarch { color: orangered; }
