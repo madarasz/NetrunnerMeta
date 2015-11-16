@@ -31,9 +31,9 @@
 
         function drawCharts() {
             var dpname = encodeURIComponent([[${DPname}]]);
-            var basecharts = "http://localhost:8080/DataTable/DPStats/";
-            var baselist = "http://localhost:8080/JSON/DPStats/Identities/";
-            var basecompare = "http://localhost:8080/MDSIdentity/" + dpname + "/";
+            var basecharts = "/DataTable/DPStats/";
+            var baselist = "/JSON/DPStats/Identities/";
+            var basecompare = "/MDSIdentity/" + dpname + "/";
             drawChart(basecharts + "Top/runner/faction/" + dpname, 'Top runner factions', 'chart_div1');
             drawChart(basecharts + "Top/corp/faction/" + dpname, 'Top corp factions', 'chart_div2');
             drawChart(basecharts + "Top/runner/identity/" + dpname, 'Top runner identities', 'chart_div3');

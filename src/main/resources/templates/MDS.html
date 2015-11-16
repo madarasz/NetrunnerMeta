@@ -30,12 +30,11 @@
         google.setOnLoadCallback(drawCharts);
 
         function drawCharts() {
-            var url = "http://localhost:8080/DataTable/MDSIdentity/" + encodeURIComponent([[${DPname}]]) +
+            var url = "/DataTable/MDSIdentity/" + encodeURIComponent([[${DPname}]]) +
                 "/" + encodeURIComponent([[${identity}]]);
-            var tooltipurl = "http://localhost:8080/JSON/Deck/" + encodeURIComponent([[${DPname}]]) +
+            var tooltipurl = "/JSON/Deck/" + encodeURIComponent([[${DPname}]]) +
                     "/" + encodeURIComponent([[${identity}]]);
             drawChart(url, tooltipurl, [[${identity}]], 'chart_div1');
-            //setDeckInfo("http://localhost:8080/JSON/Deck?url=http%3A%2F%2Fstimhack.com%2Fanr-pro-circuit-austin-tx-20-players%2F%231");
         }
 
         // Callback that creates and populates a data table,

@@ -218,7 +218,7 @@ public class Statistics {
             int decknum = deckRepository.countByIdentityAndCardPool(title, cardpackName);
             if (decknum > 0) {
                 DPIdentity entry = new DPIdentity(title,
-                        String.format("http://localhost:8080/MDSIdentity/%s/%s", cardpackName, title),
+                        String.format("/MDSIdentity/%s/%s", cardpackName, title),
                         decknum, topdecknum);
                 result.addIdentitiy(entry);
             }
