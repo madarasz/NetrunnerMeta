@@ -34,6 +34,12 @@ public class ColorPicker {
                 return("#254139");
             case "nbn":
                 return("#A1762B");
+            case "adam":
+                return("darkgoldenrod");
+            case "apex":
+                return("darkred");
+            case "sunny-lebeau":
+                return("black");
             default:
                 return("#CCCCCC");
         }
