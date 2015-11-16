@@ -1,7 +1,7 @@
 package com.madarasz.netrunnerstats.springMVC.gchartConverter;
 
+import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
-import com.madarasz.netrunnerstats.database.DOs.stats.entries.DeckInfo;
 import com.madarasz.netrunnerstats.database.DOs.stats.IdentityMDS;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.MDSEntry;
 import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
@@ -22,6 +22,9 @@ public class MDSToGchart {
     @Autowired
     DeckRepository deckRepository;
 
+    @Autowired
+    Statistics statistics;
+
     private static final String STYLE_TOPDECK = "point {size: 8; shape-type: star; stroke-color: #FFFFFF;}";
     private static final String STYLE_NOT_TOPDECK = "point {stroke-color: #FFFFFF;}";
 
@@ -38,7 +41,7 @@ public class MDSToGchart {
             CellNumber y = new CellNumber(entry.getY());
             CellString style = null;
             Deck deck = deckRepository.findByUrl(entry.getDeckURL());
-            CellString tooltip = new CellString(new DeckInfo(deck).getDigest());
+            CellString tooltip = new CellString(statistics.getDeckInfo(deck).getDigest());
             rowdata.add(x);
             rowdata.add(y);
             if (entry.isTopdeck()) {

@@ -1,6 +1,5 @@
 package com.madarasz.netrunnerstats.database.DOs.stats;
 
-import com.madarasz.netrunnerstats.database.DOs.Deck;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.DeckInfo;
 import com.madarasz.netrunnerstats.helper.comparator.DeckInfoComparator;
 
@@ -13,16 +12,16 @@ import java.util.List;
 public class DeckInfos {
     private List<DeckInfo> infos;
 
-    public DeckInfos(List<Deck> decks) {
+    public DeckInfos() {
         infos = new ArrayList<DeckInfo>();
-        for (Deck deck : decks) {
-            infos.add(new DeckInfo(deck));
-        }
-        sortInfos();
     }
 
     public List<DeckInfo> getInfos() {
         return infos;
+    }
+
+    public void addDeckInfo(DeckInfo deckInfo) {
+        infos.add(deckInfo);
     }
 
     public void sortInfos() {

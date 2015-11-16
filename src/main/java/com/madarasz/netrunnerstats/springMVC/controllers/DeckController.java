@@ -1,5 +1,6 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
+import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
 import com.madarasz.netrunnerstats.database.DOs.stats.DeckInfos;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.DeckInfo;
@@ -7,8 +8,6 @@ import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Created by madarasz on 11/10/15.
@@ -20,13 +19,16 @@ public class DeckController {
     @Autowired
     DeckRepository deckRepository;
 
+    @Autowired
+    Statistics statistics;
+
     // JSON output
     @RequestMapping(value="/JSON/Deck", params = {"url"}, method = RequestMethod.GET)
     public @ResponseBody
     DeckInfo getDeckInfo (@RequestParam String url) {
         Deck deck = deckRepository.findByUrl(url);
         if (deck != null) {
-            return new DeckInfo(deck);
+            return statistics.getDeckInfo(deck);
         } else {
             return new DeckInfo();
         }
@@ -36,7 +38,6 @@ public class DeckController {
     @RequestMapping(value="/JSON/Deck/{DPName}/{identity}", method = RequestMethod.GET)
     public @ResponseBody
     DeckInfos getAllDeckInfos(@PathVariable(value="identity") String identity, @PathVariable(value="DPName") String DPName) {
-        List<Deck> decks = deckRepository.filterByIdentityAndCardPool(identity, DPName);
-        return new DeckInfos(decks);
+        return statistics.getDeckInfos(identity, DPName);
     }
 }

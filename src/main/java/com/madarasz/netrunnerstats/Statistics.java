@@ -4,18 +4,13 @@ import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.CardPack;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
 import com.madarasz.netrunnerstats.database.DOs.result.StatCounts;
-import com.madarasz.netrunnerstats.database.DOs.stats.CardPoolStats;
-import com.madarasz.netrunnerstats.database.DOs.stats.DPIntentities;
-import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
-import com.madarasz.netrunnerstats.database.DOs.stats.IdentityMDS;
-import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
-import com.madarasz.netrunnerstats.database.DOs.stats.entries.CountDeckStands;
-import com.madarasz.netrunnerstats.database.DOs.stats.entries.DPIdentity;
-import com.madarasz.netrunnerstats.database.DOs.stats.entries.MDSEntry;
+import com.madarasz.netrunnerstats.database.DOs.stats.*;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
 import com.madarasz.netrunnerstats.database.DRs.*;
 import com.madarasz.netrunnerstats.database.DRs.stats.DPStatsRepository;
 import com.madarasz.netrunnerstats.database.DRs.stats.IdentityMDSRepository;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
+import com.madarasz.netrunnerstats.helper.DeckDigest;
 import com.madarasz.netrunnerstats.helper.Enums;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +52,9 @@ public class Statistics {
 
     @Autowired
     CardPoolStatsRepository cardPoolStatsRepository;
+
+    @Autowired
+    DeckDigest deckDigest;
 
     @Autowired
     ColorPicker colorPicker;
@@ -246,6 +244,22 @@ public class Statistics {
             cardPoolStatsRepository.save(result);
         }
         return result;
+    }
+
+    public DeckInfos getDeckInfos(String identityName, String cardpool) {
+        List<Deck> decks = deckRepository.filterByIdentityAndCardPool(identityName, cardpool);
+        DeckInfos result = new DeckInfos();
+        for (Deck deck : decks) {
+            DeckInfo info = getDeckInfo(deck);
+            result.addDeckInfo(info);
+        }
+        result.sortInfos();
+        return result;
+    }
+
+    public DeckInfo getDeckInfo(Deck deck) {
+        return new DeckInfo(deckDigest.shortHtmlDigest(deck), deckDigest.htmlDigest(deck),
+                deckDigest.digest(deck), deck.getUrl());
     }
 
     private double NaNFix(double input) {
