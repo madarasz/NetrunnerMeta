@@ -29,7 +29,10 @@ public class DeckDigest {
         if (!deck.getPlayer().equals("")) {
             result += " by " + deck.getPlayer();
         }
-        result += " (" + deck.countCards() + " cards)";
+        result += " (" + deck.countCards() + " cards)\n";
+
+        Standing standing = standingRepository.findByDeckUrl(deck.getUrl()); // TODO: do only once
+        result += "#" + standing.getRank() + " at " + standing.getTournament().getName();
         return result;
     }
 
@@ -44,8 +47,7 @@ public class DeckDigest {
         }
         result += "<br />\n";
         result += "<em>" + deck.getIdentity().getTitle() +
-                " (" + deck.getIdentity().getCardPack().getName() + ")</em> - "
-                + deck.countCards() + " cards";
+                " (" + deck.getIdentity().getCardPack().getName() + ")</em>";
         return result;
     }
 
@@ -69,7 +71,9 @@ public class DeckDigest {
             }
             for (DeckHasCard card : selectedCards) {
                 Card thecard = card.getCard();
-                result += card.getQuantity() + "x " + thecard.getTitle();
+                result += card.getQuantity() + "x ";
+                result += "<a href=\"http://netrunnerdb.com/en/card/" + thecard.getCode() +
+                        "\" target=\"_blank\" rel=\"nofollow\">" + thecard.getTitle() + "</a>";
                 result += " <em>(" + thecard.getCardPack().getName() + ")</em>";
 
                 // display faction cost
@@ -91,13 +95,15 @@ public class DeckDigest {
             }
         }
 
+        // card count and up to
+        result += deck.countCards() + " cards, up to: <em>" + deck.getUpto() + "</em><br />\n";
 
         // tournament and deck links
         if (!deck.getUrl().contains("stimhack")) {
-            result += "<br />\n<a href=\"" + deck.getUrl() + "\" target=\"_blank\">" + deck.getUrl() + "</a>";
+            result += "<a href=\"" + deck.getUrl() + "\" target=\"_blank\">" + deck.getUrl() + "</a><br />\n";
         }
         Standing standing = standingRepository.findByDeckUrl(deck.getUrl());
-        result += "<br>\n<a href=\"" + standing.getTournament().getUrl() + "\" target=\"_blank\">"
+        result += "<a href=\"" + standing.getTournament().getUrl() + "\" target=\"_blank\">"
                 + standing.getTournament().getName() + "</a> - rank: #" + standing.getRank();
 
         return result;
