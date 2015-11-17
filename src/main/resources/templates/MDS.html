@@ -6,10 +6,10 @@
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
         <h3 class="page-header" th:text="${DPname}"></h3>
-        <h4 th:text="${identity}"></h4>
+        <h4><span th:text="${identity}"></span> - <span id="deck_number"></span> decks</h4>
         <div class="row">
             <div class="col-md-6">
-                <div id="chart_div1"></div>
+                <div id="chart_div1" class="mds-chart"></div>
             </div>
             <div class="col-md-6">
                 <div id="deck_data"></div>
@@ -42,6 +42,8 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
+        $('#chart_div1').addClass('spinner');
+
         // Load the Visualization API and the piechart package.
         google.load('visualization', '1.0', {'packages':['corechart']});
 
@@ -64,7 +66,10 @@
             var jsonDataChart = $.ajax({
                 url: urlvalue,
                 dataType: "json",
-                async: false
+                async: false,
+                success: function(data) {
+                    $('#deck_number').replaceWith(data.rows.length);
+                }
             }).responseText;
 
             var jsonDataToolTip = $.ajax({
@@ -99,6 +104,8 @@
             });
 
             chart.draw(data, options);
+
+            $('#chart_div1').removeClass('spinner');
         }
 
         function setDeckInfo(htmlvalue) {

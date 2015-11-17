@@ -10,21 +10,21 @@
         <div class="row">
             <div class="col-md-6">
                 <h4>Top runner factions</h4>
-                <div id="chart_div1"></div>
+                <div id="chart_div1" class="pie-chart"></div>
             </div>
             <div class="col-md-6">
                 <h4>Top corp factions</h4>
-                <div id="chart_div2"></div>
+                <div id="chart_div2" class="pie-chart"></div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-6">
                 <h4>Top runner identities</h4>
-                <div id="chart_div3"></div>
+                <div id="chart_div3" class="pie-chart"></div>
             </div>
             <div class="col-md-6">
                 <h4>Top corp identities</h4>
-                <div id="chart_div4"></div>
+                <div id="chart_div4" class="pie-chart"></div>
             </div>
         </div>
         <div class="row">
@@ -59,6 +59,13 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
+        $('#chart_div1').addClass('spinner');
+        $('#chart_div2').addClass('spinner');
+        $('#chart_div3').addClass('spinner');
+        $('#chart_div4').addClass('spinner');
+        $('#text_div1').addClass('spinner');
+        $('#text_div2').addClass('spinner');
+
         // Load the Visualization API and the piechart package.
         google.load('visualization', '1.0', {'packages':['corechart']});
 
@@ -70,10 +77,10 @@
             var basecharts = "/DataTable/DPStats/";
             var baselist = "/JSON/DPStats/Identities/";
             var basecompare = "/MDSIdentity/" + dpname + "/";
-            drawChart(basecharts + "Top/runner/faction/" + dpname, 'Top runner factions', 'chart_div1');
-            drawChart(basecharts + "Top/corp/faction/" + dpname, 'Top corp factions', 'chart_div2');
-            drawChart(basecharts + "Top/runner/identity/" + dpname, 'Top runner identities', 'chart_div3');
-            drawChart(basecharts + "Top/corp/identity/" + dpname, 'Top corp identities', 'chart_div4');
+            drawChart(basecharts + "Top/runner/faction/" + dpname, 'chart_div1');
+            drawChart(basecharts + "Top/corp/faction/" + dpname, 'chart_div2');
+            drawChart(basecharts + "Top/runner/identity/" + dpname, 'chart_div3');
+            drawChart(basecharts + "Top/corp/identity/" + dpname, 'chart_div4');
             listIdentities(baselist + "runner/" + dpname, "#text_div1", basecompare);
             listIdentities(baselist + "corp/"+ dpname, "#text_div2", basecompare);
         }
@@ -81,7 +88,7 @@
         // Callback that creates and populates a data table,
         // instantiates the pie chart, passes in the data and
         // draws it.
-        function drawChart(urlvalue, title, elementid) {
+        function drawChart(urlvalue, elementid) {
 
             var slices = new Array;
 
@@ -93,6 +100,7 @@
                     $.each(data.rows, function (index, element) {
                         slices.push({color : element.c[2].v});
                     });
+                    $('#'+elementid).removeClass('spinner');
                 }
             }).responseText;
 
@@ -123,6 +131,7 @@
                             href: linkurl + element.title
                         }));
                     });
+                    $(elementid).removeClass('spinner');
                 }
             });
         }
