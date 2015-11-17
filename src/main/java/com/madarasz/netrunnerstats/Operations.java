@@ -12,6 +12,7 @@ import com.madarasz.netrunnerstats.database.DRs.*;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import com.madarasz.netrunnerstats.brokers.StimhackBroker;
+import com.madarasz.netrunnerstats.helper.DeckValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
@@ -38,6 +39,9 @@ public class Operations {
 
     @Autowired
     StandingRepository standingRepository;
+
+    @Autowired
+    DeckValidator deckValidator;
 
     @Autowired
     NetrunnerDBBroker netrunnerDBBroker;
@@ -305,7 +309,7 @@ public class Operations {
         List<Deck> decks = deckRepository.getAllDecks();
         for (Deck deck : decks) {
 //            System.out.println(String.format("Checking validity: %s", deck.toString()));
-            if (deck.isValidDeck()) {
+            if (deckValidator.isValidDeck(deck)) {
 //                System.out.println("OK");
             }
         }

@@ -6,6 +6,7 @@ import com.madarasz.netrunnerstats.Operations;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import com.madarasz.netrunnerstats.brokers.StimhackBroker;
+import com.madarasz.netrunnerstats.helper.DeckValidator;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
 import org.junit.Assert;
 import org.junit.Before;
@@ -53,6 +54,9 @@ public class DatabaseTest {
 
     @Autowired
     StandingRepository standingRepository;
+
+    @Autowired
+    DeckValidator deckValidator;
 
     @Autowired
     NetrunnerDBBroker netrunnerDBBroker;
@@ -154,7 +158,7 @@ public class DatabaseTest {
 
         // validity check
         for (Deck deck : decks) {
-            Assert.assertTrue("Imported deck not valid: " + deck.getUrl(), deck.isValidDeck());
+            Assert.assertTrue("Imported deck not valid: " + deck.getUrl(), deckValidator.isValidDeck(deck));
         }
 
         // deck multiple reentry check
@@ -307,7 +311,7 @@ public class DatabaseTest {
         operations.loadStimhackPackTournaments("");
         List<Deck> decks = deckRepository.getAllDecks();
         for (Deck deck : decks) {
-            Assert.assertTrue("Imported deck not valid: " + deck.getUrl(), deck.isValidDeck());
+            Assert.assertTrue("Imported deck not valid: " + deck.getUrl(), deckValidator.isValidDeck(deck));
         }
     }
 
