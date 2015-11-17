@@ -3,6 +3,7 @@ package com.madarasz.netrunnerstats.helper;
 import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
 import com.madarasz.netrunnerstats.database.DOs.Standing;
+import com.madarasz.netrunnerstats.database.DOs.Tournament;
 import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.database.DRs.StandingRepository;
 import com.madarasz.netrunnerstats.helper.comparator.DeckHasCardComparator;
@@ -32,7 +33,8 @@ public class DeckDigest {
         result += " (" + deck.countCards() + " cards)\n";
 
         Standing standing = standingRepository.findByDeckUrl(deck.getUrl()); // TODO: do only once
-        result += "#" + standing.getRank() + " at " + standing.getTournament().getName();
+        Tournament tournament = standing.getTournament();
+        result += "#" + standing.getRank() + " / " + tournament.getPlayerNumber() + " at " + tournament.getName();
         return result;
     }
 
@@ -103,8 +105,9 @@ public class DeckDigest {
             result += "<a href=\"" + deck.getUrl() + "\" target=\"_blank\">" + deck.getUrl() + "</a><br />\n";
         }
         Standing standing = standingRepository.findByDeckUrl(deck.getUrl());
-        result += "<a href=\"" + standing.getTournament().getUrl() + "\" target=\"_blank\">"
-                + standing.getTournament().getName() + "</a> - rank: #" + standing.getRank();
+        Tournament tournament = standing.getTournament();
+        result += "<a href=\"" + tournament.getUrl() + "\" target=\"_blank\">"
+                + tournament.getName() + "</a> - rank: #" + standing.getRank() + " / " + tournament.getPlayerNumber();
 
         return result;
     }
