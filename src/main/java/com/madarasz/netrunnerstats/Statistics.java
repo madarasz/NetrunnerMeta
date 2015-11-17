@@ -7,6 +7,7 @@ import com.madarasz.netrunnerstats.database.DOs.result.StatCounts;
 import com.madarasz.netrunnerstats.database.DOs.stats.*;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
 import com.madarasz.netrunnerstats.database.DRs.*;
+import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
 import com.madarasz.netrunnerstats.database.DRs.stats.DPStatsRepository;
 import com.madarasz.netrunnerstats.database.DRs.stats.IdentityMDSRepository;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
@@ -76,15 +77,15 @@ public class Statistics {
                 String identity = stat.getCategory();
                 if (stat.getSideCode().equals("runner")) {
                     statistics.addRunnerIdentity(identity,
-                            deckRepository.countTopByCardPackAndIdentity(cardpackName, identity),
+                            deckRepository.countTopByIdentityAndCardPool(identity, cardpackName),
                             stat.getCount(), colorPicker.colorIdentity(identity));
                 } else {
                     statistics.addCorpIdentity(identity,
-                            deckRepository.countTopByCardPackAndIdentity(cardpackName, identity),
+                            deckRepository.countTopByIdentityAndCardPool(identity, cardpackName),
                             stat.getCount(), colorPicker.colorIdentity(identity));
                 }
                 System.out.println(String.format("%s - %d (%d)", identity, stat.getCount(),
-                        deckRepository.countTopByCardPackAndIdentity(cardpackName, identity)));
+                        deckRepository.countTopByIdentityAndCardPool(identity, cardpackName)));
             }
 
             System.out.println("*********************************************************************");
@@ -93,13 +94,13 @@ public class Statistics {
             for (StatCounts stat : stats) {
                 String faction = stat.getCategory();
                 if (stat.getSideCode().equals("runner")) {
-                    statistics.addRunnerFaction(faction, deckRepository.countTopByCardPackAndFaction(cardpackName, faction),
+                    statistics.addRunnerFaction(faction, deckRepository.countTopByCardPoolAndFaction(cardpackName, faction),
                             stat.getCount(), colorPicker.colorFaction(faction));
                 } else {
-                    statistics.addCorpFaction(faction, deckRepository.countTopByCardPackAndFaction(cardpackName, faction),
+                    statistics.addCorpFaction(faction, deckRepository.countTopByCardPoolAndFaction(cardpackName, faction),
                             stat.getCount(), colorPicker.colorFaction(faction));
                 }
-                System.out.println(String.format("%s - %d (%d)", faction, stat.getCount(), deckRepository.countTopByCardPackAndFaction(cardpackName, faction)));
+                System.out.println(String.format("%s - %d (%d)", faction, stat.getCount(), deckRepository.countTopByCardPoolAndFaction(cardpackName, faction)));
             }
 
             System.out.println("*********************************************************************");

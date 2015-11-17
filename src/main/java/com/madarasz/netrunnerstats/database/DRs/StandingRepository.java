@@ -14,24 +14,24 @@ import java.util.List;
  */
 public interface StandingRepository extends GraphRepository<Standing>, RelationshipOperationsRepository<Standing> {
 
-    @Query("MATCH (t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing) WHERE (t.url={0}) RETURN COUNT(s)")
+    @Query("MATCH (t:Tournament {url: {0}})<-[:IN_TOURNAMENT]-(s:Standing) RETURN COUNT(s)")
     int countByTournamentURL(String tournamentURL);
 
-    @Query("MATCH (p:CardPack)<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing) WHERE (p.name={0}) RETURN COUNT(s)")
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing) RETURN COUNT(s)")
     int countByCardPool(String cardpoolname);
 
-    @Query("MATCH (p:CardPack)<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card) " +
-            "WHERE (p.name={0}) AND (s.topdeck=TRUE) RETURN c.title AS category, COUNT(*) as count, c.side_code AS side_code " +
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing {topdeck: TRUE})-[:IS_IDENTITY]->(c:Card) " +
+            "RETURN c.title AS category, COUNT(*) as count, c.side_code AS side_code " +
             "ORDER BY side_code DESC, count DESC")
     List<StatCounts> getTopIdentityStatsByCardPool(String cardpoolName);
 
-    @Query("MATCH (p:CardPack)<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card) " +
-            "WHERE (p.name={0}) AND (s.topdeck=TRUE) RETURN c.faction_code AS category, COUNT(*) AS count, c.side_code AS side_code " +
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing {topdeck: TRUE})-[:IS_IDENTITY]->(c:Card) " +
+            "RETURN c.faction_code AS category, COUNT(*) AS count, c.side_code AS side_code " +
             "ORDER BY side_code DESC, count DESC")
     List<StatCounts> getTopFactionStatsByCardPool(String cardpoolName);
 
-    @Query("MATCH (t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card) WHERE (t.url={0}) AND (s.rank={1}) " +
-            "AND (c.title={2}) RETURN s LIMIT 1")
+    @Query("MATCH (t:Tournament {url: {0}})<-[:IN_TOURNAMENT]-(s:Standing {rank: {1}})-[:IS_IDENTITY]->(c:Card {title: {2}}) " +
+            "RETURN s LIMIT 1")
     Standing findByTournamentURLRankIdentity(String url, int rank, String identityname);
 
     @Query("MATCH (s:Standing) return s")

@@ -10,7 +10,7 @@ import org.springframework.data.neo4j.repository.RelationshipOperationsRepositor
  */
 public interface IdentityMDSRepository extends GraphRepository<IdentityMDS>, RelationshipOperationsRepository<IdentityMDS> {
 
-    @Query("MATCH (i:IdentityMDS) WHERE (i.dpname={0}) AND (i.identitytitle={1}) RETURN i LIMIT 1")
+    @Query("MATCH (i:IdentityMDS {dpname: {0}, identitytitle: {1}}) RETURN i LIMIT 1")
     IdentityMDS findByDpnameIdentitytitle(String dpname, String identitytitle);
 
 }

@@ -1,4 +1,4 @@
-package com.madarasz.netrunnerstats.database.DRs;
+package com.madarasz.netrunnerstats.database.DRs.stats;
 
 import com.madarasz.netrunnerstats.database.DOs.stats.CardPoolStats;
 import org.springframework.data.neo4j.annotation.Query;

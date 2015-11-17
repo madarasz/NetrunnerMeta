@@ -17,6 +17,6 @@ public interface TournamentRepository extends GraphRepository<Tournament>, Relat
     @Query("MATCH (t:Tournament) return t")
     List<Tournament> getAllTournaments();
 
-    @Query("MATCH (p:CardPack)<-[:POOL]-(:Tournament) WHERE (p.name={0}) RETURN COUNT(p)")
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament) RETURN COUNT(p)")
     int countByCardpool(String cardpoolName);
 }
