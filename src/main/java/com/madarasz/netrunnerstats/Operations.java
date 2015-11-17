@@ -4,9 +4,11 @@ import com.madarasz.netrunnerstats.database.DOs.*;
 import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.database.DOs.stats.CardPoolStats;
 import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
+import com.madarasz.netrunnerstats.database.DOs.stats.DeckInfos;
 import com.madarasz.netrunnerstats.database.DOs.stats.IdentityMDS;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CountDeckStands;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.DeckInfo;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.MDSEntry;
 import com.madarasz.netrunnerstats.database.DRs.*;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
@@ -78,9 +80,12 @@ public class Operations {
      * Logs DB Stats node, relationship count
      */
     public void logDBStatCount() {
-        System.out.println(String.format("CardPoolStats %d, CardPool: %d, DP statistics: %d, CountDeckStands: %d, IdentityMDS: %d, MDSEntry: %d",
-                template.count(CardPoolStats.class), template.count(CardPool.class), template.count(DPStatistics.class), template.count(CountDeckStands.class),
-                template.count(IdentityMDS.class), template.count(MDSEntry.class)));
+        System.out.println(String.format("CardPoolStats %d, CardPool: %d, DP statistics: %d, CountDeckStands: %d, " +
+                "IdentityMDS: %d, MDSEntry: %d, DeckInfos: %d, DeckInfo: %d",
+                template.count(CardPoolStats.class), template.count(CardPool.class),
+                template.count(DPStatistics.class), template.count(CountDeckStands.class),
+                template.count(IdentityMDS.class), template.count(MDSEntry.class),
+                template.count(DeckInfos.class), template.count(DeckInfo.class)));
     }
 
     /**
@@ -362,6 +367,7 @@ public class Operations {
         template.query("MATCH (n:DPStatistics) OPTIONAL MATCH (n)-[r]-(c:CountDeckStands) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:IdentityMDS) OPTIONAL MATCH (n)-[r]-(c:MDSEntry) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:CardPoolStats) OPTIONAL MATCH (n)-[r]-(c:CardPool) DELETE n,r,c", emptyparams);
+        template.query("MATCH (n:DeckInfos) OPTIONAL MATCH (n)-[r]-(c:DeckInfo) DELETE n,r,c", emptyparams);
         logDBStatCount();
     }
 

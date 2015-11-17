@@ -1,6 +1,5 @@
 package com.madarasz.netrunnerstats;
 
-import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.CardPack;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
 import com.madarasz.netrunnerstats.database.DOs.result.StatCounts;
@@ -9,10 +8,10 @@ import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
 import com.madarasz.netrunnerstats.database.DRs.*;
 import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
 import com.madarasz.netrunnerstats.database.DRs.stats.DPStatsRepository;
+import com.madarasz.netrunnerstats.database.DRs.stats.DeckInfosRepository;
 import com.madarasz.netrunnerstats.database.DRs.stats.IdentityMDSRepository;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
 import com.madarasz.netrunnerstats.helper.DeckDigest;
-import com.madarasz.netrunnerstats.helper.Enums;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,6 +52,9 @@ public class Statistics {
 
     @Autowired
     CardPoolStatsRepository cardPoolStatsRepository;
+
+    @Autowired
+    DeckInfosRepository deckInfosRepository;
 
     @Autowired
     DeckDigest deckDigest;
@@ -110,56 +112,6 @@ public class Statistics {
         return statistics;
     }
 
-    public void getAllStats() {
-        List<Card> identities = cardRepository.findIdentities();
-        long totalDecks = deckRepository.count();
-        System.out.println("*********************************************************************");
-        System.out.println(String.format("Number of all decks: %d", totalDecks));
-        for (Enums.Factions faction : Enums.Factions.values()) {
-            String factionName = faction.toString().replaceAll("_", "-");
-            int factionCount = deckRepository.countByFaction(factionName);
-            if (factionCount > 0) {
-                System.out.println(String.format("* %s: %d", factionName, factionCount));
-                for (Card card : identities) {
-                    if (card.getFaction_code().equals(factionName)) {
-                        int identityCount = deckRepository.countByIdentity(card);
-                        if (identityCount > 0) {
-                            System.out.println(String.format("** %s: %d", card.getTitle(), identityCount));
-                        }
-                    }
-                }
-            }
-        }
-
-        System.out.println("*********************************************************************");
-
-        for (Enums.CardCycles cardCycle : Enums.CardCycles.values()) {
-            String cycleName = cardCycle.toString().replaceAll("_"," ");
-            int cyclenumber = cardCycle.getCycleNumber();
-            int cycleCount = deckRepository.countByCycle(cyclenumber);
-            if (cycleCount > 0) {
-                System.out.println(String.format("* %s: %d", cycleName, cycleCount));
-                int number = 0;
-                do {
-                    number++;
-                    CardPack cardPack = cardPackRepository.findByCyclenumberAndNumber(cyclenumber, number);
-                    if (cardPack == null) {
-                        break;
-                    } else {
-                        String cardPackName = cardPack.getName();
-                        int cardpackCount = deckRepository.countByCardpool(cardPackName);
-                        if (cardpackCount > 0) {
-                            System.out.println(String.format("** %s: %d", cardPackName, cardpackCount));
-                            getPackStats(cardPackName);
-                        }
-                    }
-                } while(true);
-            }
-        }
-
-        System.out.println("*********************************************************************");
-    }
-
     /**
      * Generate multidimensional scaling for identity and cardpool legality
      * @param identityName filter for identity
@@ -195,7 +147,7 @@ public class Statistics {
                 }
             }
             System.out.println("*********************************************************************");
-            System.out.println("Saving MDS Statistics.");
+            System.out.println(String.format("Saving MDS Statistics: %s - %s", cardpackName, identityName));
             identityMdsRepository.save(result);
         }
         return result;
@@ -248,13 +200,17 @@ public class Statistics {
     }
 
     public DeckInfos getDeckInfos(String identityName, String cardpool) {
-        List<Deck> decks = deckRepository.filterByIdentityAndCardPool(identityName, cardpool);
-        DeckInfos result = new DeckInfos();
-        for (Deck deck : decks) {
-            DeckInfo info = getDeckInfo(deck);
-            result.addDeckInfo(info);
+        DeckInfos result = deckInfosRepository.findByCardpoolIdentityname(cardpool, identityName);
+        if (result == null) {
+            List<Deck> decks = deckRepository.filterByIdentityAndCardPool(identityName, cardpool);
+            result = new DeckInfos();
+            for (Deck deck : decks) {
+                DeckInfo info = getDeckInfo(deck);
+                result.addDeckInfo(info);
+            }
+            System.out.println(String.format("Saving DeckInfos Statistics: %s - %s", cardpool, identityName));
+            deckInfosRepository.save(result);
         }
-        result.sortInfos();
         return result;
     }
 

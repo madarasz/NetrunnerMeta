@@ -1,10 +1,16 @@
 package com.madarasz.netrunnerstats.database.DOs.stats.entries;
 
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
 /**
  * Created by madarasz on 11/10/15.
  * For deck information digest.
  */
+@NodeEntity
 public class DeckInfo {
+    @GraphId
+    private Long id;
     private String shortHtmlDigest;
     private String htmlDigest;
     private String digest;

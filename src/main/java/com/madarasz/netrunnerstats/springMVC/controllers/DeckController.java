@@ -2,12 +2,13 @@ package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
-import com.madarasz.netrunnerstats.database.DOs.stats.DeckInfos;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.DeckInfo;
 import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by madarasz on 11/10/15.
@@ -37,7 +38,7 @@ public class DeckController {
     // JSON output
     @RequestMapping(value="/JSON/Deck/{DPName}/{identity}", method = RequestMethod.GET)
     public @ResponseBody
-    DeckInfos getAllDeckInfos(@PathVariable(value="identity") String identity, @PathVariable(value="DPName") String DPName) {
-        return statistics.getDeckInfos(identity, DPName);
+    List<DeckInfo> getAllDeckInfos(@PathVariable(value="identity") String identity, @PathVariable(value="DPName") String DPName) {
+        return statistics.getDeckInfos(identity, DPName).getSortedInfos();
     }
 }
