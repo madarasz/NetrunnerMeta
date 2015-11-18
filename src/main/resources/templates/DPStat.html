@@ -5,36 +5,56 @@
 <body>
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
-        <h3 class="page-header" th:text="${DPname}"></h3>
+        <h3 th:text="${DPname}"></h3>
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#top">Factions / identities, top</a></li>
+            <li><a data-toggle="tab" href="#all">Factions / identities, all</a></li>
+            <li><a data-toggle="tab" href="#decks">Decks</a></li>
+        </ul>
 
-        <div class="row">
-            <div class="col-md-6">
-                <h4>Top runner factions</h4>
-                <div id="chart_div1" class="pie-chart"></div>
+        <div class="tab-content">
+
+            <!-- Top tab -->
+            <div id="top" class="tab-pane fade in active">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Top runner factions</h4>
+                        <div id="chart_div1" class="pie-chart"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Top corp factions</h4>
+                        <div id="chart_div2" class="pie-chart"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Top runner identities</h4>
+                        <div id="chart_div3" class="pie-chart"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Top corp identities</h4>
+                        <div id="chart_div4" class="pie-chart"></div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6">
-                <h4>Top corp factions</h4>
-                <div id="chart_div2" class="pie-chart"></div>
+
+            <!-- all tab -->
+            <div id="all" class="tab-pane fade">
+
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <h4>Top runner identities</h4>
-                <div id="chart_div3" class="pie-chart"></div>
-            </div>
-            <div class="col-md-6">
-                <h4>Top corp identities</h4>
-                <div id="chart_div4" class="pie-chart"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <h4>Runner decks</h4>
-                <div id="text_div1"></div>
-            </div>
-            <div class="col-md-6">
-                <h4>Corp decks</h4>
-                <div id="text_div2"></div>
+
+            <!-- decks tab -->
+            <div id="decks" class="tab-pane fade">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Runner decks</h4>
+                        <div id="text_div1"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Corp decks</h4>
+                        <div id="text_div2"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
