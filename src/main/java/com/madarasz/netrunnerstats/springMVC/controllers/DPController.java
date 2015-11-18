@@ -1,8 +1,8 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
-import com.madarasz.netrunnerstats.database.DOs.stats.DPIntentities;
 import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.Statistics;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.DPIdentity;
 import com.madarasz.netrunnerstats.springMVC.gchart.DataTable;
 import com.madarasz.netrunnerstats.springMVC.gchartConverter.DPStatsToGchart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,9 +54,10 @@ public class DPController {
 
     // JSON - identities in the Data Pack
     @RequestMapping(value="/JSON/DPStats/Identities/{sidecode}/{DPName}", method = RequestMethod.GET)
-    public @ResponseBody DPIntentities getDPIdentities(
+    public @ResponseBody
+    List<DPIdentity> getDPIdentities(
             @PathVariable(value = "sidecode") String sidecode,
             @PathVariable(value = "DPName") String DPName) {
-        return statistics.getIdentityLinksForDataPack(DPName, sidecode);
+        return statistics.getIdentityLinksForDataPack(DPName, sidecode).getSortedIdentities();
     }
 }

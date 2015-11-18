@@ -6,10 +6,7 @@ import com.madarasz.netrunnerstats.database.DOs.result.StatCounts;
 import com.madarasz.netrunnerstats.database.DOs.stats.*;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
 import com.madarasz.netrunnerstats.database.DRs.*;
-import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
-import com.madarasz.netrunnerstats.database.DRs.stats.DPStatsRepository;
-import com.madarasz.netrunnerstats.database.DRs.stats.DeckInfosRepository;
-import com.madarasz.netrunnerstats.database.DRs.stats.IdentityMDSRepository;
+import com.madarasz.netrunnerstats.database.DRs.stats.*;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
 import com.madarasz.netrunnerstats.helper.DeckDigest;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by madarasz on 11/7/15.
@@ -55,6 +53,9 @@ public class Statistics {
 
     @Autowired
     DeckInfosRepository deckInfosRepository;
+
+    @Autowired
+    DPIdentitiesRepository dpIdentitiesRepository;
 
     @Autowired
     DeckDigest deckDigest;
@@ -152,29 +153,34 @@ public class Statistics {
         }
         return result;
     }
-    public DPIntentities getIdentityLinksForDataPack(String cardpackName, String sidecode) {
-        DPStatistics stats = getPackStats(cardpackName);
-        DPIntentities result = new DPIntentities();
+    public DPIdentities getIdentityLinksForDataPack(String cardpackName, String sidecode) {
+        DPIdentities result = dpIdentitiesRepository.findByCardpoolSidecode(cardpackName, sidecode);
+        if (result == null) {
+            result = new DPIdentities(cardpackName, sidecode);
+            DPStatistics stats = getPackStats(cardpackName);
 
-        List<CountDeckStands> data;
-        if (sidecode.equals("runner")) {
-            data = stats.getSortedRunnerIdentities();
-        } else if (sidecode.equals("corp")) {
-            data = stats.getSortedCorpIdentities();
-        } else {
-            return new DPIntentities();
-        }
-
-        for (CountDeckStands identity : data) {
-            int topdecknum = identity.getDecknum();
-            String title = identity.getTitle();
-            int decknum = deckRepository.countByIdentityAndCardPool(title, cardpackName);
-            if (decknum > 0) {
-                DPIdentity entry = new DPIdentity(title,
-                        String.format("/MDSIdentity/%s/%s", cardpackName, title),
-                        decknum, topdecknum);
-                result.addIdentitiy(entry);
+            Set<CountDeckStands> data;
+            if (sidecode.equals("runner")) {
+                data = stats.getRunnerIdentities();
+            } else if (sidecode.equals("corp")) {
+                data = stats.getCorpIdentities();
+            } else {
+                return new DPIdentities();
             }
+
+            for (CountDeckStands identity : data) {
+                int topdecknum = identity.getDecknum();
+                String title = identity.getTitle();
+                int decknum = deckRepository.countByIdentityAndCardPool(title, cardpackName);
+                if (decknum > 0) {
+                    DPIdentity entry = new DPIdentity(title,
+                            String.format("/MDSIdentity/%s/%s", cardpackName, title),
+                            decknum, topdecknum);
+                    result.addIdentitiy(entry);
+                }
+            }
+            System.out.println(String.format("Saving DPIdentities: %s - %s", cardpackName, sidecode));
+            dpIdentitiesRepository.save(result);
         }
         return result;
     }

@@ -76,6 +76,22 @@ public class DPStatistics {
         this.statnum = statnum;
     }
 
+    public Set<CountDeckStands> getRunnerFactions() {
+        return runnerFactions;
+    }
+
+    public Set<CountDeckStands> getRunnerIdentities() {
+        return runnerIdentities;
+    }
+
+    public Set<CountDeckStands> getCorpFactions() {
+        return corpFactions;
+    }
+
+    public Set<CountDeckStands> getCorpIdentities() {
+        return corpIdentities;
+    }
+
     public List<CountDeckStands> getSortedRunnerFactions() {
         return sortSet(runnerFactions);
     }

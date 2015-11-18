@@ -125,7 +125,7 @@
                 dataType: "json",
                 async: false,
                 success: function(data) {
-                    $.each(data.identities, function(index, element) {
+                    $.each(data, function(index, element) {
                         $(elementid).append($('<div>')).append($('<a>', {
                             text: element.title + " (" + element.decknum +" decks)",
                             href: linkurl + element.title
