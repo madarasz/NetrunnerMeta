@@ -35,7 +35,7 @@ import java.util.Set;
 @Transactional
 @WebAppConfiguration
 @ConfigurationProperties(prefix = "testdb")
-public class DatabaseTest {
+public class ImportDataTest {
 
     @Autowired
     Operations operations;

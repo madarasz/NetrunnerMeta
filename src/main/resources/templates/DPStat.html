@@ -40,7 +40,26 @@
 
             <!-- all tab -->
             <div id="all" class="tab-pane fade">
-
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>All runner factions</h4>
+                        <div id="chart_div5" class="pie-chart"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>All corp factions</h4>
+                        <div id="chart_div6" class="pie-chart"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>All runner identities</h4>
+                        <div id="chart_div7" class="pie-chart"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>All corp identities</h4>
+                        <div id="chart_div8" class="pie-chart"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- decks tab -->
@@ -83,6 +102,10 @@
         $('#chart_div2').addClass('spinner');
         $('#chart_div3').addClass('spinner');
         $('#chart_div4').addClass('spinner');
+        $('#chart_div5').addClass('spinner');
+        $('#chart_div6').addClass('spinner');
+        $('#chart_div7').addClass('spinner');
+        $('#chart_div8').addClass('spinner');
         $('#text_div1').addClass('spinner');
         $('#text_div2').addClass('spinner');
 
@@ -101,6 +124,10 @@
             drawChart(basecharts + "Top/corp/faction/" + dpname, 'chart_div2');
             drawChart(basecharts + "Top/runner/identity/" + dpname, 'chart_div3');
             drawChart(basecharts + "Top/corp/identity/" + dpname, 'chart_div4');
+            drawChart(basecharts + "All/runner/faction/" + dpname, 'chart_div5');
+            drawChart(basecharts + "All/corp/faction/" + dpname, 'chart_div6');
+            drawChart(basecharts + "All/runner/identity/" + dpname, 'chart_div7');
+            drawChart(basecharts + "All/corp/identity/" + dpname, 'chart_div8');
             listIdentities(baselist + "runner/" + dpname, "#text_div1", basecompare);
             listIdentities(baselist + "corp/"+ dpname, "#text_div2", basecompare);
         }

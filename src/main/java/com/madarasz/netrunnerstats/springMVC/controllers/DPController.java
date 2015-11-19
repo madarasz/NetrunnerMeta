@@ -29,19 +29,22 @@ public class DPController {
     DPStatsToGchart dpStatsToGchart;
 
     // JSON output
-    @RequestMapping(value="/JSON/DPStats/Top/{DPName}", method = RequestMethod.GET)
-    public @ResponseBody DPStatistics getDPJSON(@PathVariable String DPName) {
-        DPStatistics stats = statistics.getPackStats(DPName);
+    @RequestMapping(value="/JSON/DPStats/{filter}/{DPName}", method = RequestMethod.GET)
+    public @ResponseBody DPStatistics getDPJSON(
+            @PathVariable(value = "filter") String filter,
+            @PathVariable(value = "DPName") String DPName) {
+        DPStatistics stats = statistics.getPackStats(DPName, filter.equals("Top"));
         return stats;
     }
 
     // Google Chart DataTable output
-    @RequestMapping(value="/DataTable/DPStats/Top/{sidecode}/{stattype}/{DPName}", method = RequestMethod.GET)
+    @RequestMapping(value="/DataTable/DPStats/{filter}/{sidecode}/{stattype}/{DPName}", method = RequestMethod.GET)
     public @ResponseBody DataTable getDPTopDataTable(
+            @PathVariable(value = "filter") String filter,
             @PathVariable(value = "sidecode") String sidecode,
             @PathVariable(value = "stattype") String stattype,
             @PathVariable(value = "DPName") String DPName) {
-        DPStatistics stats = statistics.getPackStats(DPName);
+        DPStatistics stats = statistics.getPackStats(DPName, filter.equals("Top"));
         return dpStatsToGchart.converter(stats, sidecode, stattype);
     }
 

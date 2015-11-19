@@ -10,7 +10,9 @@ import com.madarasz.netrunnerstats.database.DRs.stats.*;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
 import com.madarasz.netrunnerstats.helper.DeckDigest;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
+import org.neo4j.graphdb.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -63,51 +65,79 @@ public class Statistics {
     @Autowired
     ColorPicker colorPicker;
 
+    @Autowired
+    Operations operations;
+
     /**
      * Log statistics about deck count for each identity for all cardpool legality
      */
-    public DPStatistics getPackStats(String cardpackName) {
-        DPStatistics statistics = dpStatsRepository.findByDpname(cardpackName);
+    public DPStatistics getPackStats(String cardpackName, boolean top) {
+        DPStatistics statistics;
+        if (top) {
+            statistics = dpStatsRepository.findByDpnameOnlyTop(cardpackName);
+        } else {
+            statistics = dpStatsRepository.findByDpnameAll(cardpackName);
+        }
         if (statistics == null) {
-            statistics = new DPStatistics(cardpackName, deckRepository.countByCardpool(cardpackName), standingRepository.countByCardPool(cardpackName));
-            System.out.println("*********************************************************************");
-            System.out.println(String.format("Stats for cardpool: %s (%d decks, %d standings)",
-                    cardpackName, deckRepository.countByCardpool(cardpackName), standingRepository.countByCardPool(cardpackName)));
-            System.out.println("*********************************************************************");
+            statistics = new DPStatistics(cardpackName, deckRepository.countByCardpool(cardpackName),
+                    standingRepository.countByCardPool(cardpackName), top);
+//            System.out.println("*********************************************************************");
+//            System.out.println(String.format("Stats for cardpool: %s (%d decks, %d standings)",
+//                    cardpackName, deckRepository.countByCardpool(cardpackName), standingRepository.countByCardPool(cardpackName)));
+//            System.out.println("*********************************************************************");
 
-            List<StatCounts> stats = standingRepository.getTopIdentityStatsByCardPool(cardpackName);
+            List<StatCounts> stats;
+            if (top) {
+                stats = standingRepository.getTopIdentityStatsByCardPool(cardpackName);
+            } else {
+                stats = standingRepository.getIdentityStatsByCardPool(cardpackName);
+            }
+
             for (StatCounts stat : stats) {
                 String identity = stat.getCategory();
-                if (stat.getSideCode().equals("runner")) {
-                    statistics.addRunnerIdentity(identity,
-                            deckRepository.countTopByIdentityAndCardPool(identity, cardpackName),
-                            stat.getCount(), colorPicker.colorIdentity(identity));
+                // count
+                int count;
+                if (top) {
+                    count = deckRepository.countTopByIdentityAndCardPool(identity, cardpackName);
                 } else {
-                    statistics.addCorpIdentity(identity,
-                            deckRepository.countTopByIdentityAndCardPool(identity, cardpackName),
-                            stat.getCount(), colorPicker.colorIdentity(identity));
+                    count = deckRepository.countByIdentityAndCardPool(identity, cardpackName);
                 }
-                System.out.println(String.format("%s - %d (%d)", identity, stat.getCount(),
-                        deckRepository.countTopByIdentityAndCardPool(identity, cardpackName)));
+                // adding stats
+                if (stat.getSideCode().equals("runner")) {
+                    statistics.addRunnerIdentity(identity, count, stat.getCount(), colorPicker.colorIdentity(identity));
+                } else {
+                    statistics.addCorpIdentity(identity, count, stat.getCount(), colorPicker.colorIdentity(identity));
+                }
+//                System.out.println(String.format("%s - %d (%d)", identity, stat.getCount(),
+//                        deckRepository.countTopByIdentityAndCardPool(identity, cardpackName)));
             }
 
-            System.out.println("*********************************************************************");
-
-            stats = standingRepository.getTopFactionStatsByCardPool(cardpackName);
+//            System.out.println("*********************************************************************");
+            if (top) {
+                stats = standingRepository.getTopFactionStatsByCardPool(cardpackName);
+            } else {
+                stats = standingRepository.getFactionStatsByCardPool(cardpackName);
+            }
             for (StatCounts stat : stats) {
                 String faction = stat.getCategory();
-                if (stat.getSideCode().equals("runner")) {
-                    statistics.addRunnerFaction(faction, deckRepository.countTopByCardPoolAndFaction(cardpackName, faction),
-                            stat.getCount(), colorPicker.colorFaction(faction));
+                // count
+                int count;
+                if (top) {
+                    count = deckRepository.countTopByCardPoolAndFaction(cardpackName, faction);
                 } else {
-                    statistics.addCorpFaction(faction, deckRepository.countTopByCardPoolAndFaction(cardpackName, faction),
-                            stat.getCount(), colorPicker.colorFaction(faction));
+                    count = deckRepository.countByCardPoolAndFaction(cardpackName, faction);
                 }
-                System.out.println(String.format("%s - %d (%d)", faction, stat.getCount(), deckRepository.countTopByCardPoolAndFaction(cardpackName, faction)));
+                // adding stats
+                if (stat.getSideCode().equals("runner")) {
+                    statistics.addRunnerFaction(faction, count, stat.getCount(), colorPicker.colorFaction(faction));
+                } else {
+                    statistics.addCorpFaction(faction, count, stat.getCount(), colorPicker.colorFaction(faction));
+                }
+//                System.out.println(String.format("%s - %d (%d)", faction, stat.getCount(), deckRepository.countTopByCardPoolAndFaction(cardpackName, faction)));
             }
 
-            System.out.println("*********************************************************************");
-            System.out.println("Saving DP Statistics.");
+//            System.out.println("*********************************************************************");
+            System.out.println(String.format("Saving DP Statistics: %s %s", cardpackName, top));
             dpStatsRepository.save(statistics); // TODO: commit?
         }
         return statistics;
@@ -157,7 +187,7 @@ public class Statistics {
         DPIdentities result = dpIdentitiesRepository.findByCardpoolSidecode(cardpackName, sidecode);
         if (result == null) {
             result = new DPIdentities(cardpackName, sidecode);
-            DPStatistics stats = getPackStats(cardpackName);
+            DPStatistics stats = getPackStats(cardpackName, false);
 
             Set<CountDeckStands> data;
             if (sidecode.equals("runner")) {

@@ -58,6 +58,9 @@ public class Operations {
         System.out.println("Cleaning DB.");
         Map<String, Object> emptyparams = new HashMap<String, Object>();
         template.query("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
+        // troublemaker nodes
+        template.query("MATCH ()-[h:HAS_CARD]->() DELETE h", emptyparams);
+        template.query("MATCH (n:CountDeckStands) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         logDBCount();
     }
 
@@ -367,6 +370,8 @@ public class Operations {
         template.query("MATCH (n:CardPoolStats) OPTIONAL MATCH (n)-[r]-(c:CardPool) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:DeckInfos) OPTIONAL MATCH (n)-[r]-(c:DeckInfo) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:DPIdentities) OPTIONAL MATCH (n)-[r]-(c:DPIdentity) DELETE n,r,c", emptyparams);
+        // troublemaker nodes
+        template.query("MATCH (n:CountDeckStands) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         logDBStatCount();
     }
 

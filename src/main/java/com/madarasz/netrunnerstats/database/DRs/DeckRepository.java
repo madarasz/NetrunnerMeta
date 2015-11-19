@@ -36,6 +36,11 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
             "RETURN COUNT(d)")
     int countByIdentityAndCardPool(String title, String cardpoolname);
 
+    @Query("MATCH (i:Card {faction_code: {1}})<-[:IDENTITY]-(d:Deck)<-[:IS_DECK]-(s:Standing)" +
+            "-[:IN_TOURNAMENT]->(:Tournament)-[:POOL]->(p:CardPack {name: {0}}) " +
+            "RETURN COUNT(d)")
+    int countByCardPoolAndFaction(String cardpoolname, String factionName);
+
     @Query("MATCH (i:Card {title: {0}})<-[:IDENTITY]-(d:Deck)<-[:IS_DECK]-(s:Standing {topdeck: true})" +
             "-[:IN_TOURNAMENT]->(:Tournament)-[:POOL]->(p:CardPack {name: {1}}) " +
             "RETURN COUNT(d)")

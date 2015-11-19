@@ -18,7 +18,7 @@ public class DeckInfos {
     @GraphId
     private Long id;
     private Set<DeckInfo> infos;
-    private String cardpoolname; // TODO: real reference
+    private String cardpoolname;
     private String identitytitle;
 
     public DeckInfos() {

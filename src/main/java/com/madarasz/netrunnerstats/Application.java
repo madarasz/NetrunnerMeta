@@ -103,18 +103,15 @@ public class Application implements CommandLineRunner {
                 case acooall:
 //                    operations.cleanDB();
 //                    operations.loadNetrunnerDB();
-//                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/data-and-destiny/1/", true, false);
-//                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/the-universe-of-tomorrow/1/", true, false);
+                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/data-and-destiny/1/", true, false);
+                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/the-universe-of-tomorrow/1/", true, false);
                     operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/old-hollywood/1/", true, false);
 //                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/anr-tournament-archive/1", true, false);
                     operations.logDBCount();
                     break;
                 case checkdata: operations.checkDataValidity(); break;
                 case getpackstats:
-                    statistics.getPackStats("The Universe of Tomorrow");
-                    break;
-                case getallstats:
-                    statistics.getAllStats();
+                    statistics.getPackStats("The Universe of Tomorrow", true);
                     break;
                 case getpackmath: statistics.getPackMath("Near-Earth Hub: Broadcast Center", "Old Hollywood"); break;
                 case cleandb: operations.cleanDB(); break;
@@ -126,9 +123,10 @@ public class Application implements CommandLineRunner {
                     break;
                 case stimhackpacktournament:
                     operations.loadStimhackPackTournaments("Old Hollywood");
-//                    operations.loadStimhackPackTournaments("The Universe of Tomorrow");
-//                    operations.loadStimhackPackTournaments("Data and Destiny");
-//                    operations.loadStimhackPackTournaments("Data & Destiny");
+                    operations.loadStimhackPackTournaments("The Universe of Tomorrow");
+                    operations.loadStimhackPackTournaments("Data and Destiny");
+                    operations.loadStimhackPackTournaments("Data & Destiny");
+                    operations.logDBCount();
                     break;
                 case resetstats:
                     operations.resetStats();
@@ -150,7 +148,7 @@ public class Application implements CommandLineRunner {
         netrunnerdbloaddeck,
         acooloaddeck, acooloadtournament, acooloadtournamentdecks, acooloadpage, acooall,
         stimhackdecks, stimhacktournament, stimhackpacktournament,
-        archetype, getpackstats, getpackmath, getallstats, resetstats,
+        archetype, getpackstats, getpackmath, resetstats,
         none
     }
 }

@@ -30,6 +30,16 @@ public interface StandingRepository extends GraphRepository<Standing>, Relations
             "ORDER BY side_code DESC, count DESC")
     List<StatCounts> getTopFactionStatsByCardPool(String cardpoolName);
 
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card) " +
+            "RETURN c.title AS category, COUNT(*) as count, c.side_code AS side_code " +
+            "ORDER BY side_code DESC, count DESC")
+    List<StatCounts> getIdentityStatsByCardPool(String cardpoolName);
+
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card) " +
+            "RETURN c.faction_code AS category, COUNT(*) AS count, c.side_code AS side_code " +
+            "ORDER BY side_code DESC, count DESC")
+    List<StatCounts> getFactionStatsByCardPool(String cardpoolName);
+
     @Query("MATCH (t:Tournament {url: {0}})<-[:IN_TOURNAMENT]-(s:Standing {rank: {1}})-[:IS_IDENTITY]->(c:Card {title: {2}}) " +
             "RETURN s LIMIT 1")
     Standing findByTournamentURLRankIdentity(String url, int rank, String identityname);

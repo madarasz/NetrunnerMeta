@@ -14,9 +14,10 @@ import java.util.*;
 public class DPStatistics {
     @GraphId
     private Long id;
-    @Indexed(unique=true) private String dpname; // TODO: actually link to Card Pack
+    @Indexed(unique=true) private String dpname;
     private int decknum;
     private int statnum;
+    private boolean top;
     @RelatedTo(type = "RFACTION") private @Fetch Set<CountDeckStands> runnerFactions;
     @RelatedTo(type = "RIDENTITY") private @Fetch Set<CountDeckStands> runnerIdentities;
     @RelatedTo(type = "CFACTION") private @Fetch Set<CountDeckStands> corpFactions;
@@ -25,10 +26,11 @@ public class DPStatistics {
     public DPStatistics() {
     }
 
-    public DPStatistics(String DPname, int decknum, int statnum) {
+    public DPStatistics(String DPname, int decknum, int statnum, boolean top) {
         this.statnum = statnum;
         this.dpname = DPname;
         this.decknum = decknum;
+        this.top = top;
         runnerFactions = new HashSet<CountDeckStands>();
         runnerIdentities = new HashSet<CountDeckStands>();
         corpFactions = new HashSet<CountDeckStands>();
