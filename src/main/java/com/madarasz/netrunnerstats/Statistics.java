@@ -10,9 +10,7 @@ import com.madarasz.netrunnerstats.database.DRs.stats.*;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
 import com.madarasz.netrunnerstats.helper.DeckDigest;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
-import org.neo4j.graphdb.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -69,10 +67,13 @@ public class Statistics {
     Operations operations;
 
     /**
-     * Log statistics about deck count for each identity for all cardpool legality
+     * Log statistics about deck and stat count for each identity for a cardpool legality
+     * @param cardpackName cardpool name
+     * @param top just top decks?
+     * @return DPStatistics
      */
     public DPStatistics getPackStats(String cardpackName, boolean top) {
-        DPStatistics statistics = new DPStatistics();
+        DPStatistics statistics;
         if (top) {
             statistics = dpStatsRepository.findByDpnameOnlyTop(cardpackName);
         } else {
@@ -158,15 +159,16 @@ public class Statistics {
      * Generate multidimensional scaling for identity and cardpool legality
      * @param identityName filter for identity
      * @param cardpackName filter for cardpool
+     * @return IdentityMDS
      */
     public IdentityMDS getPackMath(String identityName, String cardpackName) {
         IdentityMDS result = identityMdsRepository.findByDpnameIdentitytitle(cardpackName, identityName);
         if (result == null) {
-            ArrayList<Deck> decks = new ArrayList<Deck>(deckRepository.filterByIdentityAndCardPool(identityName, cardpackName));
-            ArrayList<Deck> topdecks = new ArrayList<Deck>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
+            ArrayList<Deck> decks = new ArrayList<>(deckRepository.filterByIdentityAndCardPool(identityName, cardpackName));
+            ArrayList<Deck> topdecks = new ArrayList<>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
 
             // TODO: better topdecks contain
-            ArrayList<String> topURLs = new ArrayList<String>();
+            ArrayList<String> topURLs = new ArrayList<>();
             for (Deck topdeck : topdecks) {
                 topURLs.add(topdeck.getUrl());
             }
@@ -194,6 +196,13 @@ public class Statistics {
         }
         return result;
     }
+
+    /**
+     * Generates indentity deck groups with links for MDS based on cardpool
+     * @param cardpackName cardpool
+     * @param sidecode runner or corp
+     * @return DPIdentities
+     */
     public DPIdentities getIdentityLinksForDataPack(String cardpackName, String sidecode) {
         DPIdentities result = dpIdentitiesRepository.findByCardpoolSidecode(cardpackName, sidecode);
         if (result == null) {
@@ -201,12 +210,15 @@ public class Statistics {
             DPStatistics stats = getPackStats(cardpackName, false);
 
             Set<CountDeckStands> data;
-            if (sidecode.equals("runner")) {
-                data = stats.getRunnerIdentities();
-            } else if (sidecode.equals("corp")) {
-                data = stats.getCorpIdentities();
-            } else {
-                return new DPIdentities();
+            switch (sidecode) {
+                case "runner":
+                    data = stats.getRunnerIdentities();
+                    break;
+                case "corp":
+                    data = stats.getCorpIdentities();
+                    break;
+                default:
+                    return new DPIdentities();
             }
 
             for (CountDeckStands identity : data) {
@@ -226,6 +238,10 @@ public class Statistics {
         return result;
     }
 
+    /**
+     * Generates cardpool statistics: deck number, ranking number, tournament number per cardpool
+     * @return CardPoolStats
+     */
     public CardPoolStats getCardPoolStats() {
         CardPoolStats result = cardPoolStatsRepository.find();
         if (result == null) {
@@ -246,6 +262,12 @@ public class Statistics {
         return result;
     }
 
+    /**
+     * Generates html digest of decks for certain indentity and cardpool
+     * @param identityName identity name
+     * @param cardpool cardpool name
+     * @return DeckInfos
+     */
     public DeckInfos getDeckInfos(String identityName, String cardpool) {
         DeckInfos result = deckInfosRepository.findByCardpoolIdentityname(cardpool, identityName);
         if (result == null) {
@@ -261,7 +283,7 @@ public class Statistics {
         return result;
     }
 
-    public DeckInfo getDeckInfo(Deck deck) {
+    private DeckInfo getDeckInfo(Deck deck) {
         return new DeckInfo(deckDigest.shortHtmlDigest(deck), deckDigest.htmlDigest(deck),
                 deckDigest.digest(deck), deck.getUrl());
     }
