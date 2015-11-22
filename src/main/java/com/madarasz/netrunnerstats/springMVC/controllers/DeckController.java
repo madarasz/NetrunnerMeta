@@ -38,7 +38,9 @@ public class DeckController {
     // JSON output
     @RequestMapping(value="/JSON/Deck/{DPName}/{identity}", method = RequestMethod.GET)
     public @ResponseBody
-    List<DeckInfo> getAllDeckInfos(@PathVariable(value="identity") String identity, @PathVariable(value="DPName") String DPName) {
+    List<DeckInfo> getAllDeckInfos(
+            @PathVariable(value="identity") String identity,
+            @PathVariable(value="DPName") String DPName) {
         return statistics.getDeckInfos(identity, DPName).getSortedInfos();
     }
 }
