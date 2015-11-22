@@ -16,12 +16,12 @@ import java.util.List;
 public class DPStatsToCompareGchart extends DPToChart {
 
     public DataTable converter(DPStatistics topstats, DPStatistics allstats, String sidecode, String stattype) {
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("Faction", "string"));
         columns.add(new Column("all", "number"));
         columns.add(new Column("top", "number"));
 //        columns.add(new Column("", "", "string", "style"));
-        List<Row> rows = new ArrayList<Row>();
+        List<Row> rows = new ArrayList<>();
         List<CountDeckStands> topstands = filter(topstats, sidecode, stattype);
         List<CountDeckStands> allstands = filter(allstats, sidecode, stattype);
         int sumtop;
@@ -33,11 +33,18 @@ public class DPStatsToCompareGchart extends DPToChart {
             sumtop = topstats.getCorpStatnum();
             sumall = allstats.getCorpStatnum();
         }
-        for (int i = 0; i < topstands.size(); i ++)
-        {
-            CellString title = new CellString(topstands.get(i).getTitle());
-            double fractionall = ((double)allstands.get(i).getStandingnum()) / sumall;
-            double fractiontop = ((double)topstands.get(i).getStandingnum()) / sumtop;
+
+        for (CountDeckStands allstand : allstands) {
+            String identity = allstand.getTitle();
+            CellString title = new CellString(identity);
+            double fractionall = ((double)allstand.getStandingnum()) / sumall;
+            double fractiontop = 0;
+            for (CountDeckStands topstand : topstands) {
+                if (topstand.getTitle().equals(identity)) {
+                    fractiontop = ((double) topstand.getStandingnum()) / sumtop;
+                    break;
+                }
+            }
             CellNumber countall = new CellNumber(fractionall, String.format("%,.1f%%", fractionall * 100));
             CellNumber counttop = new CellNumber(fractiontop, String.format("%,.1f%%", fractiontop * 100));
 //            CellString style = new CellString(topstands.get(i).getColorcode());
