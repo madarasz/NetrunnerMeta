@@ -1,5 +1,6 @@
 package com.madarasz.netrunnerstats;
 
+import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.CardPack;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
 import com.madarasz.netrunnerstats.database.DOs.result.StatCounts;
@@ -283,7 +284,26 @@ public class Statistics {
         return result;
     }
 
-    private DeckInfo getDeckInfo(Deck deck) {
+    /**
+     * Calculates how used a card in the cardpack
+     * @param cardpack cardpack name
+     * @return CardUsageStat
+     */
+    public CardUsageStat getMostUsedCardsForCardPack(String cardpack) {
+        CardUsageStat result = new CardUsageStat(cardpack);
+        List<Card> cards = cardRepository.findByCardPackName(cardpack);
+        for (Card card: cards) {
+            String code = card.getCode();
+            int count = deckRepository.countByUsingCard(code);
+            if (count > 0) {
+                int topcount = deckRepository.countTopByUsingCard(code);
+                result.addCardUsage(new CardUsage(card.getTitle(), card.getSide_code(), count, topcount));
+            }
+        }
+        return result;
+    }
+
+    public DeckInfo getDeckInfo(Deck deck) {
         return new DeckInfo(deckDigest.shortHtmlDigest(deck), deckDigest.htmlDigest(deck),
                 deckDigest.digest(deck), deck.getUrl());
     }

@@ -21,5 +21,6 @@ public interface CardRepository extends GraphRepository<Card>, RelationshipOpera
     @Query("MATCH (n:Card {type_code: 'identity'}) return n")
     List<Card> findIdentities();
 
-    List<Card> findByCardPackCode(String code);
+    @Query("MATCH (p:CardPack {name: {0}})<-[:IN_SET]-(c:Card) RETURN c")
+    List<Card> findByCardPackName(String code);
 }

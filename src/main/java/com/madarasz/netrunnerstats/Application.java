@@ -131,6 +131,9 @@ public class Application implements CommandLineRunner {
                 case resetstats:
                     operations.resetStats();
                     break;
+                case mostusedcard:
+                    statistics.getMostUsedCardsForCardPack("Data and Destiny");
+                    break;
             }
 
             tx.success();
@@ -148,7 +151,7 @@ public class Application implements CommandLineRunner {
         netrunnerdbloaddeck,
         acooloaddeck, acooloadtournament, acooloadtournamentdecks, acooloadpage, acooall,
         stimhackdecks, stimhacktournament, stimhackpacktournament,
-        archetype, getpackstats, getpackmath, resetstats,
+        archetype, getpackstats, getpackmath, resetstats, mostusedcard,
         none
     }
 }
