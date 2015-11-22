@@ -59,6 +59,9 @@ public class Statistics {
     DPIdentitiesRepository dpIdentitiesRepository;
 
     @Autowired
+    CardUsageStatsRepository cardUsageStatsRepository;
+
+    @Autowired
     DeckDigest deckDigest;
 
     @Autowired
@@ -150,7 +153,7 @@ public class Statistics {
             }
 
 //            System.out.println("*********************************************************************");
-            System.out.println(String.format("Saving DP Statistics: %s %s", cardpackName, top));
+            System.out.println(String.format("Saving DP Statistics: %s - top: %s", cardpackName, top));
             dpStatsRepository.save(statistics); // TODO: commit?
         }
         return statistics;
@@ -290,15 +293,20 @@ public class Statistics {
      * @return CardUsageStat
      */
     public CardUsageStat getMostUsedCardsForCardPack(String cardpack) {
-        CardUsageStat result = new CardUsageStat(cardpack);
-        List<Card> cards = cardRepository.findByCardPackName(cardpack);
-        for (Card card: cards) {
-            String code = card.getCode();
-            int count = deckRepository.countByUsingCard(code);
-            if (count > 0) {
-                int topcount = deckRepository.countTopByUsingCard(code);
-                result.addCardUsage(new CardUsage(card.getTitle(), card.getSide_code(), count, topcount));
+        CardUsageStat result = cardUsageStatsRepository.findByCardPackName(cardpack);
+        if (result == null) {
+            result = new CardUsageStat(cardpack);
+            List<Card> cards = cardRepository.findByCardPackName(cardpack);
+            for (Card card : cards) {
+                String code = card.getCode();
+                int count = deckRepository.countByUsingCard(code);
+                if (count > 0) {
+                    int topcount = deckRepository.countTopByUsingCard(code);
+                    result.addCardUsage(new CardUsage(card.getTitle(), card.getSide_code(), count, topcount));
+                }
             }
+            System.out.println(String.format("Saving Card Usage Statistics: %s", cardpack));
+            cardUsageStatsRepository.save(result);
         }
         return result;
     }

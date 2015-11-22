@@ -1,11 +1,18 @@
 package com.madarasz.netrunnerstats.database.DOs.stats.entries;
 
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.Indexed;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
 /**
  * Created by madarasz on 11/22/15.
  * Holds card usage data
  */
+@NodeEntity
 public class CardUsage {
-    private String cardtitle;
+    @GraphId
+    private Long id;
+    @Indexed private String cardtitle;
     private String sidecode;
     private int indecks;
     private int intopdecks;

@@ -2,6 +2,7 @@ package com.madarasz.netrunnerstats.database.DOs.stats;
 
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardUsage;
 import com.madarasz.netrunnerstats.helper.comparator.CardUsageComparator;
+import org.springframework.data.neo4j.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,9 +13,15 @@ import java.util.Set;
  * Created by madarasz on 11/22/15.
  * Holds statistics on card usage of cards in data pack.
  */
+@NodeEntity
 public class CardUsageStat {
-    private String cardpackname;
-    private Set<CardUsage> cards;
+    @GraphId
+    private Long id;
+    @Indexed(unique=true) private String cardpackname;
+    @RelatedTo(type = "USAGE") private @Fetch Set<CardUsage> cards;
+
+    public CardUsageStat() {
+    }
 
     public CardUsageStat(String cardpackname) {
         this.cardpackname = cardpackname;
