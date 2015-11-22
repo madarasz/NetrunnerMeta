@@ -72,15 +72,26 @@ public class Statistics {
      * Log statistics about deck count for each identity for all cardpool legality
      */
     public DPStatistics getPackStats(String cardpackName, boolean top) {
-        DPStatistics statistics;
+        DPStatistics statistics = new DPStatistics();
         if (top) {
             statistics = dpStatsRepository.findByDpnameOnlyTop(cardpackName);
         } else {
             statistics = dpStatsRepository.findByDpnameAll(cardpackName);
         }
+
         if (statistics == null) {
-            statistics = new DPStatistics(cardpackName, deckRepository.countByCardpool(cardpackName),
-                    standingRepository.countByCardPool(cardpackName), top);
+//            System.out.println(String.format("Calculating DP Statistics: %s %s", cardpackName, top));
+            // total count
+            int deckcount;
+            int standcount;
+            if (top) {
+                deckcount = deckRepository.countTopByCardpool(cardpackName);
+                standcount = standingRepository.countTopByCardPool(cardpackName);
+            } else {
+                deckcount = deckRepository.countByCardpool(cardpackName);
+                standcount = standingRepository.countByCardPool(cardpackName);
+            }
+            statistics = new DPStatistics(cardpackName, deckcount, standcount, top);
 //            System.out.println("*********************************************************************");
 //            System.out.println(String.format("Stats for cardpool: %s (%d decks, %d standings)",
 //                    cardpackName, deckRepository.countByCardpool(cardpackName), standingRepository.countByCardPool(cardpackName)));

@@ -5,8 +5,8 @@ package com.madarasz.netrunnerstats.springMVC.gchart;
  * Object representation of the "cell" property in Google Charts.
  */
 public abstract class Cell {
-    private String f;   // formatted value
-    private Style p;   // style properties
+    protected String f;   // formatted value
+    protected Style p;   // style properties
 
     public Cell() {
         f = null;

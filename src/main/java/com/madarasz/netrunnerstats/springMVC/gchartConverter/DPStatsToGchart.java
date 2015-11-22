@@ -13,15 +13,7 @@ import java.util.List;
  * Converts DPStats data to Google Chart DataTable
  */
 @Component
-public class DPStatsToGchart {
-
-    public List<String> colorConverter(DPStatistics stats, String sidecode, String stattype) {
-        List<String> result = new ArrayList<String>();
-        for (CountDeckStands info : filter(stats, sidecode, stattype)) {
-            result.add(info.getColorcode());
-        }
-        return result;
-    }
+public class DPStatsToGchart extends DPToChart{
 
     public DataTable converter(DPStatistics stats, String sidecode, String stattype) {
         List<Column> columns = new ArrayList<Column>();
@@ -42,29 +34,4 @@ public class DPStatsToGchart {
         }
         return new DataTable(columns, rows);
     }
-
-    private List<CountDeckStands> filter (DPStatistics stats, String sidecode, String stattype){
-        List<CountDeckStands> data;
-        if (sidecode.equals("runner")) {
-            if (stattype.equals("identity")) {
-                data = stats.getSortedRunnerIdentities();
-            } else if (stattype.equals("faction")){
-                data = stats.getSortedRunnerFactions();
-            } else {
-                return new ArrayList<CountDeckStands>();
-            }
-        } else if (sidecode.equals("corp")) {
-            if (stattype.equals("identity")) {
-                data = stats.getSortedCorpIdentities();
-            } else if (stattype.equals("faction")){
-                data = stats.getSortedCorpFactions();
-            } else {
-                return new ArrayList<CountDeckStands>();
-            }
-        } else {
-            return new ArrayList<CountDeckStands>();
-        }
-        return data;
-    }
-
 }

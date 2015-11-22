@@ -9,6 +9,7 @@
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#top">Factions / identities, top</a></li>
             <li><a data-toggle="tab" href="#all">Factions / identities, all</a></li>
+            <li><a data-toggle="tab" href="#compare">Compare top - all</a></li>
             <li><a data-toggle="tab" href="#decks">Decks</a></li>
         </ul>
 
@@ -62,6 +63,30 @@
                 </div>
             </div>
 
+            <!-- compare tab -->
+            <div id="compare" class="tab-pane fade">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Compare runner factions</h4>
+                        <div id="chart_div9" class="pie-chart"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Compare corp factions</h4>
+                        <div id="chart_div10" class="pie-chart"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Compare runner identities</h4>
+                        <div id="chart_div11" class="pie-chart"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Compare corp identities</h4>
+                        <div id="chart_div12" class="pie-chart"></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- decks tab -->
             <div id="decks" class="tab-pane fade">
                 <div class="row">
@@ -106,6 +131,10 @@
         $('#chart_div6').addClass('spinner');
         $('#chart_div7').addClass('spinner');
         $('#chart_div8').addClass('spinner');
+        $('#chart_div9').addClass('spinner');
+        $('#chart_div10').addClass('spinner');
+        $('#chart_div11').addClass('spinner');
+        $('#chart_div12').addClass('spinner');
         $('#text_div1').addClass('spinner');
         $('#text_div2').addClass('spinner');
 
@@ -117,17 +146,22 @@
 
         function drawCharts() {
             var dpname = encodeURIComponent([[${DPname}]]);
-            var basecharts = "/DataTable/DPStats/";
+            var basepiecharts = "/DataTable/DPStats/";
+            var basebarcharts = "/DataTable/DPStats/Compare/";
             var baselist = "/JSON/DPStats/Identities/";
             var basecompare = "/MDSIdentity/" + dpname + "/";
-            drawChart(basecharts + "Top/runner/faction/" + dpname, 'chart_div1');
-            drawChart(basecharts + "Top/corp/faction/" + dpname, 'chart_div2');
-            drawChart(basecharts + "Top/runner/identity/" + dpname, 'chart_div3');
-            drawChart(basecharts + "Top/corp/identity/" + dpname, 'chart_div4');
-            drawChart(basecharts + "All/runner/faction/" + dpname, 'chart_div5');
-            drawChart(basecharts + "All/corp/faction/" + dpname, 'chart_div6');
-            drawChart(basecharts + "All/runner/identity/" + dpname, 'chart_div7');
-            drawChart(basecharts + "All/corp/identity/" + dpname, 'chart_div8');
+            drawPieChart(basepiecharts + "Top/runner/faction/" + dpname, 'chart_div1');
+            drawPieChart(basepiecharts + "Top/corp/faction/" + dpname, 'chart_div2');
+            drawPieChart(basepiecharts + "Top/runner/identity/" + dpname, 'chart_div3');
+            drawPieChart(basepiecharts + "Top/corp/identity/" + dpname, 'chart_div4');
+            drawPieChart(basepiecharts + "All/runner/faction/" + dpname, 'chart_div5');
+            drawPieChart(basepiecharts + "All/corp/faction/" + dpname, 'chart_div6');
+            drawPieChart(basepiecharts + "All/runner/identity/" + dpname, 'chart_div7');
+            drawPieChart(basepiecharts + "All/corp/identity/" + dpname, 'chart_div8');
+            drawBarChart(basebarcharts + "runner/faction/" + dpname, 'chart_div9');
+            drawBarChart(basebarcharts + "corp/faction/" + dpname, 'chart_div10');
+            drawBarChart(basebarcharts + "runner/identity/" + dpname, 'chart_div11');
+            drawBarChart(basebarcharts + "corp/identity/" + dpname, 'chart_div12');
             listIdentities(baselist + "runner/" + dpname, "#text_div1", basecompare);
             listIdentities(baselist + "corp/"+ dpname, "#text_div2", basecompare);
         }
@@ -135,7 +169,7 @@
         // Callback that creates and populates a data table,
         // instantiates the pie chart, passes in the data and
         // draws it.
-        function drawChart(urlvalue, elementid) {
+        function drawPieChart(urlvalue, elementid) {
 
             var slices = new Array;
 
@@ -163,6 +197,45 @@
 
             // Instantiate and draw our chart, passing in some options.
             var chart = new google.visualization.PieChart(document.getElementById(elementid));
+            chart.draw(data, options);
+        }
+
+        function drawBarChart(urlvalue, elementid) {
+
+//            var slices = new Array;
+
+            var jsonData = $.ajax({
+                url: urlvalue,
+                dataType: "json",
+                async: false,
+                success: function(data) {
+//                    $.each(data.rows, function (index, element) {
+//                        slices.push({color : element.c[2].v});
+//                    });
+                    $('#'+elementid).removeClass('spinner');
+                }
+            }).responseText;
+
+            // Create our data table out of JSON data loaded from server.
+            var data = new google.visualization.DataTable(jsonData);
+            var haxis;
+            if ($.parseJSON(jsonData).rows.length > 6) {
+                haxis = 'none';
+            } else {
+                haxis = 'out';
+            }
+
+            // Set chart options
+            var options = {
+                'width':500,
+                'height':300,
+                'vAxis': {format:'#,#%'},
+                'hAxis': { textPosition: haxis }
+//                'slices': slices
+            };
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.ColumnChart(document.getElementById(elementid));
             chart.draw(data, options);
         }
 

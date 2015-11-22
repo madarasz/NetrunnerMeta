@@ -4,6 +4,7 @@ import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.DPIdentity;
 import com.madarasz.netrunnerstats.springMVC.gchart.DataTable;
+import com.madarasz.netrunnerstats.springMVC.gchartConverter.DPStatsToCompareGchart;
 import com.madarasz.netrunnerstats.springMVC.gchartConverter.DPStatsToGchart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,9 @@ public class DPController {
     @Autowired
     DPStatsToGchart dpStatsToGchart;
 
+    @Autowired
+    DPStatsToCompareGchart dpStatsToCompareGchart;
+
     // JSON output
     @RequestMapping(value="/JSON/DPStats/{filter}/{DPName}", method = RequestMethod.GET)
     public @ResponseBody DPStatistics getDPJSON(
@@ -44,8 +48,23 @@ public class DPController {
             @PathVariable(value = "sidecode") String sidecode,
             @PathVariable(value = "stattype") String stattype,
             @PathVariable(value = "DPName") String DPName) {
-        DPStatistics stats = statistics.getPackStats(DPName, filter.equals("Top"));
-        return dpStatsToGchart.converter(stats, sidecode, stattype);
+
+        if (filter.equals("Compare")) {  // comparison
+            DPStatistics allstats = statistics.getPackStats(DPName, false);
+            DPStatistics topstats = statistics.getPackStats(DPName, true);
+            return dpStatsToCompareGchart.converter(topstats, allstats, sidecode, stattype);
+
+        } else if (filter.equals("Top")) {  // top
+            DPStatistics stats = statistics.getPackStats(DPName, true);
+            return dpStatsToGchart.converter(stats, sidecode, stattype);
+
+        } else if (filter.equals("All")) {  // all
+            DPStatistics stats = statistics.getPackStats(DPName, false);
+            return dpStatsToGchart.converter(stats, sidecode, stattype);
+
+        } else {    // none
+            return new DataTable();
+        }
     }
 
     // html page output

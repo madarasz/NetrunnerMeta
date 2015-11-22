@@ -14,10 +14,10 @@ import java.util.*;
 public class DPStatistics {
     @GraphId
     private Long id;
-    @Indexed(unique=true) private String dpname;
+    @Indexed private String dpname;
     private int decknum;
     private int statnum;
-    private boolean top;
+    @Indexed private boolean top;
     @RelatedTo(type = "RFACTION") private @Fetch Set<CountDeckStands> runnerFactions;
     @RelatedTo(type = "RIDENTITY") private @Fetch Set<CountDeckStands> runnerIdentities;
     @RelatedTo(type = "CFACTION") private @Fetch Set<CountDeckStands> corpFactions;
@@ -54,11 +54,7 @@ public class DPStatistics {
     }
 
 
-    public String getDPname() {
-        return dpname;
-    }
-
-    public void setDPname(String dpname) {
+    public void setDpname(String dpname) {
         this.dpname = dpname;
     }
 
@@ -76,6 +72,14 @@ public class DPStatistics {
 
     public void setStatnum(int statnum) {
         this.statnum = statnum;
+    }
+
+    public String getDpname() {
+        return dpname;
+    }
+
+    public boolean isTop() {
+        return top;
     }
 
     public Set<CountDeckStands> getRunnerFactions() {
@@ -116,4 +120,36 @@ public class DPStatistics {
         list.sort(comparator);
         return list;
     }
+
+    public int getRunnerStatnum() {
+        int result = 0;
+        for (CountDeckStands stands : runnerFactions) {
+            result += stands.getStandingnum();
+        }
+        return result;
+    }
+
+    public int getCorpStatnum() {
+        int result = 0;
+        for (CountDeckStands stands : corpFactions) {
+            result += stands.getStandingnum();
+        }
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s - top: %s - decks: %d, stands: %d", dpname, top, decknum, statnum);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        DPStatistics stats = (DPStatistics) obj;
+        if (dpname == null) return super.equals(obj);
+        return (dpname.equals(stats.getDpname())) && (top == stats.isTop());
+    }
+
 }
