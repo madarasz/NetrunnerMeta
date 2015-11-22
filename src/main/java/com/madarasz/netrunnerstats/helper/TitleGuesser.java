@@ -25,6 +25,9 @@ public class TitleGuesser {
             case "Deja Vu" :
                 newtitle = "Déjà Vu";
                 break;
+            case "Unregistered S&W 35" :
+                newtitle = "Unregistered S&W '35";
+                break;
         }
         return newtitle;
     }
