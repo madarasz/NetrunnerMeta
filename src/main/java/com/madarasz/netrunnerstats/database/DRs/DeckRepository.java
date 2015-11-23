@@ -68,9 +68,9 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
     @Query("MATCH (d:Deck) return d")
     List<Deck> getAllDecks();
 
-    @Query("MATCH (c:Card {code: {0}})<-[:HAS_CARD]-(d:Deck) RETURN COUNT(d)")
+    @Query("MATCH (c:Card {code: {0}})<--(d:Deck) RETURN COUNT(d)")
     int countByUsingCard(String cardcode);
 
-    @Query("MATCH (c:Card {code: {0}})<-[:HAS_CARD]-(d:Deck)<-[:IS_DECK]-(s:Standing {topdeck: true}) RETURN COUNT(d)")
+    @Query("MATCH (c:Card {code: {0}})<--(d:Deck)<-[:IS_DECK]-(s:Standing {topdeck: true}) RETURN COUNT(d)")
     int countTopByUsingCard(String cardcode);
 }
