@@ -79,7 +79,7 @@ public class Operations {
     public void logDBStatCount() {
         System.out.println(String.format("CardPoolStats %d, CardPool: %d, DP statistics: %d, CountDeckStands: %d, " +
                 "IdentityMDS: %d, MDSEntry: %d, DeckInfos: %d, DeckInfo: %d, DP Identities: %d, DP Identity: %d, \n" +
-                "CardUsageStats: %d, CardUsage: %d",
+                "CardUsageStat: %d, CardUsage: %d",
                 template.count(CardPoolStats.class), template.count(CardPool.class),
                 template.count(DPStatistics.class), template.count(CountDeckStands.class),
                 template.count(IdentityMDS.class), template.count(MDSEntry.class),

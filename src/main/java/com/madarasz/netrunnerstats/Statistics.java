@@ -294,7 +294,7 @@ public class Statistics {
      * @return CardUsageStat
      */
     public CardUsageStat getMostUsedCardsForCardPack(String cardpack) {
-        CardUsageStat result = cardUsageStatsRepository.findByCardPackName(cardpack, false);
+        CardUsageStat result = cardUsageStatsRepository.findByCardPackName(cardpack);
         if (result == null) {
             result = new CardUsageStat(cardpack, false);
             List<Card> cards = cardRepository.findByCardPackName(cardpack);
@@ -319,7 +319,7 @@ public class Statistics {
      * @return CardUsageStat
      */
     public CardUsageStat getMostUsedCardsForCardpool(String cardpool) {
-        CardUsageStat result = cardUsageStatsRepository.findByCardPackName(cardpool, true);
+        CardUsageStat result = cardUsageStatsRepository.findByCardPoolName(cardpool);
         if (result == null) {
             result = new CardUsageStat(cardpool, true);
             List<CardCounts> stat = cardRepository.findMostPopularCardsByCardPack(cardpool, "runner");

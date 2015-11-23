@@ -17,7 +17,7 @@ import java.util.Set;
 public class CardUsageStat {
     @GraphId
     private Long id;
-    @Indexed(unique=true) private String cardpackname;
+    @Indexed private String cardpackname;
     private boolean cardpool; // true if cardpool, false if cardpack
     @RelatedTo(type = "USAGE") private @Fetch Set<CardUsage> cards;
 
