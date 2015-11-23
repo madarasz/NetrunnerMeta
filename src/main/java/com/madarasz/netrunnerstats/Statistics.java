@@ -3,6 +3,7 @@ package com.madarasz.netrunnerstats;
 import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.CardPack;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.result.CardCounts;
 import com.madarasz.netrunnerstats.database.DOs.result.StatCounts;
 import com.madarasz.netrunnerstats.database.DOs.stats.*;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
@@ -309,6 +310,13 @@ public class Statistics {
             cardUsageStatsRepository.save(result);
         }
         return result;
+    }
+
+    public void getMostUsedCardsForCardpool(String cardpool) {
+        List<CardCounts> result = cardRepository.findMostPopularCardsByCardPack(cardpool, "runner");
+        for (CardCounts count : result) {
+            System.out.println(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
+        }
     }
 
     public DeckInfo getDeckInfo(Deck deck) {

@@ -1,6 +1,7 @@
 package com.madarasz.netrunnerstats.database.DRs;
 
 import com.madarasz.netrunnerstats.database.DOs.Card;
+import com.madarasz.netrunnerstats.database.DOs.result.CardCounts;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.neo4j.repository.RelationshipOperationsRepository;
@@ -23,4 +24,8 @@ public interface CardRepository extends GraphRepository<Card>, RelationshipOpera
 
     @Query("MATCH (p:CardPack {name: {0}})<-[:IN_SET]-(c:Card) RETURN c")
     List<Card> findByCardPackName(String code);
+
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament)<-[:IN_TOURNAMENT]-(:Standing)-[:IS_DECK]->(:Deck)-[:HAS_CARD]->(c:Card {side_code: {1}})-[:IN_SET]->(cp:CardPack) " +
+            "RETURN c.title AS title, COUNT(c) AS count, cp.name AS cardpack ORDER BY count DESC LIMIT 10")
+    List<CardCounts> findMostPopularCardsByCardPack(String cardpackname, String sidecode);
 }
