@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,11 +23,19 @@ public class CardController {
     Statistics statistics;
 
     // JSON output
-    @RequestMapping(value="/JSON/Cards/{sidecode}/{DPName}", method = RequestMethod.GET)
+    @RequestMapping(value="/JSON/Cards/{target}/{sidecode}/{DPName}", method = RequestMethod.GET)
     public @ResponseBody
     List<CardUsage> getAllDeckInfos(
+            @PathVariable(value="target") String target,
             @PathVariable(value="sidecode") String sidecode,
             @PathVariable(value="DPName") String DPName) {
-        return statistics.getMostUsedCardsForCardPack(DPName).getSortedCards(sidecode);
+        switch (target) {
+            case "Cardpack":
+                return statistics.getMostUsedCardsForCardPack(DPName).getSortedCards(sidecode);
+            case "Cardpool":
+                return statistics.getMostUsedCardsForCardpool(DPName).getSortedCards(sidecode);
+            default:
+                return new ArrayList<CardUsage>();
+        }
     }
 }

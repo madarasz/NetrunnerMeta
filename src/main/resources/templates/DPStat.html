@@ -132,6 +132,34 @@
                         </table>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>10 most used runner cards with this cardpool</h4>
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <td>card title</td>
+                                <td>pack</td>
+                                <td>used in top decks</td>
+                            </tr>
+                            </thead>
+                            <tbody id="runnertable2"></tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>10 most used corp cards with this cardpool</h4>
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <td>card title</td>
+                                <td>pack</td>
+                                <td>used in top decks</td>
+                            </tr>
+                            </thead>
+                            <tbody id="corptable2"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -172,6 +200,8 @@
         $('#text_div2').addClass('spinner');
         $('#runnertable').addClass('spinner');
         $('#corptable').addClass('spinner');
+        $('#runnertable2').addClass('spinner');
+        $('#corptable2').addClass('spinner');
 
 
         // Load the Visualization API and the piechart package.
@@ -201,8 +231,10 @@
             drawBarChart(basebarcharts + "corp/identity/" + dpname, 'chart_div12');
             listIdentities(baselist + "runner/" + dpname, "#text_div1", basecompare);
             listIdentities(baselist + "corp/"+ dpname, "#text_div2", basecompare);
-            loadCardTable(basecardtable + "runner/" + dpname, "#runnertable");
-            loadCardTable(basecardtable + "corp/" + dpname, "#corptable");
+            loadCardPackTable(basecardtable + "Cardpack/runner/" + dpname, "#runnertable");
+            loadCardPackTable(basecardtable + "Cardpack/corp/" + dpname, "#corptable");
+            loadCardPoolTable(basecardtable + "Cardpool/runner/" + dpname, "#runnertable2");
+            loadCardPoolTable(basecardtable + "Cardpool/corp/" + dpname, "#corptable2");
         }
 
         // Callback that creates and populates a data table,
@@ -295,7 +327,7 @@
             });
         }
 
-        function loadCardTable(urlvalue, elementid) {
+        function loadCardPackTable(urlvalue, elementid) {
             var jsonData = $.ajax({
                 url: urlvalue,
                 dataType: "json",
@@ -308,6 +340,26 @@
                             text: element.intopdecks
                         }), $('<td>', {
                             text: element.indecks
+                        })));
+                    });
+                    $(elementid).removeClass('spinner');
+                }
+            });
+        }
+
+        function loadCardPoolTable(urlvalue, elementid) {
+            var jsonData = $.ajax({
+                url: urlvalue,
+                dataType: "json",
+                async: false,
+                success: function(data) {
+                    $.each(data, function(index, element) {
+                        $(elementid).append($('<tr>').append($('<td>', {
+                            text: element.cardtitle
+                        }), $('<td>').append($('<em>', {
+                            text: element.cardpacktitle
+                        })), $('<td>', {
+                            text: element.intopdecks
                         })));
                     });
                     $(elementid).removeClass('spinner');

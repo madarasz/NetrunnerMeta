@@ -289,34 +289,53 @@ public class Statistics {
     }
 
     /**
-     * Calculates how used a card in the cardpack
+     * Calculates most used a card in the cardpack
      * @param cardpack cardpack name
      * @return CardUsageStat
      */
     public CardUsageStat getMostUsedCardsForCardPack(String cardpack) {
-        CardUsageStat result = cardUsageStatsRepository.findByCardPackName(cardpack);
+        CardUsageStat result = cardUsageStatsRepository.findByCardPackName(cardpack, false);
         if (result == null) {
-            result = new CardUsageStat(cardpack);
+            result = new CardUsageStat(cardpack, false);
             List<Card> cards = cardRepository.findByCardPackName(cardpack);
             for (Card card : cards) {
                 String code = card.getCode();
                 int count = deckRepository.countByUsingCard(code);
                 if (count > 0) {
                     int topcount = deckRepository.countTopByUsingCard(code);
-                    result.addCardUsage(new CardUsage(card.getTitle(), card.getSide_code(), count, topcount));
+                    result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
+                            card.getSide_code(), count, topcount));
                 }
             }
-            System.out.println(String.format("Saving Card Usage Statistics: %s", cardpack));
+            System.out.println(String.format("Saving Card Usage Statistics, cardpack: %s", cardpack));
             cardUsageStatsRepository.save(result);
         }
         return result;
     }
 
-    public void getMostUsedCardsForCardpool(String cardpool) {
-        List<CardCounts> result = cardRepository.findMostPopularCardsByCardPack(cardpool, "runner");
-        for (CardCounts count : result) {
-            System.out.println(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
+    /**
+     * Calculates most used a card with a cardpool of tournaments
+     * @param cardpool cardpool name
+     * @return CardUsageStat
+     */
+    public CardUsageStat getMostUsedCardsForCardpool(String cardpool) {
+        CardUsageStat result = cardUsageStatsRepository.findByCardPackName(cardpool, true);
+        if (result == null) {
+            result = new CardUsageStat(cardpool, true);
+            List<CardCounts> stat = cardRepository.findMostPopularCardsByCardPack(cardpool, "runner");
+            for (CardCounts count : stat) {
+                result.addCardUsage(new CardUsage(count.getTitle(), count.getCardpack(), "runner", -1, count.getCount()));
+//            System.out.println(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
+            }
+            stat = cardRepository.findMostPopularCardsByCardPack(cardpool, "corp");
+            for (CardCounts count : stat) {
+                result.addCardUsage(new CardUsage(count.getTitle(), count.getCardpack(), "corp", -1, count.getCount()));
+//            System.out.println(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
+            }
+            System.out.println(String.format("Saving Card Usage Statistics, cardpool: %s", cardpool));
+            cardUsageStatsRepository.save(result);
         }
+        return result;
     }
 
     public DeckInfo getDeckInfo(Deck deck) {

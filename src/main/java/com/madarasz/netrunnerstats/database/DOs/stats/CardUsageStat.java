@@ -18,13 +18,15 @@ public class CardUsageStat {
     @GraphId
     private Long id;
     @Indexed(unique=true) private String cardpackname;
+    private boolean cardpool; // true if cardpool, false if cardpack
     @RelatedTo(type = "USAGE") private @Fetch Set<CardUsage> cards;
 
     public CardUsageStat() {
     }
 
-    public CardUsageStat(String cardpackname) {
+    public CardUsageStat(String cardpackname, boolean cardpool) {
         this.cardpackname = cardpackname;
+        this.cardpool = cardpool;
         cards = new HashSet<>();
     }
 
@@ -34,6 +36,10 @@ public class CardUsageStat {
 
     public String getCardpackname() {
         return cardpackname;
+    }
+
+    public boolean isCardpool() {
+        return cardpool;
     }
 
     public Set<CardUsage> getCards() {

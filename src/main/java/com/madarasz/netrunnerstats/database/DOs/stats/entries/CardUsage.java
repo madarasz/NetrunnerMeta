@@ -14,14 +14,16 @@ public class CardUsage {
     private Long id;
     @Indexed private String cardtitle;
     private String sidecode;
+    private String cardpacktitle;
     private int indecks;
     private int intopdecks;
 
     public CardUsage() {
     }
 
-    public CardUsage(String cardtitle, String sidecode, int indecks, int intopdecks) {
+    public CardUsage(String cardtitle, String cardpacktitle, String sidecode, int indecks, int intopdecks) {
         this.cardtitle = cardtitle;
+        this.cardpacktitle = cardpacktitle;
         this.sidecode = sidecode;
         this.indecks = indecks;
         this.intopdecks = intopdecks;
@@ -41,5 +43,9 @@ public class CardUsage {
 
     public int getIntopdecks() {
         return intopdecks;
+    }
+
+    public String getCardpacktitle() {
+        return cardpacktitle;
     }
 }
