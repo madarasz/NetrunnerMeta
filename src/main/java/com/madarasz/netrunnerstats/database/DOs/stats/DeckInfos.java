@@ -2,8 +2,10 @@ package com.madarasz.netrunnerstats.database.DOs.stats;
 
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.DeckInfo;
 import com.madarasz.netrunnerstats.helper.comparator.DeckInfoComparator;
+import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,7 +19,7 @@ import java.util.Set;
 public class DeckInfos {
     @GraphId
     private Long id;
-    private Set<DeckInfo> infos;
+    @RelatedTo(type = "DIGEST") private @Fetch Set<DeckInfo> infos;
     private String cardpoolname;
     private String identitytitle;
 

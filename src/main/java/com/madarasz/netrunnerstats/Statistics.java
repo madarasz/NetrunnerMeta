@@ -277,7 +277,7 @@ public class Statistics {
         DeckInfos result = deckInfosRepository.findByCardpoolIdentityname(cardpool, identityName);
         if (result == null) {
             List<Deck> decks = deckRepository.filterByIdentityAndCardPool(identityName, cardpool);
-            result = new DeckInfos();
+            result = new DeckInfos(cardpool, identityName);
             for (Deck deck : decks) {
                 DeckInfo info = getDeckInfo(deck);
                 result.addDeckInfo(info);
@@ -286,6 +286,11 @@ public class Statistics {
             deckInfosRepository.save(result);
         }
         return result;
+    }
+
+    public DeckInfo getDeckInfo(Deck deck) {
+        return new DeckInfo(deckDigest.shortHtmlDigest(deck), deckDigest.htmlDigest(deck),
+                deckDigest.digest(deck), deck.getUrl());
     }
 
     /**
@@ -336,11 +341,6 @@ public class Statistics {
             cardUsageStatsRepository.save(result);
         }
         return result;
-    }
-
-    public DeckInfo getDeckInfo(Deck deck) {
-        return new DeckInfo(deckDigest.shortHtmlDigest(deck), deckDigest.htmlDigest(deck),
-                deckDigest.digest(deck), deck.getUrl());
     }
 
     private double NaNFix(double input) {

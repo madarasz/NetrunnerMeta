@@ -25,7 +25,7 @@ public class CardController {
     // JSON output
     @RequestMapping(value="/JSON/Cards/{target}/{sidecode}/{DPName}", method = RequestMethod.GET)
     public @ResponseBody
-    List<CardUsage> getAllDeckInfos(
+    List<CardUsage> getMostUsedCards(
             @PathVariable(value="target") String target,
             @PathVariable(value="sidecode") String sidecode,
             @PathVariable(value="DPName") String DPName) {

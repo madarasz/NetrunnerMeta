@@ -24,18 +24,6 @@ public class DeckController {
     Statistics statistics;
 
     // JSON output
-    @RequestMapping(value="/JSON/Deck", params = {"url"}, method = RequestMethod.GET)
-    public @ResponseBody
-    DeckInfo getDeckInfo (@RequestParam String url) {
-        Deck deck = deckRepository.findByUrl(url);
-        if (deck != null) {
-            return statistics.getDeckInfo(deck);
-        } else {
-            return new DeckInfo();
-        }
-    }
-
-    // JSON output
     @RequestMapping(value="/JSON/Deck/{DPName}/{identity}", method = RequestMethod.GET)
     public @ResponseBody
     List<DeckInfo> getAllDeckInfos(

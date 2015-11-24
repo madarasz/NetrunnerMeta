@@ -1,6 +1,7 @@
 package com.madarasz.netrunnerstats.database.DOs.stats.entries;
 
 import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 /**
@@ -14,7 +15,7 @@ public class DeckInfo {
     private String shortHtmlDigest;
     private String htmlDigest;
     private String digest;
-    private String url;
+    @Indexed private String url;
 
     public DeckInfo() {
     }

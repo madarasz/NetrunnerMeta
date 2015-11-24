@@ -1,13 +1,14 @@
 import com.madarasz.netrunnerstats.Application;
 import com.madarasz.netrunnerstats.Operations;
+import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.stats.CardPoolStats;
 import com.madarasz.netrunnerstats.database.DOs.stats.CardUsageStat;
+import com.madarasz.netrunnerstats.database.DOs.stats.DeckInfos;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardUsage;
-import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
-import com.madarasz.netrunnerstats.database.DRs.stats.CardUsageStatsRepository;
-import com.madarasz.netrunnerstats.springMVC.controllers.CPController;
-import com.madarasz.netrunnerstats.springMVC.controllers.CardController;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.DeckInfo;
+import com.madarasz.netrunnerstats.database.DRs.stats.*;
+import com.madarasz.netrunnerstats.springMVC.controllers.*;
 import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by madarasz on 11/19/15.
@@ -51,10 +53,34 @@ public class StatisticsTest {
     CardController cardController;
 
     @Autowired
+    DeckController deckController;
+
+    @Autowired
+    DPController dpController;
+
+    @Autowired
+    MDSController mdsController;
+
+    @Autowired
     CardPoolStatsRepository cardPoolStatsRepository;
 
     @Autowired
     CardUsageStatsRepository cardUsageStatsRepository;
+
+    @Autowired
+    DeckInfosRepository deckInfosRepository;
+
+    @Autowired
+    DPIdentitiesRepository dpIdentitiesRepository;
+
+    @Autowired
+    DPStatsRepository dpStatsRepository;
+
+    @Autowired
+    IdentityMDSRepository identityMDSRepository;
+
+    @Autowired
+    Statistics statistics;
 
     @Rule
     public TestName name = new TestName();
@@ -80,8 +106,8 @@ public class StatisticsTest {
     public void cardPoolStatsTest() {
         cpController.getCardPools();
         // check count
-        Assert.assertEquals("CardPoolStats not created.", 1, template.count(CardPoolStats.class));
-        Assert.assertEquals("CardPool not created.", 1, template.count(CardPool.class));
+        Assert.assertEquals("CardPoolStats is not created.", 1, template.count(CardPoolStats.class));
+        Assert.assertEquals("CardPool is not created.", 1, template.count(CardPool.class));
         // check values
         CardPoolStats cardPoolStats = cardPoolStatsRepository.find();
         CardPool cardPool = cardPoolStats.getSortedCardpool().get(0);
@@ -90,19 +116,19 @@ public class StatisticsTest {
         Assert.assertEquals("Incorrect standing number in CardPoolStats.", 76, cardPool.getStandingsnum());
         // check duplication
         cpController.getCardPools();
-        Assert.assertEquals("CardPoolStats duplicated.", 1, template.count(CardPoolStats.class));
-        Assert.assertEquals("CardPool duplicated.", 1, template.count(CardPool.class));
+        Assert.assertEquals("CardPoolStats are duplicated.", 1, template.count(CardPoolStats.class));
+        Assert.assertEquals("CardPool is duplicated.", 1, template.count(CardPool.class));
     }
 
     @Test
     public void mostUsedCardsTest() {
-        cardController.getAllDeckInfos("Cardpack", "runner", "Old Hollywood");
-        cardController.getAllDeckInfos("Cardpack", "corp", "Old Hollywood");
-        cardController.getAllDeckInfos("Cardpool", "runner", "Old Hollywood");
-        cardController.getAllDeckInfos("Cardpool", "corp", "Old Hollywood");
+        cardController.getMostUsedCards("Cardpack", "runner", "Old Hollywood");
+        cardController.getMostUsedCards("Cardpack", "corp", "Old Hollywood");
+        cardController.getMostUsedCards("Cardpool", "runner", "Old Hollywood");
+        cardController.getMostUsedCards("Cardpool", "corp", "Old Hollywood");
         // check count
-        Assert.assertEquals("CardUsageStat not created.", 2, template.count(CardUsageStat.class));
-        Assert.assertEquals("CardUsage not created.", 49, template.count(CardUsage.class));
+        Assert.assertEquals("CardUsageStat are not created.", 2, template.count(CardUsageStat.class));
+        Assert.assertEquals("CardUsage are not created.", 49, template.count(CardUsage.class));
         // check values
         CardUsageStat pool = cardUsageStatsRepository.findByCardPoolName("Old Hollywood");
         CardUsageStat pack = cardUsageStatsRepository.findByCardPackName("Old Hollywood");
@@ -111,14 +137,44 @@ public class StatisticsTest {
         String poolcorp = pool.getSortedCards("corp").get(0).getCardtitle();
         ArrayList<String> pcPossible = new ArrayList<>(
                 Arrays.asList("Jackson Howard", "Wraparound", "Hedge Fund", "Cyberdex Virus Suite", "Enigma"));
-        Assert.assertTrue("Card usage not calculated right.", prPossible.contains(packrunner));
-        Assert.assertTrue("Card usage not calculated right.", pcPossible.contains(poolcorp));
+        Assert.assertTrue("Card usage is not calculated right.", prPossible.contains(packrunner));
+        Assert.assertTrue("Card usage is not calculated right.", pcPossible.contains(poolcorp));
         // check duplication
-        cardController.getAllDeckInfos("Cardpack", "runner", "Old Hollywood");
-        cardController.getAllDeckInfos("Cardpack", "corp", "Old Hollywood");
-        cardController.getAllDeckInfos("Cardpool", "runner", "Old Hollywood");
-        cardController.getAllDeckInfos("Cardpool", "corp", "Old Hollywood");
-        Assert.assertEquals("CardUsageStat duplicated.", 2, template.count(CardUsageStat.class));
-        Assert.assertEquals("CardUsage duplicated.", 49, template.count(CardUsage.class));
+        cardController.getMostUsedCards("Cardpack", "runner", "Old Hollywood");
+        cardController.getMostUsedCards("Cardpack", "corp", "Old Hollywood");
+        cardController.getMostUsedCards("Cardpool", "runner", "Old Hollywood");
+        cardController.getMostUsedCards("Cardpool", "corp", "Old Hollywood");
+        Assert.assertEquals("CardUsageStat is duplicated.", 2, template.count(CardUsageStat.class));
+        Assert.assertEquals("CardUsage is duplicated.", 49, template.count(CardUsage.class));
+    }
+
+    @Test
+    public void deckInfoTest() {
+        List<DeckInfo> deckInfo = deckController.getAllDeckInfos("Near-Earth Hub: Broadcast Center", "Old Hollywood");
+        DeckInfos deckInfos = statistics.getDeckInfos("Near-Earth Hub: Broadcast Center", "Old Hollywood");
+        deckController.getAllDeckInfos("Noise: Hacker Extraordinaire", "Old Hollywood");
+        // check count
+        Assert.assertEquals("DeckInfos are not created", 2, template.count(DeckInfos.class));
+        Assert.assertEquals("DeckInfo are not created", 3, template.count(DeckInfo.class));
+        // check values
+        Assert.assertEquals("DeckInfo count per identity is not OK.", 2, deckInfo.size());
+        Assert.assertEquals("DeckInfos cardpool is not OK.", "Old Hollywood", deckInfos.getCardpoolname());
+        Assert.assertEquals("DeckInfos indentity is not OK.", "Near-Earth Hub: Broadcast Center", deckInfos.getIdentitytitle());
+        Assert.assertEquals("DeckInfo url is not correct.", "http://www.acoo.net/deck/13824" ,deckInfo.get(0).getUrl());
+        Assert.assertTrue("DeckInfo digest is not correct.", deckInfo.get(0).getDigest().contains("Bucha"));
+        Assert.assertTrue("DeckInfo digest is not correct.", deckInfo.get(0).getDigest().contains("Vladislav"));
+        Assert.assertTrue("DeckInfo digest is not correct.", deckInfo.get(0).getDigest().contains("49 cards"));
+        Assert.assertTrue("DeckInfo digest is not correct.", deckInfo.get(0).getDigest().contains("#6 / 38"));
+        Assert.assertTrue("DeckInfo digest is not correct.", deckInfo.get(0).getDigest().contains("Slovakia"));
+        Assert.assertTrue("DeckInfo HtmlDigest is not correct.", deckInfo.get(0).getHtmlDigest().contains("Operation (11)"));
+        Assert.assertTrue("DeckInfo HtmlDigest is not correct.", deckInfo.get(0).getHtmlDigest().contains("acoo.net"));
+        Assert.assertTrue("DeckInfo HtmlDigest is not correct.", deckInfo.get(0).getHtmlDigest().contains("#6 / 38"));
+        Assert.assertTrue("DeckInfo HtmlDigest is not correct.", deckInfo.get(0).getHtmlDigest().contains("Slovakia"));
+        // check duplication
+        deckController.getAllDeckInfos("Near-Earth Hub: Broadcast Center", "Old Hollywood");
+        deckController.getAllDeckInfos("Noise: Hacker Extraordinaire", "Old Hollywood");
+        Assert.assertEquals("DeckInfos are duplicated", 2, template.count(DeckInfos.class));
+        Assert.assertEquals("DeckInfo is duplicated", 3, template.count(DeckInfo.class));
+
     }
 }

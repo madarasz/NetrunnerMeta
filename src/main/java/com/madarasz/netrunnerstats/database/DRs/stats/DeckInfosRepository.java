@@ -12,6 +12,6 @@ import org.springframework.data.neo4j.repository.RelationshipOperationsRepositor
 public interface DeckInfosRepository extends GraphRepository<DeckInfos>,
         RelationshipOperationsRepository<DeckInfos> {
 
-    @Query("MATCH (d:Deckinfos {cardpoolname: {0}, identitytitle: {1}}) RETURN d LIMIT 1")
+    @Query("MATCH (d:DeckInfos {cardpoolname: {0}, identitytitle: {1}}) RETURN d LIMIT 1")
     DeckInfos findByCardpoolIdentityname(String cardpool, String identity);
 }
