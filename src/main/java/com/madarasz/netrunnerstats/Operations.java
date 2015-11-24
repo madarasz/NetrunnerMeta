@@ -346,14 +346,21 @@ public class Operations {
             }
         }
 
-        // checking for duplicated decks
-        List<Deck> decks2 = new ArrayList<Deck>(decks);
+        // checking for duplicated decks, stimhack-acoo
+        List<Deck> decks2 = new ArrayList<>();
+        List<Deck> decks3 = new ArrayList<>();
         for (Deck deck : decks) {
-            decks2.remove(deck);
+            if (deck.getUrl().contains("stimhack")) {
+                decks2.add(deck);   // stimhack
+            } else {
+                decks3.add(deck);   // acoo
+            }
+        }
+        for (Deck deck3 : decks3) {
             for (Deck deck2 : decks2) {
-                if (deck.equals(deck2)) {
+                if (deck3.equals(deck2)) {
                     System.out.println("WARNING - matching decks:");
-                    System.out.println(deck.toString());
+                    System.out.println(deck3.toString());
                     System.out.println(deck2.toString());
                 }
             }
