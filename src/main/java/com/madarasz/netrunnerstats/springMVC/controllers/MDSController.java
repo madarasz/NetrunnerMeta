@@ -27,12 +27,12 @@ public class MDSController {
     MDSToGchart mdsToGchart;
 
     // JSON output
-    @RequestMapping(value="/JSON/MDSIdentity/{DPName}/{identity}", method = RequestMethod.GET)
-    public @ResponseBody
-    IdentityMDS getDPJSON(@PathVariable(value="identity") String identity, @PathVariable(value="DPName") String DPName) {
-        IdentityMDS MDS = statistics.getPackMath(identity, DPName);
-        return MDS;
-    }
+//    @RequestMapping(value="/JSON/MDSIdentity/{DPName}/{identity}", method = RequestMethod.GET)
+//    public @ResponseBody
+//    IdentityMDS getDPJSON(@PathVariable(value="identity") String identity, @PathVariable(value="DPName") String DPName) {
+//        IdentityMDS MDS = statistics.getPackMath(identity, DPName);
+//        return MDS;
+//    }
 
     // Google Chart DataTable output
     @RequestMapping(value="/DataTable/MDSIdentity/{DPName}/{identity}", method = RequestMethod.GET)

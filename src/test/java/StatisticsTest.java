@@ -1,14 +1,13 @@
 import com.madarasz.netrunnerstats.Application;
 import com.madarasz.netrunnerstats.Operations;
 import com.madarasz.netrunnerstats.Statistics;
-import com.madarasz.netrunnerstats.database.DOs.stats.CardPoolStats;
-import com.madarasz.netrunnerstats.database.DOs.stats.CardUsageStat;
-import com.madarasz.netrunnerstats.database.DOs.stats.DeckInfos;
-import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
-import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardUsage;
-import com.madarasz.netrunnerstats.database.DOs.stats.entries.DeckInfo;
+import com.madarasz.netrunnerstats.database.DOs.stats.*;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
 import com.madarasz.netrunnerstats.database.DRs.stats.*;
 import com.madarasz.netrunnerstats.springMVC.controllers.*;
+import com.madarasz.netrunnerstats.springMVC.gchart.CellNumber;
+import com.madarasz.netrunnerstats.springMVC.gchart.CellString;
+import com.madarasz.netrunnerstats.springMVC.gchart.DataTable;
 import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
@@ -176,5 +175,69 @@ public class StatisticsTest {
         Assert.assertEquals("DeckInfos are duplicated", 2, template.count(DeckInfos.class));
         Assert.assertEquals("DeckInfo is duplicated", 3, template.count(DeckInfo.class));
 
+    }
+
+    @Test
+    public void dataPackTest() {
+        // testing DPStatistics and CountDeckStands
+        dpController.getDPTopDataTable("Compare", "runner", "faction", "Old Hollywood");
+        DataTable dataTable = dpController.getDPTopDataTable("Compare", "corp", "identity", "Old Hollywood");
+        // check count
+        Assert.assertEquals("DP statistics are not created", 2, template.count(DPStatistics.class));
+        Assert.assertEquals("CountDeckStands are not created", 50, template.count(CountDeckStands.class));
+        // check values
+        Assert.assertEquals("DataTable values are not correct.",
+                "Near-Earth Hub: Broadcast Center", ((CellString)dataTable.getRows().get(0).getC().get(0)).getV());
+        Assert.assertEquals("DataTable values are not correct.",
+                "36.8%", dataTable.getRows().get(0).getC().get(1).getF());
+        Assert.assertEquals("DataTable values are not correct.",
+                "63.6%", dataTable.getRows().get(0).getC().get(2).getF());
+        // check duplication
+        dpController.getDPTopDataTable("Top", "runner", "identity", "Old Hollywood");
+        dpController.getDPTopDataTable("All", "corp", "faction", "Old Hollywood");
+        Assert.assertEquals("DP statistics are duplicated", 2, template.count(DPStatistics.class));
+        Assert.assertEquals("CountDeckStands are duplicated", 50, template.count(CountDeckStands.class));
+
+        // testing DPIdentities and DPIdentity
+        dpController.getDPIdentities("runner", "Old Hollywood");
+        List<DPIdentity> identities = dpController.getDPIdentities("corp", "Old Hollywood");
+        // check count
+        Assert.assertEquals("DP Identities are not created", 2, template.count(DPIdentities.class));
+        Assert.assertEquals("DP Identity objects are not created", 13, template.count(DPIdentity.class));
+        // check values
+        Assert.assertEquals("DP Identity data is not correct.",
+                "Near-Earth Hub: Broadcast Center", identities.get(0).getTitle());
+        Assert.assertEquals("DP Identity data is not correct.",
+                "/MDSIdentity/Old Hollywood/Near-Earth Hub: Broadcast Center", identities.get(0).getUrl());
+        Assert.assertEquals("DP Identity data is not correct.", 2, identities.get(0).getTopdecknum());
+        Assert.assertEquals("DP Identity data is not correct.", 2, identities.get(0).getDecknum());
+        // check duplication
+        dpController.getDPIdentities("runner", "Old Hollywood");
+        dpController.getDPIdentities("corp", "Old Hollywood");
+        Assert.assertEquals("DP Identities are duplicated", 2, template.count(DPIdentities.class));
+        Assert.assertEquals("DP Identity objects are duplicated", 13, template.count(DPIdentity.class));
+    }
+
+    @Test
+    public void mdsTest() {
+        DataTable dataTable = mdsController.getMDSDataTable("Near-Earth Hub: Broadcast Center", "Old Hollywood");
+        // check count
+        Assert.assertEquals("IdentityMDS is not created", 1, template.count(IdentityMDS.class));
+        Assert.assertEquals("MDSEntries are not created", 2, template.count(MDSEntry.class));
+        // check values
+        Assert.assertTrue("MDSEntries are not correct",
+                ((CellNumber)dataTable.getRows().get(0).getC().get(0)).getV() +
+                        ((CellNumber)dataTable.getRows().get(1).getC().get(0)).getV() < 0.01);
+        Assert.assertTrue("MDSEntries are not correct",
+                ((CellNumber)dataTable.getRows().get(0).getC().get(1)).getV() +
+                        ((CellNumber)dataTable.getRows().get(1).getC().get(1)).getV() < 0.01);
+        Assert.assertTrue("MDSEntries are not correct",
+                ((CellString)dataTable.getRows().get(0).getC().get(3)).getV().contains("Bucha"));
+        Assert.assertTrue("MDSEntries are not correct",
+                ((CellString)dataTable.getRows().get(1).getC().get(3)).getV().contains("FAstrobiotics"));
+        // check duplication
+        mdsController.getMDSDataTable("Near-Earth Hub: Broadcast Center", "Old Hollywood");
+        Assert.assertEquals("IdentityMDS is duplicated", 1, template.count(IdentityMDS.class));
+        Assert.assertEquals("MDSEntries are duplicated", 2, template.count(MDSEntry.class));
     }
 }

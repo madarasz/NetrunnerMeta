@@ -33,13 +33,13 @@ public class DPController {
     DPStatsToCompareGchart dpStatsToCompareGchart;
 
     // JSON output
-    @RequestMapping(value="/JSON/DPStats/{filter}/{DPName}", method = RequestMethod.GET)
-    public @ResponseBody DPStatistics getDPJSON(
-            @PathVariable(value = "filter") String filter,
-            @PathVariable(value = "DPName") String DPName) {
-        DPStatistics stats = statistics.getPackStats(DPName, filter.equals("Top"));
-        return stats;
-    }
+//    @RequestMapping(value="/JSON/DPStats/{filter}/{DPName}", method = RequestMethod.GET)
+//    public @ResponseBody DPStatistics getDPJSON(
+//            @PathVariable(value = "filter") String filter,
+//            @PathVariable(value = "DPName") String DPName) {
+//        DPStatistics stats = statistics.getPackStats(DPName, filter.equals("Top"));
+//        return stats;
+//    }
 
     // Google Chart DataTable output
     @RequestMapping(value="/DataTable/DPStats/{filter}/{sidecode}/{stattype}/{DPName}", method = RequestMethod.GET)

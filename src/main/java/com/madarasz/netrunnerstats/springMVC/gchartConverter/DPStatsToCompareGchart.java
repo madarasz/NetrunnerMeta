@@ -17,7 +17,7 @@ public class DPStatsToCompareGchart extends DPToChart {
 
     public DataTable converter(DPStatistics topstats, DPStatistics allstats, String sidecode, String stattype) {
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("Faction", "string"));
+        columns.add(new Column("category", "string"));
         columns.add(new Column("all", "number"));
         columns.add(new Column("top", "number"));
 //        columns.add(new Column("", "", "string", "style"));
