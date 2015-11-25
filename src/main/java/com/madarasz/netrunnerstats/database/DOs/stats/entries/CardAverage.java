@@ -1,12 +1,17 @@
 package com.madarasz.netrunnerstats.database.DOs.stats.entries;
 
 import com.madarasz.netrunnerstats.database.DOs.Card;
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
 
 /**
  * Created by madarasz on 11/25/15.
  * Statistical information on deck averages.
  */
+@NodeEntity
 public class CardAverage {
+    @GraphId
+    private Long id;
     private String cardtitle;
     private String using;   // what percentage decks are using it
     private String average; // what is the average card count per deck

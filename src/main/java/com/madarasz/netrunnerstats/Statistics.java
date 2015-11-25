@@ -66,6 +66,9 @@ public class Statistics {
     CardUsageStatsRepository cardUsageStatsRepository;
 
     @Autowired
+    IdentityAverageRepository identityAverageRepository;
+
+    @Autowired
     DeckDigest deckDigest;
 
     @Autowired
@@ -353,38 +356,43 @@ public class Statistics {
      * @return IdentityAverage
      */
     public IdentityAverage getIdentityAverage(String identity, String cardpool) {
-        IdentityAverage result = new IdentityAverage(identity, cardpool);
-        List<Deck> decks = deckRepository.filterByIdentityAndCardPool(identity, cardpool);
-        Set<Card> cards = new HashSet<>();
-        int decknum = decks.size();
+        IdentityAverage result = identityAverageRepository.findIdentityCardPool(identity, cardpool);
+        if (result == null) {
+            result = new IdentityAverage(identity, cardpool);
+            List<Deck> decks = deckRepository.filterByIdentityAndCardPool(identity, cardpool);
+            Set<Card> cards = new HashSet<>();
+            int decknum = decks.size();
 
-        // get all used cards
-        for (Deck deck : decks) {
-            for (DeckHasCard card : deck.getCards()) {
-                if (!cards.contains(card.getCard())) {
-                    cards.add(card.getCard());
-                }
-            }
-        }
-
-        // examine all used cards
-        for (Card card : cards) {
-            int used = 0;
-            int sumused = 0;
-            String cardcode = card.getCode();
+            // get all used cards
             for (Deck deck : decks) {
-                for (DeckHasCard deckHasCard : deck.getCards()) {
-                    if (cardcode.equals(deckHasCard.getCard().getCode())) {
-                        used++;
-                        sumused += deckHasCard.getQuantity();
+                for (DeckHasCard card : deck.getCards()) {
+                    if (!cards.contains(card.getCard())) {
+                        cards.add(card.getCard());
                     }
                 }
             }
-            CardAverage cardAverage = new CardAverage(card,
-                    String.format("%.1f%%", (double)used / decknum * 100),
-                    String.format("%.2f", (double)sumused / decknum),
-                    String.format("%.2f", (double)sumused / used));
-            result.addCard(cardAverage);
+
+            // examine all used cards
+            for (Card card : cards) {
+                int used = 0;
+                int sumused = 0;
+                String cardcode = card.getCode();
+                for (Deck deck : decks) {
+                    for (DeckHasCard deckHasCard : deck.getCards()) {
+                        if (cardcode.equals(deckHasCard.getCard().getCode())) {
+                            used++;
+                            sumused += deckHasCard.getQuantity();
+                        }
+                    }
+                }
+                CardAverage cardAverage = new CardAverage(card,
+                        String.format("%.1f%%", (double) used / decknum * 100),
+                        String.format("%.2f", (double) sumused / decknum),
+                        String.format("%.2f", (double) sumused / used));
+                result.addCard(cardAverage);
+            }
+            System.out.println(String.format("Saving deck averages: %s - %s", identity, cardpool));
+            identityAverageRepository.save(result);
         }
         return result;
     }

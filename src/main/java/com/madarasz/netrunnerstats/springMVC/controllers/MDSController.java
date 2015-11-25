@@ -54,7 +54,7 @@ public class MDSController {
     @RequestMapping(value="/JSON/Average/{DPName}/{identity}", method = RequestMethod.GET)
     public @ResponseBody
     List<CardAverage> getDeckAverage(@PathVariable(value="identity") String identity,
-                                     @PathVariable(value="DPName") String DPName, Map<String, Object> model) {
+                                     @PathVariable(value="DPName") String DPName) {
         return averageDigest.getSortedAverages(statistics.getIdentityAverage(identity, DPName));
     }
 }

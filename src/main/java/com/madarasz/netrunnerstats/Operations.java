@@ -79,13 +79,14 @@ public class Operations {
     public void logDBStatCount() {
         System.out.println(String.format("CardPoolStats %d, CardPool: %d, DP statistics: %d, CountDeckStands: %d, " +
                 "IdentityMDS: %d, MDSEntry: %d, DeckInfos: %d, DeckInfo: %d, DP Identities: %d, DP Identity: %d, \n" +
-                "CardUsageStat: %d, CardUsage: %d",
+                "CardUsageStat: %d, CardUsage: %d, IdentityAverage: %d, CardAverage: %d",
                 template.count(CardPoolStats.class), template.count(CardPool.class),
                 template.count(DPStatistics.class), template.count(CountDeckStands.class),
                 template.count(IdentityMDS.class), template.count(MDSEntry.class),
                 template.count(DeckInfos.class), template.count(DeckInfo.class),
                 template.count(DPIdentities.class), template.count(DPIdentity.class),
-                template.count(CardUsageStat.class), template.count(CardUsage.class)));
+                template.count(CardUsageStat.class), template.count(CardUsage.class),
+                template.count(IdentityAverage.class), template.count(CardAverage.class)));
     }
 
     /**
@@ -380,6 +381,7 @@ public class Operations {
         template.query("MATCH (n:DeckInfos) OPTIONAL MATCH (n)-[r]-(c:DeckInfo) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:DPIdentities) OPTIONAL MATCH (n)-[r]-(c:DPIdentity) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:CardUsageStat) OPTIONAL MATCH (n)-[r]-(c:CardUsage) DELETE n,r,c", emptyparams);
+        template.query("MATCH (n:IdentityAverage) OPTIONAL MATCH (n)-[r]-(c:CardAverage) DELETE n,r,c", emptyparams);
         // troublemaker nodes
         template.query("MATCH (n:CountDeckStands) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         template.query("MATCH (n:CardUsage) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);

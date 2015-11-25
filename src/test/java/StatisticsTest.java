@@ -220,6 +220,7 @@ public class StatisticsTest {
 
     @Test
     public void mdsTest() {
+        // MDS calculation
         DataTable dataTable = mdsController.getMDSDataTable("Near-Earth Hub: Broadcast Center", "Old Hollywood");
         // check count
         Assert.assertEquals("IdentityMDS is not created", 1, template.count(IdentityMDS.class));
@@ -239,5 +240,21 @@ public class StatisticsTest {
         mdsController.getMDSDataTable("Near-Earth Hub: Broadcast Center", "Old Hollywood");
         Assert.assertEquals("IdentityMDS is duplicated", 1, template.count(IdentityMDS.class));
         Assert.assertEquals("MDSEntries are duplicated", 2, template.count(MDSEntry.class));
+
+        // average deck calculation
+        List<CardAverage> average = mdsController.getDeckAverage("Near-Earth Hub: Broadcast Center", "Old Hollywood");
+        // check count
+        Assert.assertEquals("IdentityAverage is not created", 1, template.count(IdentityAverage.class));
+        Assert.assertEquals("CardAverages are not created", 29, template.count(CardAverage.class));
+        // check values
+        ArrayList<String> possible = new ArrayList<>(Arrays.asList("Project Beale", "AstroScript Pilot Program"));
+        Assert.assertTrue("CardAverages are not correct", possible.contains(average.get(0).getCardtitle()));
+        Assert.assertEquals("CardAverages are not correct", "50.0%", average.get(28).getUsing());
+        Assert.assertEquals("CardAverages are not correct", "0.50", average.get(28).getAverage());
+        Assert.assertEquals("CardAverages are not correct", "1.00", average.get(28).getAverageifused());
+        // check duplication
+        mdsController.getDeckAverage("Near-Earth Hub: Broadcast Center", "Old Hollywood");
+        Assert.assertEquals("IdentityAverage is duplicated", 1, template.count(IdentityAverage.class));
+        Assert.assertEquals("CardAverages are duplicated", 29, template.count(CardAverage.class));
     }
 }

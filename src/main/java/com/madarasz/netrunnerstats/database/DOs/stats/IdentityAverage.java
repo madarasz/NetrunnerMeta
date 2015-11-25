@@ -1,6 +1,7 @@
 package com.madarasz.netrunnerstats.database.DOs.stats;
 
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardAverage;
+import org.springframework.data.neo4j.annotation.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,10 +10,13 @@ import java.util.Set;
  * Created by madarasz on 11/25/15.
  * Statistical information on average card distribution on identities.
  */
+@NodeEntity
 public class IdentityAverage {
-    private String identity;
-    private String cardpool;
-    private Set<CardAverage> cards;
+    @GraphId
+    private Long id;
+    @Indexed private String identity;
+    @Indexed private String cardpool;
+    @RelatedTo(type = "CARDS") private @Fetch Set<CardAverage> cards;
 
     public IdentityAverage() {
         this.cards = new HashSet<>();
