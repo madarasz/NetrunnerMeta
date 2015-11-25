@@ -19,7 +19,7 @@ public class DPStatsToCompareGchart extends DPToChart {
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("category", "string"));
         columns.add(new Column("all", "number"));
-        columns.add(new Column("top", "number"));
+        columns.add(new Column("top 30%", "number"));
 //        columns.add(new Column("", "", "string", "style"));
         List<Row> rows = new ArrayList<>();
         List<CountDeckStands> topstands = filter(topstats, sidecode, stattype);

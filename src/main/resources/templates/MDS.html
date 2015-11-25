@@ -5,10 +5,13 @@
 <body>
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
-        <h3 class="page-header" th:text="${DPname}"></h3>
-        <h4><span th:text="${identity}"></span> - <span id="deck_number"></span> decks</h4>
+        <div class="page-header">
+            <h3><a th:href="@{/DPStats/__${DPname}__}"><span th:text="${DPname}"></span></a> > </h3>
+            <h4><span th:text="${identity}"></span> - <span id="deck_number"></span> decks</h4>
+        </div>
         <div class="row">
             <div class="col-md-6">
+                <h5 class="text-center">Deck similarity matrix</h5>
                 <div id="chart_div1" class="mds-chart"></div>
             </div>
             <div class="col-md-6">
@@ -83,9 +86,13 @@
 
             // Set chart options
             var options = {
-                'legend': {position: 'none'},
-                'width':700,
-                'height':600,
+                'legend': 'none',
+                'width': 555,
+                'height': 555,
+                'chartArea': { width:'100%', height:'100%' },
+                'backgroundColor': { strokeWidth: 1 },
+                'hAxis' : { gridlines: { count: 0 }},
+                'vAxis' : { gridlines: { count: 0 }},
                 'tooltip': { trigger: 'selection' }
             };
 
