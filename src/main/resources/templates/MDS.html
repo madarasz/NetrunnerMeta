@@ -9,6 +9,8 @@
             <h3><a th:href="@{/DPStats/__${DPname}__}"><span th:text="${DPname}"></span></a> > </h3>
             <h4><span th:text="${identity}"></span> - <span id="deck_number"></span> decks</h4>
         </div>
+
+        <!--MDS and decklist-->
         <div class="row">
             <div class="col-md-6">
                 <h5 class="text-center">Deck similarity matrix</h5>
@@ -16,6 +18,25 @@
             </div>
             <div class="col-md-6">
                 <div id="deck_data"></div>
+            </div>
+        </div>
+
+        <!--Average card usage stats-->
+        <div class="row">
+            <div class="col-md-12">
+                <h5>Average card usage in identity</h5>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>card title</th>
+                        <th>pack</th>
+                        <th class="text-center">in decks</th>
+                        <th class="text-center">average used</th>
+                        <th class="text-center">average used<br /> if in deck</th>
+                    </tr>
+                    </thead>
+                    <tbody id="average-table"></tbody>
+                </table>
             </div>
         </div>
 
@@ -46,6 +67,7 @@
         /*<![CDATA[*/
 
         $('#chart_div1').addClass('spinner');
+        $('#average-table').addClass('spinner');
 
         // Load the Visualization API and the piechart package.
         google.load('visualization', '1.0', {'packages':['corechart']});
@@ -54,11 +76,12 @@
         google.setOnLoadCallback(drawCharts);
 
         function drawCharts() {
-            var url = "/DataTable/MDSIdentity/" + encodeURIComponent([[${DPname}]]) +
-                    "/" + encodeURIComponent([[${identity}]]);
-            var tooltipurl = "/JSON/Deck/" + encodeURIComponent([[${DPname}]]) +
-                    "/" + encodeURIComponent([[${identity}]]);
+            var filter = encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${identity}]]);
+            var url = "/DataTable/MDSIdentity/" + filter;
+            var tooltipurl = "/JSON/Deck/" + filter;
+            var averageurl = "/JSON/Average/" + filter;
             drawChart(url, tooltipurl, [[${identity}]], 'chart_div1');
+            fillTable(averageurl, '#average-table');
         }
 
         // Callback that creates and populates a data table,
@@ -117,6 +140,44 @@
 
         function setDeckInfo(htmlvalue) {
             $('#deck_data').replaceWith("<div id=\"deck_data\">" + htmlvalue + "</div>");
+        }
+
+        function fillTable(urlvalue, elementid) {
+            var typecode = 'none';
+            var jsonDataChart = $.ajax({
+                url: urlvalue,
+                dataType: "json",
+                async: false,
+                success: function(data) {
+                    $.each(data, function(index, element) {
+                        if (element.typecodes.indexOf(typecode) < 0) {
+                            typecode = element.typecodes;
+                            $(elementid).append($('<tr>').append($('<td>', {
+                                class: 'warning',
+                                colspan: 5
+                            }).append($('<strong>', {
+                                text: typecode
+                            }))))
+//                        })), $('<td>'), $('<td>'), $('<td>'), $('<td>')))
+                        }
+                        $(elementid).append($('<tr>').append($('<td>', {
+                            text: element.cardtitle
+                        }), $('<td>').append($('<em>', {
+                            text: element.cardpack
+                        })), $('<td>', {
+                            text: element.using,
+                            class: 'text-right'
+                        }), $('<td>', {
+                            text: element.average,
+                            class: 'text-center'
+                        }), $('<td>', {
+                            text: element.averageifused,
+                            class: 'text-center'
+                        })));
+                    });
+                    $(elementid).removeClass('spinner');
+                }
+            }).responseText;
         }
         /*]]>*/
     </script>

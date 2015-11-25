@@ -22,6 +22,9 @@ import java.util.Set;
 @Component
 public class DeckDigest {
 
+    private static final String[] TYPES_RUNNER = new String[]{"event", "hardware", "icebreaker", "program", "resource"};
+    private static final String[] TYPES_CORP = new String[]{"agenda", "asset", "operation", "upgrade", "barrier", "code gate", "sentry", "mythic", "trap"};
+
     @Autowired
     StandingRepository standingRepository;
 
@@ -58,9 +61,9 @@ public class DeckDigest {
 
         List<String> categories;
         if (deck.getIdentity().getSide_code().equals("runner")) {
-            categories = new ArrayList<String>(Arrays.asList("event", "hardware", "icebreaker", "program", "resource"));
+            categories = new ArrayList<String>(Arrays.asList(TYPES_RUNNER));
         } else {
-            categories = new ArrayList<String>(Arrays.asList("agenda", "asset", "operation", "upgrade", "barrier", "code gate", "sentry", "mythic", "trap"));
+            categories = new ArrayList<String>(Arrays.asList(TYPES_CORP));
         }
 
         Set<DeckHasCard> cards = deck.getCards();

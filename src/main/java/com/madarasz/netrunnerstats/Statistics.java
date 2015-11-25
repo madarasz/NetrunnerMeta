@@ -3,12 +3,14 @@ package com.madarasz.netrunnerstats;
 import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.CardPack;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.database.DOs.result.CardCounts;
 import com.madarasz.netrunnerstats.database.DOs.result.StatCounts;
 import com.madarasz.netrunnerstats.database.DOs.stats.*;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
 import com.madarasz.netrunnerstats.database.DRs.*;
 import com.madarasz.netrunnerstats.database.DRs.stats.*;
+import com.madarasz.netrunnerstats.helper.AverageDigest;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
 import com.madarasz.netrunnerstats.helper.DeckDigest;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -339,6 +342,49 @@ public class Statistics {
             }
             System.out.println(String.format("Saving Card Usage Statistics, cardpool: %s", cardpool));
             cardUsageStatsRepository.save(result);
+        }
+        return result;
+    }
+
+    /**
+     * Calculates average card usage statistics for identity and cardpool.
+     * @param identity identity title
+     * @param cardpool cardpool name
+     * @return IdentityAverage
+     */
+    public IdentityAverage getIdentityAverage(String identity, String cardpool) {
+        IdentityAverage result = new IdentityAverage(identity, cardpool);
+        List<Deck> decks = deckRepository.filterByIdentityAndCardPool(identity, cardpool);
+        Set<Card> cards = new HashSet<>();
+        int decknum = decks.size();
+
+        // get all used cards
+        for (Deck deck : decks) {
+            for (DeckHasCard card : deck.getCards()) {
+                if (!cards.contains(card.getCard())) {
+                    cards.add(card.getCard());
+                }
+            }
+        }
+
+        // examine all used cards
+        for (Card card : cards) {
+            int used = 0;
+            int sumused = 0;
+            String cardcode = card.getCode();
+            for (Deck deck : decks) {
+                for (DeckHasCard deckHasCard : deck.getCards()) {
+                    if (cardcode.equals(deckHasCard.getCard().getCode())) {
+                        used++;
+                        sumused += deckHasCard.getQuantity();
+                    }
+                }
+            }
+            CardAverage cardAverage = new CardAverage(card,
+                    String.format("%.1f%%", (double)used / decknum * 100),
+                    String.format("%.2f", (double)sumused / decknum),
+                    String.format("%.2f", (double)sumused / used));
+            result.addCard(cardAverage);
         }
         return result;
     }
