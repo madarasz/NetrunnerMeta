@@ -407,14 +407,6 @@ public class Statistics {
         return result;
     }
 
-    // TODO
-    public void getTopFactionsOverTime() {
-        CardPoolStats cardPoolStats = getCardPoolStats();
-        for (CardPool cardPool : cardPoolStats.getSortedCardpool()) {
-            getPackStats(cardPool.getTitle(), true);
-        }
-    }
-
     private double NaNFix(double input) {
         if (Double.isNaN(input)) {
             return 0;

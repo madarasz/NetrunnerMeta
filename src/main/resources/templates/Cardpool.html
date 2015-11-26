@@ -11,14 +11,24 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <td>cardpool up to</td>
-                            <td>tournaments</td>
-                            <td>decks</td>
-                            <td>rankings</td>
+                            <th>cardpool up to</th>
+                            <th>tournaments</th>
+                            <th>decks</th>
+                            <th>rankings</th>
                         </tr>
                     </thead>
                     <tbody id="cptable"></tbody>
                 </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Runner factions over time (top decks)</h4>
+                <div id="chart_div1" class="pie-chart"></div>
+            </div>
+            <div class="col-md-6">
+                <h4>Corp factions over time (top decks)</h4>
+                <div id="chart_div2" class="pie-chart"></div>
             </div>
         </div>
         <div class="row top-buffer">
@@ -30,32 +40,74 @@
     </div>
     <div th:replace="fragments/head :: scripts"></div>
 
+    <script type="text/javascript"
+            src="https://www.google.com/jsapi?autoload={
+            'modules':[{
+              'name':'visualization',
+              'version':'1',
+              'packages':['corechart']
+            }]
+          }"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
 
         $('#cptable').addClass('spinner');
+        $('#chart_div1').addClass('spinner');
+        $('#chart_div2').addClass('spinner');
 
-        var jsonData = $.ajax({
-            url: "/JSON/Cardpool",
-            dataType: "json",
-            async: false,
-            success: function(data) {
-                $.each(data, function(index, element) {
-                    $("#cptable").append($('<tr>').append($('<td>').append($('<a>', {
-                        text: element.title,
-                        href: "/DPStats/" + encodeURIComponent(element.title)
-                    })), $('<td>', {
-                        text: element.tournamentnum
-                    }), $('<td>', {
-                        text: element.decknum
-                    }), $('<td>', {
-                        text: element.standingsnum
-                    })));
-                });
-                $('#cptable').removeClass('spinner');
-            }
-        });
+        google.setOnLoadCallback(drawData);
 
+        function drawData() {
+            filltable();
+            drawChart("/DataTable/Cardpool/runner","chart_div1");
+            drawChart("/DataTable/Cardpool/corp","chart_div2");
+        }
+
+        function drawChart(urlvalue, elementid) {
+            var jsonData = $.ajax({
+                url: urlvalue,
+                dataType: "json",
+                async: false
+            }).responseText;
+
+            var data = new google.visualization.DataTable(jsonData);
+
+            var options = {
+                'width':555,
+                'curveType': 'function',
+                'vAxis': {format:'#,#%'},
+//                'chartArea': {width:'90%'},
+                'legend': {position: 'right', maxLines: 6}
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById(elementid));
+            chart.draw(data, options);
+            $('#'+elementid).removeClass('spinner');
+        }
+
+        function filltable() {
+
+            var jsonData = $.ajax({
+                url: "/JSON/Cardpool",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $.each(data, function (index, element) {
+                        $("#cptable").append($('<tr>').append($('<td>').append($('<a>', {
+                            text: element.title,
+                            href: "/DPStats/" + encodeURIComponent(element.title)
+                        })), $('<td>', {
+                            text: element.tournamentnum
+                        }), $('<td>', {
+                            text: element.decknum
+                        }), $('<td>', {
+                            text: element.standingsnum
+                        })));
+                    });
+                    $('#cptable').removeClass('spinner');
+                }
+            });
+        }
         /*]]>*/
     </script>
 </body>

@@ -275,18 +275,10 @@
 
         function drawBarChart(urlvalue, elementid) {
 
-//            var slices = new Array;
-
             var jsonData = $.ajax({
                 url: urlvalue,
                 dataType: "json",
-                async: false,
-                success: function(data) {
-//                    $.each(data.rows, function (index, element) {
-//                        slices.push({color : element.c[2].v});
-//                    });
-                    $('#'+elementid).removeClass('spinner');
-                }
+                async: false
             }).responseText;
 
             // Create our data table out of JSON data loaded from server.
@@ -304,12 +296,12 @@
                 'height':300,
                 'vAxis': {format:'#,#%'},
                 'hAxis': { textPosition: haxis }
-//                'slices': slices
             };
 
             // Instantiate and draw our chart, passing in some options.
             var chart = new google.visualization.ColumnChart(document.getElementById(elementid));
             chart.draw(data, options);
+            $('#'+elementid).removeClass('spinner');
         }
 
         function listIdentities(urlvalue, elementid, linkurl) {
