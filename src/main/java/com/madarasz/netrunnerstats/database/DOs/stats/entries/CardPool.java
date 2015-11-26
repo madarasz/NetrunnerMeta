@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 
 /**
  * Created by madarasz on 11/12/15.
+ * Statistical information on cardpool data per datapack.
  */
 @NodeEntity
 public class CardPool {

@@ -16,17 +16,17 @@ import java.util.List;
 public class DPStatsToGchart extends DPToChart{
 
     public DataTable converter(DPStatistics stats, String sidecode, String stattype) {
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("Faction", "string"));
         columns.add(new Column("player number", "number"));
         columns.add(new Column("", "", "string", "style"));
-        List<Row> rows = new ArrayList<Row>();
+        List<Row> rows = new ArrayList<>();
 
         for (CountDeckStands info : filter(stats, sidecode, stattype)) {
             CellString title = new CellString(info.getTitle());
             CellNumber count = new CellNumber(info.getStandingnum());
             CellString style = new CellString(info.getColorcode());
-            List<Cell> rowdata = new ArrayList<Cell>();
+            List<Cell> rowdata = new ArrayList<>();
             rowdata.add(title);
             rowdata.add(count);
             rowdata.add(style);

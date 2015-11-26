@@ -13,9 +13,6 @@ import java.util.List;
  */
 public interface DPStatsRepository extends GraphRepository<DPStatistics>, RelationshipOperationsRepository<DPStatistics> {
 
-    @Query("MATCH (d:DPStatistics {dpname: {0}, top: {1}}) RETURN d LIMIT 1")
-    DPStatistics findByDpnameTop(String DPname, String top);
-
     @Query("MATCH (d:DPStatistics {dpname: {0}, top: true}) RETURN d LIMIT 1")
     DPStatistics findByDpnameOnlyTop(String DPname);
 

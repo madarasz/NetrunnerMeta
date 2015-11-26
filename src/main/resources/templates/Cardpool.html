@@ -23,29 +23,17 @@
         </div>
         <div class="row top-buffer">
             <div class="col-md-6">
-                <button class="btn btn-default btn-sm" data-toggle="collapse" data-target="#infopanel">Help</button>
-                <div class="panel panel-default collapse top-buffer" id="infopanel">
-                    <div class="panel-heading">Deck similarity</div>
-                    <div class="panel-body">
-                        <p>This section gives you information on which cardpools we have information on.</p>
-                        <ul>
-                            <li><strong>Tournaments:</strong> the number of tournaments we have information on.</li>
-                            <li><strong>Decks:</strong> the number of decks we have information on.</li>
-                            <li><strong>Rankings:</strong> the number of tournaments rankings we have information on.
-                            This consists of the identity information about a certain rank (i.e third place
-                                played Andromeda at the tournament).</li>
-                        </ul>
-                        <p>We gather information from <a href="http://acoo.net" target="_blank">Acoo</a> and
-                        <a href="http://stimhack.com" target="_blank">Stimhack</a> in an automated way.</p>
-                        </div>
-                </div>
+                <div th:replace="fragments/help :: cardpool"></div>
             </div>
         </div>
         <div th:replace="fragments/footer :: footer"></div>
     </div>
     <div th:replace="fragments/head :: scripts"></div>
+
     <script th:inline="javascript">
         /*<![CDATA[*/
+
+        $('#cptable').addClass('spinner');
 
         var jsonData = $.ajax({
             url: "/JSON/Cardpool",
@@ -64,6 +52,7 @@
                         text: element.standingsnum
                     })));
                 });
+                $('#cptable').removeClass('spinner');
             }
         });
 

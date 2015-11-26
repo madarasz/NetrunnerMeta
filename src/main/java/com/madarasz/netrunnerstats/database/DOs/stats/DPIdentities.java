@@ -25,13 +25,13 @@ public class DPIdentities {
     private String sidecode;
 
     public DPIdentities() {
-        identities = new HashSet<DPIdentity>();
+        this.identities = new HashSet<>();
     }
 
     public DPIdentities(String carpool, String sidecode) {
         this.cardpool = carpool;
         this.sidecode = sidecode;
-        this.identities = new HashSet<DPIdentity>();
+        this.identities = new HashSet<>();
     }
 
     public Set<DPIdentity> getIdentities() {
@@ -51,7 +51,7 @@ public class DPIdentities {
     }
 
     public List<DPIdentity> getSortedIdentities() {
-        List<DPIdentity> result = new ArrayList<DPIdentity>(identities);
+        List<DPIdentity> result = new ArrayList<>(identities);
         DPIdentityComparator comparator = new DPIdentityComparator();
         result.sort(comparator);
         return result;

@@ -14,6 +14,7 @@ import java.util.Set;
 
 /**
  * Created by madarasz on 11/12/15.
+ * Statistical DB entry for CardpoolStats. 1 entry in entire application.
  */
 @NodeEntity
 public class CardPoolStats {
@@ -22,11 +23,7 @@ public class CardPoolStats {
     @RelatedTo(type = "DPS") private @Fetch Set<CardPool> cardpool;
 
     public CardPoolStats() {
-        cardpool = new HashSet<CardPool>();
-    }
-
-    public CardPoolStats(Set<CardPool> cardpool) {
-        this.cardpool = cardpool;
+        this.cardpool = new HashSet<>();
     }
 
     public Set<CardPool> getCardpool() {
@@ -35,7 +32,7 @@ public class CardPoolStats {
 
     public List<CardPool> getSortedCardpool() {
         CardPoolComparator comparator = new CardPoolComparator();
-        List<CardPool> result = new ArrayList<CardPool>(cardpool);
+        List<CardPool> result = new ArrayList<>(cardpool);
         result.sort(comparator);
         return result;
     }

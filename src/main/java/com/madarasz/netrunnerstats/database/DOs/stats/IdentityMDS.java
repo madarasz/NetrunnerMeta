@@ -27,6 +27,7 @@ public class IdentityMDS {
     @RelatedTo(type = "IDENT") private @Fetch Set<MDSEntry> decks;
 
     public IdentityMDS() {
+        this.decks = new HashSet<>();
     }
 
     public IdentityMDS(String dpname, String identitytitle, int decknum, int topdecknum) {
@@ -34,7 +35,7 @@ public class IdentityMDS {
         this.identitytitle = identitytitle;
         this.decknum = decknum;
         this.topdecknum = topdecknum;
-        this.decks = new HashSet<MDSEntry>();
+        this.decks = new HashSet<>();
     }
 
     public void addDeck(MDSEntry deck) {
@@ -83,7 +84,7 @@ public class IdentityMDS {
 
     public List<MDSEntry> getSortedDecks() {
         MDSEntryComparator comparator = new MDSEntryComparator();
-        List<MDSEntry> result = new ArrayList<MDSEntry>(decks);
+        List<MDSEntry> result = new ArrayList<>(decks);
         result.sort(comparator);
         return result;
     }

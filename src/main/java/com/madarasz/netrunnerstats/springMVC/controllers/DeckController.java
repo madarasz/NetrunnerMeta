@@ -1,7 +1,6 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.Statistics;
-import com.madarasz.netrunnerstats.database.DOs.Deck;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.DeckInfo;
 import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;

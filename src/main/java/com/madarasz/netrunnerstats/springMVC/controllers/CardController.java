@@ -35,7 +35,7 @@ public class CardController {
             case "Cardpool":
                 return statistics.getMostUsedCardsForCardpool(DPName).getSortedCards(sidecode);
             default:
-                return new ArrayList<CardUsage>();
+                return new ArrayList<>();
         }
     }
 }

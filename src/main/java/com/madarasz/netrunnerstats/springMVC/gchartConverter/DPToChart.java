@@ -15,23 +15,29 @@ public abstract class DPToChart {
     protected List<CountDeckStands> filter (DPStatistics stats, String sidecode, String stattype){
         List<CountDeckStands> data;
         if (sidecode.equals("runner")) {
-            if (stattype.equals("identity")) {
-                data = stats.getSortedRunnerIdentities();
-            } else if (stattype.equals("faction")){
-                data = stats.getSortedRunnerFactions();
-            } else {
-                return new ArrayList<CountDeckStands>();
+            switch (stattype) {
+                case "identity":
+                    data = stats.getSortedRunnerIdentities();
+                    break;
+                case "faction":
+                    data = stats.getSortedRunnerFactions();
+                    break;
+                default:
+                    return new ArrayList<>();
             }
         } else if (sidecode.equals("corp")) {
-            if (stattype.equals("identity")) {
-                data = stats.getSortedCorpIdentities();
-            } else if (stattype.equals("faction")){
-                data = stats.getSortedCorpFactions();
-            } else {
-                return new ArrayList<CountDeckStands>();
+            switch (stattype) {
+                case "identity":
+                    data = stats.getSortedCorpIdentities();
+                    break;
+                case "faction":
+                    data = stats.getSortedCorpFactions();
+                    break;
+                default:
+                    return new ArrayList<>();
             }
         } else {
-            return new ArrayList<CountDeckStands>();
+            return new ArrayList<>();
         }
         return data;
     }

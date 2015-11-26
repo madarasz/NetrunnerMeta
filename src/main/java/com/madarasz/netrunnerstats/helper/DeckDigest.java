@@ -61,9 +61,9 @@ public class DeckDigest {
 
         List<String> categories;
         if (deck.getIdentity().getSide_code().equals("runner")) {
-            categories = new ArrayList<String>(Arrays.asList(TYPES_RUNNER));
+            categories = new ArrayList<>(Arrays.asList(TYPES_RUNNER));
         } else {
-            categories = new ArrayList<String>(Arrays.asList(TYPES_CORP));
+            categories = new ArrayList<>(Arrays.asList(TYPES_CORP));
         }
 
         Set<DeckHasCard> cards = deck.getCards();
@@ -116,7 +116,7 @@ public class DeckDigest {
     }
 
     private List<DeckHasCard> filterDeck(Set<DeckHasCard> cards, String typeFilter) {
-        List<DeckHasCard> result = new ArrayList<DeckHasCard>();
+        List<DeckHasCard> result = new ArrayList<>();
         for (DeckHasCard card : cards) {
             if (((card.getCard().getType_code().contains(typeFilter)) ||
                     (card.getCard().getSubtype_code().contains(typeFilter))) &&

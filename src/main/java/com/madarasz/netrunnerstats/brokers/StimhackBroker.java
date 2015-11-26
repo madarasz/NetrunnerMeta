@@ -9,6 +9,8 @@ import com.madarasz.netrunnerstats.database.DRs.CardRepository;
 import com.madarasz.netrunnerstats.helper.TitleGuesser;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.jsoup.nodes.Element;
@@ -23,6 +25,8 @@ import java.util.Set;
  */
 @Component
 public class StimhackBroker {
+
+    private static final Logger logger = LoggerFactory.getLogger(StimhackBroker.class);
 
     private static final String HTML_INFO_BOX = "div.wc-shortcodes-box";
     private static final String HTML_FIRST_DECK = "div.wc-shortcodes-column-first";
@@ -63,7 +67,7 @@ public class StimhackBroker {
         String firstDeck = httpBroker.htmlFromHtml(HTML_FIRST_DECK);
         String secondDeck = httpBroker.htmlFromHtml(HTML_SECOND_DECK);
 
-        Set<Deck> resultDecks = new HashSet<Deck>();
+        Set<Deck> resultDecks = new HashSet<>();
         resultDecks.add(parseDeck(firstDeck, playerName, url + "#1"));
         resultDecks.add(parseDeck(secondDeck, playerName, url + "#2"));
 
@@ -80,7 +84,7 @@ public class StimhackBroker {
         String[] lines = text.split(HTML_LINE_BREAK);
         String decktitle = Jsoup.parse(lines[0]).text();
         Card identity = null;
-        String identitytext = "";
+        String identitytext;
         int i;
         for (i = 0; i < 3; i++) {
             identitytext = titleGuesser.alternateTitle(
@@ -124,10 +128,10 @@ public class StimhackBroker {
                 }
 
                 if (card != null) {
-//                    System.out.println(String.format("%dx %s", quantity, card.getTitle()));
+                    logger.trace(String.format("%dx %s", quantity, card.getTitle()));
                     result.hasCard(card, quantity);
                 } else {
-//                    System.out.println("ERROR - Can't parse card name: " + cardtitle);
+                    logger.trace("ERROR - Can't parse card name: " + cardtitle);
                 }
             }
         }
@@ -140,13 +144,13 @@ public class StimhackBroker {
                 Card card = cardRepository.findByTitle(titleGuesser.alternateTitle(tag.text()));
                 if ((card.getType_code().equals("identity")) && (card.getSide_code().equals(side))) {
                     identity = card;
-                    System.out.println("Guessing identity from tags: " + identity.getTitle());
+                    logger.warn("Guessing identity from tags: " + identity.getTitle());
                     break;
                 }
             }
         }
         if (identity == null) {
-            System.out.println("ERROR - can't parse identity: " + url);
+            logger.error("ERROR - can't parse identity: " + url);
         }
         result.setIdentity(identity);
         return result;
@@ -183,12 +187,11 @@ public class StimhackBroker {
             }
         }
 
-        Tournament tournament = new Tournament(-1, name, date, cardpool, url, playernumber);
-        return tournament;
+        return new Tournament(-1, name, date, cardpool, url, playernumber);
     }
 
     public Set<String> getTournamentURLs(String cardpoolName) {
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         httpBroker.parseHtml(URL_TOURNAMENTS);
         Elements rows = httpBroker.elementsFromHtml("tbody.list > tr");
         for (Element row : rows) {

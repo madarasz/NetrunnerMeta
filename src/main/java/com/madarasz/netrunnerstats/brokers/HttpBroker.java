@@ -6,6 +6,8 @@ import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -20,6 +22,8 @@ import java.util.ArrayList;
  */
 @Component
 public class HttpBroker {
+
+    private static final Logger logger = LoggerFactory.getLogger(HttpBroker.class);
 
     private Document document;
 
@@ -69,10 +73,10 @@ public class HttpBroker {
             readok = true;
             try {
 //                Connection.Response response = Jsoup.connect(url).userAgent("Mozilla").followRedirects(true).execute();
-//                System.out.println(response.url());
+//                logger.debug(response.url());
                 document = Jsoup.connect(url).userAgent("Mozilla").followRedirects(true).timeout(5000).get();
             } catch (IOException e) {
-                System.out.println(String.format("ERROR - could not read HTML - %s - retrying", url));
+                logger.error(String.format("ERROR - could not read HTML - %s - retrying", url));
                 retry++;
                 readok = false;
                 if (retry == 5) e.printStackTrace();

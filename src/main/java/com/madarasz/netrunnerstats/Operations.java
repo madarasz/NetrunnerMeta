@@ -9,6 +9,8 @@ import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import com.madarasz.netrunnerstats.brokers.StimhackBroker;
 import com.madarasz.netrunnerstats.helper.DeckValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,8 @@ import java.util.*;
  */
 @Component
 public class Operations {
+
+    private static final Logger logger = LoggerFactory.getLogger(Operations.class);
 
     @Autowired
     CardRepository cardRepository;
@@ -55,8 +59,8 @@ public class Operations {
      * Wipes DB clean
      */
     public void cleanDB() {
-        System.out.println("Cleaning DB.");
-        Map<String, Object> emptyparams = new HashMap<String, Object>();
+        logger.info("Cleaning DB.");
+        Map<String, Object> emptyparams = new HashMap<>();
         template.query("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         // troublemaker nodes
         template.query("MATCH ()-[h:HAS_CARD]->() DELETE h", emptyparams);
@@ -68,7 +72,7 @@ public class Operations {
      * Logs DB node, relationship count
      */
     public void logDBCount() {
-        System.out.println(String.format("Cards: %d, CardPacks: %d, Decks: %d, Standings: %d, Tournaments: %d, Deck-card relations: %d",
+        logger.info(String.format("Cards: %d, CardPacks: %d, Decks: %d, Standings: %d, Tournaments: %d, Deck-card relations: %d",
                 template.count(Card.class), template.count(CardPack.class), template.count(Deck.class), template.count(Standing.class), template.count(Tournament.class),
                 template.count(DeckHasCard.class)));
     }
@@ -77,8 +81,8 @@ public class Operations {
      * Logs DB Stats node, relationship count
      */
     public void logDBStatCount() {
-        System.out.println(String.format("CardPoolStats %d, CardPool: %d, DP statistics: %d, CountDeckStands: %d, " +
-                "IdentityMDS: %d, MDSEntry: %d, DeckInfos: %d, DeckInfo: %d, DP Identities: %d, DP Identity: %d, \n" +
+        logger.info(String.format("CardPoolStats %d, CardPool: %d, DP statistics: %d, CountDeckStands: %d, " +
+                "IdentityMDS: %d, MDSEntry: %d, DeckInfos: %d, DeckInfo: %d, DP Identities: %d, DP Identity: %d, " +
                 "CardUsageStat: %d, CardUsage: %d, IdentityAverage: %d, CardAverage: %d",
                 template.count(CardPoolStats.class), template.count(CardPool.class),
                 template.count(DPStatistics.class), template.count(CountDeckStands.class),
@@ -99,11 +103,11 @@ public class Operations {
         for (CardPack cardPack : allCardPacks) {
             if (cardPackRepository.findByCode(cardPack.getCode()) == null) {
                 cardPackRepository.save(cardPack);
-//                System.out.println("Found pack: " + cardPack.toString());
+                logger.trace("Found pack: " + cardPack.toString());
                 found++;
             }
         }
-        System.out.println("Found new card packs: " + found);
+        logger.info("Found new card packs: " + found);
 
         // load and save cards
         Set<Card> allCards = netrunnerDBBroker.readCards();
@@ -111,11 +115,11 @@ public class Operations {
         for (Card card : allCards) {
             if (cardRepository.findByTitle(card.getTitle()) == null) {
                 cardRepository.save(card);
-//                System.out.println("Found card: " + card.toString());
+                logger.trace("Found card: " + card.toString());
                 found++;
             }
         }
-        System.out.println("Found new cards: " + found);
+        logger.info("Found new cards: " + found);
     }
 
     /**
@@ -127,11 +131,11 @@ public class Operations {
         String url = netrunnerDBBroker.deckUrlFromId(deckId);
         Deck exists = deckRepository.findByUrl(url);
         if (exists != null) {
-            System.out.println("Deck is already in DB. Not saving!");
+            logger.info("Deck is already in DB. Not saving!");
             return exists;
         } else {
             Deck deck = netrunnerDBBroker.readDeck(deckId);
-            System.out.println("Saving new deck! - " + deck.toString());
+            logger.info("Saving new deck! - " + deck.toString());
             deckRepository.save(deck);
             return deck;
         }
@@ -146,11 +150,11 @@ public class Operations {
         String url = acooBroker.deckUrlFromId(deckId);
         Deck exists = deckRepository.findByUrl(url);
         if (exists != null) {
-            System.out.println("Deck is already in DB. Not saving!");
+            logger.info("Deck is already in DB. Not saving!");
             return exists;
         } else {
             Deck deck = acooBroker.readDeck(deckId);
-            System.out.println("Saving new deck! - " + deck.toString());
+            logger.info("Saving new deck! - " + deck.toString());
             deckRepository.save(deck);
             return deck;
         }
@@ -164,12 +168,12 @@ public class Operations {
     public Set<Deck> loadStimhackDecks(String url) {
         Deck exists = deckRepository.findByUrl(url+"#1");
         if (exists != null) {
-            System.out.println("Decks are already in DB. Not saving!");
-            return new HashSet<Deck>();
+            logger.info("Decks are already in DB. Not saving!");
+            return new HashSet<>();
         } else {
             Set<Deck> decks = stimhackBroker.readDeck(url);
             for (Deck deck : decks) {
-                System.out.println("Saving new deck! - " + deck.toString());
+                logger.info("Saving new deck! - " + deck.toString());
                 deckRepository.save(deck);
             }
             return decks;
@@ -185,10 +189,10 @@ public class Operations {
     public Tournament loadStimhackTournament(String url) {
         Tournament exists = tournamentRepository.findByUrl(url);
         if (exists != null) {
-            System.out.println("Tournament is already in DB. Not saving!");
+            logger.info("Tournament is already in DB. Not saving!");
             return exists;
         } else {
-            System.out.println("Parsing tournament at: " + url);
+            logger.info("Parsing tournament at: " + url);
             // decks
             Set<Deck> decks = loadStimhackDecks(url);
             // tournament
@@ -196,10 +200,10 @@ public class Operations {
             // standings for top1
             for (Deck deck : decks) {
                 Standing standing = new Standing(tournament, 1, deck.getIdentity(), true, deck.getIdentity().isRunner(), deck);
-                System.out.println("Saving standing! - " + standing.toString());
+                logger.info("Saving standing! - " + standing.toString());
                 standingRepository.save(standing);
             }
-            System.out.println("Saving new tournament! - " + tournament.toString());
+            logger.info("Saving new tournament! - " + tournament.toString());
             tournamentRepository.save(tournament);
             return tournament;
         }
@@ -212,9 +216,9 @@ public class Operations {
      * @return list of URLs
      */
     public Set<Tournament> loadStimhackPackTournaments(String cardpoolName) {
-        Set<Tournament> result = new HashSet<Tournament>();
+        Set<Tournament> result = new HashSet<>();
         Set<String> urls = stimhackBroker.getTournamentURLs(cardpoolName);
-        System.out.println(String.format("%d stimhack tournaments found for cardpool: %s", urls.size(), cardpoolName));
+        logger.info(String.format("%d stimhack tournaments found for cardpool: %s", urls.size(), cardpoolName));
         for (String url : urls) {
             result.add(loadStimhackTournament(url));
         }
@@ -232,11 +236,11 @@ public class Operations {
         String url = acooBroker.tournamentUrlFromId(tournamentId);
         Tournament exists = tournamentRepository.findByUrl(url);
         if (exists != null) {
-            System.out.println("Tournament is already in DB. Not saving!");
+            logger.info("Tournament is already in DB. Not saving!");
             return exists;
         } else {
             Tournament tournament = acooBroker.readTournament(tournamentId);
-            System.out.println("Saving new tournament! - " + tournament.toString());
+            logger.info("Saving new tournament! - " + tournament.toString());
             tournamentRepository.save(tournament);
             return tournament;
         }
@@ -255,20 +259,20 @@ public class Operations {
 
         // load tournament standings with decks
         Set<Standing> standings = acooBroker.loadTournamentStandingsAndDecks(url, tournament);
-//        System.out.println("Total available standings: " + standings.size());
+        logger.debug("Total available standings: " + standings.size());
         // remove already existing standings
-        Set<Standing> savestandings = new HashSet<Standing>(standings);
+        Set<Standing> savestandings = new HashSet<>(standings);
         for (Standing standing : standings) {
             Standing exists = standingRepository.findByTournamentURLRankIdentity(tournament.getUrl(), standing.getRank(), standing.getIdentity().getTitle());
             if (exists != null) {
                 savestandings.remove(standing);
             } else {
-//                System.out.println("Saving stanging: " + standing.toString());
+                logger.trace("Saving stanging: " + standing.toString());
                 standingRepository.save(standing);
             }
 
         }
-        System.out.println(String.format("Saving new standings: %d", savestandings.size()));
+        logger.info(String.format("Saving new standings: %d", savestandings.size()));
 
         tournamentRepository.save(tournament);
     }
@@ -280,7 +284,7 @@ public class Operations {
      * @param filterempty do not save tournaments with no decks
      */
     public void loadAcooTournamentsFromUrl(String url, boolean paging, boolean filterempty) {
-        System.out.println("*** Reading tournaments on page: " + url);
+        logger.info("*** Reading tournaments on page: " + url);
         Set<Integer> tournamentIds = acooBroker.loadTournamentIdsFromUrl(url, filterempty);
         for (int tournamentId : tournamentIds) {
             loadAcooTournamentDecks(tournamentId);
@@ -291,32 +295,20 @@ public class Operations {
         }
     }
 
-    // TODO: not to be used
-    public void generateArchetype(String name, String cardpool, String identity, boolean filtertop) {
-        List<Deck> deckList;
-        if (filtertop) {
-            deckList = deckRepository.filterTopByIdentityAndCardPool(identity, cardpool);
-        } else {
-            deckList = deckRepository.filterByIdentityAndCardPool(identity, cardpool);
-        }
-        Archetype archetype = new Archetype(name, deckList, cardRepository.findByTitle(identity));
-        System.out.println(archetype.toString());
-    }
-
     /**
      * Checks DB and solves errors.
      * Checks decks validity. Check tournament data. Calculate tournament cardpool validity if not defined.
      */
     public void checkDataValidity() {
         logDBCount();
-        System.out.println("Checking data validity");
+        logger.info("Checking data validity");
 
         // check decks
         List<Deck> decks = deckRepository.getAllDecks();
         for (Deck deck : decks) {
-//            System.out.println(String.format("Checking validity: %s", deck.toString()));
+            logger.debug(String.format("Checking validity: %s", deck.toString()));
             if (deckValidator.isValidDeck(deck)) {
-//                System.out.println("OK");
+                logger.debug("OK");
             }
         }
 
@@ -324,7 +316,7 @@ public class Operations {
         List<Standing> standings = standingRepository.getAllStanding();
         for (Standing standing : standings) {
             if (standing.getIdentity().getTitle().equals("The Shadow: Pulling the Strings")) {
-                System.out.println(String.format("Unknown identity during tournament import (#%d): %s",
+                logger.warn(String.format("Unknown identity during tournament import (#%d): %s",
                         standing.getRank(), standing.getTournament().getUrl()));
             }
         }
@@ -335,13 +327,13 @@ public class Operations {
         for (Tournament tournament : tournaments) {
             // check wrong date
             if (tournament.getDate().equals(nulldate)) {
-                System.out.println(String.format("ERROR - Wrong date: %s", tournament.toString()));
+                logger.warn(String.format("ERROR - Wrong date: %s", tournament.toString()));
             }
             // check wrong cardpool
             String oldname = tournament.getCardpool().getName();
             CardPack fix = guessCardPool(tournament);
             if ((!oldname.equals(fix.getName())) && (fix.later(tournament.getCardpool()))) {
-                System.out.println(String.format("ERROR - Wrong cardpool: %s - new cardpool: %s", tournament.toString(), fix.getName()));
+                logger.warn(String.format("ERROR - Wrong cardpool: %s - new cardpool: %s", tournament.toString(), fix.getName()));
                 tournament.setCardpool(fix);
                 tournamentRepository.save(tournament);
             }
@@ -360,9 +352,9 @@ public class Operations {
         for (Deck deck3 : decks3) {
             for (Deck deck2 : decks2) {
                 if (deck3.equals(deck2)) {
-                    System.out.println("WARNING - matching decks:");
-                    System.out.println(deck3.toString());
-                    System.out.println(deck2.toString());
+                    logger.warn("WARNING - matching decks:");
+                    logger.warn(deck3.toString());
+                    logger.warn(deck2.toString());
                 }
             }
         }
@@ -373,8 +365,8 @@ public class Operations {
      */
     public void resetStats() {
         logDBStatCount();
-        System.out.println("Deleting calculated Statistics from database.");
-        Map<String, Object> emptyparams = new HashMap<String, Object>();
+        logger.info("Deleting calculated Statistics from database.");
+        Map<String, Object> emptyparams = new HashMap<>();
         template.query("MATCH (n:DPStatistics) OPTIONAL MATCH (n)-[r]-(c:CountDeckStands) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:IdentityMDS) OPTIONAL MATCH (n)-[r]-(c:MDSEntry) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:CardPoolStats) OPTIONAL MATCH (n)-[r]-(c:CardPool) DELETE n,r,c", emptyparams);

@@ -1,5 +1,7 @@
 package com.madarasz.netrunnerstats.brokers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -14,6 +16,9 @@ import java.util.regex.Pattern;
  */
 @Component
 public class RegExBroker {
+
+    private static final Logger logger = LoggerFactory.getLogger(RegExBroker.class);
+
     private static final String REGEX_CARD_QUANTITY = "^\\d{1}x?";
     private static final String REGEX_FIRST_NUMBER = "\\d+";
     private static final String[] DATE_FORMATS = {"yyyy-MM-dd", "MMMM dd, yyyy", "MM/dd/yyyy", "dd.MM.yyyy"};
@@ -54,7 +59,7 @@ public class RegExBroker {
             try {
                 return Integer.parseInt(matcher.group(0));
             } catch (Exception e) {
-                System.out.println("Couldn't find the first number in line: " + line);
+                logger.warn("Couldn't find the first number in line: " + line);
                 return -1; // conversion problem
             }
         } else {
@@ -74,7 +79,7 @@ public class RegExBroker {
             }
         }
 
-        System.out.println("ERROR - could not format date: " + datetext);
+        logger.warn("ERROR - could not format date: " + datetext);
         return new Date(0);
     }
 

@@ -13,6 +13,7 @@ import java.util.Map;
 
 /**
  * Created by madarasz on 11/12/15.
+ * Cardpool controller.
  */
 @Controller
 public class CPController {

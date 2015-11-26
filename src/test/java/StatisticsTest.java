@@ -11,6 +11,8 @@ import com.madarasz.netrunnerstats.springMVC.gchart.DataTable;
 import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -35,6 +37,8 @@ import java.util.List;
 @WebAppConfiguration
 @ConfigurationProperties(prefix = "testdb")
 public class StatisticsTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(StatisticsTest.class);
 
     @Autowired
     Operations operations;
@@ -86,19 +90,19 @@ public class StatisticsTest {
 
     @Before
     public void setUp() {
-        System.out.println("**************** Setting up ****************");
+        logger.info("**************** Setting up ****************");
         operations.cleanDB();
         operations.loadNetrunnerDB();
         operations.loadAcooTournamentDecks(731);
         operations.logDBCount();
         operations.resetStats();
-        System.out.println(String.format("**************** Running test: %s ****************", name.getMethodName()));
+        logger.info(String.format("**************** Running test: %s ****************", name.getMethodName()));
     }
 
     @After
     public void tearDown() {
         operations.logDBStatCount();
-        System.out.println(String.format("**************** Ended test: %s ****************", name.getMethodName()));
+        logger.info(String.format("**************** Ended test: %s ****************", name.getMethodName()));
     }
 
     @Test

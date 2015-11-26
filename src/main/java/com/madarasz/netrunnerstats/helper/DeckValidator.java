@@ -3,6 +3,8 @@ package com.madarasz.netrunnerstats.helper;
 import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
 import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DeckValidator {
+
+    private static final Logger logger = LoggerFactory.getLogger(DeckValidator.class);
 
     public DeckValidator() {
     }
@@ -27,14 +31,14 @@ public class DeckValidator {
         int decksize = deck.countCards();
         if (decksize < identity.getMinimumdecksize()) {
             validity = false;
-            System.out.println(String.format("ERROR - card count: %d", decksize));
+            logger.warn(String.format("ERROR - card count: %d", decksize));
         }
 
         // influence check
         int influence = deck.getInfluenceCount();
         if (influence > identity.getInfluencelimit()) {
             validity = false;
-            System.out.println(String.format("ERROR - influence count: %d", influence));
+            logger.warn(String.format("ERROR - influence count: %d", influence));
         }
 
         String side = identity.getSide_code();
@@ -49,13 +53,13 @@ public class DeckValidator {
                     ((!card.isLimited()) && (quantity > 3)) ||
                     ((card.isLimited()) && (quantity > 1))) {
                 validity = false;
-                System.out.println(String.format("ERROR - illegal card quantity - %dx %s", quantity, card.getTitle()));
+                logger.warn(String.format("ERROR - illegal card quantity - %dx %s", quantity, card.getTitle()));
             }
 
             // same side
             if (!card.getSide_code().equals(side)) {
                 validity = false;
-                System.out.println(String.format("ERROR - illegal side - %s", card.getTitle()));
+                logger.warn(String.format("ERROR - illegal side - %s", card.getTitle()));
             }
 
             // agenda count
@@ -67,7 +71,7 @@ public class DeckValidator {
             if ((isApex) && (card.getType_code().equals("resource"))
                     && (!card.getSubtype_code().contains("virtual"))) {
                 validity = false;
-                System.out.println(String.format("ERROR - Apex can only have virtual resources - %s", card.getTitle()));
+                logger.warn(String.format("ERROR - Apex can only have virtual resources - %s", card.getTitle()));
             }
         }
 
@@ -78,13 +82,13 @@ public class DeckValidator {
             int bottom = size * 2 + 18;
             if ((agendaCount < bottom) || (agendaCount > top)) {
                 validity = false;
-                System.out.println(String.format("ERROR - deck size: %d - agenda count: %d (%d-%d)",
+                logger.warn(String.format("ERROR - deck size: %d - agenda count: %d (%d-%d)",
                         decksize, agendaCount, bottom, top));
             }
         }
 
         if (!validity) {
-            System.out.println("Validity error occurred with deck: " + deck.getUrl());
+            logger.warn("Validity error occurred with deck: " + deck.getUrl());
         }
         return validity;
     }

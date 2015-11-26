@@ -45,7 +45,7 @@ public class CardPack {
     /**
      * Checks if this cardPack came out later than the other pack.
      * @param cardPack other pack
-     * @return
+     * @return is it later
      */
     public boolean later(CardPack cardPack) {
         return ((cyclenumber > cardPack.getCyclenumber()) ||

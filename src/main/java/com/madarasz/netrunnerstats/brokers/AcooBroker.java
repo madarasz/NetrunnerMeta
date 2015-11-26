@@ -7,6 +7,8 @@ import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
 import com.madarasz.netrunnerstats.helper.TitleGuesser;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.*;
@@ -17,7 +19,10 @@ import java.util.*;
  */
 @Component
 public class AcooBroker {
-    public final static String ACOO_URL = "http://www.acoo.net/";
+
+    private static final Logger logger = LoggerFactory.getLogger(AcooBroker.class);
+
+    public final String ACOO_URL = "http://www.acoo.net/";
     private final static String JSOUP_DECK_CARDS = "div.deck-display-type > ul > li";
     private final static String JSOUP_TOURNAMENT_DESC = "div.section > p";
     private final static String JSOUP_TOURNAMENT_POOL = "div.section > p > a";
@@ -65,7 +70,7 @@ public class AcooBroker {
             resultDeck.setName(titleparts[2]);
             resultDeck.setPlayer(titleparts[1]);
         } catch (Exception e) {
-            System.out.println("ERROR - cannot parse title: " + titlebar + "// deckid: " + id);
+            logger.warn(String.format("ERROR - cannot parse title: %s // deckid: %d", titlebar, id));
             resultDeck.setName(titlebar);
             resultDeck.setPlayer("");
         }
@@ -98,7 +103,7 @@ public class AcooBroker {
                 title = titleGuesser.alternateTitle(title);
                 card = cardRepository.findByTitle(title);
                 if (card == null) {
-                    System.out.println("ERROR - no such card");
+                    logger.error("ERROR - no such card");
                 }
             }
             if (quantity == 0) {    // identity
@@ -126,7 +131,7 @@ public class AcooBroker {
         Date date = regExBroker.parseDate(titleparts[1]);
         CardPack pool = cardPackRepository.findByName(httpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL));
         if (pool == null) {
-            System.out.println("ERROR - no card pack found: " + httpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL) + " // tournament id: " + tournamentId);
+            logger.warn(String.format("ERROR - no card pack found: %s // tournament id: %d", httpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL), tournamentId));
         }
         return new Tournament(tournamentId, titleparts[0], date, pool, url, playerNumber);
     }
@@ -138,7 +143,7 @@ public class AcooBroker {
      * @return Acoo tournament IDS
      */
     public Set<Integer> loadTournamentIdsFromUrl(String url, boolean filterempty) {
-        Set<Integer> result = new HashSet<Integer>();
+        Set<Integer> result = new HashSet<>();
         httpBroker.parseHtml(url);
         Elements rows = httpBroker.elementsFromHtml(JSOUP_TOURNAMENT_LIST);
         for (Element row : rows) {
@@ -148,7 +153,7 @@ public class AcooBroker {
                 decknumbertext = row.select("td:eq(5)").first().text();
                 decknumber = Integer.valueOf(decknumbertext);
             } catch (Exception e) {
-                System.out.println("ERROR - unable to parse deck number for: " + decknumbertext + "// tournament: " + url);
+                logger.error(String.format("ERROR - unable to parse deck number for: %s // tournament: %s", decknumbertext, url));
             }
             if ((!filterempty) || (decknumber > 0)) {
                 Element cell = row.select("td").first().select("a").first();
@@ -203,7 +208,7 @@ public class AcooBroker {
      * @return standings with decks
      */
     public Set<Standing> loadTournamentStandingsAndDecks(String url, Tournament tournament) {
-        Set<Standing> standings = new HashSet<Standing>();
+        Set<Standing> standings = new HashSet<>();
         httpBroker.parseHtml(url);
         Elements lists = httpBroker.elementsFromHtml(JSOUP_TOURNAMENT_RANKLIST);
 
@@ -228,7 +233,7 @@ public class AcooBroker {
      * @return standings with decks
      */
     private Set<Standing> standingsFromRows(Tournament tournament, Elements rows) {
-        Set<Standing> standings = new HashSet<Standing>();
+        Set<Standing> standings = new HashSet<>();
         for (Element row : rows) {
             // extract rank
             String rankString = row.select("td").first().text();
@@ -240,7 +245,7 @@ public class AcooBroker {
                 String identitystring = iconToIdentity(hrefparts[4]);
                 Card identity = cardRepository.findByTitle(identitystring);
                 if (identity == null) {
-                    System.out.println("ERROR - can't find identity for title: " + identitystring);
+                    logger.error("ERROR - can't find identity for title: " + identitystring);
                 }
                 boolean topdeck = rank <= tournament.getPlayerNumber() * 0.3;    // top 30% of decks
 
@@ -249,16 +254,16 @@ public class AcooBroker {
                 if (deckpart.isEmpty()) {
                     standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner()));
                 } else {
-                    System.out.print("Rank: " + rank + " - ");
+                    logger.info("Rank: " + rank + " - ");
                     hrefparts = deckpart.first().attr("href").split("/");
                     int deckId = Integer.valueOf(hrefparts[2]);
                     Deck exists = deckRepository.findByUrl(deckUrlFromId(deckId));
                     if (exists == null) {
                         Deck deck = readDeck(deckId);
-                        System.out.println("Saving new deck! - " + deck.toString());
+                        logger.info("Saving new deck! - " + deck.toString());
                         standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner(), deck));
                     } else {
-                        System.out.println("Already added");
+                        logger.info("Already added");
                         standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner()));
                     }
                 }
@@ -439,7 +444,7 @@ public class AcooBroker {
                 break;
 
             default:
-                System.out.println(String.format("ERROR - Unknown ID for icon: %s", filename));
+                logger.error(String.format("ERROR - Unknown ID for icon: %s", filename));
                 identityName = "The Shadow: Pulling the Strings";  // fallback ID
         }
         return identityName;

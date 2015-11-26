@@ -24,6 +24,10 @@ public class DPStatistics {
     @RelatedTo(type = "CIDENTITY") private @Fetch Set<CountDeckStands> corpIdentities;
 
     public DPStatistics() {
+        this.runnerFactions = new HashSet<>();
+        this.runnerIdentities = new HashSet<>();
+        this.corpFactions = new HashSet<>();
+        this.corpIdentities = new HashSet<>();
     }
 
     public DPStatistics(String DPname, int decknum, int statnum, boolean top) {
@@ -31,10 +35,10 @@ public class DPStatistics {
         this.dpname = DPname;
         this.decknum = decknum;
         this.top = top;
-        runnerFactions = new HashSet<CountDeckStands>();
-        runnerIdentities = new HashSet<CountDeckStands>();
-        corpFactions = new HashSet<CountDeckStands>();
-        corpIdentities = new HashSet<CountDeckStands>();
+        this.runnerFactions = new HashSet<>();
+        this.runnerIdentities = new HashSet<>();
+        this.corpFactions = new HashSet<>();
+        this.corpIdentities = new HashSet<>();
     }
 
     public void addRunnerFaction(String title, int decks, int standings, String colorcode) {
@@ -116,7 +120,7 @@ public class DPStatistics {
 
     private List<CountDeckStands> sortSet(Set<CountDeckStands> inputset) {
         CountDeckStatsComparator comparator = new CountDeckStatsComparator();
-        List<CountDeckStands> list = new ArrayList<CountDeckStands>(inputset);
+        List<CountDeckStands> list = new ArrayList<>(inputset);
         list.sort(comparator);
         return list;
     }

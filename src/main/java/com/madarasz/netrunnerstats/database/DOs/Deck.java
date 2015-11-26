@@ -20,14 +20,14 @@ public class Deck {
     @RelatedTo(type = "UP_TO") @Fetch private CardPack upto;
 
     public Deck() {
-        cards = new HashSet<DeckHasCard>();
+        this.cards = new HashSet<>();
     }
 
     public Deck(String name, String player, String url) {
         this.name = name;
         this.player = player;
         this.url = url;
-        cards = new HashSet<DeckHasCard>();
+        this.cards = new HashSet<>();
     }
 
     public DeckHasCard hasCard(Card card, int quantity) {
@@ -143,17 +143,16 @@ public class Deck {
         return decksize;
     }
 
-    // TODO: not sure this is ok
     public boolean equals(Deck deck) {
         if (!identity.getCode().equals(deck.getIdentity().getCode())) {
             return false;
         }
-        if ((id == deck.id) || (url.equals(deck.getUrl()))) {
+        if ((id.equals(deck.id)) || (url.equals(deck.getUrl()))) {
             return true;
         }
 
-        Set<DeckHasCard> deck1 = new HashSet<DeckHasCard>(cards);
-        Set<DeckHasCard> deck2 = new HashSet<DeckHasCard>(deck.getCards());
+        Set<DeckHasCard> deck1 = new HashSet<>(cards);
+        Set<DeckHasCard> deck2 = new HashSet<>(deck.getCards());
         for (DeckHasCard hasCard : cards) {
             for (DeckHasCard hasCard2 : deck.getCards()) {
                 if ((hasCard.getCard().getCode().equals(hasCard2.getCard().getCode())) &&

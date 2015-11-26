@@ -29,17 +29,17 @@ public class MDSToGchart {
     private static final String STYLE_NOT_TOPDECK = "point {stroke-color: #FFFFFF;}";
 
     public DataTable converter(IdentityMDS stats) {
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("x", "number"));
         columns.add(new Column("y",  "number"));
         columns.add(new Column("", "", "string", "style"));
         columns.add(new Column("", "", new Formatting(true), "string", "tooltip"));
-        List<Row> rows = new ArrayList<Row>();
+        List<Row> rows = new ArrayList<>();
         for (MDSEntry entry : stats.getSortedDecks()) {
-            List<Cell> rowdata = new ArrayList<Cell>();
+            List<Cell> rowdata = new ArrayList<>();
             CellNumber x = new CellNumber(entry.getX());
             CellNumber y = new CellNumber(entry.getY());
-            CellString style = null;
+            CellString style;
             Deck deck = deckRepository.findByUrl(entry.getDeckURL());
             CellString tooltip = new CellString(statistics.getDeckInfo(deck).getDigest());
             rowdata.add(x);

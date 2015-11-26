@@ -10,10 +10,11 @@ import com.madarasz.netrunnerstats.database.DOs.stats.*;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
 import com.madarasz.netrunnerstats.database.DRs.*;
 import com.madarasz.netrunnerstats.database.DRs.stats.*;
-import com.madarasz.netrunnerstats.helper.AverageDigest;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
 import com.madarasz.netrunnerstats.helper.DeckDigest;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,8 @@ import java.util.Set;
  */
 @Component
 public class Statistics {
+
+    private static final Logger logger = LoggerFactory.getLogger(Statistics.class);
 
     @Autowired
     CardRepository cardRepository;
@@ -92,7 +95,6 @@ public class Statistics {
         }
 
         if (statistics == null) {
-//            System.out.println(String.format("Calculating DP Statistics: %s %s", cardpackName, top));
             // total count
             int deckcount;
             int standcount;
@@ -104,10 +106,10 @@ public class Statistics {
                 standcount = standingRepository.countByCardPool(cardpackName);
             }
             statistics = new DPStatistics(cardpackName, deckcount, standcount, top);
-//            System.out.println("*********************************************************************");
-//            System.out.println(String.format("Stats for cardpool: %s (%d decks, %d standings)",
-//                    cardpackName, deckRepository.countByCardpool(cardpackName), standingRepository.countByCardPool(cardpackName)));
-//            System.out.println("*********************************************************************");
+            logger.debug("*********************************************************************");
+            logger.debug(String.format("Stats for cardpool: %s (%d decks, %d standings)",
+                    cardpackName, deckRepository.countByCardpool(cardpackName), standingRepository.countByCardPool(cardpackName)));
+            logger.debug("*********************************************************************");
 
             List<StatCounts> stats;
             if (top) {
@@ -131,11 +133,11 @@ public class Statistics {
                 } else {
                     statistics.addCorpIdentity(identity, count, stat.getCount(), colorPicker.colorIdentity(identity));
                 }
-//                System.out.println(String.format("%s - %d (%d)", identity, stat.getCount(),
-//                        deckRepository.countTopByIdentityAndCardPool(identity, cardpackName)));
+                logger.debug(String.format("%s - %d (%d)", identity, stat.getCount(),
+                        deckRepository.countTopByIdentityAndCardPool(identity, cardpackName)));
             }
 
-//            System.out.println("*********************************************************************");
+            logger.debug("*********************************************************************");
             if (top) {
                 stats = standingRepository.getTopFactionStatsByCardPool(cardpackName);
             } else {
@@ -156,12 +158,12 @@ public class Statistics {
                 } else {
                     statistics.addCorpFaction(faction, count, stat.getCount(), colorPicker.colorFaction(faction));
                 }
-//                System.out.println(String.format("%s - %d (%d)", faction, stat.getCount(), deckRepository.countTopByCardPoolAndFaction(cardpackName, faction)));
+                logger.debug(String.format("%s - %d (%d)", faction, stat.getCount(), deckRepository.countTopByCardPoolAndFaction(cardpackName, faction)));
             }
 
-//            System.out.println("*********************************************************************");
-            System.out.println(String.format("Saving DP Statistics: %s - top: %s", cardpackName, top));
-            dpStatsRepository.save(statistics); // TODO: commit?
+            logger.debug("*********************************************************************");
+            logger.info(String.format("Saving DP Statistics: %s - top: %s", cardpackName, top));
+            dpStatsRepository.save(statistics);
         }
         return statistics;
     }
@@ -198,11 +200,11 @@ public class Statistics {
                     MDSEntry mds = new MDSEntry(scaling[0][i], scaling[1][i],
                             decks.get(i).getName(), decks.get(i).getUrl(), topURLs.contains(decks.get(i).getUrl()));
                     result.addDeck(mds);
-                    System.out.println(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
+                    logger.debug(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
                 }
             }
-            System.out.println("*********************************************************************");
-            System.out.println(String.format("Saving MDS Statistics: %s - %s", cardpackName, identityName));
+            logger.debug("*********************************************************************");
+            logger.info(String.format("Saving MDS Statistics: %s - %s", cardpackName, identityName));
             identityMdsRepository.save(result);
         }
         return result;
@@ -243,7 +245,7 @@ public class Statistics {
                     result.addIdentitiy(entry);
                 }
             }
-            System.out.println(String.format("Saving DPIdentities: %s - %s", cardpackName, sidecode));
+            logger.info(String.format("Saving DPIdentities: %s - %s", cardpackName, sidecode));
             dpIdentitiesRepository.save(result);
         }
         return result;
@@ -267,7 +269,7 @@ public class Statistics {
                         cardPack.getNumber(), cardPack.getCyclenumber());
                 result.addCardPool(cardPool);
             }
-            System.out.println("Saving Cardpool Statistics.");
+            logger.info("Saving Cardpool Statistics.");
             cardPoolStatsRepository.save(result);
         }
         return result;
@@ -288,7 +290,7 @@ public class Statistics {
                 DeckInfo info = getDeckInfo(deck);
                 result.addDeckInfo(info);
             }
-            System.out.println(String.format("Saving DeckInfos Statistics: %s - %s", cardpool, identityName));
+            logger.info(String.format("Saving DeckInfos Statistics: %s - %s", cardpool, identityName));
             deckInfosRepository.save(result);
         }
         return result;
@@ -318,7 +320,7 @@ public class Statistics {
                             card.getSide_code(), count, topcount));
                 }
             }
-            System.out.println(String.format("Saving Card Usage Statistics, cardpack: %s", cardpack));
+            logger.info(String.format("Saving Card Usage Statistics, cardpack: %s", cardpack));
             cardUsageStatsRepository.save(result);
         }
         return result;
@@ -336,14 +338,14 @@ public class Statistics {
             List<CardCounts> stat = cardRepository.findMostPopularCardsByCardPack(cardpool, "runner");
             for (CardCounts count : stat) {
                 result.addCardUsage(new CardUsage(count.getTitle(), count.getCardpack(), "runner", -1, count.getCount()));
-//            System.out.println(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
+                logger.debug(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
             }
             stat = cardRepository.findMostPopularCardsByCardPack(cardpool, "corp");
             for (CardCounts count : stat) {
                 result.addCardUsage(new CardUsage(count.getTitle(), count.getCardpack(), "corp", -1, count.getCount()));
-//            System.out.println(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
+                logger.debug(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
             }
-            System.out.println(String.format("Saving Card Usage Statistics, cardpool: %s", cardpool));
+            logger.info(String.format("Saving Card Usage Statistics, cardpool: %s", cardpool));
             cardUsageStatsRepository.save(result);
         }
         return result;
@@ -391,7 +393,7 @@ public class Statistics {
                         String.format("%.2f", (double) sumused / used));
                 result.addCard(cardAverage);
             }
-            System.out.println(String.format("Saving deck averages: %s - %s", identity, cardpool));
+            logger.info(String.format("Saving deck averages: %s - %s", identity, cardpool));
             identityAverageRepository.save(result);
         }
         return result;

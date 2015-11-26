@@ -40,21 +40,19 @@ public class DPController {
             @PathVariable(value = "stattype") String stattype,
             @PathVariable(value = "DPName") String DPName) {
 
-        if (filter.equals("Compare")) {  // comparison
-            DPStatistics allstats = statistics.getPackStats(DPName, false);
-            DPStatistics topstats = statistics.getPackStats(DPName, true);
-            return dpStatsToCompareGchart.converter(topstats, allstats, sidecode, stattype);
-
-        } else if (filter.equals("Top")) {  // top
-            DPStatistics stats = statistics.getPackStats(DPName, true);
-            return dpStatsToGchart.converter(stats, sidecode, stattype);
-
-        } else if (filter.equals("All")) {  // all
-            DPStatistics stats = statistics.getPackStats(DPName, false);
-            return dpStatsToGchart.converter(stats, sidecode, stattype);
-
-        } else {    // none
-            return new DataTable();
+        switch (filter) {
+            case "Compare":
+                DPStatistics allstats = statistics.getPackStats(DPName, false);
+                DPStatistics topstats = statistics.getPackStats(DPName, true);
+                return dpStatsToCompareGchart.converter(topstats, allstats, sidecode, stattype);
+            case "Top":
+                DPStatistics statstop = statistics.getPackStats(DPName, true);
+                return dpStatsToGchart.converter(statstop, sidecode, stattype);
+            case "All":
+                DPStatistics statsall = statistics.getPackStats(DPName, false);
+                return dpStatsToGchart.converter(statsall, sidecode, stattype);
+            default:
+                return new DataTable();
         }
     }
 

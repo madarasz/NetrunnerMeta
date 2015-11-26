@@ -14,6 +14,7 @@ import java.util.Set;
 
 /**
  * Created by madarasz on 11/11/15.
+ * Holds statistical information on deck digests of cardpool and identity.
  */
 @NodeEntity
 public class DeckInfos {
@@ -24,13 +25,13 @@ public class DeckInfos {
     private String identitytitle;
 
     public DeckInfos() {
-        infos = new HashSet<DeckInfo>();
+        this.infos = new HashSet<>();
     }
 
     public DeckInfos(String cardpoolname, String identitytitle) {
         this.cardpoolname = cardpoolname;
         this.identitytitle = identitytitle;
-        this.infos = new HashSet<DeckInfo>();
+        this.infos = new HashSet<>();
     }
 
     public Set<DeckInfo> getInfos() {
@@ -51,7 +52,7 @@ public class DeckInfos {
 
     public List<DeckInfo> getSortedInfos() {
         DeckInfoComparator comparator = new DeckInfoComparator();
-        List<DeckInfo> result = new ArrayList<DeckInfo>(infos);
+        List<DeckInfo> result = new ArrayList<>(infos);
         result.sort(comparator);
         return result;
     }

@@ -26,9 +26,9 @@ public class MultiDimensionalScaling {
         // get all cards
         Set<DeckHasCard> deckACards = decka.getCards();
         Set<DeckHasCard> deckBCards = deckb.getCards();
-        Map<Card, Integer> deckAMap = new HashMap<Card, Integer>();
-        Map<Card, Integer> deckBMap = new HashMap<Card, Integer>();
-        Set<Card> cards = new HashSet<Card>();
+        Map<Card, Integer> deckAMap = new HashMap<>();
+        Map<Card, Integer> deckBMap = new HashMap<>();
+        Set<Card> cards = new HashSet<>();
         for (DeckHasCard deckHasCard : deckACards) {
             cards.add(deckHasCard.getCard());
             deckAMap.put(deckHasCard.getCard(), deckHasCard.getQuantity());
@@ -84,13 +84,13 @@ public class MultiDimensionalScaling {
     public ArrayList<ArrayList<Deck>> calculateKMeans(ArrayList<Deck> decks, int k) {
         int decksize = decks.size();
 
-        ArrayList<Deck> centers = new ArrayList<Deck>();
+        ArrayList<Deck> centers = new ArrayList<>();
         Random randomGenerator = new Random();
         int index = randomGenerator.nextInt(decksize);
 
-        ArrayList<ArrayList<Deck>> result = new ArrayList<ArrayList<Deck>>();
+        ArrayList<ArrayList<Deck>> result = new ArrayList<>();
         for (int i = 0; i < k; i++) {
-            ArrayList<Deck> newset = new ArrayList<Deck>();
+            ArrayList<Deck> newset = new ArrayList<>();
             result.add(newset);
         }
         return result;

@@ -20,6 +20,7 @@ import java.util.Set;
  */
 @Component
 public final class NetrunnerDBBroker {
+
     private final static String NETRUNNERDB_API_URL = "http://netrunnerdb.com/api/";
 
     @Autowired
@@ -38,7 +39,7 @@ public final class NetrunnerDBBroker {
     public Set<CardPack> readSets() {
         JSONArray setData = new JSONObject(httpBroker.readFromUrl(NETRUNNERDB_API_URL + "sets", true))
                 .getJSONArray("input");
-        Set<CardPack> resultSet = new HashSet<CardPack>();
+        Set<CardPack> resultSet = new HashSet<>();
 
         for (int i = 0; i < setData.length(); i++) {
             JSONObject packData = setData.getJSONObject(i);
@@ -52,7 +53,7 @@ public final class NetrunnerDBBroker {
     public Set<Card> readCards() {
         JSONArray cardsData = new JSONObject(httpBroker.readFromUrl(NETRUNNERDB_API_URL + "cards", true))
                 .getJSONArray("input");
-        Set<Card> resultSet = new HashSet<Card>();
+        Set<Card> resultSet = new HashSet<>();
 
         for (int i = 0; i < cardsData.length(); i++) {
 

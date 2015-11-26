@@ -48,7 +48,7 @@ public class DPStatsToCompareGchart extends DPToChart {
             CellNumber countall = new CellNumber(fractionall, String.format("%,.1f%%", fractionall * 100));
             CellNumber counttop = new CellNumber(fractiontop, String.format("%,.1f%%", fractiontop * 100));
 //            CellString style = new CellString(topstands.get(i).getColorcode());
-            List<Cell> rowdata = new ArrayList<Cell>();
+            List<Cell> rowdata = new ArrayList<>();
             rowdata.add(title);
             rowdata.add(countall);
             rowdata.add(counttop);
