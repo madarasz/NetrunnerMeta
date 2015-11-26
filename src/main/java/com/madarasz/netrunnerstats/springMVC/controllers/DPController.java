@@ -56,6 +56,21 @@ public class DPController {
         }
     }
 
+    // JSON output DPstats
+    @RequestMapping(value="/JSON/DPStats/{filter}/{DPName}", method = RequestMethod.GET)
+    public @ResponseBody DPStatistics getDPStatistics(
+            @PathVariable(value = "filter") String filter,
+            @PathVariable(value = "DPName") String DPName) {
+        switch (filter) {
+            case "Top":
+                return statistics.getPackStats(DPName, true);
+            case "All":
+                return statistics.getPackStats(DPName, false);
+            default:
+                return new DPStatistics();
+        }
+    }
+
     // html page output
     @RequestMapping(value="/DPStats/{DPName}", method = RequestMethod.GET)
     public String getDPPage(@PathVariable String DPName, Map<String, Object> model) {

@@ -17,6 +17,8 @@ public class DPStatistics {
     @Indexed private String dpname;
     private int decknum;
     private int statnum;
+    private int runnerstatnum;
+    private int corpstatnum;
     @Indexed private boolean top;
     @RelatedTo(type = "RFACTION") private @Fetch Set<CountDeckStands> runnerFactions;
     @RelatedTo(type = "RIDENTITY") private @Fetch Set<CountDeckStands> runnerIdentities;
@@ -30,31 +32,33 @@ public class DPStatistics {
         this.corpIdentities = new HashSet<>();
     }
 
-    public DPStatistics(String DPname, int decknum, int statnum, boolean top) {
+    public DPStatistics(String DPname, int decknum, int statnum, int runnerstatnum, int corpstatnum, boolean top) {
         this.statnum = statnum;
         this.dpname = DPname;
         this.decknum = decknum;
         this.top = top;
+        this.runnerstatnum = runnerstatnum;
+        this.corpstatnum = corpstatnum;
         this.runnerFactions = new HashSet<>();
         this.runnerIdentities = new HashSet<>();
         this.corpFactions = new HashSet<>();
         this.corpIdentities = new HashSet<>();
     }
 
-    public void addRunnerFaction(String title, int decks, int standings, String colorcode) {
-        runnerFactions.add(new CountDeckStands(title, decks, standings, colorcode));
+    public void addRunnerFaction(String title, int decks, int standings, double percentage, String colorcode) {
+        runnerFactions.add(new CountDeckStands(title, decks, standings, percentage, colorcode));
     }
 
-    public void addCorpFaction(String title, int decks, int standings, String colorcode) {
-        corpFactions.add(new CountDeckStands(title, decks, standings, colorcode));
+    public void addCorpFaction(String title, int decks, int standings, double percentage, String colorcode) {
+        corpFactions.add(new CountDeckStands(title, decks, standings, percentage, colorcode));
     }
 
-    public void addRunnerIdentity(String title, int decks, int standings, String colorcode) {
-        runnerIdentities.add(new CountDeckStands(title, decks, standings, colorcode));
+    public void addRunnerIdentity(String title, int decks, int standings, double percentage, String colorcode) {
+        runnerIdentities.add(new CountDeckStands(title, decks, standings, percentage, colorcode));
     }
 
-    public void addCorpIdentity(String title, int decks, int standings, String colorcode) {
-        corpIdentities.add(new CountDeckStands(title, decks, standings, colorcode));
+    public void addCorpIdentity(String title, int decks, int standings, double percentage, String colorcode) {
+        corpIdentities.add(new CountDeckStands(title, decks, standings, percentage, colorcode));
     }
 
 
@@ -126,19 +130,11 @@ public class DPStatistics {
     }
 
     public int getRunnerStatnum() {
-        int result = 0;
-        for (CountDeckStands stands : runnerFactions) {
-            result += stands.getStandingnum();
-        }
-        return result;
+        return runnerstatnum;
     }
 
     public int getCorpStatnum() {
-        int result = 0;
-        for (CountDeckStands stands : corpFactions) {
-            result += stands.getStandingnum();
-        }
-        return result;
+        return corpstatnum;
     }
 
     @Override

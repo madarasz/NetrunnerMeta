@@ -24,24 +24,16 @@ public class DPStatsToCompareGchart extends DPToChart {
         List<Row> rows = new ArrayList<>();
         List<CountDeckStands> topstands = filter(topstats, sidecode, stattype);
         List<CountDeckStands> allstands = filter(allstats, sidecode, stattype);
-        int sumtop;
-        int sumall;
-        if (sidecode.equals("runner")) {
-            sumtop = topstats.getRunnerStatnum();
-            sumall = allstats.getRunnerStatnum();
-        } else {
-            sumtop = topstats.getCorpStatnum();
-            sumall = allstats.getCorpStatnum();
-        }
 
         for (CountDeckStands allstand : allstands) {
             String identity = allstand.getTitle();
             CellString title = new CellString(identity);
-            double fractionall = ((double)allstand.getStandingnum()) / sumall;
+            double fractionall = allstand.getPercentage();
+            // maybe there is no such in top
             double fractiontop = 0;
             for (CountDeckStands topstand : topstands) {
                 if (topstand.getTitle().equals(identity)) {
-                    fractiontop = ((double) topstand.getStandingnum()) / sumtop;
+                    fractiontop = topstand.getPercentage();
                     break;
                 }
             }

@@ -23,6 +23,12 @@ public interface StandingRepository extends GraphRepository<Standing>, Relations
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing {topdeck: true}) RETURN COUNT(s)")
     int countTopByCardPool(String cardpoolname);
 
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card {side_code: {1}}) RETURN COUNT(s)")
+    int countByCardPoolSidecode(String cardpoolname, String side_code);
+
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing {topdeck: true})-[:IS_IDENTITY]->(c:Card {side_code: {1}}) RETURN COUNT(s)")
+    int countTopByCardPoolSidecode(String cardpoolname, String side_code);
+
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing {topdeck: TRUE})-[:IS_IDENTITY]->(c:Card) " +
             "RETURN c.title AS category, COUNT(*) as count, c.side_code AS side_code " +
             "ORDER BY side_code DESC, count DESC")
