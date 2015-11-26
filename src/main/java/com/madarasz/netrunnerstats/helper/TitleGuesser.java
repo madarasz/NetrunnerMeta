@@ -28,6 +28,24 @@ public class TitleGuesser {
             case "Unregistered S&W 35" :
                 newtitle = "Unregistered S&W '35";
                 break;
+            case "Pre-paid VoicePAD" :
+                newtitle = "Prepaid VoicePAD";
+                break;
+            case "Glenn Station2" :
+                newtitle = "Glenn Station";
+                break;
+            case "Amazon Industrial Zone4" :
+                newtitle = "Amazon Industrial Zone";
+                break;
+            case "Crisium Grid1" :
+                newtitle = "Crisium Grid";
+                break;
+            case "Off the Grid1" :
+                newtitle = "Off the Grid";
+                break;
+            case "Nisei MKII" :
+                newtitle = "Nisei MK II";
+                break;
         }
         return newtitle;
     }

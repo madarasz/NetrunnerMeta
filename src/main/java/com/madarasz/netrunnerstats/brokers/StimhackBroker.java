@@ -35,7 +35,7 @@ public class StimhackBroker {
     private static final String HTML_TAGS = "span.footer-tags > a";
     private static final String HTML_TITLE = "h1.entry-title";
     private static final String SPLITTER_INFO = ": |</strong>";
-    private static final String SLITTER_CARD_NAME = "^\\dx? | •| \\(";
+    private static final String SLITTER_CARD_NAME = "^\\dx? | •| \\(| ●";
     private static final String SLITTER_DATE = "Date: ";
     private static final String URL_TOURNAMENTS = "http://stimhack.com/tournament-decklists/";
 
@@ -142,7 +142,7 @@ public class StimhackBroker {
             Elements tags = httpBroker.elementsFromHtml(HTML_TAGS);
             for (Element tag : tags) {
                 Card card = cardRepository.findByTitle(titleGuesser.alternateTitle(tag.text()));
-                if ((card.getType_code().equals("identity")) && (card.getSide_code().equals(side))) {
+                if ((card != null) && (card.getType_code().equals("identity")) && (card.getSide_code().equals(side))) {
                     identity = card;
                     logger.warn("Guessing identity from tags: " + identity.getTitle());
                     break;
