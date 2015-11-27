@@ -51,10 +51,21 @@ public class MDSController {
     }
 
     // JSON output for deck averages
+    @RequestMapping(value="/JSON/Average/{DPName}/{identity}/{part}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<CardAverage> getDeckAverage(
+            @PathVariable(value="identity") String identity,
+            @PathVariable(value="DPName") String DPName,
+            @PathVariable(value="part") int part) {
+        return averageDigest.getSortedAverages(statistics.getIdentityAverage(identity, DPName), part);
+    }
+
+    // JSON output for deck averages
     @RequestMapping(value="/JSON/Average/{DPName}/{identity}", method = RequestMethod.GET)
     public @ResponseBody
-    List<CardAverage> getDeckAverage(@PathVariable(value="identity") String identity,
-                                     @PathVariable(value="DPName") String DPName) {
+    List<CardAverage> getDeckAverage(
+            @PathVariable(value="identity") String identity,
+            @PathVariable(value="DPName") String DPName) {
         return averageDigest.getSortedAverages(statistics.getIdentityAverage(identity, DPName));
     }
 }

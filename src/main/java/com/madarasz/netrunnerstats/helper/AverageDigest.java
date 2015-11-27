@@ -24,12 +24,15 @@ public class AverageDigest {
 
     private static final String[] TYPES_RUNNER = new String[]{"event", "hardware", "icebreaker", "program", "resource"};
     private static final String[] TYPES_CORP = new String[]{"agenda", "asset", "operation", "upgrade", "barrier", "code gate", "sentry", "mythic", "trap"};
+    private static final String[] TYPES_RUNNER_PART1 = new String[]{"event", "hardware", "resource"};
+    private static final String[] TYPES_RUNNER_PART2 = new String[]{"icebreaker", "program"};
+    private static final String[] TYPES_CORP_PART1 = new String[]{"agenda", "asset", "operation", "upgrade"};
+    private static final String[] TYPES_CORP_PART2 = new String[]{"barrier", "code gate", "sentry", "mythic", "trap"};
 
     public AverageDigest() {
     }
 
     public List<CardAverage> getSortedAverages(IdentityAverage stat) {
-        List<CardAverage> result = new ArrayList<>();
         Card identity = cardRepository.findByTitle(stat.getIdentity());
         if (identity != null) {
             String[] filters;
@@ -38,13 +41,41 @@ public class AverageDigest {
             } else {
                 filters = TYPES_CORP;
             }
-
-            for (String filter : filters) {
-                List<CardAverage> subset = filterAndSortCards(stat.getCards(), filter);
-                result.addAll(subset);
-            }
+            return getSortedAverages(stat, filters);
+        } else {
+            return new ArrayList<CardAverage>();
         }
+    }
 
+    public List<CardAverage> getSortedAverages(IdentityAverage stat, int part) {
+        Card identity = cardRepository.findByTitle(stat.getIdentity());
+        if (identity != null) {
+            String[] filters;
+            if (identity.isRunner()) {
+                if (part == 1) {
+                    filters = TYPES_RUNNER_PART1;
+                } else {
+                    filters = TYPES_RUNNER_PART2;
+                }
+            } else {
+                if (part == 1) {
+                    filters = TYPES_CORP_PART1;
+                } else {
+                    filters = TYPES_CORP_PART2;
+                }
+            }
+            return getSortedAverages(stat, filters);
+        } else {
+            return new ArrayList<CardAverage>();
+        }
+    }
+
+    private List<CardAverage> getSortedAverages(IdentityAverage stat, String[] filters) {
+        List<CardAverage> result = new ArrayList<>();
+        for (String filter : filters) {
+            List<CardAverage> subset = filterAndSortCards(stat.getCards(), filter);
+            result.addAll(subset);
+        }
         return result;
     }
 

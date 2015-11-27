@@ -32,10 +32,25 @@
                         <th>pack</th>
                         <th class="text-center">in decks</th>
                         <th class="text-center">average used</th>
-                        <th class="text-center">average used<br /> if in deck</th>
+                        <th class="text-center">average used if in deck</th>
                     </tr>
                     </thead>
                     <tbody id="average-table"></tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h5>&nbsp;</h5>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>card title</th>
+                        <th>pack</th>
+                        <th class="text-center">in decks</th>
+                        <th class="text-center">average used</th>
+                        <th class="text-center">average used if in deck</th>
+                    </tr>
+                    </thead>
+                    <tbody id="average-table2"></tbody>
                 </table>
             </div>
         </div>
@@ -55,6 +70,7 @@
 
         $('#chart_div1').addClass('spinner');
         $('#average-table').addClass('spinner');
+        $('#average-table2').addClass('spinner');
 
         // Load the Visualization API and the piechart package.
         google.load('visualization', '1.0', {'packages':['corechart']});
@@ -66,9 +82,11 @@
             var filter = encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${identity}]]);
             var url = "/DataTable/MDSIdentity/" + filter;
             var tooltipurl = "/JSON/Deck/" + filter;
-            var averageurl = "/JSON/Average/" + filter;
+            var averageurl1 = "/JSON/Average/" + filter + "/1";
+            var averageurl2 = "/JSON/Average/" + filter + "/2";
             drawChart(url, tooltipurl, [[${identity}]], 'chart_div1');
-            fillTable(averageurl, '#average-table');
+            fillTable(averageurl1, '#average-table');
+            fillTable(averageurl2, '#average-table2');
         }
 
         // Callback that creates and populates a data table,
@@ -101,8 +119,8 @@
                 'height': 555,
                 'chartArea': { width:'100%', height:'100%' },
                 'backgroundColor': { strokeWidth: 1 },
-                'hAxis' : { gridlines: { count: 0 }},
-                'vAxis' : { gridlines: { count: 0 }},
+                'hAxis' : { gridlines: { count: 0 }, baselineColor: '#fff'},
+                'vAxis' : { gridlines: { count: 0 }, baselineColor: '#fff'},
                 'tooltip': { trigger: 'selection' }
             };
 
