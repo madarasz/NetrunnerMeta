@@ -14,6 +14,12 @@ public class CardUsageComparator implements Comparator<CardUsage>{
     public int compare(CardUsage c1, CardUsage c2) {
         if (c1.getIntopdecks() > c2.getIntopdecks()) {
             return -1;
+        } if (c1.getIntopdecks() == c2.getIntopdecks()) {
+            if (c1.getIndecks() > c2.getIndecks()) {
+                return -1;
+            } else {
+                return 1;
+            }
         } else {
             return 1;
         }
