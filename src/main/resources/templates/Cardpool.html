@@ -64,11 +64,21 @@
         }
 
         function drawChart(urlvalue, elementid) {
+
+            var linecolors = new Array;
+
             var jsonData = $.ajax({
                 url: urlvalue,
                 dataType: "json",
-                async: false
+                async: false,
+                success: function(data) {
+                    $.each(data.cols, function (index, element) {
+                        linecolors.push({color : element.id});
+                    });
+                }
             }).responseText;
+
+            linecolors.splice(0, 1); // removing first entry
 
             var data = new google.visualization.DataTable(jsonData);
 
@@ -77,7 +87,9 @@
                 'curveType': 'function',
                 'vAxis': {format:'#,#%'},
 //                'chartArea': {width:'90%'},
-                'legend': {position: 'right', maxLines: 6}
+                'legend': {position: 'right', maxLines: 6},
+                'series': linecolors,
+                'lineWidth': 3
             };
 
             var chart = new google.visualization.LineChart(document.getElementById(elementid));

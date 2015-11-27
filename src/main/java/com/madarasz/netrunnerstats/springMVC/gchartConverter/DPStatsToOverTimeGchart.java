@@ -7,6 +7,7 @@ import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CountDeckStands;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
+import com.madarasz.netrunnerstats.helper.ColorPicker;
 import com.madarasz.netrunnerstats.springMVC.gchart.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,9 @@ public class DPStatsToOverTimeGchart extends DPToChart {
     @Autowired
     CardRepository cardRepository;
 
+    @Autowired
+    ColorPicker colorPicker;
+
     public DataTable converter(String sidecode) {
 
         CardPoolStats cardPoolStats = statistics.getCardPoolStats();
@@ -37,7 +41,7 @@ public class DPStatsToOverTimeGchart extends DPToChart {
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("pack", "string"));
         for (String faction : factions) {
-            columns.add(new Column(faction, "number"));
+            columns.add(new Column(colorPicker.colorFaction(faction), faction, "number", "")); // putting color code into id field
         }
         List<Row> rows = new ArrayList<>();
 
