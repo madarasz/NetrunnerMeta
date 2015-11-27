@@ -35,7 +35,7 @@ public class CPController {
     }
 
     // html output
-    @RequestMapping(value="/", method = RequestMethod.GET)
+    @RequestMapping(value="/Cardpool", method = RequestMethod.GET)
     public String getCPPage(Map<String, Object> model) {
         return "Cardpool";
     }
