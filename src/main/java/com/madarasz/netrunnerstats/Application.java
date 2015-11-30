@@ -106,6 +106,9 @@ public class Application implements CommandLineRunner {
                     operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/the-universe-of-tomorrow/1/", true, false);
                     operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/old-hollywood/1/", true, false);
                     operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/the-underway/1/", true, false);
+                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/chrome-city/1/", true, false);
+                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/breaker-bay/1/", true, false);
+                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/tournament/set/the-valley/1/", true, false);
 //                    operations.loadAcooTournamentsFromUrl("http://www.acoo.net/anr-tournament-archive/1", true, false);
                     operations.logDBCount();
                     break;
@@ -127,6 +130,9 @@ public class Application implements CommandLineRunner {
                     operations.loadStimhackPackTournaments("Data and Destiny");
                     operations.loadStimhackPackTournaments("Data & Destiny");
                     operations.loadStimhackPackTournaments("The Underway");
+                    operations.loadStimhackPackTournaments("Chrome City");
+                    operations.loadStimhackPackTournaments("Breaker Bay");
+                    operations.loadStimhackPackTournaments("The Valley");
                     operations.logDBCount();
                     break;
                 case resetstats:

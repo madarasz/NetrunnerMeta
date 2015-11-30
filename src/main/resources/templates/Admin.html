@@ -6,9 +6,253 @@
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
         <h3 class="page-header">Much admin... wow</h3>
+
+        <!--Data verification -->
         <div class="row">
-            <div class="col-md-12">
-                <p class="lead">You should not see this.</p>
+            <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Verify</div>
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form">
+                            <div class="row">
+                                <label class="col-md-3 control-label">Verify data</label>
+                                <div class="col-md-9">
+                                    <button type="submit" class="btn btn-default">Verify</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Stimhack-->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Stimhack</div>
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form">
+                            <div class="row form-group">
+                                <label class="col-md-3 control-label">Add single Stimhack tournament:</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button type="submit" class="btn btn-default">Import</button>
+                                </div>
+                            </div>
+                        </form>
+                        <form class="form-horizontal top-buffer" role="form">
+                            <div class="row form-group">
+                                <label class="col-md-3 control-label">Scan Stimhack for datapack:</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button type="submit" class="btn btn-default">Import</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Stimhack</div>
+                    <div class="panel-body">
+                        <p>Last update date:</p>
+                        <p>Tournaments:</p>
+                        <p>Decks:</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Acoo-->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Acoo</div>
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form">
+                            <div class="row form-group">
+                                <label class="col-md-3 control-label">Add single Acoo deck:</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button type="submit" class="btn btn-default">Import</button>
+                                </div>
+                            </div>
+                        </form>
+                        <form class="form-horizontal top-buffer" role="form">
+                            <div class="row form-group">
+                                <label class="col-md-3 control-label">Add single Acoo tournament:</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button type="submit" class="btn btn-default">Import</button>
+                                </div>
+                            </div>
+                        </form>
+                        <form class="form-horizontal top-buffer" role="form">
+                            <div class="row form-group">
+                                <label class="col-md-3 control-label">Add Acoo tournaments:</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9 checkbox">
+                                    <label><input type="checkbox" />Crawl using pagination</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button type="submit" class="btn btn-default">Import</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Acoo</div>
+                    <div class="panel-body">
+                        <p>Last update date:</p>
+                        <p>Tournaments:</p>
+                        <p>Decks:</p>
+                        <p>Standings:</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Netrunner DB-->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Netrunner DB</div>
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form">
+                            <div class="row">
+                                <label class="col-md-3 control-label">Load card, pack info</label>
+                                <div class="col-md-9">
+                                    <button type="submit" class="btn btn-default">Load</button>
+                                </div>
+                            </div>
+                        </form>
+                        <form class="form-horizontal top-buffer" role="form">
+                            <div class="row form-group">
+                                <label class="col-md-3 control-label">Add deck:</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button type="submit" class="btn btn-default">Import</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">NetrunnerDB</div>
+                    <div class="panel-body">
+                        <p>Cards:</p>
+                        <p>Packs:</p>
+                        <p>Decks:</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Database purge-->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">Database delete</div>
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form">
+                            <div class="row">
+                                <label class="col-md-3 control-label">Purge all data (with statistics)</label>
+                                <div class="col-md-9">
+                                    <button type="submit" class="btn btn-default">Purge</button>
+                                </div>
+                            </div>
+                        </form>
+                        <form class="form-horizontal top-buffer" role="form">
+                            <div class="row">
+                                <label class="col-md-3 control-label">Purge statistical data</label>
+                                <div class="col-md-9">
+                                    <button type="submit" class="btn btn-default">Purge</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Database</div>
+                    <div class="panel-body">
+                        <p>Tournaments:</p>
+                        <p>Decks:</p>
+                        <p>Standings:</p>
+                        <p>Deck-card relations:</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-8">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Statistics</div>
+                    <div class="panel-body">
+                        <p>
+                            DPStatistics:<br />
+                            CountDeckStands:
+                        </p>
+                        <p>
+                            IdentityMDS:<br />
+                            MDSEntry:
+                        </p>
+                        <p>
+                            CardPoolStats:<br />
+                            CardPool:
+                        </p>
+                        <p>
+                            DeckInfos:<br />
+                            DeckInfo:
+                        </p>
+                        <p>
+                            DPIdentities:<br />
+                            DPIdentity:
+                        </p>
+                        <p>
+                            CardUsageStat:<br />
+                            CardUsage:
+                        </p>
+                        <p>
+                            IdentityAverage:<br />
+                            CardAverage:
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
         <div th:replace="fragments/footer :: footer"></div>
