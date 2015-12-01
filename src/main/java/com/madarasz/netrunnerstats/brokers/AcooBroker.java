@@ -254,9 +254,9 @@ public class AcooBroker {
                 if (deckpart.isEmpty()) {
                     standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner()));
                 } else {
-                    logger.info("Rank: " + rank + " - ");
                     hrefparts = deckpart.first().attr("href").split("/");
                     int deckId = Integer.valueOf(hrefparts[2]);
+                    logger.info("Rank: " + rank + " - " + deckUrlFromId(deckId));
                     Deck exists = deckRepository.findByUrl(deckUrlFromId(deckId));
                     if (exists == null) {
                         Deck deck = readDeck(deckId);
