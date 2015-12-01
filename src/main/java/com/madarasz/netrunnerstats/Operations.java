@@ -231,7 +231,6 @@ public class Operations {
      * @param tournamentId tournamentID in Acoo
      * @return tournament object
      */
-    // TODO: Tournament is not refreshed if already exists
     public Tournament loadAcooTournament(int tournamentId) {
         String url = acooBroker.tournamentUrlFromId(tournamentId);
         Tournament exists = tournamentRepository.findByUrl(url);

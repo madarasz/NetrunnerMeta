@@ -1,6 +1,7 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.Operations;
+import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.database.DOs.*;
 import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.database.DOs.stats.*;
@@ -42,6 +43,9 @@ public class AdminController {
 
     @Autowired
     Operations operations;
+
+    @Autowired
+    AcooBroker acooBroker;
 
     private final DateFormat df = new SimpleDateFormat("yyyy.MM.dd.");
 
@@ -150,6 +154,85 @@ public class AdminController {
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("errorMessage",
                     String.format("Error loading Stimhack tournaments with datapack: %s", datapack));
+        }
+        return "redirect:/muchadmin";
+    }
+
+    // add acoo deck
+    @PreAuthorize("hasRole(@roles.ADMIN)")
+    @RequestMapping(value="/muchadmin/Acoo/AddDeck", method = RequestMethod.POST)
+    public String addAcooDeck(String deckid, final RedirectAttributes redirectAttributes) {
+        try {
+            int id = Integer.parseInt(deckid);
+            Deck exists = deckRepository.findByUrl(acooBroker.deckUrlFromId(id));
+            if (exists == null) {
+                operations.loadAcooDeck(id);
+                redirectAttributes.addFlashAttribute("successMessage",
+                        String.format("Tournament is added to DB with ID: %d", id));
+            } else {
+                redirectAttributes.addFlashAttribute("warningMessage",
+                        String.format("Tournament is already in DB with Acoo ID: %d", id));
+            }
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    String.format("Error loading tournament with ID: %s", deckid));
+            return "redirect:/muchadmin";
+        }
+        return "redirect:/muchadmin";
+    }
+
+    // add acoo tournament
+    @PreAuthorize("hasRole(@roles.ADMIN)")
+    @RequestMapping(value="/muchadmin/Acoo/AddTournament", method = RequestMethod.POST)
+    public String addAcooTournament(String tournamentid, final RedirectAttributes redirectAttributes) {
+        try {
+            int id = Integer.parseInt(tournamentid);
+            long tournamentcount = template.count(Tournament.class);
+            long deckcount = template.count(Deck.class);
+            long standingcount = template.count(Standing.class);
+            operations.loadAcooTournamentDecks(id);
+            tournamentcount = template.count(Tournament.class) - tournamentcount;
+            deckcount = template.count(Deck.class) - deckcount;
+            standingcount = template.count(Standing.class) - standingcount;
+            if (tournamentcount + deckcount + standingcount > 0) {
+                redirectAttributes.addFlashAttribute("successMessage",
+                        String.format("Tournament is added to DB with ID: %d - new decks: %d, new standings: %d", id, deckcount, standingcount));
+            } else {
+                redirectAttributes.addFlashAttribute("warningMessage",
+                        String.format("No new data was added with Acoo tournament ID: %d", id));
+            }
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    String.format("Error loading tournament with ID: %s", tournamentid));
+            return "redirect:/muchadmin";
+        }
+        return "redirect:/muchadmin";
+    }
+
+    // add acoo tournament from page
+    @PreAuthorize("hasRole(@roles.ADMIN)")
+    @RequestMapping(value="/muchadmin/Acoo/AddTournaments", method = RequestMethod.POST)
+    public String addAcooTournaments(String url, boolean paging, final RedirectAttributes redirectAttributes) {
+        try {
+            long tournamentcount = template.count(Tournament.class);
+            long deckcount = template.count(Deck.class);
+            long standingcount = template.count(Standing.class);
+            operations.loadAcooTournamentsFromUrl(url, paging, false);
+            tournamentcount = template.count(Tournament.class) - tournamentcount;
+            deckcount = template.count(Deck.class) - deckcount;
+            standingcount = template.count(Standing.class) - standingcount;
+            if (tournamentcount + deckcount + standingcount > 0) {
+                redirectAttributes.addFlashAttribute("successMessage",
+                        String.format("Tournaments added to DB from URL: %s - new tournaments: %d, new decks: %d, new standings: %d",
+                                url, tournamentcount, deckcount, standingcount));
+            } else {
+                redirectAttributes.addFlashAttribute("warningMessage",
+                        String.format("No new data was added with Acoo URL: %s", url));
+            }
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    String.format("Error loading tournament with URL: %s", url));
+            return "redirect:/muchadmin";
         }
         return "redirect:/muchadmin";
     }
