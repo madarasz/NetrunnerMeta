@@ -300,7 +300,7 @@ public class Operations {
      * Checks decks validity. Check tournament data. Calculate tournament cardpool validity if not defined.
      */
     public void checkDataValidity() {
-        logDBCount();
+//        logDBCount();
         logger.info("Checking data validity");
 
         // check decks
@@ -346,7 +346,10 @@ public class Operations {
             if (deck.getUrl().contains("stimhack")) {
                 decks2.add(deck);   // stimhack
             } else {
-                decks3.add(deck);   // acoo
+                Standing standing = standingRepository.findByDeckUrl(deck.getUrl());
+                if (standing.getRank() == 1) {
+                    decks3.add(deck);   // acoo
+                }
             }
         }
         for (Deck deck3 : decks3) {

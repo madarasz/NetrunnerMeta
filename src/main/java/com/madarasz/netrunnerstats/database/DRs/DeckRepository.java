@@ -73,4 +73,13 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
 
     @Query("MATCH (c:Card {code: {0}})<--(d:Deck)<-[:IS_DECK]-(s:Standing {topdeck: true}) RETURN COUNT(d)")
     int countTopByUsingCard(String cardcode);
+
+    @Query("MATCH (d:Deck) WHERE d.url =~ 'http://stimhack.*' RETURN COUNT(d)")
+    int countStimhackDecks();
+
+    @Query("MATCH (d:Deck) WHERE d.url =~ 'http://www.acoo.*' RETURN COUNT(d)")
+    int countAcooDecks();
+
+    @Query("MATCH (d:Deck) WHERE d.url =~ 'http://netrunnerdb.*' RETURN COUNT(d)")
+    int countNetrunnerDBDecks();
 }

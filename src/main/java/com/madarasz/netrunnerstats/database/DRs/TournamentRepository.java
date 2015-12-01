@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.neo4j.repository.RelationshipOperationsRepository;
 
+import java.util.Date;
 import java.util.List;
 
 /** Repository for tournaments
@@ -20,4 +21,16 @@ public interface TournamentRepository extends GraphRepository<Tournament>, Relat
 
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament) RETURN COUNT(p)")
     int countByCardpool(String cardpoolName);
+
+    @Query("MATCH (t:Tournament) WHERE t.url =~ 'http://stimhack.*' RETURN COUNT(t)")
+    int countStimhackTournaments();
+
+    @Query("MATCH (t:Tournament) WHERE t.url =~ 'http://www.acoo.*' RETURN COUNT(t)")
+    int countAcooTournaments();
+
+    @Query("MATCH (t:Tournament) WHERE t.url =~ 'http://stimhack.*' RETURN MAX(t.date)")
+    Date getLastStimhackTournamentDate();
+
+    @Query("MATCH (t:Tournament) WHERE t.url =~ 'http://www.acoo.*' RETURN MAX(t.date)")
+    Date getLastAcooTournamentDate();
 }

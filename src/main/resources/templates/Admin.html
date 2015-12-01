@@ -7,19 +7,26 @@
     <div class="container">
         <h3 class="page-header">Much admin... wow</h3>
 
+        <!--Messages-->
+        <div class="alert alert-success" role="alert" th:text="${successMessage}" th:if="${successMessage != null}"></div>
+        <div class="alert alert-warning" role="alert" th:text="${warningMessage}" th:if="${warningMessage != null}"></div>
+        <div class="alert alert-danger" role="alert" th:text="${errorMessage}" th:if="${errorMessage != null}"></div>
+
+
         <!--Data verification -->
         <div class="row">
             <div class="col-md-8">
                 <div class="panel panel-default">
                     <div class="panel-heading">Verify</div>
                     <div class="panel-body">
-                        <form class="form-horizontal" role="form">
+                        <form class="form-horizontal" role="form" method="post" action="/muchadmin/Verify">
                             <div class="row">
                                 <label class="col-md-3 control-label">Verify data</label>
                                 <div class="col-md-9">
                                     <button type="submit" class="btn btn-default">Verify</button>
                                 </div>
                             </div>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         </form>
                     </div>
                 </div>
@@ -32,11 +39,11 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Stimhack</div>
                     <div class="panel-body">
-                        <form class="form-horizontal" role="form">
+                        <form class="form-horizontal" role="form" method="post" action="/muchadmin/Stimhack/AddTournament">
                             <div class="row form-group">
                                 <label class="col-md-3 control-label">Add single Stimhack tournament:</label>
                                 <div class="col-md-9">
-                                    <input class="form-control" type="text" />
+                                    <input class="form-control" type="text" name="url" placeholder="URL"/>
                                 </div>
                             </div>
                             <div class="row">
@@ -44,12 +51,13 @@
                                     <button type="submit" class="btn btn-default">Import</button>
                                 </div>
                             </div>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         </form>
-                        <form class="form-horizontal top-buffer" role="form">
+                        <form class="form-horizontal top-buffer" role="form" method="post" action="/muchadmin/Stimhack/AddDataPack">
                             <div class="row form-group">
                                 <label class="col-md-3 control-label">Scan Stimhack for datapack:</label>
                                 <div class="col-md-9">
-                                    <input class="form-control" type="text" />
+                                    <input class="form-control" type="text" name="datapack" placeholder="data pack name"/>
                                 </div>
                             </div>
                             <div class="row">
@@ -57,6 +65,7 @@
                                     <button type="submit" class="btn btn-default">Import</button>
                                 </div>
                             </div>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         </form>
                     </div>
                 </div>
@@ -65,9 +74,10 @@
                 <div class="panel panel-info">
                     <div class="panel-heading">Stimhack</div>
                     <div class="panel-body">
-                        <p>Last update date:</p>
-                        <p>Tournaments:</p>
-                        <p>Decks:</p>
+                        <p>Last update date: <span th:text="${lastStimhackTournament}"></span></p>
+                        <p>Tournaments: <span th:text="${countStimhackTournaments}"></span></p>
+                        <p>Decks: <span th:text="${countStimhackDecks}"></span></p>
+                        <p>Standings: <span th:text="${countStimhackStandings}"></span></p>
                     </div>
                 </div>
             </div>
@@ -91,6 +101,7 @@
                                     <button type="submit" class="btn btn-default">Import</button>
                                 </div>
                             </div>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         </form>
                         <form class="form-horizontal top-buffer" role="form">
                             <div class="row form-group">
@@ -104,6 +115,7 @@
                                     <button type="submit" class="btn btn-default">Import</button>
                                 </div>
                             </div>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         </form>
                         <form class="form-horizontal top-buffer" role="form">
                             <div class="row form-group">
@@ -122,6 +134,7 @@
                                     <button type="submit" class="btn btn-default">Import</button>
                                 </div>
                             </div>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         </form>
                     </div>
                 </div>
@@ -130,10 +143,10 @@
                 <div class="panel panel-info">
                     <div class="panel-heading">Acoo</div>
                     <div class="panel-body">
-                        <p>Last update date:</p>
-                        <p>Tournaments:</p>
-                        <p>Decks:</p>
-                        <p>Standings:</p>
+                        <p>Last update date: <span th:text="${lastAcooTournament}"></span></p>
+                        <p>Tournaments: <span th:text="${countAcooTournaments}"></span></p>
+                        <p>Decks: <span th:text="${countAcooDecks}"></span></p>
+                        <p>Standings: <span th:text="${countAcooStandings}"></span></p>
                     </div>
                 </div>
             </div>
@@ -152,6 +165,7 @@
                                     <button type="submit" class="btn btn-default">Load</button>
                                 </div>
                             </div>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         </form>
                         <form class="form-horizontal top-buffer" role="form">
                             <div class="row form-group">
@@ -165,6 +179,7 @@
                                     <button type="submit" class="btn btn-default">Import</button>
                                 </div>
                             </div>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         </form>
                     </div>
                 </div>
@@ -173,9 +188,9 @@
                 <div class="panel panel-info">
                     <div class="panel-heading">NetrunnerDB</div>
                     <div class="panel-body">
-                        <p>Cards:</p>
-                        <p>Packs:</p>
-                        <p>Decks:</p>
+                        <p>Cards: <span th:text="${countCards}"></span></p>
+                        <p>Packs: <span th:text="${countCardPacks}"></span></p>
+                        <p>Decks: <span th:text="${countNetrunnerDBDecks}"></span></p>
                     </div>
                 </div>
             </div>
@@ -187,21 +202,23 @@
                 <div class="panel panel-danger">
                     <div class="panel-heading">Database delete</div>
                     <div class="panel-body">
-                        <form class="form-horizontal" role="form">
+                        <form class="form-horizontal" role="form" method="post" action="/muchadmin/PurgeAll" onSubmit="if(!confirm('ARE YOU SURE?')){return false;}">
                             <div class="row">
                                 <label class="col-md-3 control-label">Purge all data (with statistics)</label>
                                 <div class="col-md-9">
                                     <button type="submit" class="btn btn-default">Purge</button>
                                 </div>
                             </div>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         </form>
-                        <form class="form-horizontal top-buffer" role="form">
+                        <form class="form-horizontal top-buffer" role="form" method="post" action="/muchadmin/PurgeStat">
                             <div class="row">
                                 <label class="col-md-3 control-label">Purge statistical data</label>
                                 <div class="col-md-9">
                                     <button type="submit" class="btn btn-default">Purge</button>
                                 </div>
                             </div>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         </form>
                     </div>
                 </div>
@@ -210,10 +227,10 @@
                 <div class="panel panel-info">
                     <div class="panel-heading">Database</div>
                     <div class="panel-body">
-                        <p>Tournaments:</p>
-                        <p>Decks:</p>
-                        <p>Standings:</p>
-                        <p>Deck-card relations:</p>
+                        <p>Tournaments: <span th:text="${countTournaments}"></span></p>
+                        <p>Decks: <span th:text="${countDecks}"></span></p>
+                        <p>Standings: <span th:text="${countStandings}"></span></p>
+                        <p>Deck-card relations: <span th:text="${countDeckHasCards}"></span></p>
                     </div>
                 </div>
             </div>
@@ -224,32 +241,32 @@
                     <div class="panel-heading">Statistics</div>
                     <div class="panel-body">
                         <p>
-                            DPStatistics:<br />
-                            CountDeckStands:
+                            DPStatistics: <span th:text="${countDPStatistics}"></span><br />
+                            CountDeckStands: <span th:text="${countCountDeckStands}"></span>
                         </p>
                         <p>
-                            IdentityMDS:<br />
-                            MDSEntry:
+                            IdentityMDS: <span th:text="${countIdentityMDS}"></span><br />
+                            MDSEntry: <span th:text="${countMDSEntry}"></span>
                         </p>
                         <p>
-                            CardPoolStats:<br />
-                            CardPool:
+                            CardPoolStats: <span th:text="${countCardPoolStats}"></span><br />
+                            CardPool: <span th:text="${countCardPool}"></span>
                         </p>
                         <p>
-                            DeckInfos:<br />
-                            DeckInfo:
+                            DeckInfos: <span th:text="${countDeckInfos}"></span><br />
+                            DeckInfo: <span th:text="${countDeckInfo}"></span>
                         </p>
                         <p>
-                            DPIdentities:<br />
-                            DPIdentity:
+                            DPIdentities: <span th:text="${countDPIdentities}"></span><br />
+                            DPIdentity: <span th:text="${countDPIdentity}"></span>
                         </p>
                         <p>
-                            CardUsageStat:<br />
-                            CardUsage:
+                            CardUsageStat: <span th:text="${countCardUsageStat}"></span><br />
+                            CardUsage: <span th:text="${countCardUsage}"></span>
                         </p>
                         <p>
-                            IdentityAverage:<br />
-                            CardAverage:
+                            IdentityAverage: <span th:text="${countIdentityAverage}"></span><br />
+                            CardAverage: <span th:text="${countCardAverage}"></span>
                         </p>
                     </div>
                 </div>
