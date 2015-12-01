@@ -346,7 +346,7 @@ public class Operations {
                 decks2.add(deck);   // stimhack
             } else {
                 Standing standing = standingRepository.findByDeckUrl(deck.getUrl());
-                if (standing.getRank() == 1) {
+                if ((standing != null) && (standing.getRank() == 1)) {
                     decks3.add(deck);   // acoo
                 }
             }
