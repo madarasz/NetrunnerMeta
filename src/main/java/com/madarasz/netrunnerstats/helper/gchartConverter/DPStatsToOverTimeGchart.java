@@ -1,14 +1,12 @@
-package com.madarasz.netrunnerstats.springMVC.gchartConverter;
+package com.madarasz.netrunnerstats.helper.gchartConverter;
 
 import com.madarasz.netrunnerstats.Statistics;
-import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.stats.CardPoolStats;
-import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CountDeckStands;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
-import com.madarasz.netrunnerstats.springMVC.gchart.*;
+import com.madarasz.netrunnerstats.helper.gchart.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

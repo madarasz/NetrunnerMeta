@@ -1,11 +1,11 @@
-package com.madarasz.netrunnerstats.springMVC.gchartConverter;
+package com.madarasz.netrunnerstats.helper.gchartConverter;
 
 import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
 import com.madarasz.netrunnerstats.database.DOs.stats.IdentityMDS;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.MDSEntry;
 import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
-import com.madarasz.netrunnerstats.springMVC.gchart.*;
+import com.madarasz.netrunnerstats.helper.gchart.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

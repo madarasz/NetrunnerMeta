@@ -1,4 +1,4 @@
-package com.madarasz.netrunnerstats.springMVC.gchartConverter;
+package com.madarasz.netrunnerstats.helper.gchartConverter;
 
 import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CountDeckStands;

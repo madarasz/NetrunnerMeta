@@ -2,8 +2,8 @@ package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
-import com.madarasz.netrunnerstats.springMVC.gchart.DataTable;
-import com.madarasz.netrunnerstats.springMVC.gchartConverter.DPStatsToOverTimeGchart;
+import com.madarasz.netrunnerstats.helper.gchart.DataTable;
+import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToOverTimeGchart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

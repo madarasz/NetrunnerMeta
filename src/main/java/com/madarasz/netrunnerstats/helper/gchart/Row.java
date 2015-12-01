@@ -1,4 +1,4 @@
-package com.madarasz.netrunnerstats.springMVC.gchart;
+package com.madarasz.netrunnerstats.helper.gchart;
 
 import java.util.List;
 
