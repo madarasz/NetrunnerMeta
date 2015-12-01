@@ -65,7 +65,7 @@ public class Operations {
         // troublemaker nodes
         template.query("MATCH ()-[h:HAS_CARD]->() DELETE h", emptyparams);
         template.query("MATCH (n:CountDeckStands) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
-        logDBCount();
+//        logDBCount();
     }
 
     /**
@@ -380,6 +380,26 @@ public class Operations {
         template.query("MATCH (n:CountDeckStands) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         template.query("MATCH (n:CardUsage) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         logDBStatCount();
+    }
+
+    /**
+     * Deletes deck with URL
+     * @param url deck URL
+     */
+    public void deleteDeck(String url) {
+        Map<String, Object> emptyparams = new HashMap<>();
+        template.query(String.format("MATCH (d:Deck {url: \"%s\"}) OPTIONAL MATCH (d)-[r]-() DELETE d,r", url), emptyparams);
+    }
+
+    /**
+     * Deletes tournament and associated decks and standings with tournament URL
+     * @param url tounament URL
+     */
+    public void deleteTournament(String url) {
+        Map<String, Object> emptyparams = new HashMap<>();
+        template.query(String.format(
+                "MATCH (t:Tournament {url: \"%s\"})<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_DECK]->(d:Deck) " +
+                        "OPTIONAL MATCH (t)-[r1]-(), (s)-[r2]-(), (d)-[r3]-() DELETE t,s,d,r1,r2,r3", url), emptyparams);
     }
 
     /**

@@ -160,7 +160,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Netrunner DB</div>
                     <div class="panel-body">
-                        <form class="form-horizontal" role="form">
+                        <form class="form-horizontal" role="form" method="post" action="/muchadmin/NetrunnerDB/LoadDB">
                             <div class="row">
                                 <label class="col-md-3 control-label">Load card, pack info</label>
                                 <div class="col-md-9">
@@ -169,11 +169,11 @@
                             </div>
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         </form>
-                        <form class="form-horizontal top-buffer" role="form">
+                        <form class="form-horizontal top-buffer" role="form" method="post" action="/muchadmin/NetrunnerDB/LoadDeck">
                             <div class="row form-group">
                                 <label class="col-md-3 control-label">Add deck:</label>
                                 <div class="col-md-9">
-                                    <input class="form-control" type="text" />
+                                    <input class="form-control" type="text" name="deckid" placeholder="Deck ID"/>
                                 </div>
                             </div>
                             <div class="row">
@@ -204,11 +204,11 @@
                 <div class="panel panel-danger">
                     <div class="panel-heading">Database delete</div>
                     <div class="panel-body">
-                        <form class="form-horizontal" role="form">
+                        <form class="form-horizontal" role="form" method="post" action="/muchadmin/Delete/Deck">
                             <div class="row form-group">
                                 <label class="col-md-3 control-label">Delete deck:</label>
                                 <div class="col-md-9">
-                                    <input class="form-control" type="text" />
+                                    <input class="form-control" type="text" name="url" placeholder="Deck URL"/>
                                 </div>
                             </div>
                             <div class="row">
@@ -218,11 +218,11 @@
                             </div>
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         </form>
-                        <form class="form-horizontal top-buffer" role="form">
+                        <form class="form-horizontal top-buffer" role="form" method="post" action="/muchadmin/Delete/Tournament">
                             <div class="row form-group">
                                 <label class="col-md-3 control-label">Delete tournament:</label>
                                 <div class="col-md-9">
-                                    <input class="form-control" type="text" />
+                                    <input class="form-control" type="text" name="url" placeholder="Tournament URL"/>
                                 </div>
                             </div>
                             <div class="row">

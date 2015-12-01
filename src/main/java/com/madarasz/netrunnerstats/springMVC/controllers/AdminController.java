@@ -2,6 +2,7 @@ package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.Operations;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
+import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import com.madarasz.netrunnerstats.database.DOs.*;
 import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.database.DOs.stats.*;
@@ -9,6 +10,8 @@ import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
 import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
 import com.madarasz.netrunnerstats.database.DRs.StandingRepository;
 import com.madarasz.netrunnerstats.database.DRs.TournamentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +32,8 @@ import java.util.Map;
 @Controller
 public class AdminController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
+
     @Autowired
     Neo4jOperations template;
 
@@ -46,6 +51,9 @@ public class AdminController {
 
     @Autowired
     AcooBroker acooBroker;
+
+    @Autowired
+    NetrunnerDBBroker netrunnerDBBroker;
 
     private final DateFormat df = new SimpleDateFormat("yyyy.MM.dd.");
 
@@ -126,6 +134,7 @@ public class AdminController {
                 redirectAttributes.addFlashAttribute("successMessage",
                         String.format("Tournament is added to DB: %s", url));
             } catch (Exception ex) {
+                logger.error("logged exception", ex);
                 redirectAttributes.addFlashAttribute("errorMessage",
                         String.format("Error loading tournament with url: %s", url));
             }
@@ -152,6 +161,7 @@ public class AdminController {
                         String.format("No new tournaments are added to DB for datapack: %s", datapack));
             }
         } catch (Exception ex) {
+            logger.error("logged exception", ex);
             redirectAttributes.addFlashAttribute("errorMessage",
                     String.format("Error loading Stimhack tournaments with datapack: %s", datapack));
         }
@@ -174,6 +184,7 @@ public class AdminController {
                         String.format("Tournament is already in DB with Acoo ID: %d", id));
             }
         } catch (Exception ex) {
+            logger.error("logged exception", ex);
             redirectAttributes.addFlashAttribute("errorMessage",
                     String.format("Error loading tournament with ID: %s", deckid));
             return "redirect:/muchadmin";
@@ -202,6 +213,7 @@ public class AdminController {
                         String.format("No new data was added with Acoo tournament ID: %d", id));
             }
         } catch (Exception ex) {
+            logger.error("logged exception", ex);
             redirectAttributes.addFlashAttribute("errorMessage",
                     String.format("Error loading tournament with ID: %s", tournamentid));
             return "redirect:/muchadmin";
@@ -230,9 +242,110 @@ public class AdminController {
                         String.format("No new data was added with Acoo URL: %s", url));
             }
         } catch (Exception ex) {
+            logger.error("logged exception", ex);
             redirectAttributes.addFlashAttribute("errorMessage",
                     String.format("Error loading tournament with URL: %s", url));
             return "redirect:/muchadmin";
+        }
+        return "redirect:/muchadmin";
+    }
+
+    // load Netrunner DB cards and cardpacks
+    @PreAuthorize("hasRole(@roles.ADMIN)")
+    @RequestMapping(value="/muchadmin/NetrunnerDB/LoadDB", method = RequestMethod.POST)
+    public String loadNetrunnerDB(final RedirectAttributes redirectAttributes) {
+        try {
+            long cardcount = template.count(Card.class);
+            long cardpackcount = template.count(CardPack.class);
+            operations.loadNetrunnerDB();
+            cardcount = template.count(Card.class) - cardcount;
+            cardpackcount = template.count(CardPack.class) - cardpackcount;
+            if (cardcount + cardpackcount > 0) {
+                redirectAttributes.addFlashAttribute("successMessage",
+                        String.format("NetrunnerDB refreshed - new cards: %d, new cardpacks: %d",
+                                cardcount, cardpackcount));
+            } else {
+                redirectAttributes.addFlashAttribute("warningMessage", "No new data was added from NetrunnerDB.");
+            }
+        } catch (Exception ex) {
+            logger.error("logged exception", ex);
+            redirectAttributes.addFlashAttribute("errorMessage", "Error loading NetrunnerDB");
+            return "redirect:/muchadmin";
+        }
+        return "redirect:/muchadmin";
+    }
+
+    // add NetrunnerDB deck
+    @PreAuthorize("hasRole(@roles.ADMIN)")
+    @RequestMapping(value="/muchadmin/NetrunnerDB/LoadDeck", method = RequestMethod.POST)
+    public String addNetrunnerDBDeck(String deckid, final RedirectAttributes redirectAttributes) {
+        try {
+            int id = Integer.parseInt(deckid);
+            Deck exists = deckRepository.findByUrl(netrunnerDBBroker.deckUrlFromId(id));
+            if (exists == null) {
+                operations.loadNetrunnerDbDeck(id);
+                redirectAttributes.addFlashAttribute("successMessage",
+                        String.format("Tournament is added to DB with NetrunnerDB ID: %d", id));
+            } else {
+                redirectAttributes.addFlashAttribute("warningMessage",
+                        String.format("Tournament is already in DB with NetrunnerDB ID: %d", id));
+            }
+        } catch (Exception ex) {
+            logger.error("logged exception", ex);
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    String.format("Error loading tournament with NetrunnerDB ID: %s", deckid));
+            return "redirect:/muchadmin";
+        }
+        return "redirect:/muchadmin";
+    }
+
+    // delete deck
+    @PreAuthorize("hasRole(@roles.ADMIN)")
+    @RequestMapping(value="/muchadmin/Delete/Deck", method = RequestMethod.POST)
+    public String deleteDeck(String url, final RedirectAttributes redirectAttributes) {
+        Deck exists = deckRepository.findByUrl(url);
+        if (exists != null) {
+            try {
+                operations.deleteDeck(url);
+                redirectAttributes.addFlashAttribute("successMessage",
+                        String.format("Deck deleted with URL: %s", url));
+            } catch (Exception ex) {
+                logger.error("logged exception", ex);
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        String.format("Error deleting deck with url: %s", url));
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("warningMessage",
+                    String.format("No deck with URL: %s", url));
+        }
+        return "redirect:/muchadmin";
+    }
+
+    // delete deck
+    @PreAuthorize("hasRole(@roles.ADMIN)")
+    @RequestMapping(value="/muchadmin/Delete/Tournament", method = RequestMethod.POST)
+    public String deleteTournament(String url, final RedirectAttributes redirectAttributes) {
+        Tournament exists = tournamentRepository.findByUrl(url);
+        if (exists != null) {
+            try {
+                long tournamentcount = template.count(Tournament.class);
+                long deckcount = template.count(Deck.class);
+                long standingcount = template.count(Standing.class);
+                operations.deleteTournament(url);
+                tournamentcount -= template.count(Tournament.class);
+                deckcount -= template.count(Deck.class);
+                standingcount -= template.count(Standing.class);
+                redirectAttributes.addFlashAttribute("successMessage",
+                        String.format("Tournament deleted with URL: %s - deleted tournaments: %d, decks: %d, standings: %d",
+                                url, tournamentcount, deckcount, standingcount));
+            } catch (Exception ex) {
+                logger.error("logged exception", ex);
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        String.format("Error deleting tournament with url: %s", url));
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("warningMessage",
+                    String.format("No tournament with URL: %s", url));
         }
         return "redirect:/muchadmin";
     }
