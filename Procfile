@@ -1,1 +1,1 @@
-web: sh target/bin/webapp
+web: java -Dserver.port=$PORT -jar  target/com.madarasz.netrunnerstats-1.0-SNAPSHOT.jar
