@@ -6,7 +6,7 @@
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
         <div class="page-header">
-            <h3><a th:href="@{/DPStats/__${DPname}__}"><span th:text="${DPname}"></span></a> > </h3>
+            <h3><a th:href="@{/DPStats/__${DPname}__#decks}"><span th:text="${DPname}"></span></a> > </h3>
             <h4><span th:text="${identity}"></span> - <span id="deck_number"></span> decks</h4>
         </div>
 
