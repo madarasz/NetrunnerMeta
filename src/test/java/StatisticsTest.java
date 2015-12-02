@@ -29,7 +29,6 @@ import java.util.List;
 /**
  * Created by madarasz on 11/19/15.
  * Unit tests for testing statistical functions and Spring MVC controllers.
- * TODO: should do something with mocking.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)

@@ -303,7 +303,6 @@ public class ImportDataTest {
         long tournamentnum = template.count(Tournament.class);
         long standingsnum = template.count(Standing.class);
 
-//        operations.loadStimhackPackTournaments("The Source"); TODO
         operations.loadStimhackPackTournaments("The Universe of Tomorrow");
         operations.logDBCount();
 
@@ -315,16 +314,6 @@ public class ImportDataTest {
         Assert.assertTrue("Not enough tournaments after tournament page import", tournamentnum2 - tournamentnum >= 23);
         Assert.assertTrue("Not enough standings after tournament page import",
                 standingsnum2 - standingsnum == decknum2 - decknum);
-    }
-
-    @Test
-    @Ignore // TODO: make it work for ALL Stimhack tournaments
-    public void loadALLStimhackTournaments() {
-        operations.loadStimhackPackTournaments("");
-        List<Deck> decks = deckRepository.getAllDecks();
-        for (Deck deck : decks) {
-            Assert.assertTrue("Imported deck not valid: " + deck.getUrl(), deckValidator.isValidDeck(deck));
-        }
     }
 
     @Test

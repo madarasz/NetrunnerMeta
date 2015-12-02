@@ -11,7 +11,6 @@ import java.util.List;
  * Repository for deck nodes
  * Created by madarasz on 10/06/15.
  */
-// TODO: erase unnecessary edge types
 public interface DeckRepository extends GraphRepository<Deck>, RelationshipOperationsRepository<Deck> {
     Deck findByUrl(String url);
 
