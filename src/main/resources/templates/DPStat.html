@@ -38,6 +38,11 @@
                         <div id="chart_div4" class="pie-chart"></div>
                     </div>
                 </div>
+                <div class="row top-buffer">
+                    <div class="col-md-6">
+                        <div th:replace="fragments/help :: dptop"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- all tab -->
@@ -60,6 +65,11 @@
                     <div class="col-md-6">
                         <h4>All corp identities</h4>
                         <div id="chart_div8" class="pie-chart"></div>
+                    </div>
+                </div>
+                <div class="row top-buffer">
+                    <div class="col-md-6">
+                        <div th:replace="fragments/help :: dpall"></div>
                     </div>
                 </div>
             </div>
@@ -86,6 +96,11 @@
                         <div id="chart_div12" class="pie-chart"></div>
                     </div>
                 </div>
+                <div class="row top-buffer">
+                    <div class="col-md-6">
+                        <div th:replace="fragments/help :: dpcompare"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- decks tab -->
@@ -98,6 +113,11 @@
                     <div class="col-md-6">
                         <h4>Corp decks</h4>
                         <div id="text_div2"></div>
+                    </div>
+                </div>
+                <div class="row top-buffer">
+                    <div class="col-md-6">
+                        <div th:replace="fragments/help :: dpdecks"></div>
                     </div>
                 </div>
             </div>
@@ -132,6 +152,7 @@
                         </table>
                     </div>
                 </div>
+                <hr/>
                 <div class="row">
                     <div class="col-md-6">
                         <h4>20 most used runner cards in decks with this cardpool</h4>
@@ -160,23 +181,14 @@
                         </table>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="row top-buffer">
-            <div class="col-md-6">
-                <button class="btn btn-default btn-sm" data-toggle="collapse" data-target="#infopanel">Help</button>
-                <div class="panel panel-default collapse top-buffer" id="infopanel">
-                    <div class="panel-heading">Datapack / expansion information</div>
-                    <div class="panel-body">
-                        <p>This section gives you information on the factions and identities being played.
-                        The information is filtered for tournaments with deck pool up to a particular data pack / expansion.</p>
-                        <p>Top decks are considered to be the decks played by the top 30% ranking players on each tournament.
-                        In the decks sections you can check out similarities of decks for each identity.</p>
+                <div class="row top-buffer">
+                    <div class="col-md-6">
+                        <div th:replace="fragments/help :: dpcards"></div>
                     </div>
                 </div>
             </div>
         </div>
+
         <div th:replace="fragments/footer :: footer"></div>
     </div>
     <div th:replace="fragments/head :: scripts"></div>
@@ -203,11 +215,8 @@
         $('#runnertable2').addClass('spinner');
         $('#corptable2').addClass('spinner');
 
-
-        // Load the Visualization API and the piechart package.
         google.load('visualization', '1.0', {'packages':['corechart']});
 
-        // Set a callback to run when the Google Visualization API is loaded.
         google.setOnLoadCallback(drawCharts);
 
         function drawCharts() {
@@ -237,9 +246,6 @@
             loadCardPoolTable(basecardtable + "Cardpool/corp/" + dpname, "#corptable2");
         }
 
-        // Callback that creates and populates a data table,
-        // instantiates the pie chart, passes in the data and
-        // draws it.
         function drawPieChart(urlvalue, elementid) {
 
             var slices = new Array;
@@ -256,10 +262,8 @@
                 }
             }).responseText;
 
-            // Create our data table out of JSON data loaded from server.
             var data = new google.visualization.DataTable(jsonData);
 
-            // Set chart options
             var options = {
                 'width':555,
                 'height':300,
@@ -268,7 +272,6 @@
                 'slices': slices
             };
 
-            // Instantiate and draw our chart, passing in some options.
             var chart = new google.visualization.PieChart(document.getElementById(elementid));
             chart.draw(data, options);
         }
@@ -281,7 +284,6 @@
                 async: false
             }).responseText;
 
-            // Create our data table out of JSON data loaded from server.
             var data = new google.visualization.DataTable(jsonData);
             var haxis;
             if ($.parseJSON(jsonData).rows.length > 6) {
@@ -290,7 +292,6 @@
                 haxis = 'out';
             }
 
-            // Set chart options
             var options = {
                 'width':555,
                 'height':300,
@@ -298,7 +299,6 @@
                 'hAxis': { textPosition: haxis }
             };
 
-            // Instantiate and draw our chart, passing in some options.
             var chart = new google.visualization.ColumnChart(document.getElementById(elementid));
             chart.draw(data, options);
             $('#'+elementid).removeClass('spinner');

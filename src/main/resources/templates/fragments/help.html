@@ -4,12 +4,14 @@
 </head>
 <body>
 
+    <!--Cardpool-->
     <div th:fragment="cardpool">
         <button class="btn btn-default btn-sm" data-toggle="collapse" data-target="#infopanel">Help</button>
         <div class="panel panel-default collapse top-buffer" id="infopanel">
             <div class="panel-heading">Cardpool</div>
             <div class="panel-body">
-                <p>This section gives you information on which cardpools we have information on.</p>
+                <p>This section tells on which <strong>cardpools</strong> we have information on.<br/>
+                    (Tournaments with cards being legal up to a certain card pack)</p>
                 <ul>
                     <li><strong>Tournaments:</strong> the number of tournaments we have information on.</li>
                     <li><strong>Decks:</strong> the number of decks we have information on.</li>
@@ -17,27 +19,101 @@
                         This consists of the identity information about a certain rank (i.e third place
                         played Andromeda at the tournament).</li>
                 </ul>
-                <p>We gather information from <a href="http://acoo.net" target="_blank">Acoo</a> and
-                    <a href="http://stimhack.com" target="_blank">Stimhack</a> in an automated way.</p>
+                <p>Charts show the popularity of factions among the <strong>top decks</strong> over time.
+                Time is represented by legal cardpool.</p>
+                <p><strong>Top decks</strong> are considered to be the decks played by the top 30% ranking players on each tournament.</p>
             </div>
         </div>
     </div>
 
+    <!--MDS-->
     <div th:fragment="mds">
-        <button class="btn btn-default btn-sm" data-toggle="collapse" data-target="#infopanel">Help</button>
-        <div class="panel panel-default collapse top-buffer" id="infopanel">
+        <button class="btn btn-default btn-sm" data-toggle="collapse" data-target="#infopanel1">Help</button>
+        <div class="panel panel-default collapse top-buffer" id="infopanel1">
             <div class="panel-heading">Deck similarity / Average card usage</div>
             <div class="panel-body">
                 <p>The chart gives you information on <strong>similarity of decks</strong> being played with a
-                    certain identity. The information is also filtered for tournaments with deck pool up to a particular
+                    certain identity. The information is also filtered for tournaments with cardpool up to a particular
                     data pack / expansion.</p>
-                <p>Similar decks are placed close to each other on the chart, decks with a lot of differencies
+                <p>Similar decks are placed close to each other on the chart. Decks with a lot of differencies
                     are spread out far apart.</p>
                 <p>Click a point on the chart and select <em>See decklisk</em> to get the list of cards of the deck.</p>
                 <p><span class="glyphicon glyphicon-one-fine-star"></span> top deck<br />
                     <span class="glyphicon glyphicon-one-fine-dot"></span> non-top deck</p>
-                <p>Top decks are considered to be the decks played by the top 30% ranking players on each tournament.</p>
-                <p><strong>Average card usage</strong> gives you information on which cards are being played.</p>
+                <p><strong>Top decks</strong> are considered to be the decks played by the top 30% ranking players on each tournament.</p>
+                <p><strong>Average card usage</strong> gives you information on which cards are being played
+                    with this identity.</p>
+                <ul>
+                    <li><strong>in decks:</strong> what percentage of all decks are using the card</li>
+                    <li><strong>average used:</strong> average number of the card being used counting on all decks</li>
+                    <li><strong>average used if in deck:</strong> average number of the cards being used,
+                        counting only decks having at least one of the card in question.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--Datapack top-->
+    <div th:fragment="dptop">
+        <button class="btn btn-default btn-sm" data-toggle="collapse" data-target="#infopanel2">Help</button>
+        <div class="panel panel-default collapse top-buffer" id="infopanel2">
+            <div class="panel-heading">Factions, identities - top decks</div>
+            <div class="panel-body">
+                <p>This section gives you information on the factions and identities being played.</p>
+                <p><strong>Top decks</strong> are considered to be the decks played by the top 30% ranking players on each tournament.</p>
+                <p>The information is filtered for tournaments with cardpool up to a particular data pack / expansion.</p>
+            </div>
+        </div>
+    </div>
+
+    <!--Datapack all-->
+    <div th:fragment="dpall">
+        <button class="btn btn-default btn-sm" data-toggle="collapse" data-target="#infopanel3">Help</button>
+        <div class="panel panel-default collapse top-buffer" id="infopanel3">
+            <div class="panel-heading">Factions, identities - all decks</div>
+            <div class="panel-body">
+                <p>This section gives you information on the factions and identities being played.</p>
+                <p>The information is filtered for tournaments with cardpool up to a particular data pack / expansion.</p>
+            </div>
+        </div>
+    </div>
+
+    <!--Datapack compare-->
+    <div th:fragment="dpcompare">
+        <button class="btn btn-default btn-sm" data-toggle="collapse" data-target="#infopanel4">Help</button>
+        <div class="panel panel-default collapse top-buffer" id="infopanel4">
+            <div class="panel-heading">Factions, identities - compare top and all</div>
+            <div class="panel-body">
+                <p>This section compares popularity of factions and identities between top decks and all decks.</p>
+                <p><strong>Top decks</strong> are considered to be the decks played by the top 30% ranking players on each tournament.</p>
+                <p>The information is filtered for tournaments with cardpool up to a particular data pack / expansion.</p>
+            </div>
+        </div>
+    </div>
+
+    <!--Datapack decks-->
+    <div th:fragment="dpdecks">
+        <button class="btn btn-default btn-sm" data-toggle="collapse" data-target="#infopanel5">Help</button>
+        <div class="panel panel-default collapse top-buffer" id="infopanel5">
+            <div class="panel-heading">Identities, decks</div>
+            <div class="panel-body">
+                <p>This section gives you a list of identities and the number of their decks being played.</p>
+                <p>Click on an identity to see analysis of decks with that identity.</p>
+                <p>The information is filtered for tournaments with cardpool up to a particular data pack / expansion.</p>
+            </div>
+        </div>
+    </div>
+
+    <!--Datapack cards-->
+    <div th:fragment="dpcards">
+        <button class="btn btn-default btn-sm" data-toggle="collapse" data-target="#infopanel6">Help</button>
+        <div class="panel panel-default collapse top-buffer" id="infopanel6">
+            <div class="panel-heading">Popular cards</div>
+            <div class="panel-body">
+                <p>This section gives you information on cards.</p>
+                <p><strong>Most used cards from pack</strong> lists cards from the card pack.</p>
+                <p><strong>Most used cards with this cardpool</strong> lists cards used by all decks with cardpool
+                    legality up to the card pack.</p>
             </div>
         </div>
     </div>

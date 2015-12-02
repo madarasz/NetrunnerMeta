@@ -74,10 +74,8 @@
         $('#average-table').addClass('spinner');
         $('#average-table2').addClass('spinner');
 
-        // Load the Visualization API and the piechart package.
         google.load('visualization', '1.0', {'packages':['corechart']});
 
-        // Set a callback to run when the Google Visualization API is loaded.
         google.setOnLoadCallback(drawCharts);
 
         function drawCharts() {
@@ -86,15 +84,12 @@
             var tooltipurl = "/JSON/Deck/" + filter;
             var averageurl1 = "/JSON/Average/" + filter + "/1";
             var averageurl2 = "/JSON/Average/" + filter + "/2";
-            drawChart(url, tooltipurl, [[${identity}]], 'chart_div1');
+            drawChart(url, tooltipurl, 'chart_div1');
             fillTable(averageurl1, '#average-table');
             fillTable(averageurl2, '#average-table2');
         }
 
-        // Callback that creates and populates a data table,
-        // instantiates the pie chart, passes in the data and
-        // draws it.
-        function drawChart(urlvalue, urltooltip, title, elementid) {
+        function drawChart(urlvalue, urltooltip, elementid) {
 
             var jsonDataChart = $.ajax({
                 url: urlvalue,
@@ -111,10 +106,8 @@
                 async: false
             }).responseText;
 
-            // Create our data table out of JSON data loaded from server.
             var data = new google.visualization.DataTable(jsonDataChart);
 
-            // Set chart options
             var options = {
                 'legend': 'none',
                 'width': 555,
@@ -126,10 +119,10 @@
                 'tooltip': { trigger: 'selection' }
             };
 
-            // Instantiate and draw our chart, passing in some options.
             var chart = new google.visualization.ScatterChart(document.getElementById(elementid));
 
             var tooltips = $.parseJSON(jsonDataToolTip);
+
             // set tooltip
             chart.setAction({
                 id: 'sample',
@@ -165,7 +158,6 @@
                             }).append($('<strong>', {
                                 text: typecode
                             }))))
-//                        })), $('<td>'), $('<td>'), $('<td>'), $('<td>')))
                         }
                         $(elementid).append($('<tr>').append($('<td>', {
                             text: element.cardtitle
