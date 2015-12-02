@@ -8,6 +8,8 @@
     <artifactId>com.madarasz.netrunnerstats</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <packaging>war</packaging>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -18,6 +20,7 @@
         <java.version>1.8</java.version>
         <slf4j.version>1.7.13</slf4j.version>
         <logback.version>1.1.3</logback.version>
+        <start-class>com.madarasz.netrunnerstats.Application</start-class>
     </properties>
 
     <dependencies>
@@ -67,6 +70,15 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <!--<scope>provided</scope>-->
         </dependency>
 
         <!--logging-->

@@ -5,7 +5,9 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -18,7 +20,9 @@ import org.springframework.data.neo4j.config.Neo4jConfiguration;
  */
 @SpringBootApplication
 @ConfigurationProperties(prefix = "maindb")
-public class Application implements CommandLineRunner {
+public class Application extends SpringBootServletInitializer {
+
+    private static Class<Application> applicationClass = Application.class;
 
     @Configuration
     @EnableNeo4jRepositories(basePackages = "com.madarasz.netrunnerstats")
@@ -42,9 +46,12 @@ public class Application implements CommandLineRunner {
         }
     }
 
-    public void run(String... args) throws Exception {
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(applicationClass);
     }
+
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(applicationClass, args);
     }
 }
