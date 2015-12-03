@@ -113,7 +113,7 @@
                     $.each(data, function (index, element) {
                         $("#cptable").append($('<tr>').append($('<td>').append($('<a>', {
                             text: element.title,
-                            href: "/DPStats/" + encodeURIComponent(element.title)
+                            href: "/DPStats/" + encodeURIComponent(element.title) + "/"
                         })), $('<td>', {
                             text: element.tournamentnum
                         }), $('<td>', {
