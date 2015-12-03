@@ -6,7 +6,7 @@
     <title>Know the Meta</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" th:href="@{/static/apple-touch-icon.png}" />
     <style>
         body {
             padding-top: 50px;
@@ -18,7 +18,7 @@
     <link rel="stylesheet" th:href="@{/static/css/main.css}" />
 </head>
 <body th:fragment="scripts">
-        <script type="text/javascript" th:src="@{/static/jquery-1.11.3.min.js}"></script>
+        <script type="text/javascript" th:src="@{/static/js/jquery-1.11.3.min.js}"></script>
         <script type="text/javascript" th:src="@{/static/js/vendor/bootstrap.min.js}"></script>
         <script type="text/javascript" th:src="@{/static/js/main.js}"></script>
 </body>
