@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -72,7 +71,6 @@ public class AdminController {
 
     // html output
 
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin", method = RequestMethod.GET)
     public String getAdminPage(Map<String, Object> model) {
         // Stimhack count
@@ -116,7 +114,6 @@ public class AdminController {
     // submissions
 
     // verify data
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin/Verify", method = RequestMethod.POST)
     public String verify(Map<String, Object> model) {
         operations.checkDataValidity();
@@ -124,7 +121,6 @@ public class AdminController {
     }
 
     // add stimhack tournament
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin/Stimhack/AddTournament", method = RequestMethod.POST)
     public String addStimhackTournament(String url, final RedirectAttributes redirectAttributes) {
         Tournament exists = tournamentRepository.findByUrl(url);
@@ -146,7 +142,6 @@ public class AdminController {
     }
 
     // add multiple stimhack tournament by datapack
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin/Stimhack/AddDataPack", method = RequestMethod.POST)
     public String addStimhackTournamentsByDP(String datapack, final RedirectAttributes redirectAttributes) {
         try {
@@ -169,7 +164,6 @@ public class AdminController {
     }
 
     // add acoo deck
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin/Acoo/AddDeck", method = RequestMethod.POST)
     public String addAcooDeck(String deckid, final RedirectAttributes redirectAttributes) {
         try {
@@ -193,7 +187,6 @@ public class AdminController {
     }
 
     // add acoo tournament
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin/Acoo/AddTournament", method = RequestMethod.POST)
     public String addAcooTournament(String tournamentid, final RedirectAttributes redirectAttributes) {
         try {
@@ -222,7 +215,6 @@ public class AdminController {
     }
 
     // add acoo tournament from page
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin/Acoo/AddTournaments", method = RequestMethod.POST)
     public String addAcooTournaments(String url, boolean paging, final RedirectAttributes redirectAttributes) {
         try {
@@ -251,7 +243,6 @@ public class AdminController {
     }
 
     // load Netrunner DB cards and cardpacks
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin/NetrunnerDB/LoadDB", method = RequestMethod.POST)
     public String loadNetrunnerDB(final RedirectAttributes redirectAttributes) {
         try {
@@ -276,7 +267,6 @@ public class AdminController {
     }
 
     // add NetrunnerDB deck
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin/NetrunnerDB/LoadDeck", method = RequestMethod.POST)
     public String addNetrunnerDBDeck(String deckid, final RedirectAttributes redirectAttributes) {
         try {
@@ -300,7 +290,6 @@ public class AdminController {
     }
 
     // delete deck
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin/Delete/Deck", method = RequestMethod.POST)
     public String deleteDeck(String url, final RedirectAttributes redirectAttributes) {
         Deck exists = deckRepository.findByUrl(url);
@@ -322,7 +311,6 @@ public class AdminController {
     }
 
     // delete deck
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin/Delete/Tournament", method = RequestMethod.POST)
     public String deleteTournament(String url, final RedirectAttributes redirectAttributes) {
         Tournament exists = tournamentRepository.findByUrl(url);
@@ -351,7 +339,6 @@ public class AdminController {
     }
 
     // reset all data
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin/PurgeAll", method = RequestMethod.POST)
     public String purgeAll(Map<String, Object> model) {
         operations.cleanDB();
@@ -359,7 +346,6 @@ public class AdminController {
     }
 
     // reset statistical data
-    @PreAuthorize("hasRole(@roles.ADMIN)")
     @RequestMapping(value="/muchadmin/PurgeStat", method = RequestMethod.POST)
     public String purgeStats(Map<String, Object> model) {
         operations.resetStats();

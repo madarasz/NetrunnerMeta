@@ -1,6 +1,5 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,7 +25,7 @@ public class SpecialController {
         return "404";
     }
 
-    @RequestMapping(value="/", method = RequestMethod.GET)
+    @RequestMapping(value="/soon", method = RequestMethod.GET)
     public String getSoonPage(Map<String, Object> model) {
         return "Soon";
     }

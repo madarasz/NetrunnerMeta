@@ -3,4 +3,3 @@ target
 *.iml
 netrunner.db
 test.db
-*SecurityConfig.java
