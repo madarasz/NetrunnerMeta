@@ -1,6 +1,7 @@
 package com.madarasz.netrunnerstats.brokers;
 
 import com.madarasz.netrunnerstats.database.DOs.*;
+import com.madarasz.netrunnerstats.database.DRs.AdminDataRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
 import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
@@ -53,6 +54,8 @@ public class AcooBroker {
     @Autowired
     HttpBroker httpBroker;
 
+    @Autowired
+    AdminDataRepository adminDataRepository;
 
     /**
      * Reads Deck information from Acoo. Also adds deck metadata.
@@ -61,6 +64,11 @@ public class AcooBroker {
      */
     public Deck readDeck(int id) {
         String url = deckUrlFromId(id);
+        // check deny urls
+        if (adminDataRepository.getDenyUrls().isIn(url)) {
+            logger.warn(String.format("URL denied: %s", url));
+            return new Deck("denied", "denied", "denied");
+        }
         httpBroker.parseHtml(url);
         Deck resultDeck = parseDeck(httpBroker.linesFromHtml(JSOUP_DECK_CARDS));
 
@@ -252,7 +260,9 @@ public class AcooBroker {
                 // extract deck
                 Elements deckpart = id.parent().select("a");
                 if (deckpart.isEmpty()) {
-                    standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner()));
+                    if (identity != null) {
+                        standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner()));
+                    }
                 } else {
                     hrefparts = deckpart.first().attr("href").split("/");
                     int deckId = Integer.valueOf(hrefparts[2]);
@@ -260,8 +270,10 @@ public class AcooBroker {
                     Deck exists = deckRepository.findByUrl(deckUrlFromId(deckId));
                     if (exists == null) {
                         Deck deck = readDeck(deckId);
-                        logger.info("Saving new deck! - " + deck.toString());
-                        standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner(), deck));
+                        if (!deck.getUrl().equals("denied")) {
+                            logger.info("Saving new deck! - " + deck.toString());
+                            standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner(), deck));
+                        }
                     } else {
                         logger.info("Already added");
                         standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner()));

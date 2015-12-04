@@ -4,9 +4,11 @@ import com.madarasz.netrunnerstats.Operations;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import com.madarasz.netrunnerstats.database.DOs.*;
+import com.madarasz.netrunnerstats.database.DOs.admin.AdminData;
 import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.database.DOs.stats.*;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
+import com.madarasz.netrunnerstats.database.DRs.AdminDataRepository;
 import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
 import com.madarasz.netrunnerstats.database.DRs.StandingRepository;
 import com.madarasz.netrunnerstats.database.DRs.TournamentRepository;
@@ -53,6 +55,9 @@ public class AdminController {
 
     @Autowired
     NetrunnerDBBroker netrunnerDBBroker;
+
+    @Autowired
+    AdminDataRepository adminDataRepository;
 
     private final DateFormat df = new SimpleDateFormat("yyyy.MM.dd.");
 
@@ -107,7 +112,13 @@ public class AdminController {
         model.put("countCardUsage", template.count(CardUsage.class));
         model.put("countIdentityAverage", template.count(IdentityAverage.class));
         model.put("countCardAverage", template.count(CardAverage.class));
+        model.put("countAdminData", template.count(AdminData.class));
 
+        AdminData denyurls = adminDataRepository.getDenyUrls();
+        if (denyurls == null) {
+            denyurls = new AdminData();
+        }
+        model.put("denyurls", denyurls.getData());
         return "Admin";
     }
 
@@ -349,6 +360,14 @@ public class AdminController {
     @RequestMapping(value="/muchadmin/PurgeStat", method = RequestMethod.POST)
     public String purgeStats(Map<String, Object> model) {
         operations.resetStats();
+        return "redirect:/muchadmin";
+    }
+
+    // deny urls
+    @RequestMapping(value="/muchadmin/Update/DenyUrls", method = RequestMethod.POST)
+    public String verify(String urls, Map<String, Object> model) {
+        AdminData newurls = new AdminData("denyUrls", urls);
+        adminDataRepository.save(newurls);
         return "redirect:/muchadmin";
     }
 }
