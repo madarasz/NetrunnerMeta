@@ -124,13 +124,27 @@ public class StatisticsTest {
 
     @Test
     public void mostUsedCardsTest() {
+        operations.loadAcooTournamentDecks(790);
         cardController.getMostUsedCards("Cardpack", "runner", "Old Hollywood");
         cardController.getMostUsedCards("Cardpack", "corp", "Old Hollywood");
         cardController.getMostUsedCards("Cardpool", "runner", "Old Hollywood");
         cardController.getMostUsedCards("Cardpool", "corp", "Old Hollywood");
+        cardController.getMostUsedCards("Cardpack", "runner", "The Universe of Tomorrow");
+        cardController.getMostUsedCards("Cardpack", "corp", "The Universe of Tomorrow");
+        cardController.getMostUsedCards("Cardpool", "runner", "The Universe of Tomorrow");
+        cardController.getMostUsedCards("Cardpool", "corp", "The Universe of Tomorrow");
         // check count
-        Assert.assertEquals("CardUsageStat are not created.", 2, template.count(CardUsageStat.class));
-        Assert.assertEquals("CardUsage are not created.", 49, template.count(CardUsage.class));
+        Assert.assertEquals("CardUsageStat are not created.", 4, template.count(CardUsageStat.class));
+        Assert.assertEquals("CardUsage are not created.", 93, template.count(CardUsage.class));
+        // check values - deck counts
+        Assert.assertEquals("Deck counts incorrect", 2,
+                statistics.getDeckNumberFromCardpoolOnward("The Universe of Tomorrow", "corp", true));
+        Assert.assertEquals("Deck counts incorrect", 5,
+                statistics.getDeckNumberFromCardpoolOnward("The Universe of Tomorrow", "corp", false));
+        Assert.assertEquals("Deck counts incorrect", 6,
+                statistics.getDeckNumberFromCardpoolOnward("Old Hollywood", "corp", true));
+        Assert.assertEquals("Deck counts incorrect", 12,
+                statistics.getDeckNumberFromCardpoolOnward("Old Hollywood", "corp", false));
         // check values
         CardUsageStat pool = cardUsageStatsRepository.findByCardPoolName("Old Hollywood");
         CardUsageStat pack = cardUsageStatsRepository.findByCardPackName("Old Hollywood");
@@ -146,8 +160,8 @@ public class StatisticsTest {
         cardController.getMostUsedCards("Cardpack", "corp", "Old Hollywood");
         cardController.getMostUsedCards("Cardpool", "runner", "Old Hollywood");
         cardController.getMostUsedCards("Cardpool", "corp", "Old Hollywood");
-        Assert.assertEquals("CardUsageStat is duplicated.", 2, template.count(CardUsageStat.class));
-        Assert.assertEquals("CardUsage is duplicated.", 49, template.count(CardUsage.class));
+        Assert.assertEquals("CardUsageStat is duplicated.", 4, template.count(CardUsageStat.class));
+        Assert.assertEquals("CardUsage is duplicated.", 93, template.count(CardUsage.class));
     }
 
     @Test

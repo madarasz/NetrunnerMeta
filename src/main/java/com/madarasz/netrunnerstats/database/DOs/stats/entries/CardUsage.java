@@ -17,6 +17,8 @@ public class CardUsage {
     private String cardpacktitle;
     private int indecks;
     private int intopdecks;
+    private double deckfraction;
+    private double topdeckfraction;
 
     public CardUsage() {
     }
@@ -27,6 +29,16 @@ public class CardUsage {
         this.sidecode = sidecode;
         this.indecks = indecks;
         this.intopdecks = intopdecks;
+    }
+
+    public CardUsage(String cardtitle, String cardpacktitle, String sidecode, int indecks, int intopdecks, double deckfraction, double topdeckfraction) {
+        this.cardtitle = cardtitle;
+        this.sidecode = sidecode;
+        this.cardpacktitle = cardpacktitle;
+        this.indecks = indecks;
+        this.intopdecks = intopdecks;
+        this.deckfraction = deckfraction;
+        this.topdeckfraction = topdeckfraction;
     }
 
     public String getCardtitle() {
@@ -47,5 +59,13 @@ public class CardUsage {
 
     public String getCardpacktitle() {
         return cardpacktitle;
+    }
+
+    public double getDeckfraction() {
+        return deckfraction;
+    }
+
+    public double getTopdeckfraction() {
+        return topdeckfraction;
     }
 }

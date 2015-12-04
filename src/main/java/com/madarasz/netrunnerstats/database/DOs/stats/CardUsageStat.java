@@ -19,6 +19,10 @@ public class CardUsageStat {
     private Long id;
     @Indexed private String cardpackname;
     private boolean cardpool; // true if cardpool, false if cardpack
+    private int runnerdecks;
+    private int runnertopdecks;
+    private int corpdecks;
+    private int corptopdecks;
     @RelatedTo(type = "USAGE") private @Fetch Set<CardUsage> cards;
 
     public CardUsageStat() {
@@ -27,6 +31,16 @@ public class CardUsageStat {
     public CardUsageStat(String cardpackname, boolean cardpool) {
         this.cardpackname = cardpackname;
         this.cardpool = cardpool;
+        cards = new HashSet<>();
+    }
+
+    public CardUsageStat(String cardpackname, boolean cardpool, int runnerdecks, int runnertopdecks, int corpdecks, int corptopdecks) {
+        this.cardpackname = cardpackname;
+        this.cardpool = cardpool;
+        this.runnerdecks = runnerdecks;
+        this.runnertopdecks = runnertopdecks;
+        this.corpdecks = corpdecks;
+        this.corptopdecks = corptopdecks;
         cards = new HashSet<>();
     }
 
@@ -40,6 +54,22 @@ public class CardUsageStat {
 
     public boolean isCardpool() {
         return cardpool;
+    }
+
+    public int getRunnerdecks() {
+        return runnerdecks;
+    }
+
+    public int getRunnertopdecks() {
+        return runnertopdecks;
+    }
+
+    public int getCorpdecks() {
+        return corpdecks;
+    }
+
+    public int getCorptopdecks() {
+        return corptopdecks;
     }
 
     public Set<CardUsage> getCards() {

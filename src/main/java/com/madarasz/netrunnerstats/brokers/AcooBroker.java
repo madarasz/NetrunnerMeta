@@ -65,7 +65,7 @@ public class AcooBroker {
     public Deck readDeck(int id) {
         String url = deckUrlFromId(id);
         // check deny urls
-        if (adminDataRepository.getDenyUrls().isIn(url)) {
+        if ((adminDataRepository.getDenyUrls() != null) && (adminDataRepository.getDenyUrls().isIn(url))) {
             logger.warn(String.format("URL denied: %s", url));
             return new Deck("denied", "denied", "denied");
         }

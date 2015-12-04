@@ -131,8 +131,8 @@
                             <thead>
                             <tr>
                                 <th>card title</th>
-                                <th class="text-center">used in top decks</th>
-                                <th class="text-center">used in decks</th>
+                                <th class="text-center" colspan="2">used in top decks</th>
+                                <th class="text-center" colspan="2">used in decks</th>
                             </tr>
                             </thead>
                             <tbody id="runnertable"></tbody>
@@ -144,8 +144,8 @@
                             <thead>
                             <tr>
                                 <th>card title</th>
-                                <th class="text-center">used in top decks</th>
-                                <th class="text-center">used in decks</th>
+                                <th class="text-center" colspan="2">used in top decks</th>
+                                <th class="text-center" colspan="2">used in decks</th>
                             </tr>
                             </thead>
                             <tbody id="corptable"></tbody>
@@ -161,7 +161,7 @@
                             <tr>
                                 <th>card title</th>
                                 <th>pack</th>
-                                <th class="text-center">used in top decks</th>
+                                <th class="text-center" colspan="2">used in top decks</th>
                             </tr>
                             </thead>
                             <tbody id="runnertable2"></tbody>
@@ -174,7 +174,7 @@
                             <tr>
                                 <th>card title</th>
                                 <th>pack</th>
-                                <th class="text-center">used in top decks</th>
+                                <th class="text-center" colspan="2">used in top decks</th>
                             </tr>
                             </thead>
                             <tbody id="corptable2"></tbody>
@@ -205,7 +205,8 @@
         // Change hash for page-reload
         $('.nav-tabs a').on('shown.bs.tab', function (e) {
             window.location.hash = e.target.hash;
-        })
+            window.scrollTo(0,0);
+        });
 
         $('#chart_div1').addClass('spinner');
         $('#chart_div2').addClass('spinner');
@@ -255,6 +256,7 @@
             loadCardPackTable(basecardtable + "Cardpack/corp/" + dpname, "#corptable");
             loadCardPoolTable(basecardtable + "Cardpool/runner/" + dpname, "#runnertable2");
             loadCardPoolTable(basecardtable + "Cardpool/corp/" + dpname, "#corptable2");
+            window.scrollTo(0,0);
         }
 
         function drawPieChart(urlvalue, elementid) {
@@ -349,8 +351,14 @@
                             text: element.intopdecks,
                             class: 'text-right'
                         }), $('<td>', {
+                            text: '(' + Math.round(element.topdeckfraction * 100) + '%)',
+                            class: 'text-left'
+                        }), $('<td>', {
                             text: element.indecks,
                             class: 'text-right'
+                        }), $('<td>', {
+                            text: '(' + Math.round(element.deckfraction * 100) + '%)',
+                            class: 'text-left'
                         })));
                     });
                     $(elementid).removeClass('spinner');
@@ -372,6 +380,9 @@
                         })), $('<td>', {
                             text: element.intopdecks,
                             class: 'text-right'
+                        }), $('<td>', {
+                            text: '(' + Math.round(element.topdeckfraction * 100) + '%)',
+                            class: 'text-left'
                         })));
                     });
                     $(elementid).removeClass('spinner');

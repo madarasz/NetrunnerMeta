@@ -31,7 +31,7 @@ public class CardController {
             @PathVariable(value="DPName") String DPName) {
         switch (target) {
             case "Cardpack":
-                return statistics.getMostUsedCardsForCardPack(DPName).getSortedCards(sidecode);
+                return statistics.getMostUsedCardsFromCardPack(DPName).getSortedCards(sidecode);
             case "Cardpool":
                 return statistics.getMostUsedCardsForCardpool(DPName).getSortedCards(sidecode);
             default:

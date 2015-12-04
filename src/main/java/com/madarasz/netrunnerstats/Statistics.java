@@ -18,10 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by madarasz on 11/7/15.
@@ -314,18 +311,30 @@ public class Statistics {
      * @param cardpack cardpack name
      * @return CardUsageStat
      */
-    public CardUsageStat getMostUsedCardsForCardPack(String cardpack) {
+    public CardUsageStat getMostUsedCardsFromCardPack(String cardpack) {
         CardUsageStat result = cardUsageStatsRepository.findByCardPackName(cardpack);
         if (result == null) {
-            result = new CardUsageStat(cardpack, false);
+            int runnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", false);
+            int toprunnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", true);
+            int corpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", false);
+            int topcorpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", true);
+            result = new CardUsageStat(cardpack, false,
+                    runnerdecks, toprunnerdecks, corpdecks, topcorpdecks);
             List<Card> cards = cardRepository.findByCardPackName(cardpack);
             for (Card card : cards) {
                 String code = card.getCode();
                 int count = deckRepository.countByUsingCard(code);
                 if (count > 0) {
                     int topcount = deckRepository.countTopByUsingCard(code);
-                    result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
-                            card.getSide_code(), count, topcount));
+                    if (card.getSide_code().equals("runner")) {
+                        result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
+                                card.getSide_code(), count, topcount,
+                                (double)count / runnerdecks, (double)topcount / toprunnerdecks));
+                    } else {
+                        result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
+                                card.getSide_code(), count, topcount,
+                                (double)count / corpdecks, (double)topcount / topcorpdecks));
+                    }
                 }
             }
             logger.info(String.format("Saving Card Usage Statistics, cardpack: %s", cardpack));
@@ -342,15 +351,19 @@ public class Statistics {
     public CardUsageStat getMostUsedCardsForCardpool(String cardpool) {
         CardUsageStat result = cardUsageStatsRepository.findByCardPoolName(cardpool);
         if (result == null) {
-            result = new CardUsageStat(cardpool, true);
+            int toprunnerdecks = deckRepository.countTopByCardpoolAndSide(cardpool, "runner");
+            int topcorpdecks = deckRepository.countTopByCardpoolAndSide(cardpool, "corp");
+            result = new CardUsageStat(cardpool, true, -1, toprunnerdecks, -1, topcorpdecks);
             List<CardCounts> stat = cardRepository.findMostPopularCardsByCardPack(cardpool, "runner");
             for (CardCounts count : stat) {
-                result.addCardUsage(new CardUsage(count.getTitle(), count.getCardpack(), "runner", -1, count.getCount()));
+                result.addCardUsage(new CardUsage(count.getTitle(), count.getCardpack(), "runner", -1, count.getCount(),
+                        -1, (double)count.getCount() / toprunnerdecks));
                 logger.debug(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
             }
             stat = cardRepository.findMostPopularCardsByCardPack(cardpool, "corp");
             for (CardCounts count : stat) {
-                result.addCardUsage(new CardUsage(count.getTitle(), count.getCardpack(), "corp", -1, count.getCount()));
+                result.addCardUsage(new CardUsage(count.getTitle(), count.getCardpack(), "corp", -1, count.getCount(),
+                        -1, (double)count.getCount() / topcorpdecks));
                 logger.debug(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
             }
             logger.info(String.format("Saving Card Usage Statistics, cardpool: %s", cardpool));
@@ -403,6 +416,33 @@ public class Statistics {
             }
             logger.info(String.format("Saving deck averages: %s - %s", identity, cardpool));
             identityAverageRepository.save(result);
+        }
+        return result;
+    }
+
+    /**
+     * Returns the number of decks from a cardpool and onward
+     * @param cardpool cardpool name
+     * @param side side_code
+     * @param topdeck just top decks?
+     * @return deck number
+     */
+    public int getDeckNumberFromCardpoolOnward(String cardpool, String side, boolean topdeck) {
+        List<CardPool> cardPools = getCardPoolStats().getSortedCardpool();
+        Collections.reverse(cardPools);
+        int result = 0;
+        boolean count = false;
+        for (CardPool currentPool : cardPools) {
+            if (currentPool.getTitle().equals(cardpool)) {
+                count = true;
+            }
+            if (count) {
+                if (topdeck) {
+                    result += deckRepository.countTopByCardpoolAndSide(currentPool.getTitle(), side);
+                } else {
+                    result += deckRepository.countByCardpoolAndSide(currentPool.getTitle(), side);
+                }
+            }
         }
         return result;
     }
