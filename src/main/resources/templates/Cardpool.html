@@ -12,9 +12,9 @@
                     <thead>
                         <tr>
                             <th>cardpool up to</th>
-                            <th>tournaments</th>
-                            <th>decks</th>
-                            <th>rankings</th>
+                            <th class="text-center">tournaments</th>
+                            <th class="text-center">decks</th>
+                            <th class="text-center">rankings</th>
                         </tr>
                     </thead>
                     <tbody id="cptable"></tbody>
@@ -116,11 +116,14 @@
                             text: element.title,
                             href: "/DPStats/" + encodeURIComponent(element.title) + "/"
                         })), $('<td>', {
-                            text: element.tournamentnum
+                            text: element.tournamentnum,
+                            class: 'text-right'
                         }), $('<td>', {
-                            text: element.decknum
+                            text: element.decknum,
+                            class: 'text-right'
                         }), $('<td>', {
-                            text: element.standingsnum
+                            text: element.standingsnum,
+                            class: 'text-right'
                         })));
                     });
                     $('#cptable').removeClass('spinner');

@@ -131,8 +131,8 @@
                             <thead>
                             <tr>
                                 <th>card title</th>
-                                <th>used in top decks</th>
-                                <th>used in decks</th>
+                                <th class="text-center">used in top decks</th>
+                                <th class="text-center">used in decks</th>
                             </tr>
                             </thead>
                             <tbody id="runnertable"></tbody>
@@ -144,8 +144,8 @@
                             <thead>
                             <tr>
                                 <th>card title</th>
-                                <th>used in top decks</th>
-                                <th>used in decks</th>
+                                <th class="text-center">used in top decks</th>
+                                <th class="text-center">used in decks</th>
                             </tr>
                             </thead>
                             <tbody id="corptable"></tbody>
@@ -161,7 +161,7 @@
                             <tr>
                                 <th>card title</th>
                                 <th>pack</th>
-                                <th>used in top decks</th>
+                                <th class="text-center">used in top decks</th>
                             </tr>
                             </thead>
                             <tbody id="runnertable2"></tbody>
@@ -174,7 +174,7 @@
                             <tr>
                                 <th>card title</th>
                                 <th>pack</th>
-                                <th>used in top decks</th>
+                                <th class="text-center">used in top decks</th>
                             </tr>
                             </thead>
                             <tbody id="corptable2"></tbody>
@@ -346,9 +346,11 @@
                         $(elementid).append($('<tr>').append($('<td>', {
                             text: element.cardtitle
                         }), $('<td>', {
-                            text: element.intopdecks
+                            text: element.intopdecks,
+                            class: 'text-right'
                         }), $('<td>', {
-                            text: element.indecks
+                            text: element.indecks,
+                            class: 'text-right'
                         })));
                     });
                     $(elementid).removeClass('spinner');
@@ -368,7 +370,8 @@
                         }), $('<td>').append($('<em>', {
                             text: element.cardpacktitle
                         })), $('<td>', {
-                            text: element.intopdecks
+                            text: element.intopdecks,
+                            class: 'text-right'
                         })));
                     });
                     $(elementid).removeClass('spinner');
