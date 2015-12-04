@@ -35,7 +35,7 @@ public class StimhackBroker {
     private static final String HTML_TAGS = "span.footer-tags > a";
     private static final String HTML_TITLE = "h1.entry-title";
     private static final String SPLITTER_INFO = ": |</strong>";
-    private static final String SLITTER_CARD_NAME = "^\\dx? | •| \\(| ●";
+    private static final String SLITTER_CARD_NAME = "^\\dx? | •| \\(| ●|•";
     private static final String SLITTER_DATE = "Date: ";
     private static final String URL_TOURNAMENTS = "http://stimhack.com/tournament-decklists/";
 
