@@ -75,6 +75,7 @@ public class DPController {
     @RequestMapping(value="/DPStats/{DPName}", method = RequestMethod.GET)
     public String getDPPage(@PathVariable String DPName, Map<String, Object> model) {
         model.put("DPname", DPName);
+        model.put("pageTitle", DPName + " - Know the Meta - Android: Netrunner");
         return "DPStat";
     }
 

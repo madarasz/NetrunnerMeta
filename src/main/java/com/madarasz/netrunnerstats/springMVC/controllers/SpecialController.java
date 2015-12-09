@@ -17,16 +17,19 @@ public class SpecialController {
 
     @RequestMapping(value="/login", method = RequestMethod.GET)
     public String getLoginPage(Map<String, Object> model) {
+        model.put("pageTitle", "Know the Meta - Android: Netrunner");
         return "Login";
     }
 
     @RequestMapping(value="/404", method = RequestMethod.GET)
     public String get404Page(Map<String, Object> model) {
+        model.put("pageTitle", "Know the Meta - Android: Netrunner");
         return "404";
     }
 
     @RequestMapping(value="/soon", method = RequestMethod.GET)
     public String getSoonPage(Map<String, Object> model) {
+        model.put("pageTitle", "Know the Meta - Android: Netrunner");
         return "Soon";
     }
 }

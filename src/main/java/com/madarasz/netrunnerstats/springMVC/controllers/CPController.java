@@ -37,6 +37,7 @@ public class CPController {
     // html output
     @RequestMapping(value="/", method = RequestMethod.GET)
     public String getCPPage(Map<String, Object> model) {
+        model.put("pageTitle", "Know the Meta - Android: Netrunner");
         return "Cardpool";
     }
 

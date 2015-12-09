@@ -47,6 +47,7 @@ public class MDSController {
                              @PathVariable(value="DPName") String DPName, Map<String, Object> model) {
         model.put("DPname", DPName);
         model.put("identity", identity);
+        model.put("pageTitle", identity + " - " + DPName + " Know the Meta - Android: Netrunner");
         return "MDS";
     }
 
