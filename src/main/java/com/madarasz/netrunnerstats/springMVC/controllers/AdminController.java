@@ -5,7 +5,7 @@ import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import com.madarasz.netrunnerstats.database.DOs.*;
 import com.madarasz.netrunnerstats.database.DOs.admin.AdminData;
-import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
+import com.madarasz.netrunnerstats.database.DOs.admin.VerificationProblem;
 import com.madarasz.netrunnerstats.database.DOs.stats.*;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
 import com.madarasz.netrunnerstats.database.DRs.AdminDataRepository;
@@ -19,11 +19,14 @@ import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -125,10 +128,42 @@ public class AdminController {
     // submissions
 
     // verify data
-    @RequestMapping(value="/muchadmin/Verify", method = RequestMethod.POST)
-    public String verify(Map<String, Object> model) {
-        operations.checkDataValidity();
-        return "redirect:/muchadmin";
+    @RequestMapping(value="/muchadmin/Verify", method = RequestMethod.GET)
+    public @ResponseBody List<VerificationProblem> verifyData() {
+        // remove already banned urls
+        List<VerificationProblem> problems = operations.checkDataValidity();
+        List<VerificationProblem> result = new ArrayList<>(problems);
+        AdminData denyurls = adminDataRepository.getDenyUrls();
+        if (denyurls != null) {
+            for (VerificationProblem problem : problems) {
+                if (denyurls.getData().contains(problem.getUrl())) {
+                    result.remove(problem);
+                }
+            }
+        }
+        return result;
+    }
+
+    @RequestMapping(value="/muchadmin/BanDeck", method = RequestMethod.GET)
+//    public @ResponseBody String banDeck(@PathVariable(value="url") String url, final RedirectAttributes redirectAttributes) {
+    public @ResponseBody String banDeck(String url, final RedirectAttributes redirectAttributes) {
+        if (!url.equals("")) {
+            AdminData denyurls = adminDataRepository.getDenyUrls();
+            if (denyurls == null) {
+                denyurls = new AdminData("denyUrls", "");
+            }
+            // check if not banned already
+            if (!denyurls.isIn(url)) {
+                denyurls.setData(denyurls.getData() + "\n" + url);
+                adminDataRepository.save(denyurls);
+                logger.info("Denied urls updated.");
+            }
+            // delete deck with standings
+            deleteDeck(url, redirectAttributes);
+            return "OK";
+        } else {
+            return "Missing url";
+        }
     }
 
     // add stimhack tournament
@@ -149,6 +184,7 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("warningMessage",
                     String.format("Tournament is already in DB: %s", url));
         }
+        operations.updateLastUpdateDate();
         return "redirect:/muchadmin";
     }
 
@@ -171,6 +207,7 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("errorMessage",
                     String.format("Error loading Stimhack tournaments with datapack: %s", datapack));
         }
+        operations.updateLastUpdateDate();
         return "redirect:/muchadmin";
     }
 
@@ -222,6 +259,7 @@ public class AdminController {
                     String.format("Error loading tournament with ID: %s", tournamentid));
             return "redirect:/muchadmin";
         }
+        operations.updateLastUpdateDate();
         return "redirect:/muchadmin";
     }
 
@@ -250,6 +288,7 @@ public class AdminController {
                     String.format("Error loading tournament with URL: %s", url));
             return "redirect:/muchadmin";
         }
+        operations.updateLastUpdateDate();
         return "redirect:/muchadmin";
     }
 
@@ -307,6 +346,7 @@ public class AdminController {
         if (exists != null) {
             try {
                 operations.deleteDeck(url);
+                logger.info("Deck deleted: " + url);
                 redirectAttributes.addFlashAttribute("successMessage",
                         String.format("Deck deleted with URL: %s", url));
             } catch (Exception ex) {
@@ -321,7 +361,7 @@ public class AdminController {
         return "redirect:/muchadmin";
     }
 
-    // delete deck
+    // delete tournament
     @RequestMapping(value="/muchadmin/Delete/Tournament", method = RequestMethod.POST)
     public String deleteTournament(String url, final RedirectAttributes redirectAttributes) {
         Tournament exists = tournamentRepository.findByUrl(url);
@@ -345,6 +385,33 @@ public class AdminController {
         } else {
             redirectAttributes.addFlashAttribute("warningMessage",
                     String.format("No tournament with URL: %s", url));
+        }
+        return "redirect:/muchadmin";
+    }
+
+    // delete denied decks
+    @RequestMapping(value="/muchadmin/Execute/DenyUrls", method = RequestMethod.POST)
+    public String deleteDeniedDecks(final RedirectAttributes redirectAttributes) {
+        try {
+            AdminData denyurls = adminDataRepository.getDenyUrls();
+            if (denyurls != null) {
+                long deckcount = template.count(Deck.class);
+                long standingcount = template.count(Standing.class);
+                List<Deck> decks = deckRepository.getAllDecks();
+                for (Deck deck : decks) {
+                    if (denyurls.getData().contains(deck.getUrl())) {
+                        operations.deleteDeck(deck.getUrl());
+                    }
+                }
+                deckcount -= template.count(Deck.class);
+                standingcount -= template.count(Standing.class);
+                redirectAttributes.addFlashAttribute("successMessage",
+                        String.format("Denied decks deleted: %d - deleted standings: %d", deckcount, standingcount));
+            }
+        } catch (Exception ex) {
+            logger.error("logged exception", ex);
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    String.format("Error deleting denied decks"));
         }
         return "redirect:/muchadmin";
     }

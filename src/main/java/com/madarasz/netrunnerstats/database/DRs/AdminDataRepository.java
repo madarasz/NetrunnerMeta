@@ -15,4 +15,7 @@ public interface AdminDataRepository extends GraphRepository<AdminData>, Relatio
 
     @Query("MATCH (a:AdminData {function: 'denyUrls'}) RETURN a LIMIT 1")
     AdminData getDenyUrls();
+
+    @Query("MATCH (a:AdminData {function: 'lastUpdate'}) RETURN a LIMIT 1")
+    AdminData getLastUpdate();
 }

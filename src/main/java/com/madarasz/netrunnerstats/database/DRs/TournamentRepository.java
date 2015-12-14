@@ -33,4 +33,7 @@ public interface TournamentRepository extends GraphRepository<Tournament>, Relat
 
     @Query("MATCH (t:Tournament) WHERE t.url =~ 'http://www.acoo.*' RETURN MAX(t.date)")
     Date getLastAcooTournamentDate();
+
+    @Query("MATCH (t:Tournament)<-[:IN_TOURNAMENT]-(:Standing)-[:IS_DECK]->(:Deck {url: {0}}) RETURN t LIMIT 1")
+    Tournament getTournamentByDeckUrl(String url);
 }

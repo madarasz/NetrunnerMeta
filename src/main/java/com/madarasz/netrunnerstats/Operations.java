@@ -1,6 +1,8 @@
 package com.madarasz.netrunnerstats;
 
 import com.madarasz.netrunnerstats.database.DOs.*;
+import com.madarasz.netrunnerstats.database.DOs.admin.AdminData;
+import com.madarasz.netrunnerstats.database.DOs.admin.VerificationProblem;
 import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.database.DOs.stats.*;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
@@ -14,6 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -24,6 +29,7 @@ import java.util.*;
 public class Operations {
 
     private static final Logger logger = LoggerFactory.getLogger(Operations.class);
+    private final DateFormat df = new SimpleDateFormat("yyyy.MM.dd.");
 
     @Autowired
     CardRepository cardRepository;
@@ -54,6 +60,9 @@ public class Operations {
 
     @Autowired
     Neo4jOperations template;
+
+    @Autowired
+    AdminDataRepository adminDataRepository;
 
     /**
      * Wipes DB clean
@@ -298,16 +307,20 @@ public class Operations {
      * Checks DB and solves errors.
      * Checks decks validity. Check tournament data. Calculate tournament cardpool validity if not defined.
      */
-    public void checkDataValidity() {
+    public List<VerificationProblem> checkDataValidity() {
 //        logDBCount();
+        List<VerificationProblem> list = new ArrayList<>();
         logger.info("Checking data validity");
 
         // check decks
         List<Deck> decks = deckRepository.getAllDecks();
         for (Deck deck : decks) {
             logger.debug(String.format("Checking validity: %s", deck.toString()));
-            if (deckValidator.isValidDeck(deck)) {
+            String problem = deckValidator.isValidDeck(deck);
+            if (problem.equals("")) {
                 logger.debug("OK");
+            } else {
+                list.add(new VerificationProblem(deck.getName(), deck.getUrl(), "validity", problem));
             }
         }
 
@@ -315,8 +328,11 @@ public class Operations {
         List<Standing> standings = standingRepository.getAllStanding();
         for (Standing standing : standings) {
             if (standing.getIdentity().getTitle().equals("The Shadow: Pulling the Strings")) {
+                Tournament tournament = standing.getTournament();
                 logger.warn(String.format("Unknown identity during tournament import (#%d): %s",
-                        standing.getRank(), standing.getTournament().getUrl()));
+                        standing.getRank(), tournament.getUrl()));
+                list.add(new VerificationProblem(tournament.getName(), tournament.getUrl(),
+                        "wrong ID", "rank: " + standing.getRank()));
             }
         }
 
@@ -327,6 +343,8 @@ public class Operations {
             // check wrong date
             if (tournament.getDate().equals(nulldate)) {
                 logger.warn(String.format("ERROR - Wrong date: %s", tournament.toString()));
+                list.add(new VerificationProblem(tournament.getName(), tournament.getUrl(),
+                        "wrong date", ""));
             }
             // check wrong cardpool
             String oldname = tournament.getCardpool().getName();
@@ -357,9 +375,17 @@ public class Operations {
                     logger.warn("WARNING - matching decks:");
                     logger.warn(deck3.toString());
                     logger.warn(deck2.toString());
+                    Tournament tournament3 = tournamentRepository.getTournamentByDeckUrl(deck3.getUrl());
+                    Tournament tournament2 = tournamentRepository.getTournamentByDeckUrl(deck2.getUrl());
+                    list.add(new VerificationProblem(deck3.getName(), deck3.getUrl(), "duplicate",
+                            String.format("(%d) %s", tournament3.getPlayerNumber(), tournament3.getName())));
+                    list.add(new VerificationProblem(deck2.getName(), deck2.getUrl(), "duplicate",
+                            String.format("(%d) %s", tournament2.getPlayerNumber(), tournament2.getName())));
                 }
             }
         }
+
+        return list;
     }
 
     /**
@@ -383,12 +409,13 @@ public class Operations {
     }
 
     /**
-     * Deletes deck with URL
+     * Deletes deck with URL, deletes standing as well
      * @param url deck URL
      */
     public void deleteDeck(String url) {
         Map<String, Object> emptyparams = new HashMap<>();
-        template.query(String.format("MATCH (d:Deck {url: \"%s\"}) OPTIONAL MATCH (d)-[r]-() DELETE d,r", url), emptyparams);
+        template.query(String.format("MATCH (d:Deck {url: \"%s\"})<-[:IS_DECK]-(s:Standing) " +
+                "OPTIONAL MATCH (d)-[r]-(), (s)-[r2]-() DELETE d,r,s,r2", url), emptyparams);
     }
 
     /**
@@ -421,5 +448,10 @@ public class Operations {
             }
         }
         return result;
+    }
+
+    public void updateLastUpdateDate() {
+        AdminData update = new AdminData("lastUpdate", df.format(new Date()));
+        adminDataRepository.save(update);
     }
 }

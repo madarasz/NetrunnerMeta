@@ -23,22 +23,20 @@ public class DeckValidator {
      * Check deck validity
      * @return validity
      */
-    public boolean isValidDeck(Deck deck) {
-        boolean validity = true;
+    public String isValidDeck(Deck deck) {
+        String validity = "";
         Card identity = deck.getIdentity();
 
         // deck size
         int decksize = deck.countCards();
         if (decksize < identity.getMinimumdecksize()) {
-            validity = false;
-            logger.warn(String.format("ERROR - card count: %d", decksize));
+            validity += String.format("ERROR - card count: %d\n", decksize);
         }
 
         // influence check
         int influence = deck.getInfluenceCount();
         if (influence > identity.getInfluencelimit()) {
-            validity = false;
-            logger.warn(String.format("ERROR - influence count: %d", influence));
+            validity += String.format("ERROR - influence count: %d\n", influence);
         }
 
         String side = identity.getSide_code();
@@ -52,14 +50,12 @@ public class DeckValidator {
             if ((quantity <1) ||
                     ((!card.isLimited()) && (quantity > 3)) ||
                     ((card.isLimited()) && (quantity > 1))) {
-                validity = false;
-                logger.warn(String.format("ERROR - illegal card quantity - %dx %s", quantity, card.getTitle()));
+                validity += String.format("ERROR - illegal card quantity - %dx %s\n", quantity, card.getTitle());
             }
 
             // same side
             if (!card.getSide_code().equals(side)) {
-                validity = false;
-                logger.warn(String.format("ERROR - illegal side - %s", card.getTitle()));
+                validity += String.format("ERROR - illegal side - %s\n", card.getTitle());
             }
 
             // agenda count
@@ -70,8 +66,7 @@ public class DeckValidator {
             // Apex limitation
             if ((isApex) && (card.getType_code().equals("resource"))
                     && (!card.getSubtype_code().contains("virtual"))) {
-                validity = false;
-                logger.warn(String.format("ERROR - Apex can only have virtual resources - %s", card.getTitle()));
+                validity += String.format("ERROR - Apex can only have virtual resources - %s\n", card.getTitle());
             }
         }
 
@@ -81,14 +76,13 @@ public class DeckValidator {
             int top = size * 2 + 19;
             int bottom = size * 2 + 18;
             if ((agendaCount < bottom) || (agendaCount > top)) {
-                validity = false;
-                logger.warn(String.format("ERROR - deck size: %d - agenda count: %d (%d-%d)",
-                        decksize, agendaCount, bottom, top));
+                validity += String.format("ERROR - deck size: %d - agenda count: %d (%d-%d)\n",
+                        decksize, agendaCount, bottom, top);
             }
         }
 
-        if (!validity) {
-            logger.warn("Validity error occurred with deck: " + deck.getUrl());
+        if (!validity.equals("")) {
+            logger.warn(validity + "\nValidity error occurred with deck: " + deck.getUrl());
         }
         return validity;
     }

@@ -1,10 +1,16 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.Statistics;
+import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.Standing;
+import com.madarasz.netrunnerstats.database.DOs.Tournament;
+import com.madarasz.netrunnerstats.database.DOs.admin.AdminData;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
+import com.madarasz.netrunnerstats.database.DRs.AdminDataRepository;
 import com.madarasz.netrunnerstats.helper.gchart.DataTable;
 import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToOverTimeGchart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +33,12 @@ public class CPController {
     @Autowired
     DPStatsToOverTimeGchart dpStatsToOverTimeGchart;
 
+    @Autowired
+    Neo4jOperations template;
+
+    @Autowired
+    AdminDataRepository adminDataRepository;
+
     // JSON output
     @RequestMapping(value="/JSON/Cardpool", method = RequestMethod.GET)
     public @ResponseBody
@@ -38,6 +50,17 @@ public class CPController {
     @RequestMapping(value="/", method = RequestMethod.GET)
     public String getCPPage(Map<String, Object> model) {
         model.put("pageTitle", "Know the Meta - Android: Netrunner");
+        model.put("tournamentCount", template.count(Tournament.class));
+        model.put("rankingCount", template.count(Standing.class));
+        model.put("deckCount", template.count(Deck.class));
+
+        AdminData lastUpdate = adminDataRepository.getLastUpdate();
+        if (lastUpdate == null) {
+            model.put("lastUpdate", "no data");
+        } else {
+            model.put("lastUpdate", lastUpdate.getData());
+        }
+
         return "Cardpool";
     }
 

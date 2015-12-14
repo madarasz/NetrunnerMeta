@@ -6,7 +6,7 @@
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
         <h3 th:text="${DPname}"></h3>
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs" id="tabs">
             <li class="active"><a data-toggle="tab" href="#top">Factions / identities, top</a></li>
             <li><a data-toggle="tab" href="#all">Factions / identities, all</a></li>
             <li><a data-toggle="tab" href="#compare">Compare top - all</a></li>
@@ -193,19 +193,23 @@
     </div>
     <div th:replace="fragments/head :: scripts"></div>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <div th:replace="fragments/analytics :: ga"></div>
     <script th:inline="javascript">
         /*<![CDATA[*/
 
         // Javascript to enable link to tab
         var url = document.location.toString();
         if (url.match('#')) {
-            $('.nav-tabs a[href=#'+url.split('#')[1]+']').tab('show') ;
+            $('.nav-tabs a[href=#'+url.split('#')[1]+']').tab('show');
         }
 
         // Change hash for page-reload
         $('.nav-tabs a').on('shown.bs.tab', function (e) {
             window.location.hash = e.target.hash;
             window.scrollTo(0,0);
+            // google analytics event
+            var tabName = $("ul#tabs li.active a").attr('href').split('#')[1];
+            ga('send', 'event', 'tabs', tabName);
         });
 
         $('#chart_div1').addClass('spinner');
@@ -391,6 +395,5 @@
         }
         /*]]>*/
     </script>
-    <div th:replace="fragments/analytics :: ga"></div>
 </body>
 </html>

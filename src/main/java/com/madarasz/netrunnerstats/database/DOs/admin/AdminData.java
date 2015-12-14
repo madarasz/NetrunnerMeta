@@ -42,4 +42,8 @@ public class AdminData {
     public boolean isIn(String subtext) {
         return getData().contains(subtext);
     }
+
+    public void setData(String data) {
+        this.data = data;
+    }
 }

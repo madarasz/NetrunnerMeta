@@ -74,6 +74,12 @@
     min-height: 300px;
 }
 
+.fake-link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 
 
 

@@ -170,7 +170,7 @@ public class ImportDataTest {
 
         // validity check
         for (Deck deck : decks) {
-            Assert.assertTrue("Imported deck not valid: " + deck.getUrl(), deckValidator.isValidDeck(deck));
+            Assert.assertTrue("Imported deck not valid: " + deck.getUrl(), deckValidator.isValidDeck(deck).equals(""));
         }
 
         // deck multiple reentry check
