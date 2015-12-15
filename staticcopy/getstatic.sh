@@ -55,6 +55,7 @@ do
     "JSON/Cards/Cardpack/$side"
     "JSON/Cards/Cardpool/$side"
     "JSON/DPStats/Identities/$side"
+    "static/img"
     )
     for dir in "${dirs[@]}"
     do
@@ -72,13 +73,20 @@ files=( "static/css/bootstrap.min.css"
 "static/js/main.js"
 "JSON/Cardpool"
 "DataTable/Cardpool/runner"
-"DataTable/Cardpool/corp" )
+"DataTable/Cardpool/corp"
+"404"
+"soon"
+"static/img/404doge.png"
+"static/img/soon.jpg" )
 
 for file in "${files[@]}"
 do
     touch $file
     curl http://localhost:8080/$file > $file
 done
+
+mv soon soon.html
+mv 404 404.html
 
 packs=( $(curl http://localhost:8080/JSON/Cardpool | jq -r '.[].title' | sed 's/ /%20/g') )
 
