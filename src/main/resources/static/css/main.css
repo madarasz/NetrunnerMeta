@@ -4,7 +4,7 @@
    Author's custom styles
    ========================================================================== */
 
-.top-buffer { margin-top:20px; }
+.top-buffer { margin-top: 20px; }
 
 .glyphicon.glyphicon-one-fine-dot:before {
     content: "\25cf";
