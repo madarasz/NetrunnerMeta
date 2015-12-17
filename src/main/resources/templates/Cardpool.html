@@ -5,49 +5,34 @@
 <body>
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
-        <h3 class="page-header">Statistics on cardpools</h3>
-        <div class="row">
-            <div class="col-md-6">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>cardpool up to</th>
-                            <th class="text-center">tournaments</th>
-                            <th class="text-center">decks</th>
-                            <th class="text-center">rankings</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cptable"></tbody>
-                </table>
-                <small>Click on the data pack / expansion name for more information.</small>
-            </div>
-        </div>
+        <h3 class="page-header">Statistics on tournament cardpools</h3>
+
+        <!--Factions over time-->
         <div class="row top-buffer">
             <div class="col-md-6">
-                <h4>Runner factions over time (top decks)</h4>
+                <h4>Runner factions over time (top 30% decks)</h4>
                 <div id="chart_div1" class="pie-chart"></div>
             </div>
             <div class="col-md-6">
-                <h4>Corp factions over time (top decks)</h4>
+                <h4>Corp factions over time (top 30% decks)</h4>
                 <div id="chart_div2" class="pie-chart"></div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Available drilldown</h4>
+                <div class="list-group" id="drilldown"></div>
+                <small>Click on the data pack / expansion name for more information.</small>
+            </div>
+        </div>
+
         <div class="row top-buffer">
             <div class="col-md-6">
                 <div th:replace="fragments/help :: cardpool"></div>
             </div>
         </div>
-        <hr />
-        <div class="row top-buffer">
-            <div class="col-md-12">
-                <p>Last update: <span th:text="${lastUpdate}"></span></p>
-                <p>Parsed information - tournaments: <span th:text="${tournamentCount}"></span> -
-                 decks: <span th:text="${deckCount}"></span> - rankings: <span th:text="${rankingCount}"></span></p>
-                <p>We gather information from <a href="http://acoo.net" target="_blank">Acoo</a> and
-                    <a href="http://stimhack.com" target="_blank">Stimhack</a> in an automated way.
-                    <a href="http://netrunnerdb.com" target="_blank">NetrunnerDB</a> also has a cool API.</p>
-            </div>
-        </div>
+
         <div th:replace="fragments/footer :: footer"></div>
     </div>
     <div th:replace="fragments/head :: scripts"></div>
@@ -63,14 +48,14 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-        $('#cptable').addClass('spinner');
+        $('#drilldown').addClass('spinner');
         $('#chart_div1').addClass('spinner');
         $('#chart_div2').addClass('spinner');
 
         google.setOnLoadCallback(drawData);
 
         function drawData() {
-            filltable();
+            fillDrilldown();
             drawChart("/DataTable/Cardpool/runner","chart_div1");
             drawChart("/DataTable/Cardpool/corp","chart_div2");
         }
@@ -109,7 +94,7 @@
             $('#'+elementid).removeClass('spinner');
         }
 
-        function filltable() {
+        function fillDrilldown() {
 
             var jsonData = $.ajax({
                 url: "/JSON/Cardpool",
@@ -117,21 +102,13 @@
                 async: false,
                 success: function (data) {
                     $.each(data, function (index, element) {
-                        $("#cptable").append($('<tr>').append($('<td>').append($('<a>', {
+                        $("#drilldown").append($('<a>', {
                             text: element.title,
-                            href: "/DPStats/" + encodeURIComponent(element.title) + "/"
-                        })), $('<td>', {
-                            text: element.tournamentnum,
-                            class: 'text-right'
-                        }), $('<td>', {
-                            text: element.decknum,
-                            class: 'text-right'
-                        }), $('<td>', {
-                            text: element.standingsnum,
-                            class: 'text-right'
-                        })));
+                            href: "/DPStats/" + encodeURIComponent(element.title) + "/",
+                            class: 'list-group-item'
+                        }));
                     });
-                    $('#cptable').removeClass('spinner');
+                    $('#drilldown').removeClass('spinner');
                 }
             });
         }

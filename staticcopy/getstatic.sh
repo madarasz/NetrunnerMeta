@@ -76,8 +76,10 @@ files=( "static/css/bootstrap.min.css"
 "DataTable/Cardpool/corp"
 "404"
 "soon"
+"Info"
 "static/img/404doge.png"
-"static/img/soon.jpg" )
+"static/img/soon.jpg"
+"static/img/knowthemeta.png" )
 
 for file in "${files[@]}"
 do
@@ -87,6 +89,7 @@ done
 
 mv soon soon.html
 mv 404 404.html
+mv Info Info.html
 
 packs=( $(curl http://localhost:8080/JSON/Cardpool | jq -r '.[].title' | sed 's/ /%20/g') )
 

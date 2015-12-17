@@ -3,6 +3,7 @@
 ./getstatic.sh
 rm -rf ../../NetrunnerMetaStatic/*
 cp CNAME ../../NetrunnerMetaStatic/
+cp ../src/main/resources/* ../../NetrunnerMetaStatic/
 mv content/* ../../NetrunnerMetaStatic
 cd ../../NetrunnerMetaStatic/
 

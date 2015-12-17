@@ -427,6 +427,12 @@ public class Operations {
         template.query(String.format(
                 "MATCH (t:Tournament {url: \"%s\"})<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_DECK]->(d:Deck) " +
                         "OPTIONAL MATCH (t)-[r1]-(), (s)-[r2]-(), (d)-[r3]-() DELETE t,s,d,r1,r2,r3", url), emptyparams);
+        template.query(String.format(
+                "MATCH (t:Tournament {url: \"%s\"})<-[:IN_TOURNAMENT]-(s:Standing) " +
+                        "OPTIONAL MATCH (t)-[r1]-(), (s)-[r2]-() DELETE t,s,r1,r2", url), emptyparams);
+        template.query(String.format(
+                "MATCH (t:Tournament {url: \"%s\"}) " +
+                        "OPTIONAL MATCH (t)-[r1]-() DELETE t,r1", url), emptyparams);
     }
 
     /**

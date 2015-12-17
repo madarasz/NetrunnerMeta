@@ -5,6 +5,7 @@
    ========================================================================== */
 
 .top-buffer { margin-top: 20px; }
+.top-buffer-big { margin-top: 30px; }
 
 .glyphicon.glyphicon-one-fine-dot:before {
     content: "\25cf";
