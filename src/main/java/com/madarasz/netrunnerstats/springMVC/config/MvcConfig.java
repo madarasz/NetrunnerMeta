@@ -16,5 +16,6 @@ public class MvcConfig extends WebMvcAutoConfiguration.WebMvcAutoConfigurationAd
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/*").addResourceLocations("classpath:/static/favicons/");
     }
 }

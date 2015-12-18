@@ -79,7 +79,7 @@ files=( "static/css/bootstrap.min.css"
 "Info"
 "static/img/404doge.png"
 "static/img/soon.jpg"
-"static/img/knowthemeta.png" )
+"static/img/knowthemeta20x20.png" )
 
 for file in "${files[@]}"
 do
