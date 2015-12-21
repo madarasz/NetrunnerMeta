@@ -27,13 +27,13 @@ public class ColorPicker {
             case "anarch":
                 return("#AC5439");
             case "jinteki":
-                return("#852412");
+                return("#8f1E0A");
             case "haas-bioroid":
-                return("#402541");
+                return("#702871");
             case "weyland-consortium":
-                return("#254139");
+                return("#1B654F");
             case "nbn":
-                return("#A1762B");
+                return("#CB953A");
             case "adam":
                 return("darkgoldenrod");
             case "apex":
