@@ -68,8 +68,9 @@
     -webkit-animation: spinner .8s ease infinite;
 }
 
-.pie-chart {
+.chart-responsive {
     min-height: 300px;
+    width: 100%;
 }
 
 .mds-chart {
