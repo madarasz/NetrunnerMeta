@@ -106,14 +106,18 @@
 
         google.setOnLoadCallback(drawCharts);
 
+        var filter = encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${identity}]]);
+        var url = "/DataTable/MDSIdentity/" + filter;
+        var tooltipurl = "/JSON/Deck/" + filter;
+
         $(window).resize(function(){
             drawChart(url, tooltipurl, 'chart_div1');
         });
 
         function drawCharts() {
-            var filter = encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${identity}]]);
-            var url = "/DataTable/MDSIdentity/" + filter;
-            var tooltipurl = "/JSON/Deck/" + filter;
+//            var filter = encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${identity}]]);
+//            var url = "/DataTable/MDSIdentity/" + filter;
+//            var tooltipurl = "/JSON/Deck/" + filter;
             var averageurl1 = "/JSON/Average/" + filter + "/1";
             var averageurl2 = "/JSON/Average/" + filter + "/2";
             drawChart(url, tooltipurl, 'chart_div1');
