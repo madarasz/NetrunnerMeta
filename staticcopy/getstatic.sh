@@ -18,6 +18,7 @@ dirs=(
 "static/js/vendor"
 "static/img"
 "static/img/blog"
+"static/fonts"
 "JSON"
 "DataTable"
 "DataTable/Cardpool"
@@ -81,7 +82,9 @@ files=( "static/css/bootstrap.min.css"
 "Info"
 "static/img/404doge.png"
 "static/img/soon.jpg"
-"static/img/knowthemeta20x20.png" )
+"static/img/knowthemeta20x20.png"
+"static/fonts/glyphicons-halflings-regular.ttf"
+"static/fonts/glyphicons-halflings-regular.woff" )
 
 for file in "${files[@]}"
 do
