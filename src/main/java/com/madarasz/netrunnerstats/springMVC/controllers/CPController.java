@@ -4,9 +4,10 @@ import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
 import com.madarasz.netrunnerstats.database.DOs.Standing;
 import com.madarasz.netrunnerstats.database.DOs.Tournament;
-import com.madarasz.netrunnerstats.database.DOs.admin.AdminData;
+import com.madarasz.netrunnerstats.database.DOs.admin.BlogEntry;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
 import com.madarasz.netrunnerstats.database.DRs.AdminDataRepository;
+import com.madarasz.netrunnerstats.database.DRs.BlogRepository;
 import com.madarasz.netrunnerstats.helper.gchart.DataTable;
 import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToOverTimeGchart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class CPController {
     @Autowired
     AdminDataRepository adminDataRepository;
 
+    @Autowired
+    BlogRepository blogRepository;
+
     // JSON output
     @RequestMapping(value="/JSON/Cardpool", method = RequestMethod.GET)
     public @ResponseBody
@@ -53,15 +57,9 @@ public class CPController {
         model.put("tournamentCount", template.count(Tournament.class));
         model.put("rankingCount", template.count(Standing.class));
         model.put("deckCount", template.count(Deck.class));
+        model.put("blogs", blogRepository.getAll());
 
-        AdminData lastUpdate = adminDataRepository.getLastUpdate();
-        if (lastUpdate == null) {
-            model.put("lastUpdate", "no data");
-        } else {
-            model.put("lastUpdate", lastUpdate.getData());
-        }
-
-        return "Cardpool";
+        return "Home";
     }
 
     // DataTable output, factions over time

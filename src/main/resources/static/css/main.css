@@ -83,6 +83,16 @@
     cursor: pointer;
 }
 
+.teaser-image {
+    float: left;
+    margin: 10px;
+}
+
+.blog-image {
+    margin: 20px 10px 10px 10px;
+    text-align: center;
+}
+
 /* navbar */
 .navbar-inverse {
     background-color: #2c3653;

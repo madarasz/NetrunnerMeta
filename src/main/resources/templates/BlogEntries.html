@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    <div class="container">
+        <h3 class="page-header">Blog entries</h3>
+        <div class="row">
+            <div class="col-md-8 col-xs-12" th:each="blog : ${blogEntries}">
+                <div class="col-xs-12">
+                    <a th:href="@{/Blog/__${blog.url}__}"><img th:src="${blog.imageUri}" th:alt="${blog.title}" class="teaser-image" /></a>
+                    <h5>
+                        <a th:href="@{/Blog/__${blog.url}__}" th:text="${blog.title}"></a><br/>
+                        <small th:text="${blog.formattedDate}"></small>
+                    </h5>
+                    <div th:utext="${blog.teaser}" class="text-justify"></div>
+                    <a th:href="@{/Blog/__${blog.url}__}">Read more</a>
+                </div>
+            </div>
+            <div class="col-md-4 col-xs-12">
+                <script async="async" src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <!-- The ad -->
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:320px;height:100px"
+                     data-ad-client="ca-pub-1839926547748052"
+                     data-ad-slot="1633895320"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </div>
+    <div th:replace="fragments/head :: scripts"></div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        /*]]>*/
+    </script>
+    <div th:replace="fragments/analytics :: ga"></div>
+</body>
+</html>
