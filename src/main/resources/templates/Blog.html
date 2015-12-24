@@ -7,7 +7,7 @@
     <div class="container">
         <h3 class="page-header">
             <span th:text="${blog.title}"></span><br />
-            <small th:text="${blog.formattedDate}"></small>
+            <small><span th:text="${blog.formattedDate}"></span> - <span th:text="${blog.pack}"></span></small>
         </h3>
         <div class="row">
             <div class="col-md-8 col-xs-12">
@@ -23,18 +23,48 @@
                         </tr>
                     </table>
                 </div>
-                <div class="col-xs-12" th:utext="${blog.text}"></div>
+                <div class="col-xs-12 blog-text" th:utext="${blog.text}"></div>
+                <div class="col-xs-12 text-right top-buffer-big">
+                    <strong th:text="${blog.author}"></strong><br />
+                    <small><span th:text="${blog.formattedDate}"></span> - <span th:text="${blog.pack}"></span></small>
+                </div>
+
+                <div id="disqus_thread"></div>
+                <script th:inline="javascript" type="text/javascript">
+                    /*<![CDATA[*/
+                     var disqus_config = function () {
+                     this.page.url = 'http://www.knowthemeta.com/Blog/' + [[${blog.url}]];
+                     this.page.identifier = 'Blog/' + [[${blog.url}]];
+                     };
+                    (function() { // DON'T EDIT BELOW THIS LINE
+                        var d = document, s = d.createElement('script');
+
+                        s.src = '//knowthemeta.disqus.com/embed.js';
+
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    })();
+                    /*]]>*/
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
             </div>
-            <div class="col-md-4 col-xs-12"></div>
+            <div class="col-md-4 col-xs-12">
+                <script async="async" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <!-- Blog ad -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-1839926547748052"
+                     data-ad-slot="7777513729"
+                     data-ad-format="auto"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
         </div>
         <div th:replace="fragments/footer :: footer"></div>
     </div>
     <div th:replace="fragments/head :: scripts"></div>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-
-        /*]]>*/
-    </script>
+    <script id="dsq-count-scr" src="//knowthemeta.disqus.com/count.js" async="async"></script>
     <div th:replace="fragments/analytics :: ga"></div>
 </body>
 </html>

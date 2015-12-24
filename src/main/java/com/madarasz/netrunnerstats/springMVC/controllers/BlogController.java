@@ -80,9 +80,11 @@ public class BlogController {
                          @RequestParam(value = "date") String date,
                          @RequestParam(value = "teaser") String teaser,
                          @RequestParam(value = "text") String text,
+                         @RequestParam(value = "author") String author,
+                         @RequestParam(value = "pack") String pack,
                          final RedirectAttributes redirectAttributes) {
         try {
-            BlogEntry blogEntry = new BlogEntry(title, text, teaser, image, dateFormat.parse(date), url);
+            BlogEntry blogEntry = new BlogEntry(title, text, teaser, image, dateFormat.parse(date), url, author, pack);
             blogRepository.save(blogEntry);
             redirectAttributes.addFlashAttribute("successMessage", "Blog entry added / modified");
         } catch (Exception ex) {

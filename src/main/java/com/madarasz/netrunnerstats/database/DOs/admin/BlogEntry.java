@@ -21,17 +21,21 @@ public class BlogEntry {
     private String imageUri;
     private Date date;
     @Indexed(unique=true) private String url;
+    private String author;
+    private String pack;
 
     public BlogEntry() {
     }
 
-    public BlogEntry(String title, String text, String teaser, String imageUri, Date date, String url) {
+    public BlogEntry(String title, String text, String teaser, String imageUri, Date date, String url, String author, String pack) {
         this.title = title;
         this.text = text;
         this.teaser = teaser;
         this.imageUri = imageUri;
         this.date = date;
         this.url = url;
+        this.author = author;
+        this.pack = pack;
     }
 
     public String getTitle() {
@@ -56,6 +60,14 @@ public class BlogEntry {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getPack() {
+        return pack;
     }
 
     public void setText(String text) {

@@ -8,6 +8,24 @@
 .top-buffer-big { margin-top: 30px; }
 .more-padding { padding: 5px 15px 0px; }
 
+.blog-text {
+    text-align: justify;
+}
+
+.blog-pictures {
+    margin: 15px auto 5px auto;
+}
+.blog-pictures > tbody > tr > td > a > img {
+    margin: 5px;
+}
+.italic {
+    font-style: italic;
+}
+.small-card {
+    width: 143px;
+    height: 200px;
+}
+
 .glyphicon.glyphicon-one-fine-dot:before {
     content: "\25cf";
     font-size: 1.5em;

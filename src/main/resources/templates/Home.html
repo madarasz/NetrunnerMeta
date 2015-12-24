@@ -33,13 +33,23 @@
         <div class="row">
             <div class="col-md-8 col-xs-12" th:each="blog : ${blogs}">
                 <div class="col-xs-12">
-                    <a th:href="@{/Blog/__${blog.url}__}"><img th:src="${blog.imageUri}" th:alt="${blog.title}" class="teaser-image" /></a>
-                    <h5>
-                        <a th:href="@{/Blog/__${blog.url}__}" th:text="${blog.title}"></a><br/>
-                        <small th:text="${blog.formattedDate}"></small>
-                    </h5>
-                    <div th:utext="${blog.teaser}" class="text-justify"></div>
-                    <a th:href="@{/Blog/__${blog.url}__}">Read more</a>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a th:href="@{/Blog/__${blog.url}__}"><img th:src="${blog.imageUri}" th:alt="${blog.title}" class="teaser-image" /></a>
+                                </td>
+                                <td>
+                                    <h5>
+                                        <a th:href="@{/Blog/__${blog.url}__}" th:text="${blog.title}"></a><br/>
+                                        <small><span th:text="${blog.formattedDate}"></span> - <span th:text="${blog.pack}"></span></small>
+                                    </h5>
+                                    <div th:utext="${blog.teaser}" class="text-justify"></div>
+                                    <a th:href="@{/Blog/__${blog.url}__}">Read more</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="col-md-4 col-xs-12">

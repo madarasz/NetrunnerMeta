@@ -16,6 +16,8 @@ dirs=(
 "static/css"
 "static/js"
 "static/js/vendor"
+"static/img"
+"static/img/blog"
 "JSON"
 "DataTable"
 "DataTable/Cardpool"
@@ -33,6 +35,7 @@ dirs=(
 "JSON/Deck"
 "JSON/Average"
 "MDSIdentity"
+"Blog"
 )
 for dir in "${dirs[@]}"
 do
@@ -55,7 +58,6 @@ do
     "JSON/Cards/Cardpack/$side"
     "JSON/Cards/Cardpool/$side"
     "JSON/DPStats/Identities/$side"
-    "static/img"
     )
     for dir in "${dirs[@]}"
     do
@@ -90,6 +92,17 @@ done
 mv soon soon.html
 mv 404 404.html
 mv Info Info.html
+
+# blog
+curl http://localhost:8080/Blog > Blog/index.html
+blogs=( $(curl http://localhost:8080/JSON/Blog/Teasers | jq -r '.[].url' ) )
+for blog in "${blogs[@]}"
+do
+    mkdir Blog/$blog
+    curl http://localhost:8080/Blog/$blog > "Blog/$blog/index.html"
+done
+cp ../../src/main/resources/static/img/blog/* static/img/blog/
+
 
 packs=( $(curl http://localhost:8080/JSON/Cardpool | jq -r '.[].title' | sed 's/ /%20/g') )
 
