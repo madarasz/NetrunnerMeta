@@ -26,6 +26,19 @@
     height: 200px;
 }
 
+.medium-card {
+    width: 207px;
+    height: 290px;
+}
+
+.info-box {
+    border-radius: 5px;
+    margin: 20px 0px;
+    padding: 10px 15px;
+    text-align: center;
+}
+
+
 .glyphicon.glyphicon-one-fine-dot:before {
     content: "\25cf";
     font-size: 1.5em;
