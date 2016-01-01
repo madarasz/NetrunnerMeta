@@ -17,7 +17,7 @@
                     </div>
                     <div th:utext="${blog.teaser}" class="col-md-9 teaser-col"></div>
                 </div>
-                <div class="col-xs-12 blog-text" th:utext="${blog.text}"></div>
+                <div class="col-xs-12 blog-text" th:include="@{fragments/blog/__${blog.text}__}"></div>
                 <div class="col-xs-12 text-right top-buffer-big">
                     <strong th:text="${blog.author}"></strong><br />
                     <small><span th:text="${blog.formattedDate}"></span> - <span th:text="${blog.pack}"></span></small>

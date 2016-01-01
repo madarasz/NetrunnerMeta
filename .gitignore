@@ -4,4 +4,3 @@ target
 netrunner.db
 test.db
 staticcopy/content
-src/main/resources/static/blog/*
