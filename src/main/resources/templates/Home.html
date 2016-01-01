@@ -31,25 +31,24 @@
         </div>
         <h3 class="page-header">Latest blog entries</h3>
         <div class="row">
-            <div class="col-md-8 col-xs-12" th:each="blog : ${blogs}">
-                <div class="col-xs-12">
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <a th:href="@{/Blog/__${blog.url}__}"><img th:src="${blog.imageUri}" th:alt="${blog.title}" class="teaser-image" /></a>
-                                </td>
-                                <td>
-                                    <h5>
-                                        <a th:href="@{/Blog/__${blog.url}__}" th:text="${blog.title}"></a><br/>
-                                        <small><span th:text="${blog.formattedDate}"></span> - <span th:text="${blog.pack}"></span></small>
-                                    </h5>
-                                    <div th:utext="${blog.teaser}" class="text-justify"></div>
-                                    <a th:href="@{/Blog/__${blog.url}__}">Read more</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="col-md-8 col-xs-12">
+                <div class="row">
+                    <div class="col-xs-12" th:each="blog : ${blogs}">
+                        <div class="row">
+                            <div class="col-md-3 teaser-col">
+                                <a th:href="@{/Blog/__${blog.url}__}"><img th:src="${blog.imageUri}" th:alt="${blog.title}"/></a>
+                            </div>
+                            <div class="col-md-9 teaser-col">
+                                <h5>
+                                    <a th:href="@{/Blog/__${blog.url}__}" th:text="${blog.title}"></a><br/>
+                                    <small><span th:text="${blog.formattedDate}"></span> - <span th:text="${blog.pack}"></span></small>
+                                </h5>
+                                <div th:utext="${blog.teaser}" class="text-justify"></div>
+                                <a th:href="@{/Blog/__${blog.url}__}">Read more</a>
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
                 </div>
             </div>
             <div class="col-md-4 col-xs-12">

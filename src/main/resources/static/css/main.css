@@ -8,25 +8,24 @@
 .top-buffer-big { margin-top: 30px; }
 .more-padding { padding: 5px 15px 0px; }
 
+.italic {
+    font-style: italic;
+}
+
 .blog-text {
     text-align: justify;
 }
 
-.blog-pictures {
-    margin: 15px auto 5px auto;
+.blog-big-picture {
+    max-width: 100%;
+    height: auto;
 }
-.blog-pictures > tbody > tr > td > a > img {
-    margin: 5px;
-}
-.italic {
-    font-style: italic;
-}
-.small-card {
+.card-small {
     width: 143px;
     height: 200px;
 }
 
-.medium-card {
+.card-medium {
     width: 207px;
     height: 290px;
 }
@@ -38,6 +37,22 @@
     text-align: center;
 }
 
+.teaser-col {
+    text-align: justify;
+    vertical-align: middle;
+    display: table-cell;
+    float: none;
+}
+
+.blog-image {
+    margin: 20px 5px 10px 5px;
+    text-align: center;
+}
+
+.blog-image > div {
+    text-align: center;
+    margin: 0px 0px 5px 0px;
+}
 
 .glyphicon.glyphicon-one-fine-dot:before {
     content: "\25cf";
@@ -112,16 +127,6 @@
     color: blue;
     text-decoration: underline;
     cursor: pointer;
-}
-
-.teaser-image {
-    float: left;
-    margin: 10px;
-}
-
-.blog-image {
-    margin: 20px 10px 10px 10px;
-    text-align: center;
 }
 
 /* navbar */
