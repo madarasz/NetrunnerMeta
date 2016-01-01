@@ -293,9 +293,12 @@ public class Operations {
      */
     public void loadAcooTournamentsFromUrl(String url, boolean paging, boolean filterempty) {
         logger.info("*** Reading tournaments on page: " + url);
+        AdminData denyUrls = adminDataRepository.getDenyUrls();
         Set<Integer> tournamentIds = acooBroker.loadTournamentIdsFromUrl(url, filterempty);
         for (int tournamentId : tournamentIds) {
-            loadAcooTournamentDecks(tournamentId);
+            if ((denyUrls == null) || (!denyUrls.getData().contains(acooBroker.tournamentUrlFromId(tournamentId))))  {
+                loadAcooTournamentDecks(tournamentId);
+            }
         }
         String pagination = acooBroker.getTournamentPageNextLink(url);
         if ((paging) && (!pagination.equals(""))) {
