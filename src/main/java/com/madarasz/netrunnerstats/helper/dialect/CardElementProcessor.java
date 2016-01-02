@@ -2,9 +2,7 @@ package com.madarasz.netrunnerstats.helper.dialect;
 
 import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Node;

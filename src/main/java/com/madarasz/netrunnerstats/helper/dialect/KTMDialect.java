@@ -1,7 +1,5 @@
 package com.madarasz.netrunnerstats.helper.dialect;
 
-import com.madarasz.netrunnerstats.database.DRs.CardRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.IProcessor;
 
@@ -21,7 +19,7 @@ public class KTMDialect extends AbstractDialect {
 
     @Override
     public Set<IProcessor> getProcessors() {
-        final Set<IProcessor> processors = new HashSet<IProcessor>();
+        final Set<IProcessor> processors = new HashSet<>();
         processors.add(new CardElementProcessor());
         processors.add(new ImageElementProcessor());
         return processors;
