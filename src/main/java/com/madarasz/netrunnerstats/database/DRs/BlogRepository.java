@@ -16,6 +16,9 @@ public interface BlogRepository extends GraphRepository<BlogEntry>, Relationship
     @Query("MATCH (b:BlogEntry) RETURN b ORDER BY b.date DESC")
     List<BlogEntry> getAll();
 
+    @Query("MATCH (b:BlogEntry) RETURN b ORDER BY b.date DESC LIMIT 3")
+    List<BlogEntry> getLastThree();
+
     @Query("MATCH (b:BlogEntry {url: {0}}) RETURN b")
     BlogEntry getbyURL(String url);
 }

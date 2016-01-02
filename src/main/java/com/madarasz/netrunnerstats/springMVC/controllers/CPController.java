@@ -57,7 +57,7 @@ public class CPController {
         model.put("tournamentCount", template.count(Tournament.class));
         model.put("rankingCount", template.count(Standing.class));
         model.put("deckCount", template.count(Deck.class));
-        model.put("blogs", blogRepository.getAll());
+        model.put("blogs", blogRepository.getLastThree());
 
         return "Home";
     }
