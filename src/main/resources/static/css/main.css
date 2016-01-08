@@ -16,6 +16,10 @@
     text-align: justify;
 }
 
+.blog-text > h5 {
+    margin-top: 20px;
+}
+
 .blog-big-picture {
     max-width: 100%;
     height: auto;
@@ -52,6 +56,16 @@
 .blog-image > div {
     text-align: center;
     margin: 0px 0px 5px 0px;
+}
+
+.link-card {
+    text-decoration: underline;
+    color: #333;
+    /*font-weight: 500;*/
+}
+
+.link-card-broken {
+    color: red;
 }
 
 .glyphicon.glyphicon-one-fine-dot:before {
