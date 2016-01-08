@@ -36,7 +36,7 @@ public class ImageElementProcessor extends AbstractMarkupSubstitutionElementProc
             container.setAttribute("rel", "nofollow");
             container.setAttribute("target", "_blank");
             Element image = new Element("img");
-            image.setAttribute("src", "/static/img/blog/netrunner-" + title.toLowerCase().replace(" ", "-") + ".png");
+            image.setAttribute("src", getImageSrc(title));
             image.setAttribute("alt", "Netrunner " + title);
             image.setAttribute("class", "card-" + element.getAttributeValue("size"));
             container.addChild(image);
@@ -53,5 +53,10 @@ public class ImageElementProcessor extends AbstractMarkupSubstitutionElementProc
     @Override
     public int getPrecedence() {
         return 1000;
+    }
+
+    private String getImageSrc(String title) {
+        return "/static/img/blog/netrunner-" +
+                title.toLowerCase().replace(" ", "-").replace("\"", "") + ".png";
     }
 }
