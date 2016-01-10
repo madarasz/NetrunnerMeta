@@ -18,6 +18,7 @@ dirs=(
 "static/js/vendor"
 "static/img"
 "static/img/blog"
+"static/img/cards"
 "static/fonts"
 "JSON"
 "DataTable"
@@ -106,6 +107,8 @@ do
 done
 cp ../../src/main/resources/static/img/blog/* static/img/blog/
 
+# card images
+cp ../../src/main/resources/static/img/cards/* static/img/cards/
 
 packs=( $(curl http://localhost:8080/JSON/Cardpool | jq -r '.[].title' | sed 's/ /%20/g') )
 
