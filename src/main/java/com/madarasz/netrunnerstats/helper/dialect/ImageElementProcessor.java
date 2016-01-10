@@ -36,12 +36,13 @@ public class ImageElementProcessor extends AbstractMarkupSubstitutionElementProc
             container.setAttribute("rel", "nofollow");
             container.setAttribute("target", "_blank");
             Element image = new Element("img");
-            image.setAttribute("src", getImageSrc(title));
+            image.setAttribute("src", card.getImageSrc());
             image.setAttribute("alt", "Netrunner " + title);
             image.setAttribute("class", "card-" + element.getAttributeValue("size"));
             container.addChild(image);
         } else {
             container = new Element("u");
+            container.setAttribute("class", "link-card-broken");
             container.addChild(new Text(title));
         }
 
@@ -55,8 +56,4 @@ public class ImageElementProcessor extends AbstractMarkupSubstitutionElementProc
         return 1000;
     }
 
-    private String getImageSrc(String title) {
-        return "/static/img/blog/netrunner-" +
-                title.toLowerCase().replace(" ", "-").replace("\"", "") + ".png";
-    }
 }
