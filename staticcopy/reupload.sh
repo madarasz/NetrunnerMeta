@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
+# upload to github
 
-./getstatic.sh
-rm -rf ../../NetrunnerMetaStatic/*
-cp CNAME ../../NetrunnerMetaStatic/
-cp ../src/main/resources/static/favicons/* ../../NetrunnerMetaStatic/
-mv content/* ../../NetrunnerMetaStatic
 cd ../../NetrunnerMetaStatic/
-
 DATE=`date +%Y-%m-%d`
 git add --all
 git commit -m "update $DATE"

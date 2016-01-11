@@ -1,5 +1,6 @@
 #!/bin/bash
-#set -x
+# prepare static content from localhost:8080
+
 # brew install jq
 
 rm -rf content
