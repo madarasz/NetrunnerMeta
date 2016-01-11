@@ -22,6 +22,7 @@ public class KTMDialect extends AbstractDialect {
         final Set<IProcessor> processors = new HashSet<>();
         processors.add(new CardElementProcessor());
         processors.add(new ImageElementProcessor());
+        processors.add(new TooltipElementProcessor());
         return processors;
     }
 }
