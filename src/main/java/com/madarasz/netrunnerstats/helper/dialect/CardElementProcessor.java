@@ -32,9 +32,7 @@ public class CardElementProcessor extends AbstractMarkupSubstitutionElementProce
         Element container;
         if (card != null) {
             container = new Element("a");
-            container.setAttribute("href", "http://netrunnerdb.com/en/card/" + card.getCode());
-            container.setAttribute("rel", "nofollow");
-            container.setAttribute("target", "_blank");
+            container.setAttribute("href", "/Cards/" + card.getTitle());
             container.setAttribute("class", "link-card");
             container.addChild(new Text(title));
         } else {

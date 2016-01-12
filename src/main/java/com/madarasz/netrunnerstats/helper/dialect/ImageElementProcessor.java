@@ -32,9 +32,7 @@ public class ImageElementProcessor extends AbstractMarkupSubstitutionElementProc
         Element container;
         if (card != null) {
             container = new Element("a");
-            container.setAttribute("href", "http://netrunnerdb.com/en/card/" + card.getCode());
-            container.setAttribute("rel", "nofollow");
-            container.setAttribute("target", "_blank");
+            container.setAttribute("href", "/Cards/" + card.getTitle());
             Element image = new Element("img");
             image.setAttribute("src", card.getImageSrc());
             image.setAttribute("alt", "Netrunner " + title);
