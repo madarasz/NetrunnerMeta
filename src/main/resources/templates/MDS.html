@@ -49,9 +49,19 @@
                     <tr>
                         <th>card title</th>
                         <th>pack</th>
-                        <th class="text-center">in decks</th>
-                        <th class="text-center">average used</th>
-                        <th class="text-center">average used if in deck</th>
+                        <th class="text-center">
+                            in decks
+                            <ktm:tooltip place="bottom" text="percentage of all decks are using the card"/>
+                        </th>
+                        <th class="text-center">
+                            average used
+                            <ktm:tooltip place="bottom" text="average number of the card being used, counting on all decks"/>
+                        </th>
+                        <th class="text-center">
+                            average used if in deck
+                            <ktm:tooltip place="bottom" text="average number of the cards being used,
+                                counting only decks having at least one of the card in question"/>
+                        </th>
                     </tr>
                     </thead>
                     <tbody id="average-table"></tbody>
@@ -64,9 +74,19 @@
                     <tr>
                         <th>card title</th>
                         <th>pack</th>
-                        <th class="text-center">in decks</th>
-                        <th class="text-center">average used</th>
-                        <th class="text-center">average used if in deck</th>
+                        <th class="text-center">
+                            in decks
+                            <ktm:tooltip place="bottom" text="percentage of all decks are using the card"/>
+                        </th>
+                        <th class="text-center">
+                            average used
+                            <ktm:tooltip place="bottom" text="average number of the card being used, counting on all decks"/>
+                        </th>
+                        <th class="text-center">
+                            average used if in deck
+                            <ktm:tooltip place="bottom" text="average number of the cards being used,
+                                counting only decks having at least one of the card in question"/>
+                        </th>
                     </tr>
                     </thead>
                     <tbody id="average-table2"></tbody>
@@ -74,12 +94,6 @@
                 <div class="top-buffer-big text-center">
                     <div th:replace="fragments/googlead :: blog"></div>
                 </div>
-            </div>
-        </div>
-
-        <div class="row top-buffer">
-            <div class="col-md-6 col-xs-12">
-                <div th:replace="fragments/help :: mds"></div>
             </div>
         </div>
 

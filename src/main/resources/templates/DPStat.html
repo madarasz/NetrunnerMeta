@@ -5,7 +5,9 @@
 <body>
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
-        <h3 th:text="${DPname}"></h3>
+        <h3>
+            <span th:text="${DPname}"></span>
+        </h3>
         <ul class="nav nav-tabs" id="tabs">
             <li class="active"><a data-toggle="tab" href="#top">Factions / identities, top</a></li>
             <li><a data-toggle="tab" href="#all">Factions / identities, all</a></li>
@@ -38,11 +40,6 @@
                         <div id="chart_div4" class="chart-responsive"></div>
                     </div>
                 </div>
-                <div class="row top-buffer">
-                    <div class="col-md-6 col-xs-12">
-                        <div th:replace="fragments/help :: dptop"></div>
-                    </div>
-                </div>
             </div>
 
             <!-- all tab -->
@@ -65,11 +62,6 @@
                     <div class="col-md-6 col-xs-12">
                         <h4>All corp identities</h4>
                         <div id="chart_div8" class="chart-responsive"></div>
-                    </div>
-                </div>
-                <div class="row top-buffer">
-                    <div class="col-md-6 col-xs-12">
-                        <div th:replace="fragments/help :: dpall"></div>
                     </div>
                 </div>
             </div>
@@ -96,30 +88,24 @@
                         <div id="chart_div12" class="chart-responsive"></div>
                     </div>
                 </div>
-                <div class="row top-buffer">
-                    <div class="col-md-6 col-xs-12">
-                        <div th:replace="fragments/help :: dpcompare"></div>
-                    </div>
-                </div>
             </div>
 
             <!-- decks tab -->
             <div id="decks" class="tab-pane fade">
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
-                        <h4>Runner decks</h4>
-                        <small>Click on the identity names for more information.</small>
+                        <h4>
+                            Runner decks
+                            <ktm:tooltip place="right" text="Click on identity name for more information on decks playing that identity."/>
+                        </h4>
                         <div id="text_div1" class="list-group"></div>
                     </div>
                     <div class="col-md-6 col-xs-12">
-                        <h4>Corp decks</h4>
-                        <small>Click on the identity names for more information.</small>
+                        <h4>
+                            Corp decks
+                            <ktm:tooltip place="right" text="Click on identity name for more information on decks playing that identity."/>
+                        </h4>
                         <div id="text_div2" class="list-group"></div>
-                    </div>
-                </div>
-                <div class="row top-buffer">
-                    <div class="col-md-6 col-xs-12">
-                        <div th:replace="fragments/help :: dpdecks"></div>
                     </div>
                 </div>
             </div>
@@ -128,7 +114,12 @@
             <div id="cards" class="tab-pane fade">
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
-                        <h4>Most used runner cards from pack</h4>
+                        <h4>
+                            Most used runner cards from pack
+                            <ktm:tooltip place="bottom" text="Most used cards from this expansion. Percentages are calculated
+                            by number of decks containing least one card, divided by number of all decks that are legal
+                            to play these cards on tournaments. Top decks are the top 30% ranking decks on tournaments."/>
+                        </h4>
                         <table class="table table-hover">
                             <thead>
                             <tr>
@@ -141,7 +132,12 @@
                         </table>
                     </div>
                     <div class="col-md-6 col-xs-12">
-                        <h4>Most used corp cards from pack</h4>
+                        <h4>
+                            Most used corp cards from pack
+                            <ktm:tooltip place="bottom" text="Most used cards from this expansion. Percentages are calculated
+                            by number of decks containing least one card, divided by number of all decks that are legal
+                            to play these cards on tournaments. Top decks are the top 30% ranking decks on tournaments."/>
+                        </h4>
                         <table class="table table-hover">
                             <thead>
                             <tr>
@@ -157,7 +153,11 @@
                 <hr/>
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
-                        <h4>20 most used runner cards in decks with this cardpool</h4>
+                        <h4>
+                            20 most used runner cards in decks with this cardpool
+                            <ktm:tooltip place="bottom" text="Most used cards from from tournaments with this cardpool.
+                            All tournament legal cards qualify, also from previous expansions."/>
+                        </h4>
                         <table class="table table-hover">
                             <thead>
                             <tr>
@@ -170,7 +170,11 @@
                         </table>
                     </div>
                     <div class="col-md-6 col-xs-12">
-                        <h4>20 most used corp cards in decks with this cardpool</h4>
+                        <h4>
+                            20 most used corp cards in decks with this cardpool
+                            <ktm:tooltip place="bottom" text="Most used cards from from tournaments with this cardpool.
+                            All tournament legal cards qualify, also from previous expansions."/>
+                        </h4>
                         <table class="table table-hover">
                             <thead>
                             <tr>
@@ -181,11 +185,6 @@
                             </thead>
                             <tbody id="corptable2"></tbody>
                         </table>
-                    </div>
-                </div>
-                <div class="row top-buffer">
-                    <div class="col-md-6 col-xs-12">
-                        <div th:replace="fragments/help :: dpcards"></div>
                     </div>
                 </div>
             </div>
