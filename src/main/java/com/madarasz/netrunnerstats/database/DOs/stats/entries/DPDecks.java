@@ -1,13 +1,19 @@
 package com.madarasz.netrunnerstats.database.DOs.stats.entries;
 
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by madarasz on 1/11/16.
- * Deck infos in a datapack
+ * Deck links (with a certain card) filtered for a  datapack
  */
+@NodeEntity
 public class DPDecks {
+    @GraphId
+    private Long id;
     private int count;
     private String dptitle;
     private List<String> deckLinks;
