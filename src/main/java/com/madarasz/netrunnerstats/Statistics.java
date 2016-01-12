@@ -10,9 +10,11 @@ import com.madarasz.netrunnerstats.database.DOs.stats.*;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
 import com.madarasz.netrunnerstats.database.DRs.*;
 import com.madarasz.netrunnerstats.database.DRs.stats.*;
+import com.madarasz.netrunnerstats.helper.CardCount;
 import com.madarasz.netrunnerstats.helper.ColorPicker;
 import com.madarasz.netrunnerstats.helper.DeckDigest;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
+import com.madarasz.netrunnerstats.helper.comparator.CardCountComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -442,6 +444,159 @@ public class Statistics {
                 } else {
                     result += deckRepository.countByCardpoolAndSide(currentPool.getTitle(), side);
                 }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Statistics for a single card.
+     * Includes usage over time, top cards/identities, possible combos, deck links.
+     * @param cardTitle card title
+     * @return
+     */
+    public CardStat getCardStats(String cardTitle) {
+        CardStat result = new CardStat();
+        logger.info("Getting stats for card: " + cardTitle);
+        Card card = cardRepository.findByTitle(cardTitle);
+
+        if (card != null) {
+
+            result = new CardStat(card);
+            String side = card.getSide_code();
+            List<CardPool> cardPools = getCardPoolStats().getSortedCardpool();
+            List<CardPool> validPools = new ArrayList<>(cardPools);
+            Collections.reverse(cardPools);
+            CardCountComparator comparator = new CardCountComparator();
+
+            // deck numbers over time
+            for (CardPool cardPool : cardPools) {
+                String pack = cardPool.getTitle();
+                if (!card.getCardPack().later(cardPackRepository.findByName(pack))) {
+                    int decknum = deckRepository.countByCardpoolAndSide(pack, side);
+                    int topdecknum = deckRepository.countTopByCardpoolAndSide(pack, side);
+                    int using = deckRepository.countByCardpoolUsingCard(pack, cardTitle);
+                    int topusing = deckRepository.countTopByCardpoolUsingCard(pack, cardTitle);
+                    result.addOverTime(
+                            new CardUsage(cardTitle, pack, side, using, topusing,
+                                    (float)using/decknum, (float)topusing/topdecknum));
+                    logger.debug(String.format("%s - top:%,.3f%% all:%,.3f%%", pack,
+                            (float) topusing / topdecknum, (float) using / decknum));
+                } else {
+                    validPools.remove(cardPool);
+                }
+            }
+
+            // statistics on last three packs
+            // get all decks using card
+            List<CardPool> last3Pools = new ArrayList<>(validPools);
+            last3Pools.subList(0,3);
+            int alldeck = 0;
+            List<Deck> decks = new ArrayList<>();
+            for (CardPool cardPool : last3Pools) {
+                String pack = cardPool.getTitle();
+                decks.addAll(deckRepository.findByCardpoolUsingCard(pack, cardTitle));
+                alldeck += deckRepository.countByCardpoolAndSide(pack, side);
+            }
+            int countcard = decks.size();
+            logger.debug(String.format("All decks: %d - deck using card: %d", alldeck, countcard));
+
+            // get top cards
+            List<CardCount> counts = new ArrayList<>();
+            if (card.getType_code().equals("identity")) {
+                List<Card> cards = new ArrayList<>();
+                for (Deck deck : decks) {
+                    for (DeckHasCard deckHasCard : deck.getCards()) {
+                        Card cardi = deckHasCard.getCard();
+                        if (!cards.contains(cardi)) {
+                            cards.add(cardi);
+                        }
+                    }
+                }
+                for (Card cardi : cards) {
+                    int count = 0;
+                    for (Deck deck : decks) {
+                        for (DeckHasCard deckHasCard : deck.getCards()) {
+                            if (deckHasCard.getCard().equals(cardi)) {
+                                count++;
+                                break;
+                            }
+                        }
+                    }
+                    counts.add(new CardCount(cardi, count));
+                }
+                counts.sort(comparator);
+                counts = counts.subList(0, 8);
+            } else {
+                // get top identities
+                List<Card> identities = cardRepository.findIdentitiesBySide(side);
+                for (Card identity : identities) {
+                    int count = 0;
+                    for (Deck deck : decks) {
+                        if (deck.getIdentity().equals(identity)) {
+                            count++;
+                        }
+                    }
+                    counts.add(new CardCount(identity, count));
+                }
+                counts.sort(comparator);
+                counts = counts.subList(0, 5);
+            }
+
+            for (CardCount cardCount : counts) {
+                if (cardCount.getCount() > 0) {
+                    Card id = cardCount.getCard();
+                    result.addTop(new CardUsage(id.getTitle(), id.getCardPack().getName(), side, cardCount.getCount(), -1,
+                            (float) cardCount.getCount() / alldeck, -1));
+                    logger.debug(String.format("%s - %,.3f%%",
+                            cardCount.getCard().getTitle(), (float) cardCount.getCount() / decks.size()));
+                }
+            }
+
+            // get possible combos
+            List<Card> cards = new ArrayList<>();
+            for (Deck deck : decks) {
+                for (DeckHasCard deckHasCard : deck.getCards()) {
+                    Card icard = deckHasCard.getCard();
+                    if (!cards.contains(icard)) {
+                        cards.add(icard);
+                    }
+                }
+            }
+            cards.remove(card);
+            counts.clear();
+
+            for (Card icard : cards) {
+                int count = 0;
+                int countboth = 0;
+                for (CardPool cardPool : last3Pools) {
+                    count += deckRepository.countByCardpoolUsingCard(cardPool.getTitle(), icard.getTitle());
+                    countboth += deckRepository.countByCardpoolUsingCard2(cardPool.getTitle(), cardTitle, icard.getTitle());
+                }
+                counts.add(new CardCount(icard, (int)((float)countboth/count*countboth/countcard*100)));
+                logger.trace(String.format("***,%s,%d,%d", icard.getTitle(), countboth, count));
+            }
+            counts.sort(comparator);
+            counts = counts.subList(0, 10);
+            for (CardCount cardCount : counts) {
+                Card combo = cardCount.getCard();
+                result.addCombos(new CardCombo(combo.getTitle(), combo.getCardPack().getName(), cardCount.getCount()));
+                logger.debug(String.format("%s - %d",
+                        combo.getTitle(), cardCount.getCount()));
+            }
+
+            // generate deck links
+            for (CardPool cardPool : validPools) {
+                String dptitle = cardPool.getTitle();
+                DPDecks dpDecks = new DPDecks(dptitle, deckRepository.countByCardpoolUsingCard(dptitle, cardTitle));
+                List<Deck> decksInDP = deckRepository.findBestByCardpoolUsingCard(dptitle, cardTitle);
+                for (Deck deck : decksInDP) {
+                    dpDecks.addDeckLink(deckDigest.getDeckLink(deck));
+                }
+                if (dpDecks.getCount() > 10) {
+                    dpDecks.addDeckLink("..."); // symbol for more decks
+                }
+                result.addDecks(dpDecks);
             }
         }
         return result;

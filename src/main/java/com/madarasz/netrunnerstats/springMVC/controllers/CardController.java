@@ -1,7 +1,12 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.Statistics;
+import com.madarasz.netrunnerstats.database.DOs.Card;
+import com.madarasz.netrunnerstats.database.DOs.stats.CardStat;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardUsage;
+import com.madarasz.netrunnerstats.database.DRs.CardRepository;
+import com.madarasz.netrunnerstats.helper.gchart.DataTable;
+import com.madarasz.netrunnerstats.helper.gchartConverter.CardToOverTimeGchart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by madarasz on 11/22/15.
@@ -21,6 +27,12 @@ public class CardController {
 
     @Autowired
     Statistics statistics;
+
+    @Autowired
+    CardToOverTimeGchart cardToOverTimeGchart;
+
+    @Autowired
+    CardRepository cardRepository;
 
     // JSON output
     @RequestMapping(value="/JSON/Cards/{target}/{sidecode}/{DPName}", method = RequestMethod.GET)
@@ -36,6 +48,38 @@ public class CardController {
                 return statistics.getMostUsedCardsForCardpool(DPName).getSortedCards(sidecode);
             default:
                 return new ArrayList<>();
+        }
+    }
+
+    @RequestMapping(value="/JSON/Cards/{target}", method = RequestMethod.GET)
+    public @ResponseBody
+    CardStat getCardJSON(@PathVariable(value="target") String target) {
+        return statistics.getCardStats(target);
+    }
+
+    @RequestMapping(value="/JSON/Cards/Overtime/{target}", method = RequestMethod.GET)
+    public @ResponseBody
+    DataTable getCardOverTimeJSON(@PathVariable(value="target") String target) {
+        return cardToOverTimeGchart.converter(target);
+    }
+
+    // html output
+    @RequestMapping(value="/Cards/{title}", method = RequestMethod.GET)
+    public String getCardStat(@PathVariable(value="title") String title, Map<String, Object> model) {
+        Card card = cardRepository.findByTitle(title);
+        if (card == null) {
+            return "404";
+        } else {
+            model.put("title", title);
+            model.put("dp", card.getCardPack().getName());
+            model.put("imgsrc", card.getImageSrc());
+            model.put("pageTitle", card.getTitle() + " - Know the Meta - Android: Netrunner");
+            if (card.getType_code().equals("identity")) {
+                model.put("toptitle", "Most used cards with this identity");
+            } else {
+                model.put("toptitle", "Mostly used with identity");
+            }
+            return "CardStat";
         }
     }
 }

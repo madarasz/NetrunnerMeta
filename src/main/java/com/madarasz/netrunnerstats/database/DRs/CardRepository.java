@@ -22,6 +22,9 @@ public interface CardRepository extends GraphRepository<Card>, RelationshipOpera
     @Query("MATCH (n:Card {type_code: 'identity'}) return n")
     List<Card> findIdentities();
 
+    @Query("MATCH (n:Card {type_code: 'identity', side_code: {0}}) return n")
+    List<Card> findIdentitiesBySide(String side_code);
+
     @Query("MATCH (c:Card {type_code: 'identity', side_code: {0}})<-[:IS_IDENTITY]-(:Standing {topdeck: true}) " +
             "RETURN DISTINCT c.faction_code")
     List<String> findFactionTitlesBySide(String side_code);

@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    <div class="container">
+        <h3 class="page-header">
+            <span th:text="${title}"></span>
+            <em>(<span th:text="${dp}"></span>)</em>
+        </h3>
+        <div class="row">
+            <div class="alert alert-warning text-center hidden" role="alert" id="lowstat">WARNING: probably not enough data for statistical analysis</div>
+            <div class="alert alert-danger text-center hidden" role="alert" id="nostat">ERROR: no data on card - maybe too new, maybe too bad</div>
+        </div>
+        <div class="row">
+            <!--Card picture-->
+            <div class="col-md-6 col-xs-12 text-center">
+                <img th:src="@{__${imgsrc}__}" class="card-big"/><br />
+                <a id="ndblink"></a> -
+                <a id="ancurlink"></a>
+            </div>
+
+            <!--Usage over time-->
+            <div class="col-md-6 col-xs-12 text-center">
+                <h4>Card usage in decks</h4>
+                <div id="chart"></div>
+            </div>
+        </div>
+        <hr/>
+        <div class="row top-buffer-big">
+            <!--Top cards / identities-->
+            <div class="col-md-6 col-xs-12">
+                <h4>
+                    <span th:text="${toptitle}"></span>
+                    <ktm:tooltip place="right" text="based on last 3 tournament cardpools"/>
+                </h4>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Card</th>
+                            <th></th>
+                            <th colspan="2" class="text-center">decks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="identities"></tbody>
+                </table>
+            </div>
+
+            <!--Possible combos-->
+            <div class="col-md-6 col-xs-12">
+                <h4>
+                    Possible synergy with
+                    <ktm:tooltip place="right" text="based on last 3 tournament cardpools"/>
+                </h4>
+                <ul id="combos">
+                </ul>
+            </div>
+        </div>
+        <hr/>
+
+        <!--Deck list-->
+        <div class="row top-buffer-big">
+            <div class="col-xs-12">
+                <h4>Decks using this card</h4>
+                <ul id="decks"></ul>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </div>
+    <div th:replace="fragments/head :: scripts"></div>
+    <script type="text/javascript"
+            src="https://www.google.com/jsapi?autoload={
+            'modules':[{
+              'name':'visualization',
+              'version':'1',
+              'packages':['corechart']
+            }]
+          }"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $('#chart').addClass('spinner');
+        $('#identities').addClass('spinner');
+        $('#combos').addClass('spinner');
+        $('#decks').addClass('spinner');
+        google.setOnLoadCallback(drawData);
+
+        function drawData() {
+            drawChart("/JSON/Cards/Overtime/" + [[${title}]], "chart");
+            loadData();
+        }
+
+        function loadData() {
+            var jsonData = $.ajax({
+                url: "/JSON/Cards/" + [[${title}]],
+                dataType: "json",
+                async: false,
+                success: function(data) {
+                    // top identities
+                    $.each(data.top, function (index, element) {
+                        $("#identities").append($("<tr>")
+                            .append($("<td>", {
+                                text: element.cardtitle
+                            }), $("<td>").append($("<em>", {
+                                    text: '(' + element.cardpacktitle + ')'
+                            })), $("<td>", {
+                                text: element.indecks,
+                                class: 'text-right'
+                            }), $("<td>", {
+                                text: '(' + Math.round(element.deckfraction * 100) + '%)'
+                            })
+                        ));
+                    });
+                    $('#identities').removeClass('spinner');
+
+                    // combos
+                    $.each(data.combos, function (index, element) {
+                        $("#combos").append($("<li>", {
+                            text: element.title + ' '
+                        }).append($("<em>", {
+                            text: '(' + element.pack + ')'
+                        })));
+                    });
+                    $('#combos').removeClass('spinner');
+
+                    // links
+                    $('#ndblink').replaceWith($("<a>", {
+                        text: 'view on NetrunnerDB',
+                        href: 'http://netrunnerdb.com/en/card/' + data.code,
+                        rel: 'nofollow',
+                        target: 'blank'
+                    }));
+                    $('#ancurlink').replaceWith($("<a>", {
+                        text: 'view on ANCUR',
+                        href: 'http://ancur.wikia.com/wiki/' + data.title.replace(" ", "_"),
+                        rel: 'nofollow',
+                        target: 'blank'
+                    }));
+
+                    // deck links
+                    i = 0;
+                    $.each(data.decks, function (index, element) {
+                        $('#decks').append($("<li>", {
+                            text: element.dptitle + ' (' + element.count + ' decks)'
+                        }).append($("<ul>", {
+                            id: 'decks_' + i
+                        })));
+                        $.each(element.deckLinks, function (index2, element2) {
+                            if (element2 === "...") {
+                                $('#decks_' + i).append($("<p>", {
+                                    text: "..."
+                                }));
+                            } else {
+                                $('#decks_' + i).append($("<li>").append(element2));
+                            }
+                        });
+                        i++;
+                    });
+                    $('#decks').removeClass('spinner');
+
+                    // warning
+                    if (data.top[0].deckfraction < 0.05) {
+                        $("#lowstat").removeClass("hidden");
+                    }
+                }
+            }).responseText;
+        }
+
+        function drawChart(urlvalue, elementid) {
+
+
+            var jsonData = $.ajax({
+                url: urlvalue,
+                dataType: "json",
+                async: false
+            }).responseText;
+
+            var data = new google.visualization.DataTable(jsonData);
+
+            var options = {
+                'height': 350,
+                'curveType': 'none',
+                'vAxis': { format:'#,#%', minValue: 0 },
+                'hAxis': { showTextEvery: 1, slantedText: 'true' },
+                'chartArea': { top: 10, bottom: 10, height: '70%' },
+                'legend': { position: 'right', maxLines: 2 },
+                'lineWidth': 3
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById(elementid));
+            chart.draw(data, options);
+            $('#'+elementid).removeClass('spinner');
+        }
+
+        /*]]>*/
+    </script>
+    <div th:replace="fragments/analytics :: ga"></div>
+</body>
+</html>

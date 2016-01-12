@@ -159,6 +159,15 @@ public class Card {
         return advancementcost;
     }
 
+    /**
+     * get the image src for the card
+     * @return URL
+     */
+    public String getImageSrc() {
+        return "/static/img/cards/netrunner-" +
+                title.toLowerCase().replace(" ", "-").replaceAll("[^a-z0-9.-]", "") + ".png";
+    }
+
     @Override
     public String toString() {
 //        return String.format("%s (%s) - %s", title, code, cardPack.toString());

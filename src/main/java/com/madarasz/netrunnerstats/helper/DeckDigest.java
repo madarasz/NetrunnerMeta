@@ -35,7 +35,7 @@ public class DeckDigest {
         }
         result += " (" + deck.countCards() + " cards)\n";
 
-        Standing standing = standingRepository.findByDeckUrl(deck.getUrl()); // TODO: do only once
+        Standing standing = standingRepository.findByDeckUrl(deck.getUrl());
         Tournament tournament = standing.getTournament();
         result += "#" + standing.getRank() + " / " + tournament.getPlayerNumber() + " at " + tournament.getName();
         return result;
@@ -112,6 +112,28 @@ public class DeckDigest {
         result += "<a href=\"" + tournament.getUrl() + "\" target=\"_blank\">"
                 + tournament.getName() + "</a> - rank: #" + standing.getRank() + " / " + tournament.getPlayerNumber();
 
+        return result;
+    }
+
+    /**
+     * Creates a deck link html code from Deck object.
+     * Used on the card statistics page.
+     * @param deck Deck object
+     * @return deck link string
+     */
+    public String getDeckLink(Deck deck) {
+        String result;
+        Standing standing = standingRepository.findByDeckUrl(deck.getUrl());
+        Tournament tournament = standing.getTournament();
+        result = "<a href=\"" + deck.getUrl() + "\" rel=\"nofollow\" target=\"_blank\">";
+        if (deck.getName().equals("")) {
+            result += "unnamed";
+        } else {
+            result += deck.getName();
+        }
+        result += "</a>";
+        result += " by <em>" + deck.getPlayer() + "</em>";
+        result += " (#" + standing.getRank() + " / " + tournament.getPlayerNumber() + " at " + tournament.getName() + ")";
         return result;
     }
 
