@@ -123,6 +123,7 @@
                         <table class="table table-hover">
                             <thead>
                             <tr>
+                                <th></th>
                                 <th>card title</th>
                                 <th class="text-center" colspan="2">used in top decks</th>
                                 <th class="text-center" colspan="2">used in decks</th>
@@ -141,6 +142,7 @@
                         <table class="table table-hover">
                             <thead>
                             <tr>
+                                <th></th>
                                 <th>card title</th>
                                 <th class="text-center" colspan="2">used in top decks</th>
                                 <th class="text-center" colspan="2">used in decks</th>
@@ -161,6 +163,7 @@
                         <table class="table table-hover">
                             <thead>
                             <tr>
+                                <th></th>
                                 <th>card title</th>
                                 <th>pack</th>
                                 <th class="text-center" colspan="2">used in top decks</th>
@@ -178,6 +181,7 @@
                         <table class="table table-hover">
                             <thead>
                             <tr>
+                                <th></th>
                                 <th>card title</th>
                                 <th>pack</th>
                                 <th class="text-center" colspan="2">used in top decks</th>
@@ -354,9 +358,12 @@
                 async: false,
                 success: function(data) {
                     $.each(data, function(index, element) {
-                        $(elementid).append($('<tr>').append($('<td>', {
-                            text: element.cardtitle
-                        }), $('<td>', {
+                        $(elementid).append($('<tr>').append($('<td>').append($('<span>', {
+                            class: 'icon-' + element.faction
+                        })),$('<td>').append($('<a>', {
+                            text: element.cardtitle,
+                            href: '/Cards/' + element.cardtitle
+                        })), $('<td>', {
                             text: element.intopdecks,
                             class: 'text-right'
                         }), $('<td>', {
@@ -382,9 +389,12 @@
                 async: false,
                 success: function(data) {
                     $.each(data, function(index, element) {
-                        $(elementid).append($('<tr>').append($('<td>', {
-                            text: element.cardtitle
-                        }), $('<td>').append($('<em>', {
+                        $(elementid).append($('<tr>').append($('<td>').append($('<span>', {
+                            class: 'icon-' + element.faction
+                        })),$('<td>').append($('<a>', {
+                            text: element.cardtitle,
+                            href: '/Cards/' + element.cardtitle
+                        })), $('<td>').append($('<em>', {
                             text: element.cardpacktitle
                         })), $('<td>', {
                             text: element.intopdecks,

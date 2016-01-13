@@ -13,15 +13,17 @@ public class CardCombo {
     private Long id;
     private String title;
     private String pack;
+    private String faction;
     private int score;
 
     public CardCombo() {
     }
 
-    public CardCombo(String title, String pack, int score) {
+    public CardCombo(String title, String pack, String faction, int score) {
         this.title = title;
         this.pack = pack;
         this.score = score;
+        this.faction = faction;
     }
 
     public String getTitle() {
@@ -34,5 +36,9 @@ public class CardCombo {
 
     public int getScore() {
         return score;
+    }
+
+    public String getFaction() {
+        return faction;
     }
 }

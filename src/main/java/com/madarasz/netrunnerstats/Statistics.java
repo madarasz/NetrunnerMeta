@@ -333,11 +333,11 @@ public class Statistics {
                     int topcount = deckRepository.countTopByUsingCard(code);
                     if (card.getSide_code().equals("runner")) {
                         result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
-                                card.getSide_code(), count, topcount,
+                                card.getSide_code(), card.getFaction_code(), count, topcount,
                                 (double)count / runnerdecks, (double)topcount / toprunnerdecks));
                     } else {
                         result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
-                                card.getSide_code(), count, topcount,
+                                card.getSide_code(), card.getFaction_code(), count, topcount,
                                 (double)count / corpdecks, (double)topcount / topcorpdecks));
                     }
                 }
@@ -361,13 +361,13 @@ public class Statistics {
             result = new CardUsageStat(cardpool, true, -1, toprunnerdecks, -1, topcorpdecks);
             List<CardCounts> stat = cardRepository.findMostPopularCardsByCardPack(cardpool, "runner");
             for (CardCounts count : stat) {
-                result.addCardUsage(new CardUsage(count.getTitle(), count.getCardpack(), "runner", -1, count.getCount(),
+                result.addCardUsage(new CardUsage(count.getTitle(), count.getCardpack(), "runner", count.getFaction(), -1, count.getCount(),
                         -1, (double)count.getCount() / toprunnerdecks));
                 logger.debug(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
             }
             stat = cardRepository.findMostPopularCardsByCardPack(cardpool, "corp");
             for (CardCounts count : stat) {
-                result.addCardUsage(new CardUsage(count.getTitle(), count.getCardpack(), "corp", -1, count.getCount(),
+                result.addCardUsage(new CardUsage(count.getTitle(), count.getCardpack(), "corp", count.getFaction(), -1, count.getCount(),
                         -1, (double)count.getCount() / topcorpdecks));
                 logger.debug(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
             }
@@ -481,7 +481,7 @@ public class Statistics {
                         int using = deckRepository.countByCardpoolUsingCard(pack, cardTitle);
                         int topusing = deckRepository.countTopByCardpoolUsingCard(pack, cardTitle);
                         result.addOverTime(
-                                new CardUsage(cardTitle, pack, side, using, topusing,
+                                new CardUsage(cardTitle, pack, side, card.getFaction_code(), using, topusing,
                                         (float) using / decknum, (float) topusing / topdecknum));
                         logger.debug(String.format("%s - top:%,.3f%% all:%,.3f%%", pack,
                                 (float) topusing / topdecknum, (float) using / decknum));
@@ -549,7 +549,7 @@ public class Statistics {
                 for (CardCount cardCount : counts) {
                     if (cardCount.getCount() > 0) {
                         Card id = cardCount.getCard();
-                        result.addTop(new CardUsage(id.getTitle(), id.getCardPack().getName(), side, cardCount.getCount(), -1,
+                        result.addTop(new CardUsage(id.getTitle(), id.getCardPack().getName(), side, id.getFaction_code(), cardCount.getCount(), -1,
                                 (float) cardCount.getCount() / alldeck, -1));
                         logger.debug(String.format("%s - %,.3f%%",
                                 cardCount.getCard().getTitle(), (float) cardCount.getCount() / decks.size()));
@@ -583,7 +583,7 @@ public class Statistics {
                 counts = trimCardCount(counts, 10);
                 for (CardCount cardCount : counts) {
                     Card combo = cardCount.getCard();
-                    result.addCombos(new CardCombo(combo.getTitle(), combo.getCardPack().getName(), cardCount.getCount()));
+                    result.addCombos(new CardCombo(combo.getTitle(), combo.getCardPack().getName(), combo.getFaction_code(), cardCount.getCount()));
                     logger.debug(String.format("%s - %d",
                             combo.getTitle(), cardCount.getCount()));
                 }

@@ -14,6 +14,7 @@ public class CardUsage {
     private Long id;
     @Indexed private String cardtitle;
     private String sidecode;
+    private String faction;
     private String cardpacktitle;
     private int indecks;
     private int intopdecks;
@@ -23,17 +24,19 @@ public class CardUsage {
     public CardUsage() {
     }
 
-    public CardUsage(String cardtitle, String cardpacktitle, String sidecode, int indecks, int intopdecks) {
+    public CardUsage(String cardtitle, String cardpacktitle, String sidecode, String faction, int indecks, int intopdecks) {
         this.cardtitle = cardtitle;
         this.cardpacktitle = cardpacktitle;
         this.sidecode = sidecode;
+        this.faction = faction;
         this.indecks = indecks;
         this.intopdecks = intopdecks;
     }
 
-    public CardUsage(String cardtitle, String cardpacktitle, String sidecode, int indecks, int intopdecks, double deckfraction, double topdeckfraction) {
+    public CardUsage(String cardtitle, String cardpacktitle, String sidecode, String faction, int indecks, int intopdecks, double deckfraction, double topdeckfraction) {
         this.cardtitle = cardtitle;
         this.sidecode = sidecode;
+        this.faction = faction;
         this.cardpacktitle = cardpacktitle;
         this.indecks = indecks;
         this.intopdecks = intopdecks;
@@ -67,5 +70,9 @@ public class CardUsage {
 
     public double getTopdeckfraction() {
         return topdeckfraction;
+    }
+
+    public String getFaction() {
+        return faction;
     }
 }

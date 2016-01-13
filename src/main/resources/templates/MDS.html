@@ -194,9 +194,10 @@
                                 text: typecode
                             }))))
                         }
-                        $(elementid).append($('<tr>').append($('<td>', {
-                            text: element.cardtitle
-                        }), $('<td>').append($('<em>', {
+                        $(elementid).append($('<tr>').append($('<td>').append($('<a>', {
+                            text: element.cardtitle,
+                            href: '/Cards/' + element.cardtitle
+                        })), $('<td>').append($('<em>', {
                             text: element.cardpack
                         })), $('<td>', {
                             text: element.using,

@@ -14,4 +14,6 @@ public interface CardCounts {
     public int getCount();
     @ResultColumn("cardpack")
     public String getCardpack();
+    @ResultColumn("faction")
+    public String getFaction();
 }
