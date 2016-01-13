@@ -116,6 +116,9 @@ public class AdminController {
         model.put("countIdentityAverage", template.count(IdentityAverage.class));
         model.put("countCardAverage", template.count(CardAverage.class));
         model.put("countAdminData", template.count(AdminData.class));
+        model.put("countCardStat", template.count(CardStat.class));
+        model.put("countCardCombo", template.count(CardCombo.class));
+        model.put("countDPDecks", template.count(DPDecks.class));
 
         AdminData denyurls = adminDataRepository.getDenyUrls();
         if (denyurls == null) {
