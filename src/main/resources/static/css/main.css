@@ -101,6 +101,10 @@
 .inf-sunny-lebeau { color: black; }
 .inf-adam { color: darkgoldenrod; }
 
+.stat-col {
+    width: 13%;
+}
+
 /* CSS loader spinner by Stephan Wagner */
 @keyframes spinner {
     to {transform: rotate(360deg);}
