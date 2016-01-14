@@ -6,26 +6,27 @@
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
         <h3 class="page-header">
+            <span th:class="${faction}"></span>
             <span th:text="${title}"></span>
             <em>(<span th:text="${dp}"></span>)</em>
         </h3>
         <div class="row">
             <div class="alert alert-warning text-center hidden" role="alert" id="lowstat">WARNING: probably not enough data for statistical analysis</div>
-            <div class="alert alert-danger text-center hidden" role="alert" id="nostat">ERROR: no data on card - maybe too new, maybe too bad</div>
+            <div class="alert alert-danger text-center hidden" role="alert" id="nostat">ERROR: no tournament data on card</div>
         </div>
         <div class="row">
             <!--Card picture-->
-            <div class="col-md-6 col-xs-12 text-center">
+            <div class="col-md-4 col-xs-12 text-center">
                 <img th:src="@{__${imgsrc}__}" class="card-big"/><br />
                 <a id="ndblink"></a> -
                 <a id="ancurlink"></a>
             </div>
 
             <!--Usage over time-->
-            <div class="col-md-6 col-xs-12 text-center">
+            <div class="col-md-8 col-xs-12 text-center">
                 <h4>
-                    Card usage in decks
-                    <ktm:tooltip place="bottom" text="at least one card in deck"/>
+                    <span th:text="${title}"></span> usage in decks
+                    <ktm:tooltip place="bottom" text="at least one of this card in deck"/>
                 </h4>
                 <div id="chart"></div>
             </div>
@@ -36,7 +37,7 @@
             <div class="col-md-6 col-xs-12">
                 <h4>
                     <span th:text="${toptitle}"></span>
-                    <ktm:tooltip place="right" text="based on last 3 tournament cardpools"/>
+                    <ktm:tooltip place="right" text="usage based on all decks from last 3 tournament cardpools"/>
                 </h4>
                 <table class="table table-hover">
                     <thead>
@@ -73,9 +74,12 @@
 
         <!--Deck list-->
         <div class="row top-buffer-big">
-            <div class="col-xs-12">
+            <div class="col-xs-12 col-md-9">
                 <h4>Decks using this card</h4>
                 <ul id="decks"></ul>
+            </div>
+            <div class="col-xs-12 col-md-3 text-center">
+                <div th:replace="fragments/googlead :: small"></div>
             </div>
         </div>
 
@@ -99,24 +103,29 @@
         google.setOnLoadCallback(drawData);
 
         function drawData() {
-            drawChart("/JSON/Cards/Overtime/" + [[${title}]], "chart");
+            drawChart("/JSON/Cards/Overtime/" + [[${title}]] + "/", "chart");
             loadData();
         }
 
+        $(window).resize(function(){
+            drawChart("/JSON/Cards/Overtime/" + [[${title}]] + "/", "chart");
+        });
+
         function loadData() {
             var jsonData = $.ajax({
-                url: "/JSON/Cards/" + [[${title}]],
+                url: "/JSON/Cards/" + [[${title}]] + "/",
                 dataType: "json",
                 async: false,
                 success: function(data) {
-                    // top identities
+                    // top identities / cards
+                    var countper = 0;
                     $.each(data.top, function (index, element) {
                         $("#identities").append($("<tr>")
                             .append($("<td>").append($("<span>", {
                                 class: 'icon-' + element.faction
                             })),$("<td>").append($("<a>", {
                                 text: element.cardtitle,
-                                href: '/Cards/' + element.cardtitle
+                                href: '/Cards/' + element.cardtitle + '/'
                             })), $("<td>").append($("<em>", {
                                 text: '(' + element.cardpacktitle + ')'
                             })), $("<td>", {
@@ -126,6 +135,7 @@
                                 text: '(' + Math.round(element.deckfraction * 100) + '%)'
                             })
                         ));
+                        countper += element.deckfraction;
                     });
                     $('#identities').removeClass('spinner');
 
@@ -135,7 +145,7 @@
                             class: 'icon-' + element.faction
                         })), $("<td>").append($("<a>", {
                             text: element.title,
-                            href: '/Cards/' + element.title
+                            href: '/Cards/' + element.title + '/'
                         })), $("<td>", {
                             text: '(' + element.pack + ')',
                             class: 'italic'
@@ -178,10 +188,15 @@
                     });
                     $('#decks').removeClass('spinner');
 
-                    // warning
-                    if (data.top[0].deckfraction < 0.05) {
-                        $("#lowstat").removeClass("hidden");
+                    // warning, error
+                    if (countper === 0) {
+                        $("#nostat").removeClass("hidden");
+                    } else {
+                        if (countper < 0.07) {
+                            $("#lowstat").removeClass("hidden");
+                        }
                     }
+
                 }
             }).responseText;
         }
@@ -202,7 +217,7 @@
                 'curveType': 'none',
                 'vAxis': { format:'#,#%', minValue: 0 },
                 'hAxis': { showTextEvery: 1, slantedText: 'true' },
-                'chartArea': { top: 10, bottom: 10, height: '70%' },
+                'chartArea': { top: 10, bottom: 10, height: '70%'  },
                 'legend': { position: 'right', maxLines: 2 },
                 'lineWidth': 3
             };

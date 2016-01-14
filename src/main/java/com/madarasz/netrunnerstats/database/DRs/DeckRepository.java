@@ -82,7 +82,11 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
 
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament)<--(:Standing)-->(d:Deck)-->(:Card {title: {1}}) " +
             "WHERE (d:Deck)-->(:Card {title: {2}}) RETURN COUNT(DISTINCT d)")
-    int countByCardpoolUsingCard2(String cardpackName, String cardTitle, String cardTitle2);
+    int countByCardpoolUsingCardBoth(String cardpackName, String cardTitle, String cardTitle2);
+
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament)<--(:Standing)-->(d:Deck) " +
+            "WHERE (d:Deck)-->(:Card {title: {2}}) OR (d:Deck)-->(:Card {title: {1}}) RETURN COUNT(DISTINCT d)")
+    int countByCardpoolUsingCardOneOf(String cardpackName, String cardTitle, String cardTitle2);
 
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament)<--(:Standing {topdeck: true})-->(d:Deck)-->(:Card {title: {1}}) RETURN COUNT(DISTINCT d)")
     int countTopByCardpoolUsingCard(String cardpackName, String cardTitle);

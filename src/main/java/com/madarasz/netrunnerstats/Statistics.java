@@ -643,11 +643,11 @@ public class Statistics {
                     result.addDecks(dpDecks);
                 }
                 stopwatch.stop();
-                logger.info(String.format("Saving stats for card: %s (%.f3 sec)", cardTitle ,
+                logger.info(String.format("Saving stats for card: %s (%.3f sec)", cardTitle ,
                         stopwatch.getTotalTimeSeconds()));
                 cardStatRepository.save(result);
             } else {
-                logger.error("No such card.");
+                logger.error("No such card: " + cardTitle);
             }
         }
         return result;
