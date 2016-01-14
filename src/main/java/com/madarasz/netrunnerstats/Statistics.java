@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 import java.util.*;
 
@@ -97,6 +98,8 @@ public class Statistics {
         }
 
         if (statistics == null) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
             // total count
             int deckcount;
             int standcount;
@@ -171,8 +174,10 @@ public class Statistics {
                 logger.debug(String.format("%s - %d (%d)", faction, statcount, deckRepository.countTopByCardPoolAndFaction(cardpackName, faction)));
             }
 
+            stopwatch.stop();
             logger.debug("*********************************************************************");
-            logger.info(String.format("Saving DP Statistics: %s - top: %s", cardpackName, top));
+            logger.info(String.format("Saving DP Statistics: %s - top: %s (%.3f sec)", cardpackName, top,
+                    stopwatch.getTotalTimeSeconds()));
             dpStatsRepository.save(statistics);
         }
         return statistics;
@@ -187,6 +192,8 @@ public class Statistics {
     public IdentityMDS getPackMath(String identityName, String cardpackName) {
         IdentityMDS result = identityMdsRepository.findByDpnameIdentitytitle(cardpackName, identityName);
         if (result == null) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
             ArrayList<Deck> decks = new ArrayList<>(deckRepository.filterByIdentityAndCardPool(identityName, cardpackName));
             ArrayList<Deck> topdecks = new ArrayList<>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
 
@@ -213,8 +220,10 @@ public class Statistics {
                     logger.debug(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
                 }
             }
+            stopwatch.stop();
             logger.debug("*********************************************************************");
-            logger.info(String.format("Saving MDS Statistics: %s - %s", cardpackName, identityName));
+            logger.info(String.format("Saving MDS Statistics: %s - %s (%.3f sec)", cardpackName, identityName,
+                    stopwatch.getTotalTimeSeconds()));
             identityMdsRepository.save(result);
         }
         return result;
@@ -229,6 +238,8 @@ public class Statistics {
     public DPIdentities getIdentityLinksForDataPack(String cardpackName, String sidecode) {
         DPIdentities result = dpIdentitiesRepository.findByCardpoolSidecode(cardpackName, sidecode);
         if (result == null) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
             result = new DPIdentities(cardpackName, sidecode);
             DPStatistics stats = getPackStats(cardpackName, false);
 
@@ -255,7 +266,9 @@ public class Statistics {
                     result.addIdentitiy(entry);
                 }
             }
-            logger.info(String.format("Saving DPIdentities: %s - %s", cardpackName, sidecode));
+            stopwatch.stop();
+            logger.info(String.format("Saving DPIdentities: %s - %s (%.3f sec)", cardpackName, sidecode,
+                    stopwatch.getTotalTimeSeconds()));
             dpIdentitiesRepository.save(result);
         }
         return result;
@@ -268,6 +281,8 @@ public class Statistics {
     public CardPoolStats getCardPoolStats() {
         CardPoolStats result = cardPoolStatsRepository.find();
         if (result == null) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
             result = new CardPoolStats();
             List<CardPack> available = cardPackRepository.findWithStandings();
             for (CardPack cardPack : available) {
@@ -279,7 +294,8 @@ public class Statistics {
                         cardPack.getNumber(), cardPack.getCyclenumber());
                 result.addCardPool(cardPool);
             }
-            logger.info("Saving Cardpool Statistics.");
+            stopwatch.stop();
+            logger.info(String.format("Saving Cardpool Statistics. (%.3f sec)", stopwatch.getTotalTimeSeconds()));
             cardPoolStatsRepository.save(result);
         }
         return result;
@@ -294,13 +310,17 @@ public class Statistics {
     public DeckInfos getDeckInfos(String identityName, String cardpool) {
         DeckInfos result = deckInfosRepository.findByCardpoolIdentityname(cardpool, identityName);
         if (result == null) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
             List<Deck> decks = deckRepository.filterByIdentityAndCardPool(identityName, cardpool);
             result = new DeckInfos(cardpool, identityName);
             for (Deck deck : decks) {
                 DeckInfo info = getDeckInfo(deck);
                 result.addDeckInfo(info);
             }
-            logger.info(String.format("Saving DeckInfos Statistics: %s - %s", cardpool, identityName));
+            stopwatch.stop();
+            logger.info(String.format("Saving DeckInfos Statistics: %s - %s (%.3f sec)", cardpool, identityName,
+                    stopwatch.getTotalTimeSeconds()));
             deckInfosRepository.save(result);
         }
         return result;
@@ -319,6 +339,8 @@ public class Statistics {
     public CardUsageStat getMostUsedCardsFromCardPack(String cardpack) {
         CardUsageStat result = cardUsageStatsRepository.findByCardPackName(cardpack);
         if (result == null) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
             int runnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", false);
             int toprunnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", true);
             int corpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", false);
@@ -342,7 +364,9 @@ public class Statistics {
                     }
                 }
             }
-            logger.info(String.format("Saving Card Usage Statistics, cardpack: %s", cardpack));
+            stopwatch.stop();
+            logger.info(String.format("Saving Card Usage Statistics, cardpack: %s (%.3f sec)", cardpack,
+                    stopwatch.getTotalTimeSeconds()));
             cardUsageStatsRepository.save(result);
         }
         return result;
@@ -356,6 +380,8 @@ public class Statistics {
     public CardUsageStat getMostUsedCardsForCardpool(String cardpool) {
         CardUsageStat result = cardUsageStatsRepository.findByCardPoolName(cardpool);
         if (result == null) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
             int toprunnerdecks = deckRepository.countTopByCardpoolAndSide(cardpool, "runner");
             int topcorpdecks = deckRepository.countTopByCardpoolAndSide(cardpool, "corp");
             result = new CardUsageStat(cardpool, true, -1, toprunnerdecks, -1, topcorpdecks);
@@ -371,7 +397,9 @@ public class Statistics {
                         -1, (double)count.getCount() / topcorpdecks));
                 logger.debug(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
             }
-            logger.info(String.format("Saving Card Usage Statistics, cardpool: %s", cardpool));
+            stopwatch.stop();
+            logger.info(String.format("Saving Card Usage Statistics, cardpool: %s (%.3f sec)", cardpool,
+                    stopwatch.getTotalTimeSeconds()));
             cardUsageStatsRepository.save(result);
         }
         return result;
@@ -386,6 +414,8 @@ public class Statistics {
     public IdentityAverage getIdentityAverage(String identity, String cardpool) {
         IdentityAverage result = identityAverageRepository.findIdentityCardPool(identity, cardpool);
         if (result == null) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
             result = new IdentityAverage(identity, cardpool);
             List<Deck> decks = deckRepository.filterByIdentityAndCardPool(identity, cardpool);
             Set<Card> cards = new HashSet<>();
@@ -419,7 +449,9 @@ public class Statistics {
                         String.format("%.2f", (double) sumused / used));
                 result.addCard(cardAverage);
             }
-            logger.info(String.format("Saving deck averages: %s - %s", identity, cardpool));
+            stopwatch.stop();
+            logger.info(String.format("Saving deck averages: %s - %s (%.3f)", identity, cardpool,
+                    stopwatch.getTotalTimeSeconds()));
             identityAverageRepository.save(result);
         }
         return result;
@@ -464,6 +496,8 @@ public class Statistics {
             Card card = cardRepository.findByTitle(cardTitle);
 
             if (card != null) {
+                StopWatch stopwatch = new StopWatch();
+                stopwatch.start();
 
                 result = new CardStat(card);
                 String side = card.getSide_code();
@@ -571,12 +605,19 @@ public class Statistics {
 
                 for (Card icard : cards) {
                     int count = 0;
+//                    int countoneof = 0;
                     int countboth = 0;
-                    for (CardPool cardPool : last3Pools) {
-                        count += deckRepository.countByCardpoolUsingCard(cardPool.getTitle(), icard.getTitle());
-                        countboth += deckRepository.countByCardpoolUsingCard2(cardPool.getTitle(), cardTitle, icard.getTitle());
+                    for (CardPool cardPool : validPools) {
+                        if (icard.getCardPack().getCyclenumber()*100 + icard.getCardPack().getNumber() <=
+                                cardPool.getCyclenumber()*100 + cardPool.getDpnumber()) {
+                            count += deckRepository.countByCardpoolUsingCard(cardPool.getTitle(), icard.getTitle());
+//                            countoneof += deckRepository.countByCardpoolUsingCardOneOf(cardPool.getTitle(), cardTitle, icard.getTitle());
+                            countboth += deckRepository.countByCardpoolUsingCardBoth(cardPool.getTitle(), cardTitle, icard.getTitle());
+                        }
                     }
+//                    counts.add(new CardCount(icard, (int) ((float) countboth / countoneof * 100))); //Jaccard similarity
                     counts.add(new CardCount(icard, (int) ((float) countboth / count * countboth / countcard * 100)));
+//                    logger.trace(String.format("***,%s,%d,%d", icard.getTitle(), countboth, countoneof));
                     logger.trace(String.format("***,%s,%d,%d", icard.getTitle(), countboth, count));
                 }
                 counts.sort(comparator);
@@ -601,9 +642,13 @@ public class Statistics {
                     }
                     result.addDecks(dpDecks);
                 }
+                stopwatch.stop();
+                logger.info(String.format("Saving stats for card: %s (%.f3 sec)", cardTitle ,
+                        stopwatch.getTotalTimeSeconds()));
+                cardStatRepository.save(result);
+            } else {
+                logger.error("No such card.");
             }
-            logger.info("Saving stats for card: " + cardTitle);
-            cardStatRepository.save(result);
         }
         return result;
     }
