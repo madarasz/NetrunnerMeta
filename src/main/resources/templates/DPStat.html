@@ -351,37 +351,6 @@
             });
         }
 
-        function loadCardPackTable(urlvalue, elementid) {
-            var jsonData = $.ajax({
-                url: urlvalue,
-                dataType: "json",
-                async: false,
-                success: function(data) {
-                    $.each(data, function(index, element) {
-                        $(elementid).append($('<tr>').append($('<td>').append($('<span>', {
-                            class: 'icon-' + element.faction
-                        })),$('<td>').append($('<a>', {
-                            text: element.cardtitle,
-                            href: '/Cards/' + element.cardtitle + '/'
-                        })), $('<td>', {
-                            text: element.intopdecks,
-                            class: 'text-right'
-                        }), $('<td>', {
-                            text: '(' + Math.round(element.topdeckfraction * 100) + '%)',
-                            class: 'text-left'
-                        }), $('<td>', {
-                            text: element.indecks,
-                            class: 'text-right'
-                        }), $('<td>', {
-                            text: '(' + Math.round(element.deckfraction * 100) + '%)',
-                            class: 'text-left'
-                        })));
-                    });
-                    $(elementid).removeClass('spinner');
-                }
-            });
-        }
-
         function loadCardPoolTable(urlvalue, elementid) {
             var jsonData = $.ajax({
                 url: urlvalue,

@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    <div class="container">
+        <h3 class="page-header">Cards</h3>
+        <div class="row">
+            <!--Expansion list-->
+            <div class="col-md-4 col-xs-12">
+                <h4>
+                    Expansions
+                    <ktm:tooltip place="bottom" text="Click expansion name for card list."/>
+                </h4>
+                <ul id="packs"></ul>
+            </div>
+
+            <!--Card list-->
+            <div class="col-md-8 col-xs-12">
+                <!--Runner cards-->
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="shrink"></th>
+                            <th class="expand">runner card title</th>
+                            <th class="text-center shrink" colspan="2">used in top decks</th>
+                            <th class="text-center shrink" colspan="2">used in decks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="runner-cards"></tbody>
+                </table>
+
+                <!--Corp cards-->
+                <table class="table table-hover top-buffer-big">
+                    <thead>
+                    <tr>
+                        <th class="shrink"></th>
+                        <th class="expand">corp card title</th>
+                        <th class="text-center shrink" colspan="2">used in top decks</th>
+                        <th class="text-center shrink" colspan="2">used in decks</th>
+                    </tr>
+                    </thead>
+                    <tbody id="corp-cards"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </div>
+    <div th:replace="fragments/head :: scripts"></div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+            $('#packs').addClass('spinner');
+            loadPacks();
+
+            function loadTables(title) {
+                encodedtitle = encodeURIComponent(title);
+                $('#runner-cards').empty().addClass('spinner');
+                $('#corp-cards').empty().addClass('spinner');
+                loadCardPackTable('/JSON/Cards/Cardpack/runner/' + encodedtitle, '#runner-cards');
+                loadCardPackTable('/JSON/Cards/Cardpack/corp/' + encodedtitle, '#corp-cards');
+            }
+
+            function loadPacks() {
+                var jsonData = $.ajax({
+                    url: "/JSON/Cardpacks",
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        $.each(data, function (index, element) {
+                            if (element.datapacks.length == 0) {
+                                $("#packs").append($("<li>").append($("<a>", {
+                                    text: element.title,
+                                    onClick: "loadTables('" + element.title + "')",
+                                    class: 'fake-link'
+                                })));
+                            } else {
+                                $("#packs").append($("<li>", {
+                                    text: element.title + ' cycle'
+                                }), $("<ul>", {
+                                    id: "cycle-" + element.cyclenumber
+                                }));
+                                $.each(element.datapacks, function (index2, element2) {
+                                    $("#cycle-" + element.cyclenumber).append($("<li>").append($("<a>", {
+                                        text: element2,
+                                        onClick: "loadTables('" + element2 + "')",
+                                        class: 'fake-link'
+                                    })));
+                                });
+                            }
+                        });
+                        $('#packs').removeClass('spinner');
+                    }
+                });
+            }
+        /*]]>*/
+    </script>
+    <div th:replace="fragments/analytics :: ga"></div>
+</body>
+</html>

@@ -5,6 +5,7 @@ import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.stats.CardStat;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardUsage;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
+import com.madarasz.netrunnerstats.helper.Cycle;
 import com.madarasz.netrunnerstats.helper.gchart.DataTable;
 import com.madarasz.netrunnerstats.helper.gchartConverter.CardToOverTimeGchart;
 import org.slf4j.LoggerFactory;
@@ -67,6 +68,11 @@ public class CardController {
         return cardToOverTimeGchart.converter(target);
     }
 
+    @RequestMapping(value="/JSON/Cardpacks", method = RequestMethod.GET)
+    public @ResponseBody List<Cycle> getCardPacks() {
+        return statistics.getDPStructure();
+    }
+
     // html output
     @RequestMapping(value="/Cards/{title}/", method = RequestMethod.GET)
     public String getCardStat(@PathVariable(value="title") String title, Map<String, Object> model) {
@@ -87,5 +93,12 @@ public class CardController {
             }
             return "CardStat";
         }
+    }
+
+    // html output
+    @RequestMapping(value="/Cards", method = RequestMethod.GET)
+    public String getCards(Map<String, Object> model) {
+        model.put("pageTitle", "Cards - Know the Meta - Android: Netrunner");
+        return "Cards";
     }
 }

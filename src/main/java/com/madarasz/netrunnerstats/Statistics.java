@@ -10,10 +10,7 @@ import com.madarasz.netrunnerstats.database.DOs.stats.*;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
 import com.madarasz.netrunnerstats.database.DRs.*;
 import com.madarasz.netrunnerstats.database.DRs.stats.*;
-import com.madarasz.netrunnerstats.helper.CardCount;
-import com.madarasz.netrunnerstats.helper.ColorPicker;
-import com.madarasz.netrunnerstats.helper.DeckDigest;
-import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
+import com.madarasz.netrunnerstats.helper.*;
 import com.madarasz.netrunnerstats.helper.comparator.CardCountComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -362,6 +359,9 @@ public class Statistics {
                                 card.getSide_code(), card.getFaction_code(), count, topcount,
                                 (double)count / corpdecks, (double)topcount / topcorpdecks));
                     }
+                } else {
+                        result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
+                            card.getSide_code(), card.getFaction_code(), 0, 0, 0, 0));
                 }
             }
             stopwatch.stop();
@@ -467,10 +467,12 @@ public class Statistics {
     public int getDeckNumberFromCardpoolOnward(String cardpool, String side, boolean topdeck) {
         List<CardPool> cardPools = getCardPoolStats().getSortedCardpool();
         Collections.reverse(cardPools);
+        CardPack cardPack = cardPackRepository.findByName(cardpool);
         int result = 0;
         boolean count = false;
         for (CardPool currentPool : cardPools) {
-            if (currentPool.getTitle().equals(cardpool)) {
+            if (currentPool.getCyclenumber()*100 + currentPool.getDpnumber()
+                    >= cardPack.getCyclenumber()*100 + cardPack.getNumber()) {
                 count = true;
             }
             if (count) {
@@ -604,21 +606,21 @@ public class Statistics {
                 counts.clear();
 
                 for (Card icard : cards) {
-                    int count = 0;
+                    int icount = 0;
 //                    int countoneof = 0;
                     int countboth = 0;
                     for (CardPool cardPool : validPools) {
                         if (icard.getCardPack().getCyclenumber()*100 + icard.getCardPack().getNumber() <=
                                 cardPool.getCyclenumber()*100 + cardPool.getDpnumber()) {
-                            count += deckRepository.countByCardpoolUsingCard(cardPool.getTitle(), icard.getTitle());
+                            icount += deckRepository.countByCardpoolUsingCard(cardPool.getTitle(), icard.getTitle());
 //                            countoneof += deckRepository.countByCardpoolUsingCardOneOf(cardPool.getTitle(), cardTitle, icard.getTitle());
                             countboth += deckRepository.countByCardpoolUsingCardBoth(cardPool.getTitle(), cardTitle, icard.getTitle());
                         }
                     }
 //                    counts.add(new CardCount(icard, (int) ((float) countboth / countoneof * 100))); //Jaccard similarity
-                    counts.add(new CardCount(icard, (int) ((float) countboth / count * countboth / countcard * 100)));
+                    counts.add(new CardCount(icard, (int) ((float) countboth / icount * countboth / countcard * 100)));
 //                    logger.trace(String.format("***,%s,%d,%d", icard.getTitle(), countboth, countoneof));
-                    logger.trace(String.format("***,%s,%d,%d", icard.getTitle(), countboth, count));
+                    logger.trace(String.format("***,%s,%d,%d", icard.getTitle(), countboth, icount));
                 }
                 counts.sort(comparator);
                 counts = trimCardCount(counts, 10);
@@ -649,6 +651,23 @@ public class Statistics {
             } else {
                 logger.error("No such card: " + cardTitle);
             }
+        }
+        return result;
+    }
+
+    /**
+     * WARNING: cycle names are not in DB. They are coming from Enums.
+     * @return Cycle-Datapack structure
+     */
+    public List<Cycle> getDPStructure() {
+        List<Cycle> result = new ArrayList<>();
+        for (int i = 1; i< Enums.CardCycles.values().length; i++) {
+            Cycle cycle = new Cycle(i);
+            List<String> dps = cardPackRepository.getSortedPackNamesInCycle(i);
+            if (dps.size() > 1) {
+                cycle.addDatapacks(dps);
+            }
+            result.add(cycle);
         }
         return result;
     }

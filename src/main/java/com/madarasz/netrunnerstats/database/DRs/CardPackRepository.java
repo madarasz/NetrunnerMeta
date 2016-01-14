@@ -22,6 +22,6 @@ public interface CardPackRepository extends GraphRepository<CardPack>, Relations
     @Query("MATCH (p:CardPack)<-[:POOL]-(:Tournament) RETURN DISTINCT p")
     List<CardPack> findWithStandings();
 
-    @Query("MATCH (p:CardPack) RETURN p ORDER BY p.cyclenumber ASC, p.number ASC")
-    List<CardPack> getSortedPacks();
+    @Query("MATCH (p:CardPack {cyclenumber: {0}}) RETURN p.name ORDER BY p.number ASC")
+    List<String> getSortedPackNamesInCycle(int cycleNumber);
 }

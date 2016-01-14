@@ -12,6 +12,13 @@
     font-style: italic;
 }
 
+.shrink {
+    white-space: nowrap;
+}
+.expand {
+    width: 100%;
+}
+
 .blog-text {
     text-align: justify;
 }

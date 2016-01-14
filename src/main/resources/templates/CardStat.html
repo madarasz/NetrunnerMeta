@@ -12,7 +12,7 @@
         </h3>
         <div class="row">
             <div class="alert alert-warning text-center hidden" role="alert" id="lowstat">WARNING: probably not enough data for statistical analysis</div>
-            <div class="alert alert-danger text-center hidden" role="alert" id="nostat">ERROR: no tournament data on card</div>
+            <div class="alert alert-danger text-center hidden" role="alert" id="nostat">No tournament data on card</div>
         </div>
         <div class="row">
             <!--Card picture-->
@@ -56,7 +56,7 @@
             <div class="col-md-6 col-xs-12">
                 <h4>
                     Possible synergy with
-                    <ktm:tooltip place="right" text="based on last 3 tournament cardpools"/>
+                    <ktm:tooltip place="right" text="the card is usually found with these other cards in decks"/>
                 </h4>
                 <table class="table table-condensed">
                     <thead>
@@ -192,7 +192,7 @@
                     if (countper === 0) {
                         $("#nostat").removeClass("hidden");
                     } else {
-                        if (countper < 0.07) {
+                        if (countper < 0.05) {
                             $("#lowstat").removeClass("hidden");
                         }
                     }
