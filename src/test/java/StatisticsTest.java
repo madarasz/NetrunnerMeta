@@ -135,7 +135,7 @@ public class StatisticsTest {
         cardController.getMostUsedCards("Cardpool", "corp", "The Universe of Tomorrow");
         // check count
         Assert.assertEquals("CardUsageStat are not created.", 4, template.count(CardUsageStat.class));
-        Assert.assertEquals("CardUsage are not created.", 93, template.count(CardUsage.class));
+        Assert.assertEquals("CardUsage are not created.", 120, template.count(CardUsage.class));
         // check values - deck counts
         Assert.assertEquals("Deck counts incorrect", 2,
                 statistics.getDeckNumberFromCardpoolOnward("The Universe of Tomorrow", "corp", true));
@@ -161,7 +161,7 @@ public class StatisticsTest {
         cardController.getMostUsedCards("Cardpool", "runner", "Old Hollywood");
         cardController.getMostUsedCards("Cardpool", "corp", "Old Hollywood");
         Assert.assertEquals("CardUsageStat is duplicated.", 4, template.count(CardUsageStat.class));
-        Assert.assertEquals("CardUsage is duplicated.", 93, template.count(CardUsage.class));
+        Assert.assertEquals("CardUsage is duplicated.", 120, template.count(CardUsage.class));
     }
 
     @Test
