@@ -23,6 +23,7 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+/* faction icons */
 .icon-neutral:before {
     padding: 0em 0.2em;
     content: "\1F0A0";
@@ -64,6 +65,7 @@
     color: darkorange;
 }
 
+/* missing mini-faction icons*/
 .icon-apex:before {
     padding: 0em 0.2em;
     content: "\1F0A0";
@@ -82,6 +84,7 @@
     color: darkgoldenrod;
 }
 
+/* on card icons */
 .icon-credit:before {
 	content: "\e600";
 }
@@ -138,31 +141,43 @@
 	content: "\e60f";
 }
 
+/* cycle icons */
+
 .icon-Core-Set:before {
 	content: "\e618";
 }
 
-.icon-genesis-cycle:before {
+.icon-Genesis:before {
 	content: "\e616";
 }
 
-.icon-spin-cycle:before {
+.icon-Spin:before {
 	content: "\e615";
 }
 
-.icon-creation-and-control:before {
+.icon-Creation-and-Control:before {
 	content: "\e617";
 }
 
-.icon-honor-and-profit:before {
+.icon-Honor-and-Profit:before {
 	content: "\e614";
 }
 
-.icon-lunar-cycle:before {
+.icon-Lunar:before {
 	content: "\e619";
 }
 
-.icon-order-and-chaos:before {
+.icon-Order-and-Chaos:before {
 	content: "\e61a";
 }
 
+/* missing cycle icons */
+.icon-SanSan:before {
+    padding: 0em 0.3em;
+    content: "\25CF";
+}
+
+.icon-Data-and-Destiny:before {
+    padding: 0em 0.3em;
+    content: "\25CF";
+}

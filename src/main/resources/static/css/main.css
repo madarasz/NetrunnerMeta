@@ -19,6 +19,10 @@
     width: 100%;
 }
 
+.table-nonfluid {
+    width: auto !important;
+}
+
 .blog-text {
     text-align: justify;
 }

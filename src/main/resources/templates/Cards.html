@@ -11,9 +11,11 @@
             <div class="col-md-4 col-xs-12">
                 <h4>
                     Expansions
-                    <ktm:tooltip place="bottom" text="Click expansion name for card list."/>
+                    <ktm:tooltip place="top" text="Click expansion name for card list."/>
                 </h4>
-                <ul id="packs"></ul>
+                <table class="table table-condensed table-nonfluid">
+                    <tbody id="packs"></tbody>
+                </table>
             </div>
 
             <!--Card list-->
@@ -23,12 +25,27 @@
                     <thead>
                         <tr>
                             <th class="shrink"></th>
-                            <th class="expand">runner card title</th>
-                            <th class="text-center shrink" colspan="2">used in top decks</th>
-                            <th class="text-center shrink" colspan="2">used in decks</th>
+                            <th class="expand">
+                                runner card title
+                                <ktm:tooltip place="top" text="Click on card name to drill down to its statistics."/>
+                            </th>
+                            <th class="text-center shrink" colspan="2">
+                                used in top decks
+                                <ktm:tooltip place="top" text="at least one card in top 30% ranking tournament decks"/>
+                            </th>
+                            <th class="text-center shrink" colspan="2">
+                                used in decks
+                                <ktm:tooltip place="top" text="at least one card in tournament decks"/>
+                            </th>
                         </tr>
                     </thead>
-                    <tbody id="runner-cards"></tbody>
+                    <tbody id="runner-cards">
+                        <tr>
+                            <td colspan="6" class="italic text-center">
+                                Click an expansion to get its card list.
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
 
                 <!--Corp cards-->
@@ -36,12 +53,27 @@
                     <thead>
                     <tr>
                         <th class="shrink"></th>
-                        <th class="expand">corp card title</th>
-                        <th class="text-center shrink" colspan="2">used in top decks</th>
-                        <th class="text-center shrink" colspan="2">used in decks</th>
+                        <th class="expand">
+                            corp card title
+                            <ktm:tooltip place="top" text="Click on card name to drill down to its statistics."/>
+                        </th>
+                        <th class="text-center shrink" colspan="2">
+                            used in top decks
+                            <ktm:tooltip place="top" text="at least one card in top 30% ranking tournament decks"/>
+                        </th>
+                        <th class="text-center shrink" colspan="2">
+                            used in decks
+                            <ktm:tooltip place="top" text="at least one card in tournament decks"/>
+                        </th>
                     </tr>
                     </thead>
-                    <tbody id="corp-cards"></tbody>
+                    <tbody id="corp-cards">
+                        <tr>
+                            <td colspan="6" class="italic text-center">
+                                Click an expansion to get its card list.
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -55,7 +87,8 @@
             loadPacks();
 
             function loadTables(title) {
-                encodedtitle = encodeURIComponent(title);
+                var encodedtitle = encodeURIComponent(title);
+                window.scrollTo(0,0);
                 $('#runner-cards').empty().addClass('spinner');
                 $('#corp-cards').empty().addClass('spinner');
                 loadCardPackTable('/JSON/Cards/Cardpack/runner/' + encodedtitle, '#runner-cards');
@@ -63,30 +96,39 @@
             }
 
             function loadPacks() {
-                var jsonData = $.ajax({
+                $.ajax({
                     url: "/JSON/Cardpacks",
                     dataType: "json",
-                    async: false,
+                    async: true,
+                    timeout: 60000,
                     success: function (data) {
                         $.each(data, function (index, element) {
+                            var iconclass = 'icon-' + element.title.split(" ").join("-");
                             if (element.datapacks.length == 0) {
-                                $("#packs").append($("<li>").append($("<a>", {
+                                $("#packs").append($("<tr>").append($("<td>").append($("<span>", {
+                                    class: iconclass
+                                })),$("<td>", {
+                                    colspan: 2
+                                }).append($("<a>", {
                                     text: element.title,
                                     onClick: "loadTables('" + element.title + "')",
                                     class: 'fake-link'
-                                })));
+                                }))));
                             } else {
-                                $("#packs").append($("<li>", {
-                                    text: element.title + ' cycle'
-                                }), $("<ul>", {
-                                    id: "cycle-" + element.cyclenumber
-                                }));
+                                $("#packs").append($("<tr>").append($("<td>").append($("<span>", {
+                                    class: iconclass
+                                })),$("<td>", {
+                                    text: element.title + ' cycle',
+                                    colspan: 2
+                                })));
                                 $.each(element.datapacks, function (index2, element2) {
-                                    $("#cycle-" + element.cyclenumber).append($("<li>").append($("<a>", {
+                                    $("#packs").append($("<tr>").append($("<td>"), $("<td>").append($("<span>", {
+                                        class: iconclass
+                                    })), $("<td>").append($("<a>", {
                                         text: element2,
                                         onClick: "loadTables('" + element2 + "')",
                                         class: 'fake-link'
-                                    })));
+                                    }))));
                                 });
                             }
                         });
