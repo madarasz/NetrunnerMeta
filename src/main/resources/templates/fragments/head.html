@@ -42,18 +42,18 @@
         <script type="text/javascript" th:src="@{/static/js/vendor/bootstrap.min.js}"></script>
         <script type="text/javascript" th:src="@{/static/js/main.js}"></script>
 
-        <!--navbar dropdown-->
+        <!--navbar Tournament drilldown dropdown-->
         <script th:inline="javascript">
             /*<![CDATA[*/
             var jsonData = $.ajax({
-                url: "/JSON/Cardpool",
+                url: "/JSON/Cardpoolnames",
                 dataType: "json",
                 async: false,
                 success: function (data) {
                     $.each(data, function (index, element) {
                         $("#pooldrop").append($('<li>').append($('<a>', {
-                            text: element.title,
-                            href: "/DPStats/" + encodeURIComponent(element.title) + "/"
+                            text: element,
+                            href: "/DPStats/" + encodeURIComponent(element) + "/"
                         })));
                     });
                 }

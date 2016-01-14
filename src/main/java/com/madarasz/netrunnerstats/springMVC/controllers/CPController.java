@@ -4,10 +4,10 @@ import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
 import com.madarasz.netrunnerstats.database.DOs.Standing;
 import com.madarasz.netrunnerstats.database.DOs.Tournament;
-import com.madarasz.netrunnerstats.database.DOs.admin.BlogEntry;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
 import com.madarasz.netrunnerstats.database.DRs.AdminDataRepository;
 import com.madarasz.netrunnerstats.database.DRs.BlogRepository;
+import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
 import com.madarasz.netrunnerstats.helper.gchart.DataTable;
 import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToOverTimeGchart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +43,20 @@ public class CPController {
     @Autowired
     BlogRepository blogRepository;
 
+    @Autowired
+    CardPoolStatsRepository cardPoolStatsRepository;
+
     // JSON output
     @RequestMapping(value="/JSON/Cardpool", method = RequestMethod.GET)
     public @ResponseBody
     List<CardPool> getCardPools() {
         return statistics.getCardPoolStats().getSortedCardpool();
+    }
+
+    @RequestMapping(value="/JSON/Cardpoolnames", method = RequestMethod.GET)
+    public @ResponseBody
+    List<String> getCardPoolNames() {
+        return cardPoolStatsRepository.getCardPoolNames();
     }
 
     // html output

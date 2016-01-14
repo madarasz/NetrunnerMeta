@@ -148,14 +148,14 @@
         function fillDrilldown() {
 
             var jsonData = $.ajax({
-                url: "/JSON/Cardpool",
+                url: "/JSON/Cardpoolnames",
                 dataType: "json",
                 async: false,
                 success: function (data) {
                     $.each(data, function (index, element) {
                         $("#drilldown").append($('<a>', {
-                            text: element.title,
-                            href: "/DPStats/" + encodeURIComponent(element.title) + "/",
+                            text: element,
+                            href: "/DPStats/" + encodeURIComponent(element) + "/",
                             class: 'list-group-item'
                         }));
                     });
