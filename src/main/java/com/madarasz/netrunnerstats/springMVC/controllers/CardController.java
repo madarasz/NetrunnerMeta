@@ -4,6 +4,7 @@ import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.stats.CardStat;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardUsage;
+import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
 import com.madarasz.netrunnerstats.helper.Cycle;
 import com.madarasz.netrunnerstats.helper.gchart.DataTable;
@@ -37,6 +38,9 @@ public class CardController {
     @Autowired
     CardRepository cardRepository;
 
+    @Autowired
+    CardPackRepository cardPackRepository;
+
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CardController.class);
 
     // JSON output
@@ -56,13 +60,13 @@ public class CardController {
         }
     }
 
-    @RequestMapping(value="/JSON/Cards/{target}/", method = RequestMethod.GET)
+    @RequestMapping(value="/JSON/Cards/{target}/card.json", method = RequestMethod.GET)
     public @ResponseBody
     CardStat getCardJSON(@PathVariable(value="target") String target) {
         return statistics.getCardStats(target);
     }
 
-    @RequestMapping(value="/JSON/Cards/Overtime/{target}/", method = RequestMethod.GET)
+    @RequestMapping(value="/JSON/Cards/{target}/ot.json", method = RequestMethod.GET)
     public @ResponseBody
     DataTable getCardOverTimeJSON(@PathVariable(value="target") String target) {
         return cardToOverTimeGchart.converter(target);
@@ -71,6 +75,11 @@ public class CardController {
     @RequestMapping(value="/JSON/Cardpacks", method = RequestMethod.GET)
     public @ResponseBody List<Cycle> getCardPacks() {
         return statistics.getDPStructure();
+    }
+
+    @RequestMapping(value="/JSON/Cardpacknames", method = RequestMethod.GET)
+    public @ResponseBody List<String> getCardPackNames() {
+        return cardPackRepository.getSortedPackNames();
     }
 
     // html output
@@ -87,8 +96,10 @@ public class CardController {
             model.put("imgsrc", card.getImageSrc());
             model.put("pageTitle", card.getTitle() + " - Know the Meta - Android: Netrunner");
             if (card.getType_code().equals("identity")) {
+                model.put("identity", true);
                 model.put("toptitle", "Most used cards with this identity");
             } else {
+                model.put("identity", false);
                 model.put("toptitle", "Mostly used with identity");
             }
             return "CardStat";

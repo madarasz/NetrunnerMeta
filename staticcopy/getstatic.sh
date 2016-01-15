@@ -22,6 +22,7 @@ dirs=(
 "static/img/cards"
 "static/fonts"
 "JSON"
+"Cards"
 "DataTable"
 "DataTable/Cardpool"
 "DPStats"
@@ -73,10 +74,13 @@ done
 files=( "static/css/bootstrap.min.css"
 "static/css/bootstrap-theme.min.css"
 "static/css/main.css"
+"static/css/netrunner.css"
 "static/js/jquery-1.11.3.min.js"
 "static/js/vendor/bootstrap.min.js"
 "static/js/main.js"
 "JSON/Cardpool"
+"JSON/Cardpacks"
+"JSON/Cardpoolnames"
 "DataTable/Cardpool/runner"
 "DataTable/Cardpool/corp"
 "404"
@@ -86,7 +90,11 @@ files=( "static/css/bootstrap.min.css"
 "static/img/soon.jpg"
 "static/img/knowthemeta20x20.png"
 "static/fonts/glyphicons-halflings-regular.ttf"
-"static/fonts/glyphicons-halflings-regular.woff" )
+"static/fonts/glyphicons-halflings-regular.woff"
+"static/fonts/netrunner.eot"
+"static/fonts/netrunner.svg"
+"static/fonts/netrunner.ttf"
+"static/fonts/netrunner.woff" )
 
 for file in "${files[@]}"
 do
@@ -97,6 +105,7 @@ done
 mv soon soon.html
 mv 404 404.html
 mv Info Info.html
+curl http://localhost:8080/Cards > Cards/index.html
 
 # blog
 curl http://localhost:8080/Blog > Blog/index.html
@@ -125,7 +134,6 @@ do
         "DataTable/DPStats/All/$side/identity/$pack"
         "DataTable/DPStats/Compare/$side/faction/$pack"
         "DataTable/DPStats/Compare/$side/identity/$pack"
-        "JSON/Cards/Cardpack/$side/$pack"
         "JSON/Cards/Cardpool/$side/$pack"
         "JSON/DPStats/Identities/$side/$pack"
         )
@@ -157,4 +165,12 @@ do
         curl http://localhost:8080/JSON/Average/$pack/$identity/1 > "JSON/Average/${pack//%20/ }/${identity//%20/ }/1"
         curl http://localhost:8080/JSON/Average/$pack/$identity/2 > "JSON/Average/${pack//%20/ }/${identity//%20/ }/2"
     done
+done
+
+packs=( $(curl http://localhost:8080/JSON/Cardpacknames | jq -r '.[]' | sed 's/ /%20/g') )
+
+for pack in "${packs[@]}"
+do
+    curl http://localhost:8080/JSON/Cards/Cardpack/corp/$pack > "JSON/Cards/Cardpack/corp/${pack//%20/ }"
+    curl http://localhost:8080/JSON/Cards/Cardpack/runner/$pack > "JSON/Cards/Cardpack/runner/${pack//%20/ }"
 done

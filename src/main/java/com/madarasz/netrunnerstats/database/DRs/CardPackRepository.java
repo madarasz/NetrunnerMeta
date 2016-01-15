@@ -24,4 +24,9 @@ public interface CardPackRepository extends GraphRepository<CardPack>, Relations
 
     @Query("MATCH (p:CardPack {cyclenumber: {0}}) RETURN p.name ORDER BY p.number ASC")
     List<String> getSortedPackNamesInCycle(int cycleNumber);
+
+    // has at least one card in a deck
+    @Query("MATCH (p:CardPack)<-[:IN_SET]-(:Card)-[:HAS_CARD]-(:Deck) WITH DISTINCT p " +
+            "RETURN p.name ORDER BY p.cyclenumber ASC, p.number ASC")
+    List<String> getSortedPackNames();
 }

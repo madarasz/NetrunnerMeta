@@ -103,17 +103,17 @@
         google.setOnLoadCallback(drawData);
 
         function drawData() {
-            drawChart("/JSON/Cards/Overtime/" + [[${title}]] + "/", "chart");
+            drawChart("/JSON/Cards/" + [[${title}]] + "/ot.json", "chart");
             loadData();
         }
 
         $(window).resize(function(){
-            drawChart("/JSON/Cards/Overtime/" + [[${title}]] + "/", "chart");
+            drawChart("/JSON/Cards/" + [[${title}]] + "/ot.json", "chart");
         });
 
         function loadData() {
             var jsonData = $.ajax({
-                url: "/JSON/Cards/" + [[${title}]] + "/",
+                url: "/JSON/Cards/" + [[${title}]] + "/card.json",
                 dataType: "json",
                 async: false,
                 success: function(data) {
@@ -170,11 +170,22 @@
                     // deck links
                     i = 0;
                     $.each(data.decks, function (index, element) {
-                        $('#decks').append($("<li>", {
-                            text: element.dptitle + ' (' + element.count + ' decks)'
-                        }).append($("<ul>", {
-                            id: 'decks_' + i
-                        })));
+                        if ([[${identity}]] == false) {
+                            $('#decks').append($("<li>", {
+                                text: element.dptitle + ' (' + element.count + ' decks)'
+                            }).append($("<ul>", {
+                                id: 'decks_' + i
+                            })));
+                        } else {
+                            $('#decks').append($("<li>", {
+                                text: element.dptitle + ' (' + element.count + ' decks) - '
+                            }).append($("<a>", {
+                                text: '[Deck Drilldown]',
+                                href: '/MDSIdentity/' + element.dptitle + '/' + [[${title}]]
+                            })).append($("<ul>", {
+                                id: 'decks_' + i
+                            })));
+                        }
                         $.each(element.deckLinks, function (index2, element2) {
                             if (element2 === "...") {
                                 $('#decks_' + i).append($("<p>", {

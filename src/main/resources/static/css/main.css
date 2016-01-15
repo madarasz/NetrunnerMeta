@@ -21,6 +21,11 @@
 
 .table-nonfluid {
     width: auto !important;
+    margin: auto;
+}
+
+a.anchor {
+    padding-top: 50px; margin-top: -50px;
 }
 
 .blog-text {

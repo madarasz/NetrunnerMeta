@@ -9,7 +9,7 @@
         <div class="row">
             <!--Expansion list-->
             <div class="col-md-4 col-xs-12">
-                <h4>
+                <h4 class="text-center">
                     Expansions
                     <ktm:tooltip place="top" text="Click expansion name for card list."/>
                 </h4>
@@ -20,6 +20,7 @@
 
             <!--Card list-->
             <div class="col-md-8 col-xs-12">
+                <a name="results" class="anchor">&nbsp;</a>
                 <!--Runner cards-->
                 <table class="table table-hover">
                     <thead>
@@ -88,7 +89,6 @@
 
             function loadTables(title) {
                 var encodedtitle = encodeURIComponent(title);
-                window.scrollTo(0,0);
                 $('#runner-cards').empty().addClass('spinner');
                 $('#corp-cards').empty().addClass('spinner');
                 loadCardPackTable('/JSON/Cards/Cardpack/runner/' + encodedtitle, '#runner-cards');
@@ -111,8 +111,9 @@
                                     colspan: 2
                                 }).append($("<a>", {
                                     text: element.title,
-                                    onClick: "loadTables('" + element.title + "')",
-                                    class: 'fake-link'
+                                    onClick: "loadTables('" + element.title.replace(/'/g, '\\\'') + "')",
+                                    class: 'fake-link',
+                                    href: '#results'
                                 }))));
                             } else {
                                 $("#packs").append($("<tr>").append($("<td>").append($("<span>", {
@@ -126,8 +127,9 @@
                                         class: iconclass
                                     })), $("<td>").append($("<a>", {
                                         text: element2,
-                                        onClick: "loadTables('" + element2 + "')",
-                                        class: 'fake-link'
+                                        onClick: "loadTables('" + element2.replace(/'/g, '\\\'') + "')",
+                                        class: 'fake-link',
+                                        href: '#results'
                                     }))));
                                 });
                             }

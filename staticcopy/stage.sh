@@ -2,6 +2,7 @@
 # get staging ready
 
 ./getstatic.sh
+./getcardstats.sh
 rm -rf ../../NetrunnerMetaStatic/*
 cp CNAME ../../NetrunnerMetaStatic/
 cp ../src/main/resources/static/favicons/* ../../NetrunnerMetaStatic/
