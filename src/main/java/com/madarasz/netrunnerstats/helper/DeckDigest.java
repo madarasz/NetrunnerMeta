@@ -77,7 +77,7 @@ public class DeckDigest {
             for (DeckHasCard card : selectedCards) {
                 Card thecard = card.getCard();
                 result += card.getQuantity() + "x ";
-                result += "<a href=\"/Cards/" + thecard.getTitle() + "/\">" + thecard.getTitle() + "</a>";
+                result += "<a href=\"/Cards/" + thecard.getTitle().replaceAll("\"", "&quot;") + "/\">" + thecard.getTitle() + "</a>";
                 result += " <em>(" + thecard.getCardPack().getName() + ")</em>";
 
                 // display faction cost
