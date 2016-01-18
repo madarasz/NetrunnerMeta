@@ -93,6 +93,17 @@ a.anchor {
     color: red;
 }
 
+table.ordering {
+    margin: auto;
+}
+
+table.ordering > tbody > tr > td {
+    padding: 8px;
+    text-align: center;
+    border: 0px;
+    vertical-align: middle;
+}
+
 .glyphicon.glyphicon-one-fine-dot:before {
     content: "\25cf";
     font-size: 1.5em;
