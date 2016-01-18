@@ -37,7 +37,7 @@
             <div class="col-md-6 col-xs-12">
                 <h4>
                     <span th:text="${toptitle}"></span>
-                    <ktm:tooltip place="right" text="usage based on all decks from last 3 tournament cardpools"/>
+                    <ktm:tooltip place="right" text="top 8, usage based on all decks from last 3 tournament cardpools"/>
                 </h4>
                 <table class="table table-hover">
                     <thead>
@@ -101,18 +101,19 @@
         $('#combos').addClass('spinner');
         $('#decks').addClass('spinner');
         google.setOnLoadCallback(drawData);
+        var jsonData;
 
         function drawData() {
-            drawChart("/JSON/Cards/" + [[${title}]] + "/ot.json", "chart");
+            drawLineChart("/JSON/Cards/" + [[${title}]] + "/ot.json", "chart");
             loadData();
         }
 
         $(window).resize(function(){
-            drawChart("/JSON/Cards/" + [[${title}]] + "/ot.json", "chart");
+            drawLineChart("/JSON/Cards/" + [[${title}]] + "/ot.json", "chart");
         });
 
         function loadData() {
-            var jsonData = $.ajax({
+            jsonData = $.ajax({
                 url: "/JSON/Cards/" + [[${title}]] + "/card.json",
                 dataType: "json",
                 async: false,
@@ -212,7 +213,7 @@
             }).responseText;
         }
 
-        function drawChart(urlvalue, elementid) {
+        function drawLineChart(urlvalue, elementid) {
 
 
             var jsonData = $.ajax({

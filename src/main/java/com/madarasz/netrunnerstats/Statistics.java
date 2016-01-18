@@ -579,7 +579,7 @@ public class Statistics {
                         counts.add(new CardCount(identity, count));
                     }
                     counts.sort(comparator);
-                    counts = trimCardCount(counts, 5);
+                    counts = trimCardCount(counts, 8);
                 }
 
                 for (CardCount cardCount : counts) {
