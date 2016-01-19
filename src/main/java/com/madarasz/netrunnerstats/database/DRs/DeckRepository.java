@@ -64,10 +64,10 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament)<--(:Standing {topdeck: true})-->(d:Deck) RETURN COUNT(DISTINCT d)")
     int countTopByCardpool(String cardpackName);
 
-    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament)<--(:Standing)-->(d:Deck)-[:IDENTITY]->(:Card {side_code: {1}}) RETURN COUNT(DISTINCT d)")
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament)<--(:Standing)-->(d:Deck)-[:IDENTITY]->(:Card {side_code: {1}}) RETURN COUNT(d)")
     int countByCardpoolAndSide(String cardpackName, String side);
 
-    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament)<--(:Standing {topdeck: true})-->(d:Deck)-[:IDENTITY]->(:Card {side_code: {1}}) RETURN COUNT(DISTINCT d)")
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament)<--(:Standing {topdeck: true})-->(d:Deck)-[:IDENTITY]->(:Card {side_code: {1}}) RETURN COUNT(d)")
     int countTopByCardpoolAndSide(String cardpackName, String side);
 
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament)<--(:Standing)-->(d:Deck)-->(:Card {title: {1}}) RETURN COUNT(DISTINCT d)")
