@@ -579,14 +579,14 @@ public class Statistics {
                         counts.add(new CardCount(identity, count));
                     }
                     counts.sort(comparator);
-                    counts = trimCardCount(counts, 8);
+//                    counts = trimCardCount(counts, 8);
                 }
 
                 for (CardCount cardCount : counts) {
                     if (cardCount.getCount() > 0) {
                         Card id = cardCount.getCard();
                         result.addTop(new CardUsage(id.getTitle(), id.getCardPack().getName(), side, id.getFaction_code(), cardCount.getCount(), -1,
-                                (float) cardCount.getCount() / alldeck, -1));
+                                (float) cardCount.getCount() / decks.size(), -1));
                         logger.debug(String.format("%s - %,.3f%%",
                                 cardCount.getCard().getTitle(), (float) cardCount.getCount() / decks.size()));
                     }
@@ -694,5 +694,13 @@ public class Statistics {
         } else {
             return list;
         }
+    }
+
+    private int sumCardCounts(List<CardCount> list) {
+        int result = 0;
+        for (CardCount cardCount : list) {
+            result += cardCount.getCount();
+        }
+        return result;
     }
 }

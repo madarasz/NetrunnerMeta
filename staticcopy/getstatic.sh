@@ -71,13 +71,7 @@ done
 
 
 # download static files
-files=( "static/css/bootstrap.min.css"
-"static/css/bootstrap-theme.min.css"
-"static/css/main.css"
-"static/css/netrunner.css"
-"static/js/jquery-1.11.3.min.js"
-"static/js/vendor/bootstrap.min.js"
-"static/js/main.js"
+files=(
 "JSON/Cardpool"
 "JSON/Cardpacks"
 "JSON/Cardpoolnames"
@@ -86,19 +80,7 @@ files=( "static/css/bootstrap.min.css"
 "404"
 "soon"
 "Info"
-"static/img/404doge.png"
-"static/img/soon.jpg"
-"static/img/knowthemeta20x20.png"
-"static/img/acoo-logo.png"
-"static/img/github.png"
-"static/img/stimhack.png"
-"static/img/stimhack-logo.png"
-"static/fonts/glyphicons-halflings-regular.ttf"
-"static/fonts/glyphicons-halflings-regular.woff"
-"static/fonts/netrunner.eot"
-"static/fonts/netrunner.svg"
-"static/fonts/netrunner.ttf"
-"static/fonts/netrunner.woff" )
+)
 
 for file in "${files[@]}"
 do
@@ -110,6 +92,11 @@ mv soon soon.html
 mv 404 404.html
 mv Info Info.html
 curl http://localhost:8080/Cards > Cards/index.html
+
+# copy static folders
+# skip favicons
+cp -rf ../../src/main/resources/static/* static/
+rm -rf static/favicons
 
 # blog
 curl http://localhost:8080/Blog > Blog/index.html
