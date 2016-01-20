@@ -4,4 +4,6 @@ target
 netrunner.db
 test.db
 staticcopy/content
+staticcopy/node_modules
 src/main/resources/static/img/cards/*
+ktm.concat*

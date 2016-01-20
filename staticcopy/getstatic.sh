@@ -1,7 +1,10 @@
 #!/bin/bash
 # prepare static content from localhost:8080
 
+# *** dependencies ***
 # brew install jq
+# npm install
+grunt
 
 rm -rf content
 mkdir content

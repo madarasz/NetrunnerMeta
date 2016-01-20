@@ -4,6 +4,11 @@
    Author's custom styles
    ========================================================================== */
 
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
 .top-buffer { margin-top: 20px; }
 .top-buffer-big { margin-top: 30px; }
 .more-padding { padding: 5px 15px 0px; }
