@@ -11,7 +11,9 @@
             <em>(<span th:text="${dp}"></span>)</em>
         </h3>
         <div class="row">
-            <div class="alert alert-warning text-center hidden" role="alert" id="lowstat">WARNING: probably not enough data for statistical analysis</div>
+            <div class="alert alert-warning text-center hidden" role="alert" id="lowstat">
+                WARNING: probably not enough data for statistical analysis
+            </div>
             <div class="alert alert-danger text-center hidden" role="alert" id="nostat">No tournament data on card</div>
         </div>
         <div class="row">
@@ -28,7 +30,7 @@
                     <span th:text="${title}"></span> usage in decks
                     <ktm:tooltip place="bottom" text="at least one of this card in deck"/>
                 </h4>
-                <div id="chart"></div>
+                <div id="overtime-chart"></div>
             </div>
         </div>
         <hr/>
@@ -37,10 +39,11 @@
             <div class="col-md-6 col-xs-12">
                 <h4>
                     <span th:text="${toptitle}"></span>
-                    <ktm:tooltip place="right" text="top 8, usage based on all decks from last 3 tournament cardpools using this card"/>
+                    <ktm:tooltip place="right"
+                                 text="usage based on all decks from last 3 tournament cardpools using this card"/>
                 </h4>
                 <div id="idchart"></div>
-                <table class="table table-hover" id="cardtable">
+                <table class="table table-condensed table-hover" id="cardtable">
                     <thead>
                         <tr>
                             <th></th>
@@ -59,7 +62,7 @@
                     Possible synergy with
                     <ktm:tooltip place="right" text="the card is usually found with these other cards in decks"/>
                 </h4>
-                <table class="table table-condensed">
+                <table class="table table-condensed table-hover">
                     <thead>
                         <tr>
                             <th></th>
@@ -97,167 +100,102 @@
           }"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
-        $('#chart').addClass('spinner');
+        $('#overtime-chart').addClass('spinner');
         $('#combos').addClass('spinner');
         $('#decks').addClass('spinner');
         $('#cards').addClass('spinner');
+        $('#idchart').addClass('spinner');
         if ([[${identity}]]) {
             $('#idchart').addClass('hidden');
-        } else {
-            $('#idchart').addClass('spinner');
         }
-        google.setOnLoadCallback(drawData);
         var jsonData;
-        var cardChart = [['identity', 'decks']];
-        var pieChart;
-        var cardChartData;
-        var chartOptions;
+        var cardChartData = [['identity', 'decks']];
+        var cardChart;
+        var cardDataTable;
+        var cardChartOptions;
+        var overTimeChartData = [['pack', 'all', 'top 30%']];
+        var overTimeChart;
+        var overTimeDataTable;
+        var overTimeChartOptions;
 
+        google.setOnLoadCallback(drawData);
         function drawData() {
-            drawLineChart("/JSON/Cards/" + [[${title}]] + "/ot.json", "chart");
             loadData();
         }
 
+        // if resized
         $(window).resize(function(){
-            drawLineChart("/JSON/Cards/" + [[${title}]] + "/ot.json", "chart");
-            piechart.draw(cardChartData, chartOptions);
+            cardChart.draw(cardDataTable, cardChartOptions);
+            overTimeChart.draw(overTimeDataTable, overTimeChartOptions);
         });
 
-        function loadData() {
-            jsonData = $.ajax({
-                url: "/JSON/Cards/" + [[${title}]] + "/card.json",
-                dataType: "json",
-                async: false,
-                success: function(data) {
-                    // top identities / cards
-                    var countper = 0;
-                    var slicecolors = [];
-                    $.each(data.top, function (index, element) {
-                        if (index < 8) {
-                            $("#cards").append($("<tr>")
-                                    .append($("<td>").append($("<span>", {
-                                        class: 'icon-' + element.faction
-                                    })), $("<td>").append($("<a>", {
-                                        text: element.cardtitle,
-                                        href: '/Cards/' + element.cardtitle + '/'
-                                    })), $("<td>").append($("<em>", {
-                                        text: '(' + element.cardpacktitle + ')'
-                                    })), $("<td>", {
-                                        text: element.indecks,
-                                        class: 'text-right'
-                                    }), $("<td>", {
-                                        text: '(' + Math.round(element.deckfraction * 100) + '%)'
-                                    })
-                            ));
-                        }
-                        if (![[${identity}]]) {
-                            cardChart.push([]);
-                            cardChart[cardChart.length-1].push(element.cardtitle);
-                            cardChart[cardChart.length-1].push(element.indecks);
-                            slicecolors.push({color : factionCodeToColor(element.faction)});
-                        }
-                        countper += element.deckfraction;
-                    });
-                    $('#cards').removeClass('spinner');
-                    if (![[${identity}]]) {
-                        cardChartData = google.visualization.arrayToDataTable(cardChart);
-                        chartOptions = {
-                            'height': 300,
-                            'pieSliceText': 'percentage',
-                            'chartArea': { top: 10, width:'100%', height:'90%' },
-                            'slices': slicecolors,
-                            'sliceVisibilityThreshold': 0.02
-                        };
-                        piechart = new google.visualization.PieChart(document.getElementById('idchart'));
-                        piechart.draw(cardChartData, chartOptions);
-                        $('#idchart').removeClass('spinner');
-                    }
-
-                    // combos
-                    $.each(data.combos, function (index, element) {
-                        $("#combos").append($("<tr>").append($("<td>").append($("<span>", {
-                            class: 'icon-' + element.faction
-                        })), $("<td>").append($("<a>", {
-                            text: element.title,
-                            href: '/Cards/' + element.title + '/'
-                        })), $("<td>", {
-                            text: '(' + element.pack + ')',
-                            class: 'italic'
-                        })));
-                    });
-                    $('#combos').removeClass('spinner');
-
-                    // links
-                    $('#ndblink').replaceWith($("<a>", {
-                        text: 'view on NetrunnerDB',
-                        href: 'http://netrunnerdb.com/en/card/' + data.code,
-                        rel: 'nofollow',
-                        target: 'blank'
-                    }));
-                    $('#ancurlink').replaceWith($("<a>", {
-                        text: 'view on ANCUR',
-                        href: 'http://ancur.wikia.com/wiki/' + data.title.replace(" ", "_"),
-                        rel: 'nofollow',
-                        target: 'blank'
-                    }));
-
-                    // deck links
-                    i = 0;
-                    $.each(data.decks, function (index, element) {
-                        if (![[${identity}]]) {
-                            $('#decks').append($("<li>", {
-                                text: element.dptitle + ' (' + element.count + ' decks)'
-                            }).append($("<ul>", {
-                                id: 'decks_' + i
-                            })));
-                        } else {
-                            $('#decks').append($("<li>", {
-                                text: element.dptitle + ' (' + element.count + ' decks) - '
-                            }).append($("<a>", {
-                                text: '[Deck Drilldown]',
-                                href: '/MDSIdentity/' + element.dptitle + '/' + [[${title}]]
-                            })).append($("<ul>", {
-                                id: 'decks_' + i
-                            })));
-                        }
-                        $.each(element.deckLinks, function (index2, element2) {
-                            if (element2 === "...") {
-                                $('#decks_' + i).append($("<p>", {
-                                    text: "..."
-                                }));
-                            } else {
-                                $('#decks_' + i).append($("<li>").append(element2));
-                            }
-                        });
-                        i++;
-                    });
-                    $('#decks').removeClass('spinner');
-
-                    // warning, error
-                    if (countper === 0) {
-                        $("#nostat").removeClass("hidden");
-                    } else {
-                        if (countper < 0.05) {
-                            $("#lowstat").removeClass("hidden");
-                        }
-                    }
-
+        function processTopCards(data) {
+            var slicecolors = [];
+            $.each(data.top, function (index, element) {
+                // top card / identity table
+                if (index < 8) {
+                    $("#cards").append($("<tr>")
+                            .append($("<td>").append($("<span>", {
+                                class: 'icon-' + element.faction
+                            })), $("<td>").append($("<a>", {
+                                text: element.cardtitle,
+                                href: '/Cards/' + element.cardtitle + '/'
+                            })), $("<td>").append($("<em>", {
+                                text: '(' + element.cardpacktitle + ')'
+                            })), $("<td>", {
+                                text: element.indecks,
+                                class: 'text-right'
+                            }), $("<td>", {
+                                text: '(' + Math.round(element.deckfraction * 100) + '%)'
+                            })
+                    ));
                 }
-            }).responseText;
+
+                // top identity data for pie chart
+                if (![[${identity}]]) {
+                    cardChartData.push([]);
+                    cardChartData[cardChartData.length - 1].push(element.cardtitle);
+                    cardChartData[cardChartData.length - 1].push(element.indecks);
+                    slicecolors.push({color: factionCodeToColor(element.faction)});
+                }
+            });
+
+            // ... for more than 8 card / identity rows
+            if (([[${identity}]]) || (data.top.length > 8)) {
+                $("#cards").append($("<tr>").append($("<td>"), $("<td>", {
+                    text: '...',
+                    colspan: 4
+                })));
+            }
+            $('#cards').removeClass('spinner');
+
+            // draw identity pie chart
+            if (![[${identity}]]) {
+                cardDataTable = google.visualization.arrayToDataTable(cardChartData);
+                cardChartOptions = {
+                    'height': 300,
+                    'pieSliceText': 'percentage',
+                    'chartArea': {top: 10, width: '100%', height: '90%'},
+                    'slices': slicecolors
+//                    'sliceVisibilityThreshold': 0.02
+                };
+                cardChart = new google.visualization.PieChart(document.getElementById('idchart'));
+                cardChart.draw(cardDataTable, cardChartOptions);
+                $('#idchart').removeClass('spinner');
+            }
         }
 
-        function drawLineChart(urlvalue, elementid) {
-
-
-            var jsonData = $.ajax({
-                url: urlvalue,
-                dataType: "json",
-                async: false
-            }).responseText;
-
-            var data = new google.visualization.DataTable(jsonData);
-
-            var options = {
+        function processOverTime(data) {
+            $.each(data.overTime, function (index, element) {
+                overTimeChartData.push([]);
+                overTimeChartData[overTimeChartData.length - 1].push(element.cardpacktitle);
+                overTimeChartData[overTimeChartData.length - 1].push(
+                        {v: element.deckfraction, f: Math.round(element.deckfraction * 1000) / 10 + '%'});
+                overTimeChartData[overTimeChartData.length - 1].push(
+                        {v: element.topdeckfraction, f: Math.round(element.topdeckfraction * 1000) / 10 + '%'});
+            });
+            overTimeDataTable = google.visualization.arrayToDataTable(overTimeChartData);
+            overTimeChartOptions = {
                 'height': 350,
                 'curveType': 'none',
                 'vAxis': { format:'#,#%', minValue: 0 },
@@ -266,10 +204,118 @@
                 'legend': { position: 'right', maxLines: 2 },
                 'lineWidth': 3
             };
+            overTimeChart = new google.visualization.LineChart(document.getElementById('overtime-chart'));
+            overTimeChart.draw(overTimeDataTable, overTimeChartOptions);
+            $('#overtime-chart').removeClass('spinner');
 
-            var chart = new google.visualization.LineChart(document.getElementById(elementid));
-            chart.draw(data, options);
-            $('#'+elementid).removeClass('spinner');
+            // warning, error
+            data.overTime.slice(Math.max(data.overTime.length - 3, 1));
+            var avg = 0;
+            $.each(data.overTime, function (index, element) {
+                avg += element.deckfraction;
+            });
+            avg = avg / data.overTime.length;
+
+            if (avg === 0) {
+                $("#nostat").removeClass("hidden");
+                $("#overtime-chart").addClass('hidden');
+                $("#idchart").addClass('hidden');
+            } else {
+                if (avg < 0.05) {
+                    $("#lowstat").removeClass("hidden");
+                }
+            }
+        }
+
+        function processCombos(data) {
+            $.each(data.combos, function (index, element) {
+                $("#combos").append($("<tr>").append($("<td>").append($("<span>", {
+                    class: 'icon-' + element.faction
+                })), $("<td>").append($("<a>", {
+                    text: element.title,
+                    href: '/Cards/' + element.title + '/'
+                })), $("<td>", {
+                    text: '(' + element.pack + ')',
+                    class: 'italic'
+                })));
+            });
+            $('#combos').removeClass('spinner');
+        }
+
+        function processCardLinks(data) {
+            $('#ndblink').replaceWith($("<a>", {
+                text: 'view on NetrunnerDB',
+                href: 'http://netrunnerdb.com/en/card/' + data.code,
+                rel: 'nofollow',
+                target: 'blank'
+            }));
+            $('#ancurlink').replaceWith($("<a>", {
+                text: 'view on ANCUR',
+                href: 'http://ancur.wikia.com/wiki/' + data.title.replace(" ", "_"),
+                rel: 'nofollow',
+                target: 'blank'
+            }));
+        }
+
+        function processDeckLinks(data) {
+            i = 0;
+            $.each(data.decks, function (index, element) {
+                // cardpool entry
+                if (![[${identity}]]) {
+                    $('#decks').append($("<li>", {
+                        text: element.dptitle + ' (' + element.count + ' decks)'
+                    }).append($("<ul>", {
+                        id: 'decks_' + i
+                    })));
+                } else {
+                    $('#decks').append($("<li>", {
+                        text: element.dptitle + ' (' + element.count + ' decks) - '
+                    }).append($("<a>", {
+                        text: '[Deck Drilldown]',
+                        href: '/MDSIdentity/' + element.dptitle + '/' + [[${title}]]
+                    })).append($("<ul>", {
+                        id: 'decks_' + i
+                    })));
+                }
+
+                // deck sub-entry
+                $.each(element.deckLinks, function (index2, element2) {
+                    if (element2 === "...") {
+                        $('#decks_' + i).append($("<p>", {
+                            text: "..."
+                        }));
+                    } else {
+                        $('#decks_' + i).append($("<li>").append(element2));
+                    }
+                });
+                i++;
+            });
+            $('#decks').removeClass('spinner');
+        }
+
+        function loadData() {
+            jsonData = $.ajax({
+                url: "/JSON/Cards/" + [[${title}]] + "/card.json",
+                dataType: "json",
+                async: true,
+                timeout: 60000,
+                success: function(data) {
+                    // over time chart
+                    processOverTime(data);
+
+                    // top identities / cards
+                    processTopCards(data);
+
+                    // combos
+                    processCombos(data);
+
+                    // links
+                    processCardLinks(data);
+
+                    // deck links
+                    processDeckLinks(data);
+                }
+            }).responseText;
         }
 
         /*]]>*/

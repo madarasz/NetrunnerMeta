@@ -3,13 +3,8 @@ package com.madarasz.netrunnerstats.springMVC.controllers;
 import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.stats.CardStat;
-import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardUsage;
 import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
-import com.madarasz.netrunnerstats.helper.Cycle;
-import com.madarasz.netrunnerstats.helper.gchart.DataTable;
-import com.madarasz.netrunnerstats.helper.gchartConverter.CardToOverTimeGchart;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,9 +27,6 @@ public class Hack247 {
     Statistics statistics;
 
     @Autowired
-    CardToOverTimeGchart cardToOverTimeGchart;
-
-    @Autowired
     CardRepository cardRepository;
 
     @Autowired
@@ -48,11 +38,6 @@ public class Hack247 {
         return statistics.getCardStats("24/" + target);
     }
 
-    @RequestMapping(value="/JSON/Cards/24/{target}/ot.json", method = RequestMethod.GET)
-    public @ResponseBody
-    DataTable getCardOverTimeJSON(@PathVariable(value="target") String target) {
-        return cardToOverTimeGchart.converter("24/" + target);
-    }
     // html output
     @RequestMapping(value="/Cards/24/{title}/", method = RequestMethod.GET)
     public String getCardStat247(@PathVariable(value="title") String title, Map<String, Object> model) {
@@ -71,7 +56,7 @@ public class Hack247 {
                 model.put("toptitle", "Most used cards with this identity");
             } else {
                 model.put("identity", false);
-                model.put("toptitle", "Mostly used with identity");
+                model.put("toptitle", "Used with identity");
             }
             return "CardStat";
         }

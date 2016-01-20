@@ -7,8 +7,6 @@ import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardUsage;
 import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
 import com.madarasz.netrunnerstats.helper.Cycle;
-import com.madarasz.netrunnerstats.helper.gchart.DataTable;
-import com.madarasz.netrunnerstats.helper.gchartConverter.CardToOverTimeGchart;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,9 +29,6 @@ public class CardController {
 
     @Autowired
     Statistics statistics;
-
-    @Autowired
-    CardToOverTimeGchart cardToOverTimeGchart;
 
     @Autowired
     CardRepository cardRepository;
@@ -66,12 +61,6 @@ public class CardController {
         return statistics.getCardStats(target);
     }
 
-    @RequestMapping(value="/JSON/Cards/{target}/ot.json", method = RequestMethod.GET)
-    public @ResponseBody
-    DataTable getCardOverTimeJSON(@PathVariable(value="target") String target) {
-        return cardToOverTimeGchart.converter(target);
-    }
-
     @RequestMapping(value="/JSON/Cardpacks", method = RequestMethod.GET)
     public @ResponseBody List<Cycle> getCardPacks() {
         return statistics.getDPStructure();
@@ -100,7 +89,7 @@ public class CardController {
                 model.put("toptitle", "Most used cards with this identity");
             } else {
                 model.put("identity", false);
-                model.put("toptitle", "Mostly used with identity");
+                model.put("toptitle", "Used with identity");
             }
             return "CardStat";
         }
