@@ -33,7 +33,7 @@
                             <th class="text-center">rankings</th>
                         </tr>
                     </thead>
-                    <tbody id="cptable"></tbody>
+                    <tbody id="cptable" class="spinner"></tbody>
                 </table>
                 <p>Last update: <span th:text="${lastUpdate}"></span></p>
                 <p>Parsed information - tournaments: <span th:text="${tournamentCount}"></span> -
@@ -99,10 +99,6 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-        $('#cptable').addClass('spinner');
-        $('#chart_div1').addClass('spinner');
-        $('#chart_div2').addClass('spinner');
-
         google.setOnLoadCallback(drawData);
 
         function drawData() {
@@ -111,7 +107,7 @@
 
         function filltable() {
 
-            var jsonData = $.ajax({
+            $.ajax({
                 url: "/JSON/Cardpool",
                 dataType: "json",
                 async: false,

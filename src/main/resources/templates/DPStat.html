@@ -23,21 +23,21 @@
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
                         <h4>Top 30% runner factions</h4>
-                        <div id="chart_div1" class="chart-responsive"></div>
+                        <div id="chart_div1" class="chart-responsive spinner"></div>
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <h4>Top 30% corp factions</h4>
-                        <div id="chart_div2" class="chart-responsive"></div>
+                        <div id="chart_div2" class="chart-responsive spinner"></div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
                         <h4>Top 30% runner identities</h4>
-                        <div id="chart_div3" class="chart-responsive"></div>
+                        <div id="chart_div3" class="chart-responsive spinner"></div>
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <h4>Top 30% corp identities</h4>
-                        <div id="chart_div4" class="chart-responsive"></div>
+                        <div id="chart_div4" class="chart-responsive spinner"></div>
                     </div>
                 </div>
             </div>
@@ -47,21 +47,21 @@
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
                         <h4>All runner factions</h4>
-                        <div id="chart_div5" class="chart-responsive"></div>
+                        <div id="chart_div5" class="chart-responsive spinner"></div>
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <h4>All corp factions</h4>
-                        <div id="chart_div6" class="chart-responsive"></div>
+                        <div id="chart_div6" class="chart-responsive spinner"></div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
                         <h4>All runner identities</h4>
-                        <div id="chart_div7" class="chart-responsive"></div>
+                        <div id="chart_div7" class="chart-responsive spinner"></div>
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <h4>All corp identities</h4>
-                        <div id="chart_div8" class="chart-responsive"></div>
+                        <div id="chart_div8" class="chart-responsive spinner"></div>
                     </div>
                 </div>
             </div>
@@ -71,21 +71,21 @@
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
                         <h4>Compare runner factions</h4>
-                        <div id="chart_div9" class="chart-responsive"></div>
+                        <div id="chart_div9" class="chart-responsive spinner"></div>
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <h4>Compare corp factions</h4>
-                        <div id="chart_div10" class="chart-responsive"></div>
+                        <div id="chart_div10" class="chart-responsive spinner"></div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
                         <h4>Compare runner identities</h4>
-                        <div id="chart_div11" class="chart-responsive"></div>
+                        <div id="chart_div11" class="chart-responsive spinner"></div>
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <h4>Compare corp identities</h4>
-                        <div id="chart_div12" class="chart-responsive"></div>
+                        <div id="chart_div12" class="chart-responsive spinner"></div>
                     </div>
                 </div>
             </div>
@@ -98,14 +98,14 @@
                             Runner decks
                             <ktm:tooltip place="right" text="Click on identity name for more information on decks playing that identity."/>
                         </h4>
-                        <div id="text_div1" class="list-group"></div>
+                        <div id="text_div1" class="list-group spinner"></div>
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <h4>
                             Corp decks
                             <ktm:tooltip place="right" text="Click on identity name for more information on decks playing that identity."/>
                         </h4>
-                        <div id="text_div2" class="list-group"></div>
+                        <div id="text_div2" class="list-group spinner"></div>
                     </div>
                 </div>
             </div>
@@ -129,7 +129,7 @@
                                 <th class="text-center" colspan="2">used in decks</th>
                             </tr>
                             </thead>
-                            <tbody id="runnertable"></tbody>
+                            <tbody id="runnertable" class="spinner"></tbody>
                         </table>
                     </div>
                     <div class="col-md-6 col-xs-12">
@@ -148,7 +148,7 @@
                                 <th class="text-center" colspan="2">used in decks</th>
                             </tr>
                             </thead>
-                            <tbody id="corptable"></tbody>
+                            <tbody id="corptable" class="spinner"></tbody>
                         </table>
                     </div>
                 </div>
@@ -169,7 +169,7 @@
                                 <th class="text-center" colspan="2">used in top decks</th>
                             </tr>
                             </thead>
-                            <tbody id="runnertable2"></tbody>
+                            <tbody id="runnertable2" class="spinner"></tbody>
                         </table>
                     </div>
                     <div class="col-md-6 col-xs-12">
@@ -187,7 +187,7 @@
                                 <th class="text-center" colspan="2">used in top decks</th>
                             </tr>
                             </thead>
-                            <tbody id="corptable2"></tbody>
+                            <tbody id="corptable2" class="spinner"></tbody>
                         </table>
                     </div>
                 </div>
@@ -220,25 +220,6 @@
             var tabName = $("ul#tabs li.active a").attr('href').split('#')[1];
             ga('send', 'event', 'tabs', tabName);
         });
-
-        $('#chart_div1').addClass('spinner');
-        $('#chart_div2').addClass('spinner');
-        $('#chart_div3').addClass('spinner');
-        $('#chart_div4').addClass('spinner');
-        $('#chart_div5').addClass('spinner');
-        $('#chart_div6').addClass('spinner');
-        $('#chart_div7').addClass('spinner');
-        $('#chart_div8').addClass('spinner');
-        $('#chart_div9').addClass('spinner');
-        $('#chart_div10').addClass('spinner');
-        $('#chart_div11').addClass('spinner');
-        $('#chart_div12').addClass('spinner');
-        $('#text_div1').addClass('spinner');
-        $('#text_div2').addClass('spinner');
-        $('#runnertable').addClass('spinner');
-        $('#corptable').addClass('spinner');
-        $('#runnertable2').addClass('spinner');
-        $('#corptable2').addClass('spinner');
 
         google.load('visualization', '1.0', {'packages':['corechart']});
 
@@ -274,7 +255,7 @@
 
         function drawPieChart(urlvalue, elementid) {
 
-            var slices = new Array;
+            var slices = [];
 
             var jsonData = $.ajax({
                 url: urlvalue,

@@ -3,6 +3,7 @@ package com.madarasz.netrunnerstats.springMVC.controllers;
 import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.DPIdentity;
+import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
 import com.madarasz.netrunnerstats.helper.gchart.DataTable;
 import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToCompareGchart;
 import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToGchart;
@@ -31,6 +32,9 @@ public class DPController {
 
     @Autowired
     DPStatsToCompareGchart dpStatsToCompareGchart;
+
+    @Autowired
+    CardPoolStatsRepository cardPoolStatsRepository;
 
     // Google Chart DataTable output
     @RequestMapping(value="/DataTable/DPStats/{filter}/{sidecode}/{stattype}/{DPName}", method = RequestMethod.GET)
@@ -76,6 +80,7 @@ public class DPController {
     public String getDPPage(@PathVariable String DPName, Map<String, Object> model) {
         model.put("DPname", DPName);
         model.put("pageTitle", DPName + " - Know the Meta - Android: Netrunner");
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         return "DPStat";
     }
 

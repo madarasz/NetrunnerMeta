@@ -2,6 +2,7 @@ package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.database.DOs.admin.BlogEntry;
 import com.madarasz.netrunnerstats.database.DRs.BlogRepository;
+import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,16 @@ public class BlogController {
     @Autowired
     BlogRepository blogRepository;
 
+    @Autowired
+    CardPoolStatsRepository cardPoolStatsRepository;
+
     private DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd.");
 
     // html output
     @RequestMapping(value="/muchadmin/blog", method = RequestMethod.GET)
     public String getBlogAdmin(Map<String, Object> model) {
         model.put("pageTitle", "Know the Meta - Android: Netrunner");
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         model.put("blogCount", template.count(BlogEntry.class));
         model.put("blogEntries", blogRepository.getAll());
         model.put("blog", new BlogEntry());
@@ -46,6 +51,7 @@ public class BlogController {
     @RequestMapping(value="/muchadmin/blog/{url}", method = RequestMethod.GET)
     public String getBlogAdminEdit(@PathVariable(value="url") String url, Map<String, Object> model) {
         model.put("pageTitle", "Know the Meta - Android: Netrunner");
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         model.put("blogCount", template.count(BlogEntry.class));
         model.put("blogEntries", blogRepository.getAll());
         model.put("blog", blogRepository.getbyURL(url));
@@ -56,6 +62,7 @@ public class BlogController {
     @RequestMapping(value="/Blog", method = RequestMethod.GET)
     public String getBlogs(Map<String, Object> model) {
         model.put("pageTitle", "Know the Meta - Blog entries - Android: Netrunner");
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         model.put("blogEntries", blogRepository.getAll());
         return "BlogEntries";
     }
@@ -68,6 +75,7 @@ public class BlogController {
         }
 
         model.put("pageTitle", blogEntry.getTitle() + " - Know the Meta - Android: Netrunner");
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         model.put("blog", blogEntry);
         return "Blog";
     }

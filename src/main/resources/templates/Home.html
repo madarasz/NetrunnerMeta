@@ -15,7 +15,7 @@
                         <ktm:tooltip place="right" text="The charts show the popularity of factions among the top 30%
                         ranking decks over time. Time is represented by tournament legal cardpool."/>
                     </h4>
-                    <div id="chart_div1" class="chart-responsive"></div>
+                    <div id="chart_div1" class="chart-responsive spinner"></div>
                 </div>
                 <div class="col-xs-12">
                     <h4>
@@ -23,7 +23,7 @@
                         <ktm:tooltip place="right" text="The charts show the popularity of factions among the top 30%
                         ranking decks over time. Time is represented by tournament legal cardpool."/>
                     </h4>
-                    <div id="chart_div2" class="chart-responsive"></div>
+                    <div id="chart_div2" class="chart-responsive spinner"></div>
                 </div>
             </div>
             <div class="col-md-4 col-xs-12">
@@ -32,7 +32,9 @@
                         Tournament Drilldown
                         <ktm:tooltip place="top" text="Click on an expansion name for more information on tournaments with that cardpool."/>
                     </h4>
-                    <div class="list-group" id="drilldown"></div>
+                    <div class="list-group">
+                        <a th:each="cardpool : ${cardpools}" th:text="${cardpool}" th:href="@{/DPStats/__${cardpool}__/}" class="list-group-item"></a>
+                    </div>
                 </div>
                 <div class="col-xs-12">
                     <div class="panel panel-default top-buffer" id="infopanel">
@@ -108,15 +110,9 @@
           }"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
-
-        $('#drilldown').addClass('spinner');
-        $('#chart_div1').addClass('spinner');
-        $('#chart_div2').addClass('spinner');
-
         google.setOnLoadCallback(drawData);
 
         function drawData() {
-            fillDrilldown();
             drawChart("/DataTable/Cardpool/runner","chart_div1");
             drawChart("/DataTable/Cardpool/corp","chart_div2");
         }
@@ -159,25 +155,6 @@
             var chart = new google.visualization.LineChart(document.getElementById(elementid));
             chart.draw(data, options);
             $('#'+elementid).removeClass('spinner');
-        }
-
-        function fillDrilldown() {
-
-            var jsonData = $.ajax({
-                url: "/JSON/Cardpoolnames",
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    $.each(data, function (index, element) {
-                        $("#drilldown").append($('<a>', {
-                            text: element,
-                            href: "/DPStats/" + encodeURIComponent(element) + "/",
-                            class: 'list-group-item'
-                        }));
-                    });
-                    $('#drilldown').removeClass('spinner');
-                }
-            });
         }
         /*]]>*/
     </script>

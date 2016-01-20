@@ -1,9 +1,6 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.Statistics;
-import com.madarasz.netrunnerstats.database.DOs.Deck;
-import com.madarasz.netrunnerstats.database.DOs.Standing;
-import com.madarasz.netrunnerstats.database.DOs.Tournament;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
 import com.madarasz.netrunnerstats.database.DRs.AdminDataRepository;
 import com.madarasz.netrunnerstats.database.DRs.BlogRepository;
@@ -63,10 +60,8 @@ public class CPController {
     @RequestMapping(value="/", method = RequestMethod.GET)
     public String getCPPage(Map<String, Object> model) {
         model.put("pageTitle", "Know the Meta - Android: Netrunner");
-        model.put("tournamentCount", template.count(Tournament.class));
-        model.put("rankingCount", template.count(Standing.class));
-        model.put("deckCount", template.count(Deck.class));
         model.put("blogs", blogRepository.getLastThree());
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
 
         return "Home";
     }

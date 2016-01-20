@@ -14,7 +14,7 @@
                     <ktm:tooltip place="top" text="Click expansion name for card list."/>
                 </h4>
                 <table class="table table-condensed table-nonfluid">
-                    <tbody id="packs"></tbody>
+                    <tbody id="packs" class="spinner"></tbody>
                 </table>
             </div>
 
@@ -84,7 +84,6 @@
     <div th:replace="fragments/head :: scripts"></div>
     <script th:inline="javascript">
         /*<![CDATA[*/
-            $('#packs').addClass('spinner');
             loadPacks();
 
             function loadTables(title) {

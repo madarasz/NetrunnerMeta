@@ -30,7 +30,7 @@
                     <span th:text="${title}"></span> usage in decks
                     <ktm:tooltip place="bottom" text="at least one of this card in deck"/>
                 </h4>
-                <div id="overtime-chart"></div>
+                <div id="overtime-chart" class="spinner"></div>
             </div>
         </div>
         <hr/>
@@ -52,7 +52,7 @@
                             <th colspan="2" class="text-center">decks</th>
                         </tr>
                     </thead>
-                    <tbody id="cards"></tbody>
+                    <tbody id="cards" class="spinner"></tbody>
                 </table>
             </div>
 
@@ -70,7 +70,7 @@
                             <th>pack</th>
                         </tr>
                     </thead>
-                    <tbody id="combos"></tbody>
+                    <tbody id="combos" class="spinner"></tbody>
                 </table>
             </div>
         </div>
@@ -80,7 +80,7 @@
         <div class="row top-buffer-big">
             <div class="col-xs-12 col-md-9">
                 <h4>Decks using this card</h4>
-                <ul id="decks"></ul>
+                <ul id="decks" class="spinner"></ul>
             </div>
             <div class="col-xs-12 col-md-3 text-center">
                 <div th:replace="fragments/googlead :: small"></div>
@@ -100,11 +100,6 @@
           }"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
-        $('#overtime-chart').addClass('spinner');
-        $('#combos').addClass('spinner');
-        $('#decks').addClass('spinner');
-        $('#cards').addClass('spinner');
-        $('#idchart').addClass('spinner');
         if ([[${identity}]]) {
             $('#idchart').addClass('hidden');
         }

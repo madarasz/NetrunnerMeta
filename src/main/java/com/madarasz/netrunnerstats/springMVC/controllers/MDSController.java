@@ -3,6 +3,7 @@ package com.madarasz.netrunnerstats.springMVC.controllers;
 import com.madarasz.netrunnerstats.database.DOs.stats.IdentityMDS;
 import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardAverage;
+import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
 import com.madarasz.netrunnerstats.helper.AverageDigest;
 import com.madarasz.netrunnerstats.helper.gchart.DataTable;
 import com.madarasz.netrunnerstats.helper.gchartConverter.MDSToGchart;
@@ -32,6 +33,9 @@ public class MDSController {
     @Autowired
     AverageDigest averageDigest;
 
+    @Autowired
+    CardPoolStatsRepository cardPoolStatsRepository;
+
     // Google Chart DataTable output
     @RequestMapping(value="/DataTable/MDSIdentity/{DPName}/{identity}", method = RequestMethod.GET)
     public @ResponseBody
@@ -48,6 +52,7 @@ public class MDSController {
         model.put("DPname", DPName);
         model.put("identity", identity);
         model.put("pageTitle", identity + " - " + DPName + " Know the Meta - Android: Netrunner");
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         return "MDS";
     }
 

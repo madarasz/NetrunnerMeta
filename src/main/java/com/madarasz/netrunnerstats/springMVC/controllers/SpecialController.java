@@ -5,6 +5,7 @@ import com.madarasz.netrunnerstats.database.DOs.Standing;
 import com.madarasz.netrunnerstats.database.DOs.Tournament;
 import com.madarasz.netrunnerstats.database.DOs.admin.AdminData;
 import com.madarasz.netrunnerstats.database.DRs.AdminDataRepository;
+import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Controller;
@@ -26,29 +27,36 @@ public class SpecialController {
     @Autowired
     AdminDataRepository adminDataRepository;
 
+    @Autowired
+    CardPoolStatsRepository cardPoolStatsRepository;
+
     // html output
 
     @RequestMapping(value="/login", method = RequestMethod.GET)
     public String getLoginPage(Map<String, Object> model) {
         model.put("pageTitle", "Know the Meta - Android: Netrunner");
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         return "Login";
     }
 
     @RequestMapping(value="/404", method = RequestMethod.GET)
     public String get404Page(Map<String, Object> model) {
         model.put("pageTitle", "Know the Meta - Android: Netrunner");
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         return "404";
     }
 
     @RequestMapping(value="/soon", method = RequestMethod.GET)
     public String getSoonPage(Map<String, Object> model) {
         model.put("pageTitle", "Know the Meta - Android: Netrunner");
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         return "Soon";
     }
 
     @RequestMapping(value="/Info", method = RequestMethod.GET)
     public String getInfoPage(Map<String, Object> model) {
         model.put("pageTitle", "Know the Meta - Android: Netrunner - Information");
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         model.put("tournamentCount", template.count(Tournament.class));
         model.put("rankingCount", template.count(Standing.class));
         model.put("deckCount", template.count(Deck.class));

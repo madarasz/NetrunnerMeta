@@ -5,6 +5,7 @@ import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.stats.CardStat;
 import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
+import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,9 @@ public class Hack247 {
     @Autowired
     CardPackRepository cardPackRepository;
 
+    @Autowired
+    CardPoolStatsRepository cardPoolStatsRepository;
+
     @RequestMapping(value="/JSON/Cards/24/{target}/card.json", method = RequestMethod.GET)
     public @ResponseBody
     CardStat getCardJSON(@PathVariable(value="target") String target) {
@@ -51,6 +55,7 @@ public class Hack247 {
             model.put("faction", "icon-" + card.getFaction_code());
             model.put("imgsrc", card.getImageSrc());
             model.put("pageTitle", card.getTitle() + " - Know the Meta - Android: Netrunner");
+            model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
             if (card.getType_code().equals("identity")) {
                 model.put("identity", true);
                 model.put("toptitle", "Most used cards with this identity");

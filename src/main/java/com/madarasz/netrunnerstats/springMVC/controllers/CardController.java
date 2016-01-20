@@ -6,6 +6,7 @@ import com.madarasz.netrunnerstats.database.DOs.stats.CardStat;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardUsage;
 import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
+import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
 import com.madarasz.netrunnerstats.helper.Cycle;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class CardController {
 
     @Autowired
     CardPackRepository cardPackRepository;
+
+    @Autowired
+    CardPoolStatsRepository cardPoolStatsRepository;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CardController.class);
 
@@ -84,6 +88,7 @@ public class CardController {
             model.put("faction", "icon-" + card.getFaction_code());
             model.put("imgsrc", card.getImageSrc());
             model.put("pageTitle", card.getTitle() + " - Know the Meta - Android: Netrunner");
+            model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
             if (card.getType_code().equals("identity")) {
                 model.put("identity", true);
                 model.put("toptitle", "Most used cards with this identity");
@@ -99,6 +104,7 @@ public class CardController {
     @RequestMapping(value="/Cards", method = RequestMethod.GET)
     public String getCards(Map<String, Object> model) {
         model.put("pageTitle", "Cards - Know the Meta - Android: Netrunner");
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         return "Cards";
     }
 }

@@ -29,24 +29,5 @@
 </head>
 <body th:fragment="scripts">
         <script type="text/javascript" th:src="@{/static/js/ktm.concat.min.js}"></script>
-
-        <!--navbar Tournament drilldown dropdown-->
-        <script th:inline="javascript">
-            /*<![CDATA[*/
-            var jsonData = $.ajax({
-                url: "/JSON/Cardpoolnames",
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    $.each(data, function (index, element) {
-                        $("#pooldrop").append($('<li>').append($('<a>', {
-                            text: element,
-                            href: "/DPStats/" + encodeURIComponent(element) + "/"
-                        })));
-                    });
-                }
-            });
-            /*]]>*/
-        </script>
 </body>
 </html>

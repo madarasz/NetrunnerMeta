@@ -12,6 +12,7 @@ import com.madarasz.netrunnerstats.database.DRs.AdminDataRepository;
 import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
 import com.madarasz.netrunnerstats.database.DRs.StandingRepository;
 import com.madarasz.netrunnerstats.database.DRs.TournamentRepository;
+import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,9 @@ public class AdminController {
 
     @Autowired
     AdminDataRepository adminDataRepository;
+
+    @Autowired
+    CardPoolStatsRepository cardPoolStatsRepository;
 
     private final DateFormat df = new SimpleDateFormat("yyyy.MM.dd.");
 
@@ -119,6 +123,7 @@ public class AdminController {
         model.put("countCardStat", template.count(CardStat.class));
         model.put("countCardCombo", template.count(CardCombo.class));
         model.put("countDPDecks", template.count(DPDecks.class));
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
 
         AdminData denyurls = adminDataRepository.getDenyUrls();
         if (denyurls == null) {

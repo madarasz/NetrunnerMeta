@@ -14,7 +14,7 @@
         <div class="row">
             <div class="col-md-6 col-xs-12">
                 <h5 class="text-center">Deck similarity matrix</h5>
-                <div id="chart_div1" class="chart-responsive"></div>
+                <div id="chart_div1" class="chart-responsive spinner"></div>
                 <div class="more-padding">
                     <small>
                         <p>
@@ -61,7 +61,7 @@
                         </th>
                     </tr>
                     </thead>
-                    <tbody id="average-table"></tbody>
+                    <tbody id="average-table" class="spinner"></tbody>
                 </table>
             </div>
             <div class="col-md-6 col-xs-12">
@@ -83,7 +83,7 @@
                         </th>
                     </tr>
                     </thead>
-                    <tbody id="average-table2"></tbody>
+                    <tbody id="average-table2" class="spinner"></tbody>
                 </table>
                 <div class="top-buffer-big text-center">
                     <div th:replace="fragments/googlead :: blog"></div>
@@ -98,10 +98,6 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-        $('#chart_div1').addClass('spinner');
-        $('#average-table').addClass('spinner');
-        $('#average-table2').addClass('spinner');
-
         google.load('visualization', '1.0', {'packages':['corechart']});
 
         google.setOnLoadCallback(drawCharts);
@@ -115,9 +111,6 @@
         });
 
         function drawCharts() {
-//            var filter = encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${identity}]]);
-//            var url = "/DataTable/MDSIdentity/" + filter;
-//            var tooltipurl = "/JSON/Deck/" + filter;
             var averageurl1 = "/JSON/Average/" + filter + "/1";
             var averageurl2 = "/JSON/Average/" + filter + "/2";
             drawChart(url, tooltipurl, 'chart_div1');
