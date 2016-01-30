@@ -108,4 +108,7 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
 
     @Query("MATCH (d:Deck) WHERE d.url =~ 'http://netrunnerdb.*' RETURN COUNT(d)")
     int countNetrunnerDBDecks();
+
+    @Query("MATCH (:Tournament {url: {0}})<--(:Standing)-->(d:Deck) RETURN d")
+    List<Deck> findByTournamentUrl(String url);
 }

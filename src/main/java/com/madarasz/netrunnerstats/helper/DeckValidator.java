@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by madarasz on 11/17/15.
  * Checks the validity of a deck
@@ -15,15 +18,39 @@ import org.springframework.stereotype.Component;
 public class DeckValidator {
 
     private static final Logger logger = LoggerFactory.getLogger(DeckValidator.class);
+    private static final List<String> MWLTitles =
+            Arrays.asList("Cerberus \"Lady\" H1", "Clone Chip", "Desperado", "Parasite",
+                    "Prepaid VoicePAD", "Yog.0",
+                    "Architect", "AstroScript Pilot Program", "Eli 1.0", "NAPD Contract", "SanSan City Grid");
 
     public DeckValidator() {
+    }
+
+    public boolean isInfluenceOK(Deck deck, boolean MWL) {
+        int infLimit = deck.getIdentity().getInfluencelimit();
+        if (MWL) {
+            for (DeckHasCard deckHasCard : deck.getCards()) {
+                if (MWLTitles.contains(deckHasCard.getCard().getTitle())) {
+                    infLimit -= deckHasCard.getQuantity();
+                }
+            }
+            if (infLimit < 1) {
+                infLimit = 1;
+            }
+        }
+//        logger.info(String.format("Deck - %s - %d / %d", deck.getName(), deck.getInfluenceCount(), infLimit));
+        return (deck.getInfluenceCount() <= infLimit);
+    }
+
+    public String isValidDeck(Deck deck) {
+        return isValidDeck(deck, false);
     }
 
     /**
      * Check deck validity
      * @return validity
      */
-    public String isValidDeck(Deck deck) {
+    public String isValidDeck(Deck deck, boolean MWL) {
         String validity = "";
         Card identity = deck.getIdentity();
 
@@ -35,7 +62,7 @@ public class DeckValidator {
 
         // influence check
         int influence = deck.getInfluenceCount();
-        if (influence > identity.getInfluencelimit()) {
+        if (!isInfluenceOK(deck, MWL)) {
             validity += String.format("ERROR - influence count: %d\n", influence);
         }
 

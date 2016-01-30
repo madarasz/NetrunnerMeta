@@ -22,7 +22,9 @@ public interface CardPackRepository extends GraphRepository<CardPack>, Relations
     @Query("MATCH (p:CardPack)<-[:POOL]-(:Tournament) RETURN DISTINCT p")
     List<CardPack> findWithStandings();
 
-    @Query("MATCH (p:CardPack {cyclenumber: {0}}) RETURN p.name ORDER BY p.number ASC")
+    @Query("MATCH (p:CardPack {cyclenumber: {0}}) " +
+            "WHERE p.name <> 'D&D, post-MWL' " + // post-MWL hack
+            "RETURN p.name ORDER BY p.number ASC")
     List<String> getSortedPackNamesInCycle(int cycleNumber);
 
     // has at least one card in a deck

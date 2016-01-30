@@ -445,4 +445,18 @@ public class AdminController {
         adminDataRepository.save(newurls);
         return "redirect:/muchadmin";
     }
+
+    // add DAD MWL
+    @RequestMapping(value="/muchadmin/Experimental", method = RequestMethod.POST)
+    public String experimental(final RedirectAttributes redirectAttributes) {
+        operations.detectPostMWL(false);
+        return "redirect:/muchadmin";
+    }
+
+    // add DAD MWL
+    @RequestMapping(value="/muchadmin/Experimental2", method = RequestMethod.POST)
+    public String experimental2(final RedirectAttributes redirectAttributes) {
+        operations.detectPostMWL(true);
+        return "redirect:/muchadmin";
+    }
 }

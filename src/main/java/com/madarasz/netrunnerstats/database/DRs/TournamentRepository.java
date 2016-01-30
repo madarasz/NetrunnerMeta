@@ -36,4 +36,7 @@ public interface TournamentRepository extends GraphRepository<Tournament>, Relat
 
     @Query("MATCH (t:Tournament)<-[:IN_TOURNAMENT]-(:Standing)-[:IS_DECK]->(:Deck {url: {0}}) RETURN t LIMIT 1")
     Tournament getTournamentByDeckUrl(String url);
+
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament) RETURN DISTINCT t")
+    List<Tournament> getTournamentsByCardpool(String cardpool);
 }

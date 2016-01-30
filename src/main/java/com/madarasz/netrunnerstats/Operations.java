@@ -18,6 +18,7 @@ import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -462,6 +463,43 @@ public class Operations {
             }
         }
         return result;
+    }
+
+    public void detectPostMWL(boolean reorg) {
+        logger.info("Detecting post-MWL tournaments.");
+        Date nulldate = new Date(0);
+        Date date2016 = new Date(0);
+        try {
+            date2016 = df.parse("2015.12.31.");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        List<Tournament> tournaments = tournamentRepository.getTournamentsByCardpool("Data and Destiny");
+        CardPack cardPack = cardPackRepository.findByName("D&D, post-MWL");
+        if ((reorg) && (cardPack == null)) {
+            cardPack = new CardPack("D&D, post-MWL", "dadmwl", 2, 9);
+            cardPackRepository.save(cardPack);
+        }
+        for (Tournament tournament : tournaments) {
+            List<Deck> decks = deckRepository.findByTournamentUrl(tournament.getUrl());
+            if (decks.size() > 0) {
+//                logger.info("Tournament - " + tournament.getUrl());
+                boolean MWLOK = true;
+                for (Deck deck : decks) {
+                    if (!deckValidator.isInfluenceOK(deck, true)) {
+                        MWLOK = false;
+                        break;
+                    }
+                }
+                if ( (MWLOK) && ((tournament.getDate().equals(nulldate)) || (tournament.getDate().after(date2016))) ) {
+                    logger.info(String.format("MWL OK tournament (%d decks): %s", decks.size(), tournament.getUrl()));
+                    if (reorg) {
+                        tournament.setCardpool(cardPack);
+                        tournamentRepository.save(tournament);
+                    }
+                }
+            }
+        }
     }
 
     public void updateLastUpdateDate() {
