@@ -62,6 +62,7 @@ public class CPController {
         model.put("pageTitle", "Know the Meta - Android: Netrunner");
         model.put("blogs", blogRepository.getLastThree());
         model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
+        model.put("lastUpdate", adminDataRepository.getLastUpdate().getData());
 
         return "Home";
     }
