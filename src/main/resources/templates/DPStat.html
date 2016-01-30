@@ -115,48 +115,7 @@
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
                         <h4>
-                            Most used runner cards from pack
-                            <ktm:tooltip place="bottom" text="Most used cards from this expansion. Percentages are calculated
-                            by number of decks containing least one card, divided by number of all decks that are legal
-                            to play these cards on tournaments. Top decks are the top 30% ranking decks on tournaments."/>
-                        </h4>
-                        <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th></th>
-                                <th>card title</th>
-                                <th class="text-center" colspan="2">used in top decks</th>
-                                <th class="text-center" colspan="2">used in decks</th>
-                            </tr>
-                            </thead>
-                            <tbody id="runnertable" class="spinner"></tbody>
-                        </table>
-                    </div>
-                    <div class="col-md-6 col-xs-12">
-                        <h4>
-                            Most used corp cards from pack
-                            <ktm:tooltip place="bottom" text="Most used cards from this expansion. Percentages are calculated
-                            by number of decks containing least one card, divided by number of all decks that are legal
-                            to play these cards on tournaments. Top decks are the top 30% ranking decks on tournaments."/>
-                        </h4>
-                        <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th></th>
-                                <th>card title</th>
-                                <th class="text-center" colspan="2">used in top decks</th>
-                                <th class="text-center" colspan="2">used in decks</th>
-                            </tr>
-                            </thead>
-                            <tbody id="corptable" class="spinner"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <hr/>
-                <div class="row">
-                    <div class="col-md-6 col-xs-12">
-                        <h4>
-                            20 most used runner cards in decks with this cardpool
+                            30 most used runner cards in decks with this cardpool
                             <ktm:tooltip place="bottom" text="Most used cards from from tournaments with this cardpool.
                             All tournament legal cards qualify, also from previous expansions."/>
                         </h4>
@@ -174,7 +133,7 @@
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <h4>
-                            20 most used corp cards in decks with this cardpool
+                            30 most used corp cards in decks with this cardpool
                             <ktm:tooltip place="bottom" text="Most used cards from from tournaments with this cardpool.
                             All tournament legal cards qualify, also from previous expansions."/>
                         </h4>
@@ -246,8 +205,6 @@
             drawBarChart(basebarcharts + "corp/identity/" + dpname, 'chart_div12');
             listIdentities(baselist + "runner/" + dpname, "#text_div1", basecompare);
             listIdentities(baselist + "corp/"+ dpname, "#text_div2", basecompare);
-            loadCardPackTable(basecardtable + "Cardpack/runner/" + dpname, "#runnertable");
-            loadCardPackTable(basecardtable + "Cardpack/corp/" + dpname, "#corptable");
             loadCardPoolTable(basecardtable + "Cardpool/runner/" + dpname, "#runnertable2");
             loadCardPoolTable(basecardtable + "Cardpool/corp/" + dpname, "#corptable2");
             window.scrollTo(0,0);
