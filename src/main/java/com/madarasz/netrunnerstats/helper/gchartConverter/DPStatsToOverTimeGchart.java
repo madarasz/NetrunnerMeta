@@ -55,11 +55,18 @@ public class DPStatsToOverTimeGchart extends DPToChart {
             rowdata.add(title);
 
             for (String faction : factions) {
+                boolean found = false;
                 for (CountDeckStands countDeckStands : stats) {
                     if (countDeckStands.getTitle().equals(faction)) {
                         double percentage = countDeckStands.getPercentage();
                         rowdata.add(new CellNumber(percentage, String.format("%,.1f%%", percentage * 100)));
+                        found = true;
                     }
+                }
+
+                // if there was no data
+                if ((cardPool.getCyclenumber() >=9) && (!found)) {
+                    rowdata.add(new CellNumber(0, "0%"));
                 }
             }
             rows.add(new Row(rowdata));
