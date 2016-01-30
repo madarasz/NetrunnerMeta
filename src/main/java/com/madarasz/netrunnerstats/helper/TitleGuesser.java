@@ -46,6 +46,18 @@ public class TitleGuesser {
             case "Nisei MKII" :
                 newtitle = "Nisei MK II";
                 break;
+            case "Future Perfect" :
+                newtitle = "The Future Perfect";
+                break;
+            case "Future Is Now" :
+                newtitle = "The Future is Now";
+                break;
+            case "Allelle Repression" :
+                newtitle = "Allele Repression";
+                break;
+            case "Himisu Bako" :
+                newtitle = "Himitsu-Bako";
+                break;
         }
         return newtitle;
     }
