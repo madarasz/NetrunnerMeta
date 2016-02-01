@@ -1,6 +1,7 @@
 package com.madarasz.netrunnerstats.helper;
 
 import com.madarasz.netrunnerstats.database.DOs.Card;
+import com.madarasz.netrunnerstats.database.DOs.stats.ICEAverage;
 import com.madarasz.netrunnerstats.database.DOs.stats.IdentityAverage;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardAverage;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
@@ -28,8 +29,14 @@ public class AverageDigest {
     private static final String[] TYPES_RUNNER_PART2 = new String[]{"icebreaker", "program"};
     private static final String[] TYPES_CORP_PART1 = new String[]{"agenda", "asset", "operation", "upgrade"};
     private static final String[] TYPES_CORP_PART2 = new String[]{"barrier", "code gate", "sentry", "mythic", "trap"};
+    private static final String[] TYPES_ICE = new String[]{"barrier", "code gate", "sentry", "mythic", "trap",
+            "fracter", "decoder", "killer", "ai", "D4v1d", "hardware"};
 
     public AverageDigest() {
+    }
+
+    public List<CardAverage> getICESortedAverages(ICEAverage stat) {
+        return getSortedAverages(stat, TYPES_ICE);
     }
 
     public List<CardAverage> getSortedAverages(IdentityAverage stat) {
@@ -79,10 +86,19 @@ public class AverageDigest {
         return result;
     }
 
+    private List<CardAverage> getSortedAverages(ICEAverage stat, String[] filters) {
+        List<CardAverage> result = new ArrayList<>();
+        for (String filter : filters) {
+            List<CardAverage> subset = filterAndSortCards(stat.getCards(), filter);
+            result.addAll(subset);
+        }
+        return result;
+    }
+
     private List<CardAverage> filterAndSortCards(Set<CardAverage> cards, String typefilter) {
         List<CardAverage> result = new ArrayList<>();
         for (CardAverage card : cards) {
-            if (card.getTypecodes().contains(typefilter)) {
+            if ((card.getTypecodes().contains(typefilter)) || (card.getCardtitle().equals(typefilter))) {
                 result.add(card);
                 card.setTypecodes(typefilter);
             }

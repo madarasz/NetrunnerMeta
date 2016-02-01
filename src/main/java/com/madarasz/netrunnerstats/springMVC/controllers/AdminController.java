@@ -118,12 +118,14 @@ public class AdminController {
         model.put("countCardUsageStat", template.count(CardUsageStat.class));
         model.put("countCardUsage", template.count(CardUsage.class));
         model.put("countIdentityAverage", template.count(IdentityAverage.class));
+        model.put("countICEAverage", template.count(ICEAverage.class));
         model.put("countCardAverage", template.count(CardAverage.class));
         model.put("countAdminData", template.count(AdminData.class));
         model.put("countCardStat", template.count(CardStat.class));
         model.put("countCardCombo", template.count(CardCombo.class));
         model.put("countDPDecks", template.count(DPDecks.class));
         model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
+        model.put("countDecksWithoutRel", deckRepository.getAllDecksWithoutRel().size());
 
         AdminData denyurls = adminDataRepository.getDenyUrls();
         if (denyurls == null) {

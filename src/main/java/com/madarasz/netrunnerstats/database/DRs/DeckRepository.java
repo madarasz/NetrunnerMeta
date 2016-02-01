@@ -76,6 +76,10 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament)<--(:Standing)-->(d:Deck)-->(:Card {title: {1}}) RETURN DISTINCT d")
     List<Deck> findByCardpoolUsingCard(String cardpackName, String cardTitle);
 
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(:Tournament)<--(:Standing)-->(d:Deck)-[:IDENTITY]->(:Card {side_code: {1}}) " +
+            "RETURN DISTINCT d")
+    List<Deck> findByCardpoolAndSide(String cardpackName, String sidecode);
+
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<--(s:Standing)-->(d:Deck)-->(:Card {title: {1}}) " +
             "WITH s, t, d ORDER BY (1000 * s.rank / t.playerNumber) ASC LIMIT 10 RETURN d")
     List<Deck> findBestByCardpoolUsingCard(String cardpackName, String cardTitle);
@@ -111,4 +115,7 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
 
     @Query("MATCH (:Tournament {url: {0}})<--(:Standing)-->(d:Deck) RETURN d")
     List<Deck> findByTournamentUrl(String url);
+
+    @Query("MATCH (d:Deck) WHERE NOT (d)<--(:Standing) RETURN d")
+    List<Deck> getAllDecksWithoutRel();
 }

@@ -72,6 +72,10 @@ public class Standing {
 
     @Override
     public String toString() {
-        return String.format("%s - #%d %s", tournament.getUrl(), rank, identity.getTitle());
+        if (deck == null) {
+            return String.format("%s - #%d %s", tournament.getUrl(), rank, identity.getTitle());
+        } else {
+            return String.format("%s - #%d %s (%s)", tournament.getUrl(), rank, identity.getTitle(), deck.getName());
+        }
     }
 }

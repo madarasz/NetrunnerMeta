@@ -18,6 +18,7 @@ public class CardAverage {
     private String averageifused; // what is the average card count if used
     private String typecodes;   // all card typecodes and subtypes
     private String cardpack;
+    private String faction;
 
     public CardAverage() {
     }
@@ -29,6 +30,11 @@ public class CardAverage {
         this.averageifused = averageifused;
         this.typecodes = card.getType_code() + " - " + card.getSubtype_code();
         this.cardpack = card.getCardPack().getName();
+        this.faction = card.getFaction_code();
+    }
+
+    public String getFaction() {
+        return faction;
     }
 
     public String getCardtitle() {

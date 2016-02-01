@@ -47,6 +47,7 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
+                        <th></th>
                         <th>card title</th>
                         <th>pack</th>
                         <th class="text-center stat-col">
@@ -69,6 +70,7 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
+                        <th></th>
                         <th>card title</th>
                         <th>pack</th>
                         <th class="text-center stat-col">
@@ -114,8 +116,8 @@
             var averageurl1 = "/JSON/Average/" + filter + "/1";
             var averageurl2 = "/JSON/Average/" + filter + "/2";
             drawChart(url, tooltipurl, 'chart_div1');
-            fillTable(averageurl1, '#average-table');
-            fillTable(averageurl2, '#average-table2');
+            fillCardTable(averageurl1, '#average-table', 0);
+            fillCardTable(averageurl2, '#average-table2', 0);
         }
 
         function drawChart(urlvalue, urltooltip, elementid) {
@@ -170,43 +172,6 @@
             $('#deck_data').replaceWith("<div id=\"deck_data\">" + htmlvalue + "</div>");
         }
 
-        function fillTable(urlvalue, elementid) {
-            var typecode = 'none';
-            var jsonDataChart = $.ajax({
-                url: urlvalue,
-                dataType: "json",
-                async: false,
-                success: function(data) {
-                    $.each(data, function(index, element) {
-                        if (element.typecodes.indexOf(typecode) < 0) {
-                            typecode = element.typecodes;
-                            $(elementid).append($('<tr>').append($('<td>', {
-                                class: 'warning',
-                                colspan: 5
-                            }).append($('<strong>', {
-                                text: typecode
-                            }))))
-                        }
-                        $(elementid).append($('<tr>').append($('<td>').append($('<a>', {
-                            text: element.cardtitle,
-                            href: '/Cards/' + element.cardtitle + '/'
-                        })), $('<td>').append($('<em>', {
-                            text: element.cardpack
-                        })), $('<td>', {
-                            text: element.using,
-                            class: 'text-right'
-                        }), $('<td>', {
-                            text: element.average,
-                            class: 'text-center'
-                        }), $('<td>', {
-                            text: element.averageifused,
-                            class: 'text-center'
-                        })));
-                    });
-                    $(elementid).removeClass('spinner');
-                }
-            }).responseText;
-        }
         /*]]>*/
     </script>
     <div th:replace="fragments/analytics :: ga"></div>

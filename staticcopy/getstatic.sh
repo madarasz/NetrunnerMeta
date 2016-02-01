@@ -130,6 +130,7 @@ do
         "DataTable/DPStats/Compare/$side/identity/$pack"
         "JSON/Cards/Cardpool/$side/$pack"
         "JSON/DPStats/Identities/$side/$pack"
+        "/JSON/DPStats/ICE/$side/$pack"
         )
         for packfile in "${packfiles[@]}"
         do

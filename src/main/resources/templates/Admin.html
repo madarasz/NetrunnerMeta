@@ -263,6 +263,7 @@
                         <p>Standings: <span th:text="${countStandings}"></span></p>
                         <p>Deck-card relations: <span th:text="${countDeckHasCards}"></span></p>
                         <p>Admin data: <span th:text="${countAdminData}"></span></p>
+                        <p>Decks without rel: <span th:text="${countDecksWithoutRel}"></span></p>
                     </div>
                 </div>
             </div>
@@ -328,6 +329,7 @@
                         </p>
                         <p>
                             IdentityAverage: <span th:text="${countIdentityAverage}"></span><br />
+                            ICEAverage: <span th:text="${countICEAverage}"></span><br />
                             CardAverage: <span th:text="${countCardAverage}"></span>
                         </p>
                         <p>

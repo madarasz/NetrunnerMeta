@@ -13,6 +13,7 @@
             <li><a data-toggle="tab" href="#all">Factions / identities, all</a></li>
             <li><a data-toggle="tab" href="#compare">Compare top - all</a></li>
             <li><a data-toggle="tab" href="#decks">Deck Drilldown</a></li>
+            <li><a data-toggle="tab" href="#ice">ICE / breakers</a></li>
             <li><a data-toggle="tab" href="#cards">Most used cards</a></li>
         </ul>
 
@@ -106,6 +107,62 @@
                             <ktm:tooltip place="right" text="Click on identity name for more information on decks playing that identity."/>
                         </h4>
                         <div id="text_div2" class="list-group spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ICE / breakers -->
+            <div id="ice" class="tab-pane fade">
+                <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                        <h4>
+                            ICE breakers (min 5% in decks)
+                        </h4>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>card title</th>
+                                    <th>pack</th>
+                                    <th class="text-center stat-col">
+                                        in decks&nbsp;<ktm:tooltip place="bottom" text="percentage of all decks are using the card"/>
+                                    </th>
+                                    <th class="text-center stat-col">
+                                        average used&nbsp;<ktm:tooltip place="bottom" text="average number of the card being used, counting on all decks"/>
+                                    </th>
+                                    <th class="text-center stat-col">
+                                        average used if in deck&nbsp;<ktm:tooltip place="bottom" text="average number of the cards being used,
+                                    counting only decks having at least one of the card in question"/>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="breakertable" class="spinner"></tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <h4>
+                            ICE (min 5% in decks)
+                        </h4>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>card title</th>
+                                    <th>pack</th>
+                                    <th class="text-center stat-col">
+                                        in decks&nbsp;<ktm:tooltip place="bottom" text="percentage of all decks are using the card"/>
+                                    </th>
+                                    <th class="text-center stat-col">
+                                        average used&nbsp;<ktm:tooltip place="bottom" text="average number of the card being used, counting on all decks"/>
+                                    </th>
+                                    <th class="text-center stat-col">
+                                        average used if in deck&nbsp;<ktm:tooltip place="bottom" text="average number of the cards being used,
+                                    counting only decks having at least one of the card in question"/>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="icetable" class="spinner"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -205,6 +262,8 @@
             drawBarChart(basebarcharts + "corp/identity/" + dpname, 'chart_div12');
             listIdentities(baselist + "runner/" + dpname, "#text_div1", basecompare);
             listIdentities(baselist + "corp/"+ dpname, "#text_div2", basecompare);
+            fillCardTable("/JSON/DPStats/ICE/runner/" + dpname, "#breakertable", 5);
+            fillCardTable("/JSON/DPStats/ICE/corp/" + dpname, "#icetable", 5);
             loadCardPoolTable(basecardtable + "Cardpool/runner/" + dpname, "#runnertable2");
             loadCardPoolTable(basecardtable + "Cardpool/corp/" + dpname, "#corptable2");
             window.scrollTo(0,0);

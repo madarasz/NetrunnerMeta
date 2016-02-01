@@ -2,8 +2,10 @@ package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.Statistics;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardAverage;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.DPIdentity;
 import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
+import com.madarasz.netrunnerstats.helper.AverageDigest;
 import com.madarasz.netrunnerstats.helper.gchart.DataTable;
 import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToCompareGchart;
 import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToGchart;
@@ -35,6 +37,9 @@ public class DPController {
 
     @Autowired
     CardPoolStatsRepository cardPoolStatsRepository;
+
+    @Autowired
+    AverageDigest averageDigest;
 
     // Google Chart DataTable output
     @RequestMapping(value="/DataTable/DPStats/{filter}/{sidecode}/{stattype}/{DPName}", method = RequestMethod.GET)
@@ -92,4 +97,14 @@ public class DPController {
             @PathVariable(value = "DPName") String DPName) {
         return statistics.getIdentityLinksForDataPack(DPName, sidecode).getSortedIdentities();
     }
+
+    // JSON - ICE / ICE breaker in Data pack
+    @RequestMapping(value="/JSON/DPStats/ICE/{sidecode}/{DPName}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<CardAverage> getICEAverage (
+            @PathVariable(value = "sidecode") String sidecode,
+            @PathVariable(value = "DPName") String DPName) {
+        return averageDigest.getICESortedAverages(statistics.getICEAverage(sidecode, DPName));
+    }
+
 }

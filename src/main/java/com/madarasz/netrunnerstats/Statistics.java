@@ -69,6 +69,9 @@ public class Statistics {
     IdentityAverageRepository identityAverageRepository;
 
     @Autowired
+    ICEAverageRepository iceAverageRepository;
+
+    @Autowired
     CardStatRepository cardStatRepository;
 
     @Autowired
@@ -453,6 +456,67 @@ public class Statistics {
             logger.info(String.format("Saving deck averages: %s - %s (%.3f)", identity, cardpool,
                     stopwatch.getTotalTimeSeconds()));
             identityAverageRepository.save(result);
+        }
+        return result;
+    }
+
+    /**
+     * Calculates ICE and ICE breaker usage for a cardpool
+     * @param sidecode runner or corp
+     * @param cardpool cardpool name
+     * @return ICEAverage
+     */
+    public ICEAverage getICEAverage(String sidecode, String cardpool) {
+        ICEAverage result = iceAverageRepository.findBySidecodeCardpool(sidecode, cardpool);
+        if (result == null) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
+
+            // special non-ice breaker cards that should be counted
+            final List<String> extraCards = new ArrayList<>(Arrays.asList("D4v1d", "e3 Feedback Implants",
+                    "Grappling Hook"));
+
+            result = new ICEAverage(sidecode, cardpool);
+            List<Deck> decks = deckRepository.findByCardpoolAndSide(cardpool, sidecode);
+            Set<Card> cards = new HashSet<>();
+            int decknum = decks.size();
+
+            // get all relevant cards
+            for (Deck deck : decks) {
+                for (DeckHasCard deckHasCard : deck.getCards()) {
+                    Card card = deckHasCard.getCard();
+                    if ((!cards.contains(card)) &&
+                            ((card.getSubtype_code().contains("icebreaker")) ||
+                                    (card.getType_code().contains("ice")) ||
+                                    (extraCards.contains(card.getTitle())))) {
+                        cards.add(card);
+                    }
+                }
+            }
+
+            // examine all used cards
+            for (Card card : cards) {
+                int used = 0;
+                int sumused = 0;
+                String cardcode = card.getCode();
+                for (Deck deck : decks) {
+                    for (DeckHasCard deckHasCard : deck.getCards()) {
+                        if (cardcode.equals(deckHasCard.getCard().getCode())) {
+                            used++;
+                            sumused += deckHasCard.getQuantity();
+                        }
+                    }
+                }
+                CardAverage cardAverage = new CardAverage(card,
+                        String.format("%.1f%%", (double) used / decknum * 100),
+                        String.format("%.2f", (double) sumused / decknum),
+                        String.format("%.2f", (double) sumused / used));
+                result.addCard(cardAverage);
+            }
+            stopwatch.stop();
+            logger.info(String.format("Saving ICE/breaker averages: %s - %s (%.3f)", sidecode, cardpool,
+                    stopwatch.getTotalTimeSeconds()));
+            iceAverageRepository.save(result);
         }
         return result;
     }

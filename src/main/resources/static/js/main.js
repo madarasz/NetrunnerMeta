@@ -86,3 +86,46 @@ function loadCardPackTable(urlvalue, elementid) {
         }
     });
 }
+
+// fill card usage table (MDS table, ICE/breakers)
+function fillCardTable(urlvalue, elementid, minusing) {
+    var typecode = 'none';
+    $.ajax({
+        url: urlvalue,
+        dataType: "json",
+        async: false,
+        success: function(data) {
+            $.each(data, function(index, element) {
+                if (parseInt(element.using) > minusing) {
+                    if (element.typecodes.indexOf(typecode) < 0) {
+                        typecode = element.typecodes;
+                        $(elementid).append($('<tr>').append($('<td>', {
+                            class: 'warning',
+                            colspan: 6
+                        }).append($('<strong>', {
+                            text: typecode
+                        }))))
+                    }
+                    $(elementid).append($('<tr>').append($('<td>').append($('<span>', {
+                        class: 'icon-' + element.faction
+                    })), $('<td>').append($('<a>', {
+                        text: element.cardtitle,
+                        href: '/Cards/' + element.cardtitle + '/'
+                    })), $('<td>').append($('<em>', {
+                        text: element.cardpack
+                    })), $('<td>', {
+                        text: element.using,
+                        class: 'text-right'
+                    }), $('<td>', {
+                        text: element.average,
+                        class: 'text-center'
+                    }), $('<td>', {
+                        text: element.averageifused,
+                        class: 'text-center'
+                    })));
+                }
+            });
+            $(elementid).removeClass('spinner');
+        }
+    });
+}

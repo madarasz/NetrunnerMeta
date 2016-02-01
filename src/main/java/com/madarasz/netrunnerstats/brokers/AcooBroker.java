@@ -272,6 +272,7 @@ public class AcooBroker {
                         Deck deck = readDeck(deckId);
                         if (!deck.getUrl().equals("denied")) {
                             logger.info("Saving new deck! - " + deck.toString());
+                            deckRepository.save(deck);
                             standings.add(new Standing(tournament, rank, identity, topdeck, identity.isRunner(), deck));
                         }
                     } else {
