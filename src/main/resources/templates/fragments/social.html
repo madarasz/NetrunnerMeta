@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+    <!-- social -->
+    <div th:fragment="social" class="col-xs-12">
+        <!--FB stuff-->
+        <div id="fb-root"></div>
+        <script type="text/javascript">
+            /* <![CDATA[ */
+            (function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=119600664738915";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+            /* ]]> */
+        </script>
+
+        <div class="panel panel-default top-buffer" id="infopanel">
+            <div class="panel-heading">Social</div>
+            <div class="panel-body text-justify">
+                <p>
+                <div class="fb-page" data-href="https://www.facebook.com/netrunnerknowthemeta/"
+                     data-tabs="timeline" data-width="298" data-height="70" data-small-header="true"
+                     data-adapt-container-width="false" data-hide-cover="false" data-show-facepile="false">
+                    <div class="fb-xfbml-parse-ignore">
+                        <blockquote cite="https://www.facebook.com/netrunnerknowthemeta/">
+                            <a href="https://www.facebook.com/netrunnerknowthemeta/">Know the Meta - Netrunner</a>
+                        </blockquote>
+                    </div>
+                </div>
+                </p>
+                <hr/>
+                <p>
+                    <a class="twitter-timeline" href="https://twitter.com/knowthemeta" data-widget-id="694239655269699584">Tweets by @knowthemeta</a>
+                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                </p>
+                <hr/>
+                <p>
+                    <strong>Stimhack forum</strong>:
+                    <a href="http://forum.stimhack.com/t/know-the-meta/6306">
+                        <img th:src="@{/static/img/stimhack.png}"/>
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

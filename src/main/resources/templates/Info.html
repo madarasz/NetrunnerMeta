@@ -4,21 +4,6 @@
 </head>
 <body>
     <div th:replace="fragments/navbar :: navbar"></div>
-
-    <!--FB stuff-->
-    <div id="fb-root"></div>
-    <script type="text/javascript">
-        /* <![CDATA[ */
-        (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=119600664738915";
-        fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-        /* ]]> */
-    </script>
-
     <div class="container">
         <h3 class="page-header">Information</h3>
         <div class="row">
@@ -47,23 +32,6 @@
                     <p>You can contact me via: knowthemeta ( at ) gmail.com</p>
                     <p>All ideas, suggestions, feedback are welcome. Keep running.</p>
                     <p>Bugs and feaure requests: <a href="https://github.com/madarasz/NetrunnerMeta/issues" target="_blank"><img th:src="@{/static/img/github.png}"/></a></p>
-                </div>
-                <h4 class="top-buffer-big">Social</h4>
-                <div class="top-buffer">
-                    <table class="ordering">
-                        <tr>
-                            <td>
-                                <a href="https://twitter.com/knowthemeta" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false">Follow @knowthemeta</a>
-                                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-                            </td>
-                            <td>
-                                <div class="fb-like" data-href="https://www.facebook.com/netrunnerknowthemeta" data-layout="button" data-action="like" data-show-faces="false" data-share="false"></div>
-                            </td>
-                            <td>
-                                <a href="http://forum.stimhack.com/t/know-the-meta/6306"><img th:src="@{/static/img/stimhack.png}"/></a>
-                            </td>
-                        </tr>
-                    </table>
                 </div>
                 <h4 class="top-buffer-big">Acknowledgements</h4>
                 <div class="top-buffer">
