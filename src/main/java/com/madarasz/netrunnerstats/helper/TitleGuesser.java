@@ -58,6 +58,9 @@ public class TitleGuesser {
             case "Himisu Bako" :
                 newtitle = "Himitsu-Bako";
                 break;
+            case "Liberated Accounts" :
+                newtitle = "Liberated Account";
+                break;
         }
         return newtitle;
     }
