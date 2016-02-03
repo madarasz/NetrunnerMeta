@@ -596,10 +596,11 @@ public class Statistics {
                 last3Pools = trimCardPool(last3Pools, 3);
                 int alldeck = 0;
                 List<Deck> decks = new ArrayList<>();
+                List<DPStatistics> dpStatisticses = new ArrayList<>();
                 for (CardPool cardPool : last3Pools) {
                     String pack = cardPool.getTitle();
                     decks.addAll(deckRepository.findByCardpoolUsingCard(pack, cardTitle));
-                    alldeck += deckRepository.countByCardpoolAndSide(pack, side);
+                    dpStatisticses.add(getPackStats(pack, false));
                 }
                 int countcard = decks.size();
                 logger.debug(String.format("All decks: %d - deck using card: %d", alldeck, countcard));
@@ -630,6 +631,17 @@ public class Statistics {
                     }
                     counts.sort(comparator);
                     counts = trimCardCount(counts, 8);
+
+                    for (CardCount cardCount : counts) {
+                        if (cardCount.getCount() > 0) {
+                            Card id = cardCount.getCard();
+                            result.addTop(new CardUsage(id.getTitle(), id.getCardPack().getName(), side, id.getFaction_code(), cardCount.getCount(), -1,
+                                    (float) cardCount.getCount() / decks.size(), -1));
+                            logger.debug(String.format("%s - %,.3f%%",
+                                    cardCount.getCard().getTitle(), (float) cardCount.getCount() / decks.size()));
+                        }
+                    }
+
                 } else {
                     // get top identities
                     List<Card> identities = cardRepository.findIdentitiesBySide(side);
@@ -640,19 +652,27 @@ public class Statistics {
                                 count++;
                             }
                         }
-                        counts.add(new CardCount(identity, count));
-                    }
-                    counts.sort(comparator);
-//                    counts = trimCardCount(counts, 8);
-                }
-
-                for (CardCount cardCount : counts) {
-                    if (cardCount.getCount() > 0) {
-                        Card id = cardCount.getCard();
-                        result.addTop(new CardUsage(id.getTitle(), id.getCardPack().getName(), side, id.getFaction_code(), cardCount.getCount(), -1,
-                                (float) cardCount.getCount() / decks.size(), -1));
-                        logger.debug(String.format("%s - %,.3f%%",
-                                cardCount.getCard().getTitle(), (float) cardCount.getCount() / decks.size()));
+                        if (count > 0) {
+                            int deckcount = 0;
+                            for (DPStatistics dpStatistics : dpStatisticses) {
+                                Set<CountDeckStands> countDeckStandsSet;
+                                if (side.equals("runner")) {
+                                    countDeckStandsSet = dpStatistics.getRunnerIdentities();
+                                } else {
+                                    countDeckStandsSet = dpStatistics.getCorpIdentities();
+                                }
+                                for (CountDeckStands countDeckStands : countDeckStandsSet) {
+                                    if (countDeckStands.getTitle().equals(identity.getTitle())) {
+                                        deckcount += countDeckStands.getDecknum();
+                                        break;
+                                    }
+                                }
+                            }
+                            result.addTop(new CardUsage(identity.getTitle(), identity.getCardPack().getName(), side,
+                                    identity.getFaction_code(), count, -1, (float) count / deckcount, -1));
+                            logger.debug(String.format("%s - %,.3f%%",
+                                    identity.getTitle(), (float) count / deckcount));
+                        }
                     }
                 }
 

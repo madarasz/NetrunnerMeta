@@ -129,3 +129,35 @@ function fillCardTable(urlvalue, elementid, minusing) {
         }
     });
 }
+
+// shorten identity title
+function shortTitle(longtitle) {
+    switch (longtitle) {
+        case "Haas-Bioroid: Engineering the Future":
+            return "HB: EtF";
+            break;
+        case "Haas-Bioroid: Stronger Together":
+            return "HB: ST";
+            break;
+        case "Jinteki: Personal Evolution":
+            return "Jinteki: PE";
+            break;
+        case "Jinteki: Replicating Perfection":
+            return "Jinteki: RP";
+            break;
+        case "NBN: Making News":
+            return "NBN: MN";
+            break;
+        case "NBN: The World is Yours*":
+            return "NBN: TWiY*";
+            break;
+        case "Weyland Consortium: Because We Built It":
+            return "Weyland: BWBI";
+            break;
+        case "Weyland Consortium: Building a Better World":
+            return "Weyland: BaBW";
+            break;
+        default:
+            return longtitle.substring(0, longtitle.indexOf(':'));
+    }
+}

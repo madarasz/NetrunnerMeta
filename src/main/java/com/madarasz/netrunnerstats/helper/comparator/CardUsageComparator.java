@@ -12,16 +12,10 @@ public class CardUsageComparator implements Comparator<CardUsage>{
 
     @Override
     public int compare(CardUsage c1, CardUsage c2) {
-        if (c1.getIntopdecks() > c2.getIntopdecks()) {
-            return -1;
-        } if (c1.getIntopdecks() == c2.getIntopdecks()) {
-            if (c1.getIndecks() > c2.getIndecks()) {
-                return -1;
-            } else {
-                return 1;
-            }
+        if (Integer.compare(c1.getIntopdecks(), c2.getIntopdecks()) == 0) {
+            return -Integer.compare(c1.getIndecks(), c2.getIndecks());
         } else {
-            return 1;
+            return -Integer.compare(c1.getIntopdecks(), c2.getIntopdecks());
         }
     }
 }
