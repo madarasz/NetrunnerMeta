@@ -125,7 +125,11 @@ public class AdminController {
         model.put("countCardCombo", template.count(CardCombo.class));
         model.put("countDPDecks", template.count(DPDecks.class));
         model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
-        model.put("countDecksWithoutRel", deckRepository.getAllDecksWithoutRel().size());
+        List<Deck> withoutRel = deckRepository.getAllDecksWithoutRel();
+        for (Deck deck : withoutRel) {
+            logger.warn("Deck without rel: " + deck.toString());
+        }
+        model.put("countDecksWithoutRel", withoutRel.size());
 
         AdminData denyurls = adminDataRepository.getDenyUrls();
         if (denyurls == null) {

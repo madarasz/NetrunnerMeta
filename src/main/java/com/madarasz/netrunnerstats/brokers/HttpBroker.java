@@ -97,7 +97,11 @@ public class HttpBroker {
     }
 
     public Elements elementsFromHtml(String jsoupExpression) {
-        return document.select(jsoupExpression);
+        try {
+            return document.select(jsoupExpression);
+        } catch (Exception ex) {
+            return new Elements();
+        }
     }
 
     public ArrayList<String> linesFromHtml(String jsoupExpression) {

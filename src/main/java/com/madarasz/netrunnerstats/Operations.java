@@ -429,8 +429,14 @@ public class Operations {
      */
     public void deleteDeck(String url) {
         Map<String, Object> emptyparams = new HashMap<>();
-        template.query(String.format("MATCH (d:Deck {url: \"%s\"})<-[:IS_DECK]-(s:Standing) " +
-                "OPTIONAL MATCH (d)-[r]-(), (s)-[r2]-() DELETE d,r,s,r2", url), emptyparams);
+        template.query(String.format("MATCH (d:Deck {url: \"%s\"})<-[r1:IS_DECK]-(s:Standing)-[r2]-() " +
+                "DELETE d,r1,s,r2", url), emptyparams);
+        template.query(String.format("MATCH (d:Deck {url: \"%s\"})<-[r1:IS_DECK]-(s:Standing) " +
+                "DELETE d,r1,s", url), emptyparams);
+        template.query(String.format("MATCH (d:Deck {url: \"%s\"}) OPTIONAL MATCH (d)-[r]-()" +
+                "DELETE d,r", url), emptyparams);
+//        template.query(String.format("MATCH (d:Deck {url: \"%s\"})<-[:IS_DECK]-(s:Standing) " +
+//                "OPTIONAL MATCH (d)-[r]-(), (s)-[r2]-() DELETE d,r,s,r2", url), emptyparams);
     }
 
     /**
@@ -475,8 +481,10 @@ public class Operations {
         logger.info("Detecting post-MWL tournaments.");
         Date nulldate = new Date(0);
         Date date2016 = new Date(0);
+        Date dateMWL = new Date(0);
         try {
             date2016 = df.parse("2015.12.31.");
+            dateMWL = df.parse("2016.02.01.");
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -499,6 +507,15 @@ public class Operations {
                 }
                 if ( (MWLOK) && ((tournament.getDate().equals(nulldate)) || (tournament.getDate().after(date2016))) ) {
                     logger.info(String.format("MWL OK tournament (%d decks): %s", decks.size(), tournament.getUrl()));
+                    if (reorg) {
+                        tournament.setCardpool(cardPack);
+                        tournamentRepository.save(tournament);
+                    }
+                }
+            } else {
+                // later than MWL deadline, just standings
+                if (tournament.getDate().after(dateMWL)) {
+                    logger.info(String.format("MWL-date tournament: %s", tournament.getUrl()));
                     if (reorg) {
                         tournament.setCardpool(cardPack);
                         tournamentRepository.save(tournament);

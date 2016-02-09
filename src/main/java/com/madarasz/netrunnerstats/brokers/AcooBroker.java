@@ -111,7 +111,7 @@ public class AcooBroker {
                 title = titleGuesser.alternateTitle(title);
                 card = cardRepository.findByTitle(title);
                 if (card == null) {
-                    logger.error("ERROR - no such card");
+                    logger.error("ERROR - no such card - " + title);
                 }
             }
             if (quantity == 0) {    // identity

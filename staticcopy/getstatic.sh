@@ -39,6 +39,7 @@ dirs=(
 "JSON/Cards/Cardpool"
 "JSON/DPStats"
 "JSON/DPStats/Identities"
+"JSON/DPStats/ICE"
 "JSON/Deck"
 "JSON/Average"
 "MDSIdentity"
@@ -65,6 +66,7 @@ do
     "JSON/Cards/Cardpack/$side"
     "JSON/Cards/Cardpool/$side"
     "JSON/DPStats/Identities/$side"
+    "JSON/DPStats/ICE/$side"
     )
     for dir in "${dirs[@]}"
     do
@@ -130,7 +132,7 @@ do
         "DataTable/DPStats/Compare/$side/identity/$pack"
         "JSON/Cards/Cardpool/$side/$pack"
         "JSON/DPStats/Identities/$side/$pack"
-        "/JSON/DPStats/ICE/$side/$pack"
+        "JSON/DPStats/ICE/$side/$pack"
         )
         for packfile in "${packfiles[@]}"
         do
