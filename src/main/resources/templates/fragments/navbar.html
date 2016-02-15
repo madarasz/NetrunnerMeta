@@ -24,6 +24,9 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tournament Drilldown<span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                            <li>
+                                <a th:href="@{/DPStats/Last 3 aggregated/}"><em>last 3 aggregated</em></a>
+                            </li>
                             <li th:each="cardpool : ${cardpools}">
                                 <a th:text="${cardpool}" th:href="@{/DPStats/__${cardpool}__/}"></a>
                             </li>

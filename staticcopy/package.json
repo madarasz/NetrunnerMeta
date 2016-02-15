@@ -9,5 +9,12 @@
     "grunt-contrib-concat": "~0.5.1",
     "grunt-css": "~0.5.4",
     "grunt-contrib-watch": "latest"
-  }
+  },
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Necro",
+  "license": "ISC",
+  "description": "Handling static copy of Know the Meta site"
 }

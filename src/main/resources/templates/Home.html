@@ -33,6 +33,7 @@
                         <ktm:tooltip place="top" text="Click on an expansion name for more information on tournaments with that cardpool."/>
                     </h4>
                     <div class="list-group">
+                        <a href="/DPStats/Last%203%20aggregated" class="list-group-item list-group-item-info"><em>last 3 aggregated</em></a>
                         <a th:each="cardpool : ${cardpools}" th:text="${cardpool}" th:href="@{/DPStats/__${cardpool}__/}" class="list-group-item"></a>
                     </div>
                 </div>

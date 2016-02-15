@@ -17,15 +17,35 @@
                 <div id="chart_div1" class="chart-responsive spinner"></div>
                 <div class="more-padding">
                     <small>
-                        <p>
-                            <span class="glyphicon glyphicon-one-fine-star"></span> top deck<br />
-                            <span class="glyphicon glyphicon-one-fine-dot"></span> non-top deck
-                        </p>
-                        <p>
-                            Similar decks are placed close to each other on the chart.<br />
-                            Decks with a lot of differencies are spread out far apart.<br />
-                            A dense cluster of points signify a deck archetype.
-                        </p>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <span class="glyphicon glyphicon-one-fine-star"></span> top deck<br />
+                                <span class="glyphicon glyphicon-one-fine-dot"></span> non-top deck
+                            </div>
+                            <div class="col-xs-6 hidden" id="last3">
+                                <span class="glyphicon glyphicon-stop last3-1"></span>
+                                <a th:href="@{/MDSIdentity/__${cardpools[0]}__/__${identity}__}">
+                                    <span th:text="${cardpools[0]}"></span>
+                                </a>
+                                <br/>
+                                <span class="glyphicon glyphicon-stop last3-2"></span>
+                                <a th:href="@{/MDSIdentity/__${cardpools[1]}__/__${identity}__}">
+                                    <span th:text="${cardpools[1]}"></span>
+                                </a>
+                                <br/>
+                                <span class="glyphicon glyphicon-stop last3-3"></span>
+                                <a th:href="@{/MDSIdentity/__${cardpools[2]}__/__${identity}__}">
+                                    <span th:text="${cardpools[2]}"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row top-buffer">
+                            <div class="col-xs-12">
+                                    Similar decks are placed close to each other on the chart.<br />
+                                    Decks with a lot of differencies are spread out far apart.<br />
+                                    A dense cluster of points signify a deck archetype.
+                            </div>
+                        </div>
                     </small>
                 </div>
             </div>
@@ -99,6 +119,10 @@
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
+
+        if ([[${DPname}]] === "Last 3 aggregated") {
+            $('#last3').removeClass("hidden");
+        }
 
         google.load('visualization', '1.0', {'packages':['corechart']});
 

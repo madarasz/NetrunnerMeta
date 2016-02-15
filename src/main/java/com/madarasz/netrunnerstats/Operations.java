@@ -429,14 +429,14 @@ public class Operations {
      */
     public void deleteDeck(String url) {
         Map<String, Object> emptyparams = new HashMap<>();
-        template.query(String.format("MATCH (d:Deck {url: \"%s\"})<-[r1:IS_DECK]-(s:Standing)-[r2]-() " +
-                "DELETE d,r1,s,r2", url), emptyparams);
-        template.query(String.format("MATCH (d:Deck {url: \"%s\"})<-[r1:IS_DECK]-(s:Standing) " +
-                "DELETE d,r1,s", url), emptyparams);
-        template.query(String.format("MATCH (d:Deck {url: \"%s\"}) OPTIONAL MATCH (d)-[r]-()" +
-                "DELETE d,r", url), emptyparams);
-//        template.query(String.format("MATCH (d:Deck {url: \"%s\"})<-[:IS_DECK]-(s:Standing) " +
-//                "OPTIONAL MATCH (d)-[r]-(), (s)-[r2]-() DELETE d,r,s,r2", url), emptyparams);
+//        template.query(String.format("MATCH (d:Deck {url: \"%s\"})<-[r1:IS_DECK]-(s:Standing)-[r2]-() " +
+//                "DELETE d,r1,s,r2", url), emptyparams);
+//        template.query(String.format("MATCH (d:Deck {url: \"%s\"})<-[r1:IS_DECK]-(s:Standing) " +
+//                "DELETE d,r1,s", url), emptyparams);
+//        template.query(String.format("MATCH (d:Deck {url: \"%s\"}) OPTIONAL MATCH (d)-[r]-()" +
+//                "DELETE d,r", url), emptyparams);
+        template.query(String.format("MATCH (d:Deck {url: \"%s\"})<-[:IS_DECK]-(s:Standing) " +
+                "OPTIONAL MATCH (d)-[r]-(), (s)-[r2]-() DELETE d,r,s,r2", url), emptyparams);
     }
 
     /**

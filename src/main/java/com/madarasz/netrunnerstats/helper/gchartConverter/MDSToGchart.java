@@ -2,9 +2,12 @@ package com.madarasz.netrunnerstats.helper.gchartConverter;
 
 import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.Tournament;
 import com.madarasz.netrunnerstats.database.DOs.stats.IdentityMDS;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.MDSEntry;
 import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
+import com.madarasz.netrunnerstats.database.DRs.TournamentRepository;
+import com.madarasz.netrunnerstats.helper.LastThree;
 import com.madarasz.netrunnerstats.helper.gchart.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,11 +28,20 @@ public class MDSToGchart {
     @Autowired
     Statistics statistics;
 
-    private static final String STYLE_TOPDECK = "point {size: 8; shape-type: star; stroke-color: #FFFFFF;}";
-    private static final String STYLE_NOT_TOPDECK = "point {stroke-color: #FFFFFF;}";
+    @Autowired
+    LastThree lastThree;
+
+    @Autowired
+    TournamentRepository tournamentRepository;
+
+    private static final String STYLE_TOPDECK = "point {size: 8; shape-type: star; color: %s; stroke-color: #FFFFFF;}";
+    private static final String STYLE_NOT_TOPDECK = "point {color: %s; stroke-color: #FFFFFF;}";
+    private static final String[] COLORS = {"#3769cd", "#cd3737", "#cd9637"};
 
     public DataTable converter(IdentityMDS stats) {
         List<Column> columns = new ArrayList<>();
+        List<String> last3Names = lastThree.getLastThreeCardpoolNames();
+        String color;
         columns.add(new Column("x", "number"));
         columns.add(new Column("y",  "number"));
         columns.add(new Column("", "", "string", "style"));
@@ -44,10 +56,20 @@ public class MDSToGchart {
             CellString tooltip = new CellString(statistics.getDeckInfo(deck).getDigest());
             rowdata.add(x);
             rowdata.add(y);
-            if (entry.isTopdeck()) {
-                style = new CellString(STYLE_TOPDECK);
+
+            // style color
+            if (stats.getDpname().equals(statistics.LAST_3)) {
+                Tournament tournament = tournamentRepository.getTournamentByDeckUrl(deck.getUrl());
+                color = COLORS[last3Names.indexOf(tournament.getCardpool().getName())];
             } else {
-                style = new CellString(STYLE_NOT_TOPDECK);
+                color = COLORS[0];
+            }
+
+            // style shape
+            if (entry.isTopdeck()) {
+                style = new CellString(String.format(STYLE_TOPDECK, color));
+            } else {
+                style = new CellString(String.format(STYLE_NOT_TOPDECK, color));
             }
             rowdata.add(style);
             rowdata.add(tooltip);

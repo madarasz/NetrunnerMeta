@@ -132,7 +132,7 @@ public class StimhackBroker {
                     logger.trace(String.format("%dx %s", quantity, card.getTitle()));
                     result.hasCard(card, quantity);
                 } else {
-                    logger.trace("ERROR - Can't parse card name: " + cardtitle);
+                    logger.warn("ERROR - Can't parse card name: " + cardtitle);
                 }
             }
         }

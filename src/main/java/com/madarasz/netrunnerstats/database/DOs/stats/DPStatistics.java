@@ -152,4 +152,19 @@ public class DPStatistics {
         return (dpname.equals(stats.getDpname())) && (top == stats.isTop());
     }
 
+    public void setRunnerFactions(Set<CountDeckStands> runnerFactions) {
+        this.runnerFactions = runnerFactions;
+    }
+
+    public void setRunnerIdentities(Set<CountDeckStands> runnerIdentities) {
+        this.runnerIdentities = runnerIdentities;
+    }
+
+    public void setCorpFactions(Set<CountDeckStands> corpFactions) {
+        this.corpFactions = corpFactions;
+    }
+
+    public void setCorpIdentities(Set<CountDeckStands> corpIdentities) {
+        this.corpIdentities = corpIdentities;
+    }
 }

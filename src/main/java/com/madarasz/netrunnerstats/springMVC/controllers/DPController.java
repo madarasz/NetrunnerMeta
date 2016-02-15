@@ -6,6 +6,7 @@ import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardAverage;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.DPIdentity;
 import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
 import com.madarasz.netrunnerstats.helper.AverageDigest;
+import com.madarasz.netrunnerstats.helper.LastThree;
 import com.madarasz.netrunnerstats.helper.gchart.DataTable;
 import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToCompareGchart;
 import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToGchart;
@@ -40,6 +41,9 @@ public class DPController {
 
     @Autowired
     AverageDigest averageDigest;
+
+    @Autowired
+    LastThree lastThree;
 
     // Google Chart DataTable output
     @RequestMapping(value="/DataTable/DPStats/{filter}/{sidecode}/{stattype}/{DPName}", method = RequestMethod.GET)

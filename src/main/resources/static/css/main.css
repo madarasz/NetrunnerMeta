@@ -109,6 +109,10 @@ table.ordering > tbody > tr > td {
     vertical-align: middle;
 }
 
+.last3-1 { color: #3769cd; }
+.last3-2 { color: #cd3737; }
+.last3-3 { color: #cd9637; }
+
 .glyphicon.glyphicon-one-fine-dot:before {
     content: "\25cf";
     font-size: 1.5em;

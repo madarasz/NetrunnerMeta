@@ -116,7 +116,7 @@ cp ../../src/main/resources/static/img/blog/* static/img/blog/
 # card images
 cp ../../src/main/resources/static/img/cards/* static/img/cards/
 
-packs=( $(curl http://localhost:8080/JSON/Cardpool | jq -r '.[].title' | sed 's/ /%20/g') )
+packs=( $(curl http://localhost:8080/JSON/Cardpool | jq -r '.[].title' | sed 's/ /%20/g') "Last%203%20aggregated" )
 
 # for each pack
 for pack in "${packs[@]}"
