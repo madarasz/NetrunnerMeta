@@ -102,7 +102,12 @@ public class LastThree {
     }
 
     public List<String> getLastThreeCardpoolNames() {
-        return cardPoolStatsRepository.getCardPoolNames().subList(0, 3);
+        List<String> result = cardPoolStatsRepository.getCardPoolNames();
+        if (result.size() > 2) {
+            return result.subList(0, 3);
+        } else {
+            return result;
+        }
     }
 
 }

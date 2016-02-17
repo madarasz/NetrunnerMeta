@@ -102,38 +102,6 @@ public class Deck {
         return result;
     }
 
-    /**
-     * Count deck influence
-     * @return influence count
-     */
-    public int getInfluenceCount() {
-        if (identity == null) return 0;
-        int result = 0;
-        String faction_code = identity.getFaction_code();
-
-        if (identity.getCode().equals("03029")) {  // The professor
-            for (DeckHasCard deckHasCard : cards) {
-                Card card = deckHasCard.getCard();
-                if (!faction_code.equals(card.getFaction_code())) {
-                    if (card.getType_code().equals("program")) {
-                        result += card.getFactioncost() * (deckHasCard.getQuantity()-1);
-                    } else {
-                        result += card.getFactioncost() * deckHasCard.getQuantity();
-                    }
-                }
-            }
-        } else {    // not The professor
-            for (DeckHasCard deckHasCard : cards) {
-                Card card = deckHasCard.getCard();
-                if (!faction_code.equals(card.getFaction_code())) {
-                    result += card.getFactioncost() * deckHasCard.getQuantity();
-                }
-            }
-        }
-
-        return result;
-    }
-
     public int countCards() {
         int decksize = 0;
         for (DeckHasCard card : cards)
@@ -168,7 +136,7 @@ public class Deck {
 
     @Override
     public String toString() {
-        return String.format("%s (%s) - %d cards (%d inf) up to: %s - %s", name, identity.toString(), getNumberofCards(), getInfluenceCount(), getUpto().toString(), url);
+        return String.format("%s (%s) - %d cards up to: %s - %s", name, identity.toString(), getNumberofCards(), getUpto().toString(), url);
 //        return name;
     }
 }
