@@ -31,11 +31,11 @@ public class StimhackBroker {
     private static final String HTML_INFO_BOX = "div.wc-shortcodes-box";
     private static final String HTML_FIRST_DECK = "div.wc-shortcodes-column-first";
     private static final String HTML_SECOND_DECK = "div.wc-shortcodes-column-last";
-    private static final String HTML_LINE_BREAK = "<br class=\"break\">|</p><p>";
+    private static final String HTML_LINE_BREAK = "<br class=\"break\">|</p><p>|<br>";
     private static final String HTML_TAGS = "span.footer-tags > a";
     private static final String HTML_TITLE = "h1.entry-title";
     private static final String SPLITTER_INFO = ": |</strong>";
-    private static final String SLITTER_CARD_NAME = "^\\dx? | •| \\(| ●|•| ☆| ○";
+    private static final String SLITTER_CARD_NAME = "^\\dx? | •| \\(| ●|•| ☆| ○| \\*";
     private static final String SLITTER_DATE = "Date: ";
     private static final String URL_TOURNAMENTS = "http://stimhack.com/tournament-decklists/";
 
@@ -129,8 +129,10 @@ public class StimhackBroker {
 
                 // results
                 if (card != null) {
-                    logger.trace(String.format("%dx %s", quantity, card.getTitle()));
-                    result.hasCard(card, quantity);
+                    if (!card.getType_code().equals("identity")) {
+                        logger.trace(String.format("%dx %s", quantity, card.getTitle()));
+                        result.hasCard(card, quantity);
+                    }
                 } else {
                     logger.warn("ERROR - Can't parse card name: " + cardtitle);
                 }

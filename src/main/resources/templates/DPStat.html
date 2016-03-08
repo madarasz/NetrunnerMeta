@@ -141,7 +141,7 @@
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <h4>
-                            ICE (min 5% in decks)
+                        ICE (min 5% in decks)
                         </h4>
                         <table class="table table-hover">
                             <thead>
@@ -241,10 +241,11 @@
 
         google.setOnLoadCallback(drawCharts);
 
+        var dpname = encodeURIComponent([[${DPname}]]);
+        var basepiecharts = "/DataTable/DPStats/";
+        var basebarcharts = "/DataTable/DPStats/Compare/";
+
         function drawCharts() {
-            var dpname = encodeURIComponent([[${DPname}]]);
-            var basepiecharts = "/DataTable/DPStats/";
-            var basebarcharts = "/DataTable/DPStats/Compare/";
             var baselist = "/JSON/DPStats/Identities/";
             var basecompare = "/MDSIdentity/" + dpname + "/";
             var basecardtable = "/JSON/Cards/";
@@ -268,6 +269,21 @@
             loadCardPoolTable(basecardtable + "Cardpool/corp/" + dpname, "#corptable2");
             window.scrollTo(0,0);
         }
+
+        $(window).resize(function(){
+            drawPieChart(basepiecharts + "Top/runner/faction/" + dpname, 'chart_div1');
+            drawPieChart(basepiecharts + "Top/corp/faction/" + dpname, 'chart_div2');
+            drawPieChart(basepiecharts + "Top/runner/identity/" + dpname, 'chart_div3');
+            drawPieChart(basepiecharts + "Top/corp/identity/" + dpname, 'chart_div4');
+            drawPieChart(basepiecharts + "All/runner/faction/" + dpname, 'chart_div5');
+            drawPieChart(basepiecharts + "All/corp/faction/" + dpname, 'chart_div6');
+            drawPieChart(basepiecharts + "All/runner/identity/" + dpname, 'chart_div7');
+            drawPieChart(basepiecharts + "All/corp/identity/" + dpname, 'chart_div8');
+            drawBarChart(basebarcharts + "runner/faction/" + dpname, 'chart_div9');
+            drawBarChart(basebarcharts + "corp/faction/" + dpname, 'chart_div10');
+            drawBarChart(basebarcharts + "runner/identity/" + dpname, 'chart_div11');
+            drawBarChart(basebarcharts + "corp/identity/" + dpname, 'chart_div12');
+        });
 
         function drawPieChart(urlvalue, elementid) {
 
@@ -328,7 +344,7 @@
         }
 
         function listIdentities(urlvalue, elementid, linkurl) {
-            var jsonData = $.ajax({
+            $.ajax({
                 url: urlvalue,
                 dataType: "json",
                 async: false,

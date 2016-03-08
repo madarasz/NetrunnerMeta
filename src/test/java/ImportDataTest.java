@@ -337,4 +337,9 @@ public class ImportDataTest {
                 "The Universe of Tomorrow", tournament.getCardpool().getName());
     }
 
+    @Test
+    public void deniedURLs() {
+
+    }
+
 }

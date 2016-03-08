@@ -146,16 +146,16 @@ public class AdminController {
     public @ResponseBody List<VerificationProblem> verifyData() {
         // remove already banned urls
         List<VerificationProblem> problems = operations.checkDataValidity();
-        List<VerificationProblem> result = new ArrayList<>(problems);
-        AdminData denyurls = adminDataRepository.getDenyUrls();
-        if (denyurls != null) {
-            for (VerificationProblem problem : problems) {
-                if (denyurls.getData().contains(problem.getUrl())) {
-                    result.remove(problem);
-                }
-            }
-        }
-        return result;
+//        List<VerificationProblem> result = new ArrayList<>(problems);
+//        AdminData denyurls = adminDataRepository.getDenyUrls();
+//        if (denyurls != null) {
+//            for (VerificationProblem problem : problems) {
+//                if (denyurls.getData().contains(problem.getUrl())) {
+//                    result.remove(problem);
+//                }
+//            }
+//        }
+        return problems;
     }
 
     @RequestMapping(value="/muchadmin/BanDeck", method = RequestMethod.GET)

@@ -136,7 +136,14 @@ public class AcooBroker {
         String[] titleparts = titlebar.split(" \\(|\\)");
         String decription = httpBroker.textFromHtml(JSOUP_TOURNAMENT_DESC);
         int playerNumber = regExBroker.getNumberFromBeginning(decription);
-        Date date = regExBroker.parseDate(titleparts[1]);
+
+        Date date = new Date();
+        try {
+            date = regExBroker.parseDate(titleparts[1]);
+        } catch (Exception ex) {
+            logger.warn("Couldn't parse date from: " + titlebar);
+        }
+
         CardPack pool = cardPackRepository.findByName(httpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL));
         if (pool == null) {
             logger.warn(String.format("ERROR - no card pack found: %s // tournament id: %d", httpBroker.textFromHtml(JSOUP_TOURNAMENT_POOL), tournamentId));
@@ -361,6 +368,9 @@ public class AcooBroker {
                 break;
             case "icon-industrial-genomics.jpg" :
                 identityName = "Industrial Genomics: Growing Solutions";
+                break;
+            case "icon-jesminder-sareen.png" :
+                identityName = "Jesminder Sareen: Girl Behind the Curtain";
                 break;
             case "icon-jinteki-biotech-life.png" :
                 identityName = "Jinteki Biotech: Life Imagined";

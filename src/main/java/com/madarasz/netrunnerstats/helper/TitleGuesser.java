@@ -61,6 +61,42 @@ public class TitleGuesser {
             case "Liberated Accounts" :
                 newtitle = "Liberated Account";
                 break;
+            case "Legwork1" :
+                newtitle = "Legwork";
+                break;
+            case "Lucky Find1" :
+                newtitle = "Lucky Find";
+                break;
+            case "Quality Time1" :
+                newtitle = "Quality Time";
+                break;
+            case "Stimhack1" :
+                newtitle = "Stimhack";
+                break;
+            case "Astrolabe1" :
+                newtitle = "Astrolabe";
+                break;
+            case "Plascrete Carapace1" :
+                newtitle = "Plascrete Carapace";
+                break;
+            case "Prepaid VoicePAD1" :
+                newtitle = "Prepaid VoicePAD";
+                break;
+            case "Same Old Thing1" :
+                newtitle = "Same Old Thing";
+                break;
+            case "Architect2" :
+                newtitle = "Architect";
+                break;
+            case "Viper1" :
+                newtitle = "Viper";
+                break;
+            case "ZU.13 Key Master1" :
+                newtitle = "ZU.13 Key Master";
+                break;
+            case "Director Haas' Pet Project1" :
+                newtitle = "Director Haas' Pet Project";
+                break;
         }
         return newtitle;
     }
