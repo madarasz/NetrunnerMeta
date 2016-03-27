@@ -67,4 +67,8 @@ public interface StandingRepository extends GraphRepository<Standing>, Relations
 
     @Query("MATCH (t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing) WHERE t.url =~ 'http://www.acoo.*' RETURN COUNT(s)")
     int countAcooStandings();
+
+    @Query("MATCH (s1:Standing)-[:IN_TOURNAMENT]->(t:Tournament)<-[:IN_TOURNAMENT]-(s2:Standing) " +
+            "WHERE s2.rank = s1.rank AND s2.identity = s1.identity AND s1.id <> s2.id RETURN COUNT(s2)")
+    int countDoubledStandings();
 }

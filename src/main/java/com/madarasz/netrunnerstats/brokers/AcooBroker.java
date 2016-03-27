@@ -420,6 +420,9 @@ public class AcooBroker {
             case "noise-icon.png" :
                 identityName = "Noise: Hacker Extraordinaire";
                 break;
+            case "icon-palana.png" :
+                identityName = "Pālanā Foods: Sustainable Growth";
+                break;
             case "quetzal-icon.png" :
                 identityName = "Quetzal: Free Spirit";
                 break;

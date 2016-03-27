@@ -815,6 +815,36 @@ public class Statistics {
     }
 
     /**
+     * Logs win-more cards with best top 30% / all ratio
+     * EXPERIMENTAL
+     */
+    public void getWinMoreCards() {
+        StopWatch stopwatch = new StopWatch();
+        stopwatch.start();
+
+        List<Card> cards = cardRepository.findAllCards();
+        List<CardCount> counts = new ArrayList<>();
+        for (Card card : cards) {
+            List<CardUsage> cardStat = getCardStats(card.getTitle()).getOverTime();
+            if (cardStat.size() > 0) {
+                CardUsage last = cardStat.get(cardStat.size() - 1);
+                counts.add(new CardCount(card, (int) (last.getTopdeckfraction() * 1000 - last.getDeckfraction() * 1000)));
+            }
+        }
+
+        CardCountComparator comparator = new CardCountComparator();
+        counts.sort(comparator);
+        counts = trimCardCount(counts, 20);
+
+        for (CardCount cardCount : counts) {
+            logger.info(String.format("%d - %s", cardCount.getCount(), cardCount.getCard().getTitle()));
+        }
+
+        stopwatch.stop();
+        logger.info(String.format("Caltulating top win-more (%.3f sec)", stopwatch.getTotalTimeSeconds()));
+    }
+
+    /**
      * WARNING: cycle names are not in DB. They are coming from Enums.
      * @return Cycle-Datapack structure
      */

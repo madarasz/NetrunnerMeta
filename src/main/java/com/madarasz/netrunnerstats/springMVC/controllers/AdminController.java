@@ -1,6 +1,7 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.Operations;
+import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import com.madarasz.netrunnerstats.database.DOs.*;
@@ -66,6 +67,9 @@ public class AdminController {
     @Autowired
     CardPoolStatsRepository cardPoolStatsRepository;
 
+    @Autowired
+    Statistics statistics;
+
     private final DateFormat df = new SimpleDateFormat("yyyy.MM.dd.");
 
     /**
@@ -130,6 +134,7 @@ public class AdminController {
             logger.warn("Deck without rel: " + deck.toString());
         }
         model.put("countDecksWithoutRel", withoutRel.size());
+//        model.put("countDoubledStandings", standingRepository.countDoubledStandings());
 
         AdminData denyurls = adminDataRepository.getDenyUrls();
         if (denyurls == null) {
@@ -146,15 +151,6 @@ public class AdminController {
     public @ResponseBody List<VerificationProblem> verifyData() {
         // remove already banned urls
         List<VerificationProblem> problems = operations.checkDataValidity();
-//        List<VerificationProblem> result = new ArrayList<>(problems);
-//        AdminData denyurls = adminDataRepository.getDenyUrls();
-//        if (denyurls != null) {
-//            for (VerificationProblem problem : problems) {
-//                if (denyurls.getData().contains(problem.getUrl())) {
-//                    result.remove(problem);
-//                }
-//            }
-//        }
         return problems;
     }
 
@@ -463,6 +459,13 @@ public class AdminController {
     @RequestMapping(value="/muchadmin/Experimental2", method = RequestMethod.POST)
     public String experimental2(final RedirectAttributes redirectAttributes) {
         operations.detectPostMWL(true);
+        return "redirect:/muchadmin";
+    }
+
+    // detect win more cards
+    @RequestMapping(value="/muchadmin/WinMore", method = RequestMethod.POST)
+    public String winMore(final RedirectAttributes redirectAttributes) {
+        statistics.getWinMoreCards();
         return "redirect:/muchadmin";
     }
 }
