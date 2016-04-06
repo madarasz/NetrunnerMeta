@@ -21,7 +21,7 @@ import java.util.Set;
 @Component
 public final class NetrunnerDBBroker {
 
-    private final static String NETRUNNERDB_API_URL = "http://netrunnerdb.com/api/";
+    private final static String NETRUNNERDB_API_URL = "https://netrunnerdb.com/api/";
 
     @Autowired
     private CardPackRepository cardPackRepository;

@@ -8,7 +8,7 @@ mkdir JSON
 mkdir JSON/Cards
 mkdir JSON/Cards/24
 
-titles=( $(curl http://netrunnerdb.com/api/cards/ | jq -r '.[].title' | sed 's/ /%20/g') )
+titles=( $(curl https://netrunnerdb.com/api/cards/ | jq -r '.[].title' | sed 's/ /%20/g') )
 for title in "${titles[@]}"
 do
   mkdir "Cards/${title//%20/ }"

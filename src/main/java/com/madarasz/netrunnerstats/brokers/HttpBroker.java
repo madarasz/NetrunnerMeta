@@ -8,10 +8,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 
 /**
@@ -43,7 +50,7 @@ public class HttpBroker {
                 buffer.append(chars, 0, read);
 
             // remove unicode characters
-            String result = buffer.toString().replaceAll("\\p{C}", "");
+            String result = buffer.toString().replaceAll("\\p{C}", "").trim();
 
             if (fixJson) {
                 return "{\"input\": " + result + "}";
@@ -52,6 +59,7 @@ public class HttpBroker {
             }
 
         } catch (Exception ex) {
+            logger.error("logged exception", ex);
             return "";
 
         } finally {
@@ -114,5 +122,33 @@ public class HttpBroker {
     public int countFromHtml(String jsoupExpression) {
         Elements elements = document.select(jsoupExpression);
         return elements.size();
+    }
+
+    // accepting https
+    static {
+        final TrustManager[] trustAllCertificates = new TrustManager[] {
+                new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) throws CertificateException {
+                    }
+
+                    @Override
+                    public void checkServerTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) throws CertificateException {
+                    }
+
+                    @Override
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return new java.security.cert.X509Certificate[0];
+                    }
+                }
+        };
+
+        try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCertificates, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (GeneralSecurityException e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 }
