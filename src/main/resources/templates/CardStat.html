@@ -143,7 +143,7 @@
                                 text: '(' + Math.round(element.deckfraction * 100) + '%)'
                             })
                     ));
-                    // top identity data for pie chart
+                    // top identity data for bar chart
                     if (![[${identity}]]) {
                         cardChartData.push([]);
                         cardChartData[cardChartData.length - 1].push(shortTitle(element.cardtitle));
@@ -162,7 +162,7 @@
             }
             $('#cards').removeClass('spinner');
 
-            // draw identity pie chart
+            // draw identity bar chart
             if (![[${identity}]]) {
                 cardDataTable = google.visualization.arrayToDataTable(cardChartData);
                 cardChartOptions = {
