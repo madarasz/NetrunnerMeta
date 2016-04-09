@@ -128,6 +128,9 @@ public class AdminController {
         model.put("countCardStat", template.count(CardStat.class));
         model.put("countCardCombo", template.count(CardCombo.class));
         model.put("countDPDecks", template.count(DPDecks.class));
+        model.put("countTournamentDrilldown", template.count(TournamentDrilldown.class));
+        model.put("countStandingDeckCount", template.count(StandingDeckCount.class));
+        model.put("countStandingDeckCountID", template.count(StandingDeckCountID.class));
         model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         List<Deck> withoutRel = deckRepository.getAllDecksWithoutRel();
         for (Deck deck : withoutRel) {
@@ -146,7 +149,7 @@ public class AdminController {
 
     // submissions
 
-    // verify data
+    // denyUrl data
     @RequestMapping(value="/muchadmin/Verify", method = RequestMethod.GET)
     public @ResponseBody List<VerificationProblem> verifyData() {
         // remove already banned urls
@@ -442,7 +445,7 @@ public class AdminController {
 
     // deny urls
     @RequestMapping(value="/muchadmin/Update/DenyUrls", method = RequestMethod.POST)
-    public String verify(String urls, Map<String, Object> model) {
+    public String denyUrl(String urls, Map<String, Object> model) {
         AdminData newurls = new AdminData("denyUrls", urls);
         adminDataRepository.save(newurls);
         return "redirect:/muchadmin";

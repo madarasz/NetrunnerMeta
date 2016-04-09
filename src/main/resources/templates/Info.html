@@ -55,51 +55,8 @@
         <div th:replace="fragments/footer :: footer"></div>
     </div>
     <div th:replace="fragments/head :: scripts"></div>
-
-    <script type="text/javascript"
-            src="https://www.google.com/jsapi?autoload={
-            'modules':[{
-              'name':'visualization',
-              'version':'1',
-              'packages':['corechart']
-            }]
-          }"></script>
     <script th:inline="javascript">
-        /*<![CDATA[*/
-
-        google.setOnLoadCallback(drawData);
-
-        function drawData() {
-            filltable();
-        }
-
-        function filltable() {
-
-            $.ajax({
-                url: "/JSON/Cardpool",
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    $.each(data, function (index, element) {
-                        $("#cptable").append($('<tr>').append($('<td>').append($('<a>', {
-                            text: element.title,
-                            href: "/DPStats/" + encodeURIComponent(element.title) + "/"
-                        })), $('<td>', {
-                            text: element.tournamentnum,
-                            class: 'text-right'
-                        }), $('<td>', {
-                            text: element.decknum,
-                            class: 'text-right'
-                        }), $('<td>', {
-                            text: element.standingsnum,
-                            class: 'text-right'
-                        })));
-                    });
-                    $('#cptable').removeClass('spinner');
-                }
-            });
-        }
-        /*]]>*/
+        fillInfotable();
     </script>
     <div th:replace="fragments/analytics :: ga"></div>
 </body>

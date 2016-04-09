@@ -93,7 +93,8 @@ public class Operations {
     public void logDBStatCount() {
         logger.info(String.format("CardPoolStats %d, CardPool: %d, DP statistics: %d, CountDeckStands: %d, " +
                 "IdentityMDS: %d, MDSEntry: %d, DeckInfos: %d, DeckInfo: %d, DP Identities: %d, DP Identity: %d, " +
-                "CardUsageStat: %d, CardUsage: %d, IdentityAverage: %d, ICEAverage: %d, CardAverage: %d, Cardstat: %d, Cardcombo: %d, DPDecks: %d",
+                "CardUsageStat: %d, CardUsage: %d, IdentityAverage: %d, ICEAverage: %d, CardAverage: %d, Cardstat: %d, Cardcombo: %d, DPDecks: %d " +
+                "TournamentDrilldown: %d, StandingDeckCount: %d, StandingDeckCountID: %d",
                 template.count(CardPoolStats.class), template.count(CardPool.class),
                 template.count(DPStatistics.class), template.count(CountDeckStands.class),
                 template.count(IdentityMDS.class), template.count(MDSEntry.class),
@@ -101,7 +102,8 @@ public class Operations {
                 template.count(DPIdentities.class), template.count(DPIdentity.class),
                 template.count(CardUsageStat.class), template.count(CardUsage.class),
                 template.count(IdentityAverage.class), template.count(ICEAverage.class), template.count(CardAverage.class),
-                template.count(CardStat.class), template.count(CardCombo.class), template.count(DPDecks.class)));
+                template.count(CardStat.class), template.count(CardCombo.class), template.count(DPDecks.class),
+                template.count(TournamentDrilldown.class), template.count(StandingDeckCount.class), template.count(StandingDeckCountID.class)));
     }
 
     /**
@@ -382,15 +384,17 @@ public class Operations {
         for (Deck deck3 : decks3) {
             for (Deck deck2 : decks2) {
                 if (deck3.equals(deck2)) {
-                    logger.warn("WARNING - matching decks:");
-                    logger.warn(deck3.toString());
-                    logger.warn(deck2.toString());
                     Tournament tournament3 = tournamentRepository.getTournamentByDeckUrl(deck3.getUrl());
                     Tournament tournament2 = tournamentRepository.getTournamentByDeckUrl(deck2.getUrl());
-                    list.add(new VerificationProblem(deck3.getName(), deck3.getUrl(), "duplicate",
-                            String.format("(%d) %s", tournament3.getPlayerNumber(), tournament3.getName())));
-                    list.add(new VerificationProblem(deck2.getName(), deck2.getUrl(), "duplicate",
-                            String.format("(%d) %s", tournament2.getPlayerNumber(), tournament2.getName())));
+                    if (tournament3.getCardpool().getName().equals(tournament2.getCardpool().getName())) {
+                        logger.warn("WARNING - matching decks:");
+                        logger.warn(deck3.toString());
+                        logger.warn(deck2.toString());
+                        list.add(new VerificationProblem(deck3.getName(), deck3.getUrl(), "duplicate",
+                                String.format("(%d) %s", tournament3.getPlayerNumber(), tournament3.getName())));
+                        list.add(new VerificationProblem(deck2.getName(), deck2.getUrl(), "duplicate",
+                                String.format("(%d) %s", tournament2.getPlayerNumber(), tournament2.getName())));
+                    }
                 }
             }
         }
@@ -417,6 +421,8 @@ public class Operations {
         template.query("MATCH (c:DPDecks) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         template.query("MATCH (c:CardUsage) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         template.query("MATCH (c:CardStat) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
+        template.query("MATCH (t:TournamentDrilldown) OPTIONAL MATCH (t)-[r]-(s1:StandingDeckCount)," +
+                " (t)-[r]-(s2:StandingDeckCountID) DELETE t,r,s1,s2", emptyparams);
         // troublemaker nodes
         template.query("MATCH (n:CountDeckStands) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         template.query("MATCH (n:CardUsage) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);

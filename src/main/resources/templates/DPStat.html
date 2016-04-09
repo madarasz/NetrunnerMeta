@@ -217,8 +217,10 @@
         <div th:replace="fragments/footer :: footer"></div>
     </div>
     <div th:replace="fragments/head :: scripts"></div>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <div th:replace="fragments/analytics :: ga"></div>
+    <script type="text/javascript" src="https://www.google.com/jsapi?autoload=
+{'modules':[{'name':'visualization','version':'1.1','packages':
+['corechart']}]}"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
 
@@ -237,159 +239,39 @@
             ga('send', 'event', 'tabs', tabName);
         });
 
-        google.load('visualization', '1.0', {'packages':['corechart']});
+        // init chart data variables
+        var runnerTopFactionData = [['faction', 'standings']];
+        var runnerTopFactionColors = [];
+        var runnerAllFactionData = [['faction', 'standings']];
+        var runnerAllFactionColors = [];
+        var runnerTopIdentityData = [['identity', 'standings']];
+        var runnerTopIdentityColors = [];
+        var runnerAllIdentityData = [['identity', 'standings']];
+        var runnerAllIdentityColors = [];
+        var runnerCompareFactionData = [['faction', 'all', 'top 30%']];
+        var runnerCompareIdentityData = [['faction', 'all', 'top 30%']];
 
-        google.setOnLoadCallback(drawCharts);
+        var corpTopFactionData = [['faction', 'standings']];
+        var corpTopFactionColors = [];
+        var corpAllFactionData = [['faction', 'standings']];
+        var corpAllFactionColors = [];
+        var corpTopIdentityData = [['identity', 'standings']];
+        var corpTopIdentityColors = [];
+        var corpAllIdentityData = [['identity', 'standings']];
+        var corpAllIdentityColors = [];
+        var corpCompareFactionData = [['faction', 'all', 'top 30%']];
+        var corpCompareIdentityData = [['faction', 'all', 'top 30%']];
 
-        var dpname = encodeURIComponent([[${DPname}]]);
-        var basepiecharts = "/DataTable/DPStats/";
-        var basebarcharts = "/DataTable/DPStats/Compare/";
-
-        function drawCharts() {
-            var baselist = "/JSON/DPStats/Identities/";
-            var basecompare = "/MDSIdentity/" + dpname + "/";
-            var basecardtable = "/JSON/Cards/";
-            drawPieChart(basepiecharts + "Top/runner/faction/" + dpname, 'chart_div1');
-            drawPieChart(basepiecharts + "Top/corp/faction/" + dpname, 'chart_div2');
-            drawPieChart(basepiecharts + "Top/runner/identity/" + dpname, 'chart_div3');
-            drawPieChart(basepiecharts + "Top/corp/identity/" + dpname, 'chart_div4');
-            drawPieChart(basepiecharts + "All/runner/faction/" + dpname, 'chart_div5');
-            drawPieChart(basepiecharts + "All/corp/faction/" + dpname, 'chart_div6');
-            drawPieChart(basepiecharts + "All/runner/identity/" + dpname, 'chart_div7');
-            drawPieChart(basepiecharts + "All/corp/identity/" + dpname, 'chart_div8');
-            drawBarChart(basebarcharts + "runner/faction/" + dpname, 'chart_div9');
-            drawBarChart(basebarcharts + "corp/faction/" + dpname, 'chart_div10');
-            drawBarChart(basebarcharts + "runner/identity/" + dpname, 'chart_div11');
-            drawBarChart(basebarcharts + "corp/identity/" + dpname, 'chart_div12');
-            listIdentities(baselist + "runner/" + dpname, "#text_div1", basecompare);
-            listIdentities(baselist + "corp/"+ dpname, "#text_div2", basecompare);
-            fillCardTable("/JSON/DPStats/ICE/runner/" + dpname, "#breakertable", 5);
-            fillCardTable("/JSON/DPStats/ICE/corp/" + dpname, "#icetable", 5);
-            loadCardPoolTable(basecardtable + "Cardpool/runner/" + dpname, "#runnertable2");
-            loadCardPoolTable(basecardtable + "Cardpool/corp/" + dpname, "#corptable2");
-            window.scrollTo(0,0);
-        }
-
+        // redraw charts on window resize
         $(window).resize(function(){
-            drawPieChart(basepiecharts + "Top/runner/faction/" + dpname, 'chart_div1');
-            drawPieChart(basepiecharts + "Top/corp/faction/" + dpname, 'chart_div2');
-            drawPieChart(basepiecharts + "Top/runner/identity/" + dpname, 'chart_div3');
-            drawPieChart(basepiecharts + "Top/corp/identity/" + dpname, 'chart_div4');
-            drawPieChart(basepiecharts + "All/runner/faction/" + dpname, 'chart_div5');
-            drawPieChart(basepiecharts + "All/corp/faction/" + dpname, 'chart_div6');
-            drawPieChart(basepiecharts + "All/runner/identity/" + dpname, 'chart_div7');
-            drawPieChart(basepiecharts + "All/corp/identity/" + dpname, 'chart_div8');
-            drawBarChart(basebarcharts + "runner/faction/" + dpname, 'chart_div9');
-            drawBarChart(basebarcharts + "corp/faction/" + dpname, 'chart_div10');
-            drawBarChart(basebarcharts + "runner/identity/" + dpname, 'chart_div11');
-            drawBarChart(basebarcharts + "corp/identity/" + dpname, 'chart_div12');
+            drawTournamentCharts();
         });
 
-        function drawPieChart(urlvalue, elementid) {
+        // init google chart
+        google.load('visualization', '1.0', {'packages':['corechart']});
+        var dpname = encodeURIComponent([[${DPname}]]);
+        google.setOnLoadCallback(populateTournamentCharts(dpname));
 
-            var slices = [];
-
-            var jsonData = $.ajax({
-                url: urlvalue,
-                dataType: "json",
-                async: false,
-                success: function(data) {
-                    $.each(data.rows, function (index, element) {
-                        slices.push({color : element.c[2].v});
-                    });
-                    $('#'+elementid).removeClass('spinner');
-                }
-            }).responseText;
-
-            var data = new google.visualization.DataTable(jsonData);
-
-            var options = {
-                'width': 555,
-                'height': 300,
-                'pieSliceText': 'percentage',
-                'chartArea': { top: 10, width:'100%', height:'90%' },
-                'slices': slices
-            };
-
-            var chart = new google.visualization.PieChart(document.getElementById(elementid));
-            chart.draw(data, options);
-        }
-
-        function drawBarChart(urlvalue, elementid) {
-
-            var jsonData = $.ajax({
-                url: urlvalue,
-                dataType: "json",
-                async: false
-            }).responseText;
-
-            var data = new google.visualization.DataTable(jsonData);
-            var haxis;
-            if ($.parseJSON(jsonData).rows.length > 6) {
-                haxis = 'none';
-            } else {
-                haxis = 'out';
-            }
-
-            var options = {
-                'width': 555,
-                'height':300,
-                'vAxis': {format:'#,#%'},
-                'hAxis': { textPosition: haxis }
-            };
-
-            var chart = new google.visualization.ColumnChart(document.getElementById(elementid));
-            chart.draw(data, options);
-            $('#'+elementid).removeClass('spinner');
-        }
-
-        function listIdentities(urlvalue, elementid, linkurl) {
-            $.ajax({
-                url: urlvalue,
-                dataType: "json",
-                async: false,
-                success: function(data) {
-                    $.each(data, function(index, element) {
-                        $(elementid).append($('<a>', {
-                            class: 'list-group-item',
-                            text: element.title,
-                            href: linkurl + element.title
-                        }).append($('<span>', {
-                            class: 'badge',
-                            text: element.decknum
-                        })));
-                    });
-                    $(elementid).removeClass('spinner');
-                }
-            });
-        }
-
-        function loadCardPoolTable(urlvalue, elementid) {
-            var jsonData = $.ajax({
-                url: urlvalue,
-                dataType: "json",
-                async: false,
-                success: function(data) {
-                    $.each(data, function(index, element) {
-                        $(elementid).append($('<tr>').append($('<td>').append($('<span>', {
-                            class: 'icon-' + element.faction
-                        })),$('<td>').append($('<a>', {
-                            text: element.cardtitle,
-                            href: '/Cards/' + element.cardtitle + '/'
-                        })), $('<td>').append($('<em>', {
-                            text: element.cardpacktitle
-                        })), $('<td>', {
-                            text: element.intopdecks,
-                            class: 'text-right'
-                        }), $('<td>', {
-                            text: '(' + Math.round(element.topdeckfraction * 100) + '%)',
-                            class: 'text-left'
-                        })));
-                    });
-                    $(elementid).removeClass('spinner');
-                }
-            });
-        }
         /*]]>*/
     </script>
 </body>

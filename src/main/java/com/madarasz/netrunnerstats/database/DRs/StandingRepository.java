@@ -29,6 +29,12 @@ public interface StandingRepository extends GraphRepository<Standing>, Relations
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing {topdeck: true})-[:IS_IDENTITY]->(c:Card {side_code: {1}}) RETURN COUNT(s)")
     int countTopByCardPoolSidecode(String cardpoolname, String side_code);
 
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing {topdeck: true})-[:IS_IDENTITY]->(c:Card {title: {1}}) RETURN COUNT(s)")
+    int countTopByCardPoolId(String cardpoolname, String identity);
+
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing {topdeck: true})-[:IS_IDENTITY]->(c:Card {faction_code: {1}}) RETURN COUNT(s)")
+    int countTopByCardPoolFaction(String cardpoolname, String faction);
+
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing {topdeck: TRUE})-[:IS_IDENTITY]->(c:Card) " +
             "RETURN c.title AS category, COUNT(*) as count, c.side_code AS side_code " +
             "ORDER BY side_code DESC, count DESC")
@@ -71,4 +77,14 @@ public interface StandingRepository extends GraphRepository<Standing>, Relations
     @Query("MATCH (s1:Standing)-[:IN_TOURNAMENT]->(t:Tournament)<-[:IN_TOURNAMENT]-(s2:Standing) " +
             "WHERE s2.rank = s1.rank AND s2.identity = s1.identity AND s1.id <> s2.id RETURN COUNT(s2)")
     int countDoubledStandings();
+
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card {side_code: {1}}) " +
+            "RETURN c.title AS category, COUNT(*) as count, c.side_code AS side_code " +
+            "ORDER BY side_code DESC, count DESC")
+    List<StatCounts> getIdentityStatsByCardPoolSide(String cardpoolName, String sideCode);
+
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card {side_code: {1}}) " +
+            "RETURN c.faction_code AS category, COUNT(*) AS count, c.side_code AS side_code " +
+            "ORDER BY side_code DESC, count DESC")
+    List<StatCounts> getFactionStatsByCardPoolSide(String cardpoolName, String sideCode);
 }

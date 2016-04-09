@@ -3,6 +3,7 @@ package com.madarasz.netrunnerstats;
 import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.CardPack;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.Tournament;
 import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.database.DOs.result.CardCounts;
 import com.madarasz.netrunnerstats.database.DOs.result.StatCounts;
@@ -86,6 +87,9 @@ public class Statistics {
 
     @Autowired
     LastThree lastThree;
+
+    @Autowired
+    TournamentDrillDownRepository tournamentDrillDownRepository;
 
     /**
      * Log statistics about deck and stat count for each identity for a cardpool legality
@@ -842,6 +846,67 @@ public class Statistics {
 
         stopwatch.stop();
         logger.info(String.format("Caltulating top win-more (%.3f sec)", stopwatch.getTotalTimeSeconds()));
+    }
+
+    public TournamentDrilldown getTournamentDrilldown(String cardpoolTitle, String sideCode) {
+        TournamentDrilldown result = tournamentDrillDownRepository.findByCardpoolSidecode(cardpoolTitle, sideCode);
+
+        if (result == null) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
+
+            CardPack cardpool = cardPackRepository.findByName(cardpoolTitle);
+
+            // calculating counts
+            int allStandingCount = standingRepository.countByCardPoolSidecode(cardpoolTitle, sideCode);
+            int topStandingCount = standingRepository.countTopByCardPoolSidecode(cardpoolTitle, sideCode);
+            int allDeckCount = deckRepository.countByCardpoolAndSide(cardpoolTitle, sideCode);
+            int topDeckCount = deckRepository.countTopByCardpoolAndSide(cardpoolTitle, sideCode);
+
+            result = new TournamentDrilldown(cardpoolTitle, sideCode,
+                    cardpool.getCyclenumber(), cardpool.getNumber(),
+                    allStandingCount, topStandingCount, allDeckCount, topDeckCount);
+
+            // calculating identities
+            List<StatCounts> identities = standingRepository.getIdentityStatsByCardPoolSide(cardpoolTitle, sideCode);
+            for (StatCounts id : identities) {
+                String title = id.getCategory();
+                allStandingCount = id.getCount();
+                topStandingCount = standingRepository.countTopByCardPoolId(cardpoolTitle, title);
+                allDeckCount = deckRepository.countByIdentityAndCardPool(title, cardpoolTitle);
+                topDeckCount = deckRepository.countTopByIdentityAndCardPool(title, cardpoolTitle);
+                Card card = cardRepository.findByTitle(title);
+                result.addId(new StandingDeckCountID(title, card.getFaction_code(), allStandingCount, topStandingCount, allDeckCount, topDeckCount));
+            }
+
+            // calculating factions
+            List<StatCounts> factions = standingRepository.getFactionStatsByCardPoolSide(cardpoolTitle, sideCode);
+            for (StatCounts faction : factions) {
+                String title = faction.getCategory();
+                allStandingCount = faction.getCount();
+                topStandingCount = standingRepository.countTopByCardPoolFaction(cardpoolTitle, title);
+                allDeckCount = deckRepository.countByCardPoolAndFaction(cardpoolTitle, title);
+                topDeckCount = deckRepository.countTopByCardPoolAndFaction(cardpoolTitle, title);
+                result.addFaction(new StandingDeckCount(title, allStandingCount, topStandingCount, allDeckCount, topDeckCount));
+            }
+
+            // TODO: new calculattions
+            List<CardAverage> iceAverages = new ArrayList<>(getICEAverage(sideCode, cardpoolTitle).getCards());
+            result.addIce(iceAverages);
+            List<CardUsage> mostUsed;
+            if (sideCode.equals("corp")) {
+                mostUsed = new ArrayList<>(getMostUsedCardsForCardpool(cardpoolTitle).getSortedCorpCards());
+            } else {
+                mostUsed = new ArrayList<>(getMostUsedCardsForCardpool(cardpoolTitle).getSortedRunnerCards());
+            }
+            result.addMostUsedCard(mostUsed);
+
+            stopwatch.stop();
+            logger.info(String.format("Caltulating tournament drilldown (%.3f sec): %s - %s",
+                    stopwatch.getTotalTimeSeconds(), cardpoolTitle, sideCode));
+            tournamentDrillDownRepository.save(result);
+        }
+        return result;
     }
 
     /**

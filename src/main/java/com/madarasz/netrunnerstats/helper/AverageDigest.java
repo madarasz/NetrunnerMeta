@@ -39,6 +39,10 @@ public class AverageDigest {
         return getSortedAverages(stat, TYPES_ICE);
     }
 
+    public List<CardAverage> getICESortedAverages(Set<CardAverage> stat) {
+        return getSortedAverages(stat, TYPES_ICE);
+    }
+
     public List<CardAverage> getSortedAverages(IdentityAverage stat) {
         Card identity = cardRepository.findByTitle(stat.getIdentity());
         if (identity != null) {
@@ -81,6 +85,15 @@ public class AverageDigest {
         List<CardAverage> result = new ArrayList<>();
         for (String filter : filters) {
             List<CardAverage> subset = filterAndSortCards(stat.getCards(), filter);
+            result.addAll(subset);
+        }
+        return result;
+    }
+
+    private List<CardAverage> getSortedAverages(Set<CardAverage> stat, String[] filters) {
+        List<CardAverage> result = new ArrayList<>();
+        for (String filter : filters) {
+            List<CardAverage> subset = filterAndSortCards(stat, filter);
             result.addAll(subset);
         }
         return result;
