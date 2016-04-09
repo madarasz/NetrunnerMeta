@@ -37,10 +37,8 @@
     <div th:replace="fragments/analytics :: ga"></div>
 
     <script th:inline="javascript">
-        /*<![CDATA[*/
-        facebookButton(document, 'script', 'facebook-jssdk');
-        twitterTimeline(document,"script","twitter-wjs");
-        /*]]>*/
+        facebookButton(document, 'script', 'facebook-jssdk',
+            twitterTimeline(document,"script","twitter-wjs"));
     </script>
 </body>
 </html>
