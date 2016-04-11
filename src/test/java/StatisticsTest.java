@@ -73,9 +73,6 @@ public class StatisticsTest {
     DPStatsRepository dpStatsRepository;
 
     @Autowired
-    IdentityMDSRepository identityMDSRepository;
-
-    @Autowired
     Statistics statistics;
 
     @Rule

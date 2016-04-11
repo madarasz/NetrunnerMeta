@@ -5,7 +5,6 @@ import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
 import com.madarasz.netrunnerstats.helper.AverageDigest;
 import com.madarasz.netrunnerstats.helper.LastThree;
-import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToCompareGchart;
 import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToGchart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,9 +27,6 @@ public class DPController {
 
     @Autowired
     DPStatsToGchart dpStatsToGchart;
-
-    @Autowired
-    DPStatsToCompareGchart dpStatsToCompareGchart;
 
     @Autowired
     CardPoolStatsRepository cardPoolStatsRepository;

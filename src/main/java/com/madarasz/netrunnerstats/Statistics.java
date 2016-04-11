@@ -53,9 +53,6 @@ public class Statistics {
     MultiDimensionalScaling multiDimensionalScaling;
 
     @Autowired
-    IdentityMDSRepository identityMdsRepository;
-
-    @Autowired
     CardPoolStatsRepository cardPoolStatsRepository;
 
     @Autowired
@@ -251,60 +248,6 @@ public class Statistics {
         return result;
     }
 
-    /**
-     * Generates indentity deck groups with links for MDS based on cardpool
-     * @param cardpackName cardpool
-     * @param sidecode runner or corp
-     * @return DPIdentities
-     */
-    public DPIdentities getIdentityLinksForDataPack(String cardpackName, String sidecode) {
-        DPIdentities result = dpIdentitiesRepository.findByCardpoolSidecode(cardpackName, sidecode);
-        if (result == null) {
-            StopWatch stopwatch = new StopWatch();
-            stopwatch.start();
-            result = new DPIdentities(cardpackName, sidecode);
-            DPStatistics stats = getPackStats(cardpackName, false);
-
-            Set<CountDeckStands> data;
-            switch (sidecode) {
-                case "runner":
-                    data = stats.getRunnerIdentities();
-                    break;
-                case "corp":
-                    data = stats.getCorpIdentities();
-                    break;
-                default:
-                    return new DPIdentities();
-            }
-
-            for (CountDeckStands identity : data) {
-                int topdecknum = identity.getDecknum();
-                String title = identity.getTitle();
-                int decknum = 0;
-
-                // check is last 3 is requested
-                if (cardpackName.equals(LAST_3)) {
-                    for (String cardpoolName : lastThree.getLastThreeCardpoolNames()) {
-                        decknum += deckRepository.countByIdentityAndCardPool(title, cardpoolName);
-                    }
-                } else {
-                    decknum = deckRepository.countByIdentityAndCardPool(title, cardpackName);
-                }
-
-                if (decknum > 0) {
-                    DPIdentity entry = new DPIdentity(title,
-                            String.format("/MDSIdentity/%s/%s", cardpackName, title),
-                            decknum, topdecknum);
-                    result.addIdentitiy(entry);
-                }
-            }
-            stopwatch.stop();
-            logger.info(String.format("Saving DPIdentities: %s - %s (%.3f sec)", cardpackName, sidecode,
-                    stopwatch.getTotalTimeSeconds()));
-            dpIdentitiesRepository.save(result);
-        }
-        return result;
-    }
 
     /**
      * Generates cardpool statistics: deck number, ranking number, tournament number per cardpool
@@ -329,50 +272,6 @@ public class Statistics {
             stopwatch.stop();
             logger.info(String.format("Saving Cardpool Statistics. (%.3f sec)", stopwatch.getTotalTimeSeconds()));
             cardPoolStatsRepository.save(result);
-        }
-        return result;
-    }
-
-    /**
-     * Calculates most used a card in the cardpack
-     * @param cardpack cardpack name
-     * @return CardUsageStat
-     */
-    public CardUsageStat getMostUsedCardsFromCardPack(String cardpack) {
-        CardUsageStat result = cardUsageStatsRepository.findByCardPackName(cardpack);
-        if (result == null) {
-            StopWatch stopwatch = new StopWatch();
-            stopwatch.start();
-            int runnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", false);
-            int toprunnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", true);
-            int corpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", false);
-            int topcorpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", true);
-            result = new CardUsageStat(cardpack, false,
-                    runnerdecks, toprunnerdecks, corpdecks, topcorpdecks);
-            List<Card> cards = cardRepository.findByCardPackName(cardpack);
-            for (Card card : cards) {
-                String code = card.getCode();
-                int count = deckRepository.countByUsingCard(code);
-                if (count > 0) {
-                    int topcount = deckRepository.countTopByUsingCard(code);
-                    if (card.getSide_code().equals("runner")) {
-                        result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
-                                card.getSide_code(), card.getFaction_code(), count, topcount,
-                                (double)count / runnerdecks, (double)topcount / toprunnerdecks));
-                    } else {
-                        result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
-                                card.getSide_code(), card.getFaction_code(), count, topcount,
-                                (double)count / corpdecks, (double)topcount / topcorpdecks));
-                    }
-                } else {
-                        result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
-                            card.getSide_code(), card.getFaction_code(), 0, 0, 0, 0));
-                }
-            }
-            stopwatch.stop();
-            logger.info(String.format("Saving Card Usage Statistics, cardpack: %s (%.3f sec)", cardpack,
-                    stopwatch.getTotalTimeSeconds()));
-            cardUsageStatsRepository.save(result);
         }
         return result;
     }
@@ -979,13 +878,5 @@ public class Statistics {
         } else {
             return list;
         }
-    }
-
-    private int sumCardCounts(List<CardCount> list) {
-        int result = 0;
-        for (CardCount cardCount : list) {
-            result += cardCount.getCount();
-        }
-        return result;
     }
 }
