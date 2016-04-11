@@ -93,7 +93,7 @@ public class Operations {
     public void logDBStatCount() {
         logger.info(String.format("CardPoolStats %d, CardPool: %d, DP statistics: %d, CountDeckStands: %d, " +
                 "IdentityMDS: %d, MDSEntry: %d, DeckInfos: %d, DeckInfo: %d, DP Identities: %d, DP Identity: %d, " +
-                "CardUsageStat: %d, CardUsage: %d, IdentityAverage: %d, ICEAverage: %d, CardAverage: %d, Cardstat: %d, Cardcombo: %d, DPDecks: %d " +
+                "CardUsageStat: %d, CardUsage: %d, IdentityAverage: %d, CardAverage: %d, Cardstat: %d, Cardcombo: %d, DPDecks: %d " +
                 "TournamentDrilldown: %d, StandingDeckCount: %d, StandingDeckCountID: %d",
                 template.count(CardPoolStats.class), template.count(CardPool.class),
                 template.count(DPStatistics.class), template.count(CountDeckStands.class),
@@ -101,7 +101,7 @@ public class Operations {
                 template.count(DeckInfos.class), template.count(DeckInfo.class),
                 template.count(DPIdentities.class), template.count(DPIdentity.class),
                 template.count(CardUsageStat.class), template.count(CardUsage.class),
-                template.count(IdentityAverage.class), template.count(ICEAverage.class), template.count(CardAverage.class),
+                template.count(IdentityAverage.class), template.count(CardAverage.class),
                 template.count(CardStat.class), template.count(CardCombo.class), template.count(DPDecks.class),
                 template.count(TournamentDrilldown.class), template.count(StandingDeckCount.class), template.count(StandingDeckCountID.class)));
     }
@@ -414,15 +414,17 @@ public class Operations {
         template.query("MATCH (n:CardPoolStats) OPTIONAL MATCH (n)-[r]-(c:CardPool) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:DeckInfos) OPTIONAL MATCH (n)-[r]-(c:DeckInfo) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:DPIdentities) OPTIONAL MATCH (n)-[r]-(c:DPIdentity) DELETE n,r,c", emptyparams);
-        template.query("MATCH (n:CardUsageStat) OPTIONAL MATCH (n)-[r]-(c:CardUsage) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:IdentityAverage) OPTIONAL MATCH (n)-[r]-(c:CardAverage) DELETE n,r,c", emptyparams);
-        template.query("MATCH (n:ICEAverage) OPTIONAL MATCH (n)-[r]-(c:CardAverage) DELETE n,r,c", emptyparams);
+        template.query("MATCH (t:TournamentDrilldown) OPTIONAL MATCH (t)-[r]-() " +
+                "DELETE t,r", emptyparams);
+        template.query("MATCH (n:CardUsageStat) OPTIONAL MATCH (n)-[r]-(c:CardUsage) DELETE n,r,c", emptyparams);
         template.query("MATCH (c:CardCombo) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         template.query("MATCH (c:DPDecks) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         template.query("MATCH (c:CardUsage) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         template.query("MATCH (c:CardStat) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
-        template.query("MATCH (t:TournamentDrilldown) OPTIONAL MATCH (t)-[r]-(s1:StandingDeckCount)," +
-                " (t)-[r]-(s2:StandingDeckCountID) DELETE t,r,s1,s2", emptyparams);
+        template.query("MATCH (c:CardAverage) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
+        template.query("MATCH (c:StandingDeckCount) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
+        template.query("MATCH (c:StandingDeckCountID) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         // troublemaker nodes
         template.query("MATCH (n:CountDeckStands) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         template.query("MATCH (n:CardUsage) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);

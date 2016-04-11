@@ -1,7 +1,6 @@
 package com.madarasz.netrunnerstats.helper;
 
 import com.madarasz.netrunnerstats.database.DOs.Card;
-import com.madarasz.netrunnerstats.database.DOs.stats.ICEAverage;
 import com.madarasz.netrunnerstats.database.DOs.stats.IdentityAverage;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardAverage;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
@@ -35,10 +34,6 @@ public class AverageDigest {
     public AverageDigest() {
     }
 
-    public List<CardAverage> getICESortedAverages(ICEAverage stat) {
-        return getSortedAverages(stat, TYPES_ICE);
-    }
-
     public List<CardAverage> getICESortedAverages(Set<CardAverage> stat) {
         return getSortedAverages(stat, TYPES_ICE);
     }
@@ -54,7 +49,7 @@ public class AverageDigest {
             }
             return getSortedAverages(stat, filters);
         } else {
-            return new ArrayList<CardAverage>();
+            return new ArrayList<>();
         }
     }
 
@@ -77,7 +72,7 @@ public class AverageDigest {
             }
             return getSortedAverages(stat, filters);
         } else {
-            return new ArrayList<CardAverage>();
+            return new ArrayList<>();
         }
     }
 
@@ -94,15 +89,6 @@ public class AverageDigest {
         List<CardAverage> result = new ArrayList<>();
         for (String filter : filters) {
             List<CardAverage> subset = filterAndSortCards(stat, filter);
-            result.addAll(subset);
-        }
-        return result;
-    }
-
-    private List<CardAverage> getSortedAverages(ICEAverage stat, String[] filters) {
-        List<CardAverage> result = new ArrayList<>();
-        for (String filter : filters) {
-            List<CardAverage> subset = filterAndSortCards(stat.getCards(), filter);
             result.addAll(subset);
         }
         return result;

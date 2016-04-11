@@ -2,6 +2,8 @@ package com.madarasz.netrunnerstats.database.DOs.stats;
 
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardAverage;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardUsage;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.StandingDeckCount;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.StandingDeckCountID;
 import com.madarasz.netrunnerstats.helper.AverageDigest;
 import org.springframework.data.neo4j.annotation.*;
 
@@ -102,12 +104,12 @@ public class TournamentDrilldown {
         return mostUsedCards;
     }
 
-    public void addFaction(StandingDeckCount standingDeckCount) {
-        this.factions.add(standingDeckCount);
+    public void addFactions(List<StandingDeckCount> standingDeckCount) {
+        this.factions.addAll(standingDeckCount);
     }
 
-    public void addId(StandingDeckCountID standingDeckCountID) {
-        this.ids.add(standingDeckCountID);
+    public void addIds(List<StandingDeckCountID> standingDeckCountID) {
+        this.ids.addAll(standingDeckCountID);
     }
 
     public void addIce(List<CardAverage> cardAverage) {

@@ -39,7 +39,7 @@ public interface CardRepository extends GraphRepository<Card>, RelationshipOpera
             "-[:IS_DECK]->(:Deck)-[:HAS_CARD]->(c:Card {side_code: {1}})-[:IN_SET]->(cp:CardPack) " +
             "RETURN c.title AS title, COUNT(c) AS count, cp.name AS cardpack, c.faction_code AS faction " +
             "ORDER BY count DESC LIMIT 30")
-    List<CardCounts> findMostPopularCardsByCardPack(String cardpackname, String sidecode);
+    List<CardCounts> findMostPopularCardsByCardPackInTop(String cardpackname, String sidecode);
 
     @Query("MATCH (p:CardPack)<-[:POOL]-(:Tournament)<-[:IN_TOURNAMENT]-(:Standing {topdeck: true})" +
             "-[:IS_DECK]->(:Deck)-[:HAS_CARD]->(c:Card {side_code: {3}})-[:IN_SET]->(cp:CardPack) " +

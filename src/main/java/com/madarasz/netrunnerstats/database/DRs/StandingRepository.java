@@ -87,4 +87,14 @@ public interface StandingRepository extends GraphRepository<Standing>, Relations
             "RETURN c.faction_code AS category, COUNT(*) AS count, c.side_code AS side_code " +
             "ORDER BY side_code DESC, count DESC")
     List<StatCounts> getFactionStatsByCardPoolSide(String cardpoolName, String sideCode);
+
+    @Query("MATCH (p:CardPack)<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card {side_code: {3}}) " +
+            "WHERE p.name IN [{0}, {1}, {2}] " +
+            "RETURN c.title AS category, COUNT(*) as count, c.side_code AS side_code ")
+    List<StatCounts> getIdentityStatsBy3CardPoolSide(String cpName1, String cpName2, String cpName3, String sideCode);
+
+    @Query("MATCH (p:CardPack)<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card {side_code: {3}}) " +
+            "WHERE p.name IN [{0}, {1}, {2}] " +
+            "RETURN c.faction_code AS category, COUNT(*) AS count, c.side_code AS side_code ")
+    List<StatCounts> getFactionStatsBy3CardPoolSide(String cpName1, String cpName2, String cpName3, String sideCode);
 }

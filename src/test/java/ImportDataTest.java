@@ -8,6 +8,7 @@ import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import com.madarasz.netrunnerstats.brokers.StimhackBroker;
 import com.madarasz.netrunnerstats.helper.DeckValidator;
 import com.madarasz.netrunnerstats.helper.MultiDimensionalScaling;
+import com.madarasz.netrunnerstats.springMVC.controllers.AdminController;
 import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
@@ -21,9 +22,12 @@ import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -77,6 +81,9 @@ public class ImportDataTest {
 
     @Autowired
     MultiDimensionalScaling multiDimensionalScaling;
+
+    @Autowired
+    AdminController adminController;
 
     @Rule
     public TestName name = new TestName();
@@ -339,7 +346,23 @@ public class ImportDataTest {
 
     @Test
     public void deniedURLs() {
+        // set Deny URLs
+        Map<String, Object> model = new HashMap<>();
+        adminController.denyUrl("http://www.acoo.net/anr-tournament/476\n" +
+                "http://www.acoo.net/deck/10890\n" +
+                "http://stimhack.com/store-champs-gamespace-kashiwagi-tokyo-9-players/\n" +
+                "http://stimhack.com/national-warsaw-poland-72-players/#1", model);
 
+        // try loading tournaments, decks
+        RedirectAttributes redirectAttributes = new RedirectAttributesModelMap();
+        adminController.addAcooDeck("10890", redirectAttributes);
+        adminController.addAcooTournament("476", redirectAttributes);
+        adminController.addStimhackTournament("http://stimhack.com/national-warsaw-poland-72-players/", redirectAttributes);
+        adminController.addStimhackTournament("http://stimhack.com/store-champs-gamespace-kashiwagi-tokyo-9-players/", redirectAttributes);
+
+        // asserts
+        Assert.assertEquals("Denied tournaments loaded", 0, template.count(Tournament.class));
+        Assert.assertEquals("Denied decks loaded", 1, template.count(Deck.class));
     }
 
 }

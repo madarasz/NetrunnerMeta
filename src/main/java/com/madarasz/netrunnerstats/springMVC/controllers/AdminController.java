@@ -26,7 +26,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -122,7 +121,6 @@ public class AdminController {
         model.put("countCardUsageStat", template.count(CardUsageStat.class));
         model.put("countCardUsage", template.count(CardUsage.class));
         model.put("countIdentityAverage", template.count(IdentityAverage.class));
-        model.put("countICEAverage", template.count(ICEAverage.class));
         model.put("countCardAverage", template.count(CardAverage.class));
         model.put("countAdminData", template.count(AdminData.class));
         model.put("countCardStat", template.count(CardStat.class));

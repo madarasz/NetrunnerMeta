@@ -1,4 +1,4 @@
-package com.madarasz.netrunnerstats.database.DOs.stats;
+package com.madarasz.netrunnerstats.database.DOs.stats.entries;
 
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
