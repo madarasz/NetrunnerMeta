@@ -122,80 +122,67 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
+        var mdsTooltips = [];
+        var mdsData;
+        var filter = encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${identity}]]);
+
+        google.load('visualization', '1.0', {'packages':['corechart']});
+        google.setOnLoadCallback(populateMDSPage(filter));
+
         if ([[${DPname}]] === "Last 3 aggregated") {
             $('#last3').removeClass("hidden");
         }
 
-        google.load('visualization', '1.0', {'packages':['corechart']});
-
-        google.setOnLoadCallback(drawCharts);
-
-        var filter = encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${identity}]]);
-        var url = "/DataTable/MDSIdentity/" + filter;
-        var tooltipurl = "/JSON/Deck/" + filter;
-
         $(window).resize(function(){
-            drawChart(url, tooltipurl, 'chart_div1');
+            drawMDSChart(url, tooltipurl);
         });
 
-        function drawCharts() {
-            var averageurl1 = "/JSON/Average/" + filter + "/1";
-            var averageurl2 = "/JSON/Average/" + filter + "/2";
-            drawChart(url, tooltipurl, 'chart_div1');
-            fillCardTable(averageurl1, '#average-table', 0);
-            fillCardTable(averageurl2, '#average-table2', 0);
-        }
-
-        function drawChart(urlvalue, urltooltip, elementid) {
-
-            var jsonDataChart = $.ajax({
-                url: urlvalue,
+        function populateMDSPage(filter) {
+            $.ajax({
+                url: "/JSON/Identity/" + filter,
                 dataType: "json",
-                async: false,
+                async: true,
                 success: function(data) {
-                    $('#deck_number').replaceWith(data.rows.length);
+                    $('#deck_number').replaceWith(data.decks.length);
+
+                    mdsData = new google.visualization.DataTable();
+                    mdsData.addColumn('number', 'x');
+                    mdsData.addColumn('number', 'y');
+                    mdsData.addColumn({type: 'string', role: 'style'});
+                    mdsData.addColumn({type: 'string', role: 'tooltip'});
+
+                    $.each(data.decks, function(index, element) {
+                        // determine color
+                        var color = "#3769cd";
+                        if ([[${DPname}]] === "Last 3 aggregated") {
+                            switch (element.cardpool) {
+                                case [[${cardpools[0]}]]:
+                                    color = "#3769cd";
+                                    break;
+                                case [[${cardpools[1]}]]:
+                                    color = "#cd3737";
+                                    break;
+                                case [[${cardpools[2]}]]:
+                                    color = "#cd9637";
+                                    break;
+                            }
+                        }
+                        // shape and size
+                        var shape = (element.topdeck == true ? "star" : "circle");
+                        var size = (element.topdeck == true ? 8 : 5);
+                        // add point
+                        mdsData.addRow([element.x, element.y,
+                            'point { size: ' + size + '; shape-type: ' + shape + '; fill-color: ' + color + '; stroke-color: #FFFFFF;}',
+                            element.digest]);
+                        // add tooltip
+                        mdsTooltips.push({htmlDigest: element.htmlDigest});
+                    });
+                    drawMDSChart(mdsData, mdsTooltips);
+
+                    populateCardTable(data.cards, '#average-table', 0, 'event hardware resource agenda asset operation upgrade');
+                    populateCardTable(data.cards, '#average-table2', 0, 'icebreaker program barrier code gate sentry mythic trap');
                 }
-            }).responseText;
-
-            var jsonDataToolTip = $.ajax({
-                url: urltooltip,
-                dataType: "json",
-                async: false
-            }).responseText;
-
-            var data = new google.visualization.DataTable(jsonDataChart);
-
-            var options = {
-                'legend': 'none',
-                'height': 555,
-                'chartArea': { width:'100%', height:'100%' },
-                'backgroundColor': { strokeWidth: 1 },
-                'hAxis' : { gridlines: { count: 0 }, baselineColor: '#fff'},
-                'vAxis' : { gridlines: { count: 0 }, baselineColor: '#fff'},
-                'tooltip': { trigger: 'selection' }
-            };
-
-            var chart = new google.visualization.ScatterChart(document.getElementById(elementid));
-
-            var tooltips = $.parseJSON(jsonDataToolTip);
-
-            // set tooltip
-            chart.setAction({
-                id: 'sample',
-                text: 'See decklist',
-                action: function () {
-                    selection = chart.getSelection();
-                    setDeckInfo(tooltips[selection[0].row].htmlDigest);
-                }
-            });
-
-            chart.draw(data, options);
-
-            $('#chart_div1').removeClass('spinner');
-        }
-
-        function setDeckInfo(htmlvalue) {
-            $('#deck_data').replaceWith("<div id=\"deck_data\">" + htmlvalue + "</div>");
+            })
         }
 
         /*]]>*/

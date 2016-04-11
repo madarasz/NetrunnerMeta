@@ -16,16 +16,22 @@ public class MDSEntry {
     private String deckTitle;
     private String deckURL;
     private boolean topdeck;
+    private String shortHtmlDigest;
+    private String htmlDigest;
+    private String digest;
 
     public MDSEntry() {
     }
 
-    public MDSEntry(double x, double y, String deckTitle, String deckURL, boolean topdeck) {
+    public MDSEntry(double x, double y, String deckTitle, String deckURL, boolean topdeck, String shortHtmlDigest, String htmlDigest, String digest) {
         this.x = x;
         this.y = y;
         this.deckTitle = deckTitle;
         this.deckURL = deckURL;
         this.topdeck = topdeck;
+        this.shortHtmlDigest = shortHtmlDigest;
+        this.htmlDigest = htmlDigest;
+        this.digest = digest;
     }
 
     public double getX() {
@@ -44,27 +50,20 @@ public class MDSEntry {
         return deckURL;
     }
 
+    public String getShortHtmlDigest() {
+        return shortHtmlDigest;
+    }
+
+    public String getHtmlDigest() {
+        return htmlDigest;
+    }
+
+    public String getDigest() {
+        return digest;
+    }
+
     public boolean isTopdeck() {
         return topdeck;
     }
 
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public void setDeckTitle(String deckTitle) {
-        this.deckTitle = deckTitle;
-    }
-
-    public void setDeckURL(String deckURL) {
-        this.deckURL = deckURL;
-    }
-
-    public void setTopdeck(boolean topdeck) {
-        this.topdeck = topdeck;
-    }
 }

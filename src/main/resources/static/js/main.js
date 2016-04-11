@@ -323,10 +323,12 @@ function loadTournamentCardPoolTable(data, elementid) {
     $(elementid).removeClass('spinner');
 }
 
-function populateCardTable(data, elementid, minusing) {
+function populateCardTable(data, elementid, minusing, filter) {
     var typecode = 'none';
+    filter = filter || "";
     $.each(data, function(index, element) {
-        if (parseInt(element.using) > minusing) {
+        if (parseInt(element.using) > minusing &&   // greater than minusing
+            (filter === "" || filter.indexOf(element.typecodes) > -1))  {  // not filtered out
             if (element.typecodes.indexOf(typecode) < 0) {
                 typecode = element.typecodes;
                 $(elementid).append($('<tr>').append($('<td>', {
@@ -469,4 +471,37 @@ function drawTournamentCharts() {
     drawTournamentPieChart(corpAllIdentityData, corpAllIdentityColors, 'chart_div8');
     drawTournamentBarChart(corpCompareFactionData, 'chart_div10');
     drawTournamentBarChart(corpCompareIdentityData, 'chart_div12');
+}
+
+function drawMDSChart(data, tooltips) {
+
+    var options = {
+        'legend': 'none',
+        'height': 555,
+        'chartArea': { width:'100%', height:'100%' },
+        'backgroundColor': { strokeWidth: 1 },
+        'hAxis' : { gridlines: { count: 0 }, baselineColor: '#fff'},
+        'vAxis' : { gridlines: { count: 0 }, baselineColor: '#fff'},
+        'tooltip': { trigger: 'selection' }
+    };
+
+    var chart = new google.visualization.ScatterChart(document.getElementById('chart_div1'));
+
+    // set tooltip
+    chart.setAction({
+        id: 'sample',
+        text: 'See decklist',
+        action: function () {
+            selection = chart.getSelection();
+            setMDSDeckInfo(tooltips[selection[0].row].htmlDigest);
+        }
+    });
+
+    chart.draw(data, options);
+
+    $('#chart_div1').removeClass('spinner');
+}
+
+function setMDSDeckInfo(htmlvalue) {
+    $('#deck_data').replaceWith("<div id=\"deck_data\">" + htmlvalue + "</div>");
 }

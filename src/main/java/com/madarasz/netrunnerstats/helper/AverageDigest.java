@@ -1,7 +1,5 @@
 package com.madarasz.netrunnerstats.helper;
 
-import com.madarasz.netrunnerstats.database.DOs.Card;
-import com.madarasz.netrunnerstats.database.DOs.stats.IdentityAverage;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardAverage;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
 import com.madarasz.netrunnerstats.helper.comparator.CardAverageComparator;
@@ -22,12 +20,7 @@ public class AverageDigest {
     @Autowired
     CardRepository cardRepository;
 
-    private static final String[] TYPES_RUNNER = new String[]{"event", "hardware", "icebreaker", "program", "resource"};
-    private static final String[] TYPES_CORP = new String[]{"agenda", "asset", "operation", "upgrade", "barrier", "code gate", "sentry", "mythic", "trap"};
-    private static final String[] TYPES_RUNNER_PART1 = new String[]{"event", "hardware", "resource"};
-    private static final String[] TYPES_RUNNER_PART2 = new String[]{"icebreaker", "program"};
-    private static final String[] TYPES_CORP_PART1 = new String[]{"agenda", "asset", "operation", "upgrade"};
-    private static final String[] TYPES_CORP_PART2 = new String[]{"barrier", "code gate", "sentry", "mythic", "trap"};
+    private static final String[] TYPES_UNIVERSAL = new String[]{"event", "hardware", "icebreaker", "program", "resource", "agenda", "asset", "operation", "upgrade", "barrier", "code gate", "sentry", "mythic", "trap"};
     private static final String[] TYPES_ICE = new String[]{"barrier", "code gate", "sentry", "mythic", "trap",
             "fracter", "decoder", "killer", "ai", "D4v1d", "hardware"};
 
@@ -38,63 +31,20 @@ public class AverageDigest {
         return getSortedAverages(stat, TYPES_ICE);
     }
 
-    public List<CardAverage> getSortedAverages(IdentityAverage stat) {
-        Card identity = cardRepository.findByTitle(stat.getIdentity());
-        if (identity != null) {
-            String[] filters;
-            if (identity.isRunner()) {
-                filters = TYPES_RUNNER;
-            } else {
-                filters = TYPES_CORP;
-            }
-            return getSortedAverages(stat, filters);
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    public List<CardAverage> getSortedAverages(IdentityAverage stat, int part) {
-        Card identity = cardRepository.findByTitle(stat.getIdentity());
-        if (identity != null) {
-            String[] filters;
-            if (identity.isRunner()) {
-                if (part == 1) {
-                    filters = TYPES_RUNNER_PART1;
-                } else {
-                    filters = TYPES_RUNNER_PART2;
-                }
-            } else {
-                if (part == 1) {
-                    filters = TYPES_CORP_PART1;
-                } else {
-                    filters = TYPES_CORP_PART2;
-                }
-            }
-            return getSortedAverages(stat, filters);
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    private List<CardAverage> getSortedAverages(IdentityAverage stat, String[] filters) {
-        List<CardAverage> result = new ArrayList<>();
-        for (String filter : filters) {
-            List<CardAverage> subset = filterAndSortCards(stat.getCards(), filter);
-            result.addAll(subset);
-        }
-        return result;
+    public List<CardAverage> getSortedAverages(Set<CardAverage> stat) {
+        return getSortedAverages(stat, TYPES_UNIVERSAL);
     }
 
     private List<CardAverage> getSortedAverages(Set<CardAverage> stat, String[] filters) {
         List<CardAverage> result = new ArrayList<>();
         for (String filter : filters) {
-            List<CardAverage> subset = filterAndSortCards(stat, filter);
+            List<CardAverage> subset = filterAndSortCards(new ArrayList<>(stat), filter);
             result.addAll(subset);
         }
         return result;
     }
 
-    private List<CardAverage> filterAndSortCards(Set<CardAverage> cards, String typefilter) {
+    private List<CardAverage> filterAndSortCards(List<CardAverage> cards, String typefilter) {
         List<CardAverage> result = new ArrayList<>();
         for (CardAverage card : cards) {
             if ((card.getTypecodes().contains(typefilter)) || (card.getCardtitle().equals(typefilter))) {

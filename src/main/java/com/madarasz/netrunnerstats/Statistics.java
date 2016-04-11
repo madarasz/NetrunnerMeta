@@ -3,6 +3,7 @@ package com.madarasz.netrunnerstats;
 import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.CardPack;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.Tournament;
 import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.database.DOs.result.CardCounts;
 import com.madarasz.netrunnerstats.database.DOs.result.StatCounts;
@@ -56,9 +57,6 @@ public class Statistics {
 
     @Autowired
     CardPoolStatsRepository cardPoolStatsRepository;
-
-    @Autowired
-    DeckInfosRepository deckInfosRepository;
 
     @Autowired
     DPIdentitiesRepository dpIdentitiesRepository;
@@ -197,53 +195,59 @@ public class Statistics {
      * @param cardpackName filter for cardpool
      * @return IdentityMDS
      */
-    public IdentityMDS getPackMath(String identityName, String cardpackName) {
-        IdentityMDS result = identityMdsRepository.findByDpnameIdentitytitle(cardpackName, identityName);
-        if (result == null) {
-            StopWatch stopwatch = new StopWatch();
-            stopwatch.start();
-            ArrayList<Deck> decks = new ArrayList<>();
-            ArrayList<Deck> topdecks = new ArrayList<>();
+    public Set<MDSEntry> getPackMath(String identityName, String cardpackName) {
+        StopWatch stopwatch = new StopWatch();
+        stopwatch.start();
 
-            if (cardpackName.equals(LAST_3)) {
-                for (String cardpoolName : lastThree.getLastThreeCardpoolNames()) {
-                    decks.addAll(deckRepository.filterByIdentityAndCardPool(identityName, cardpoolName));
-                    topdecks.addAll(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpoolName));
-                }
-            } else {
-                decks = new ArrayList<>(deckRepository.filterByIdentityAndCardPool(identityName, cardpackName));
-                topdecks = new ArrayList<>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
+        Set<MDSEntry> result = new HashSet<>();
+        ArrayList<Deck> decks = new ArrayList<>();
+        ArrayList<Deck> topdecks = new ArrayList<>();
+
+        if (cardpackName.equals(LAST_3)) {
+            for (String cardpoolName : lastThree.getLastThreeCardpoolNames()) {
+                decks.addAll(deckRepository.filterByIdentityAndCardPool(identityName, cardpoolName));
+                topdecks.addAll(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpoolName));
             }
-
-            // TODO: better topdecks contain
-            ArrayList<String> topURLs = new ArrayList<>();
-            for (Deck topdeck : topdecks) {
-                topURLs.add(topdeck.getUrl());
-            }
-
-            int decknum = decks.size();
-            int topdecknum = topdecks.size();
-            result = new IdentityMDS(cardpackName, identityName, decknum, topdecknum);
-            if (decknum > 0) {
-                double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
-                double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
-                for (int i = 0; i < decks.size(); i++) {
-                    // NaN fix
-                    scaling[0][i] = NaNFix(scaling[0][i]);
-                    scaling[1][i] = NaNFix(scaling[1][i]);
-
-                    MDSEntry mds = new MDSEntry(scaling[0][i], scaling[1][i],
-                            decks.get(i).getName(), decks.get(i).getUrl(), topURLs.contains(decks.get(i).getUrl()));
-                    result.addDeck(mds);
-                    logger.debug(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
-                }
-            }
-            stopwatch.stop();
-            logger.debug("*********************************************************************");
-            logger.info(String.format("Saving MDS Statistics: %s - %s (%.3f sec)", cardpackName, identityName,
-                    stopwatch.getTotalTimeSeconds()));
-            identityMdsRepository.save(result);
+        } else {
+            decks = new ArrayList<>(deckRepository.filterByIdentityAndCardPool(identityName, cardpackName));
+            topdecks = new ArrayList<>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
         }
+
+        ArrayList<String> topURLs = new ArrayList<>();
+        for (Deck topdeck : topdecks) {
+            topURLs.add(topdeck.getUrl());
+        }
+
+        if (decks.size() > 0) {
+            double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
+            double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
+            for (int i = 0; i < decks.size(); i++) {
+                // NaN fix
+                scaling[0][i] = NaNFix(scaling[0][i]);
+                scaling[1][i] = NaNFix(scaling[1][i]);
+                Deck deck = decks.get(i);
+
+                if (cardpackName.equals(LAST_3)) {
+                    Tournament tournament = tournamentRepository.getTournamentByDeckUrl(deck.getUrl());
+                    MDSEntryLast3 mds = new MDSEntryLast3(scaling[0][i], scaling[1][i], deck.getName(), deck.getUrl(),
+                            topURLs.contains(decks.get(i).getUrl()),
+                            deckDigest.shortHtmlDigest(deck), deckDigest.htmlDigest(deck), deckDigest.digest(deck),
+                            tournament.getCardpool().getName());
+                    result.add(mds);
+                } else {
+                    MDSEntry mds = new MDSEntry(scaling[0][i], scaling[1][i], deck.getName(), deck.getUrl(),
+                            topURLs.contains(decks.get(i).getUrl()),
+                            deckDigest.shortHtmlDigest(deck), deckDigest.htmlDigest(deck), deckDigest.digest(deck));
+                    result.add(mds);
+                }
+
+                logger.debug(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
+            }
+        }
+        stopwatch.stop();
+        logger.debug("*********************************************************************");
+        logger.info(String.format("* calculating MDS Statistics: %s - %s (%.3f sec)", cardpackName, identityName,
+                stopwatch.getTotalTimeSeconds()));
         return result;
     }
 
@@ -327,46 +331,6 @@ public class Statistics {
             cardPoolStatsRepository.save(result);
         }
         return result;
-    }
-
-    /**
-     * Generates html digest of decks for certain indentity and cardpool
-     * @param identityName identity name
-     * @param cardpool cardpool name
-     * @return DeckInfos
-     */
-    public DeckInfos getDeckInfos(String identityName, String cardpool) {
-        DeckInfos result = deckInfosRepository.findByCardpoolIdentityname(cardpool, identityName);
-        if (result == null) {
-            StopWatch stopwatch = new StopWatch();
-            stopwatch.start();
-            List<Deck> decks = new ArrayList<>();
-
-            // check is last 3 is requested
-            if (cardpool.equals(LAST_3)) {
-                for (String cardpoolName : lastThree.getLastThreeCardpoolNames()) {
-                    decks.addAll(deckRepository.filterByIdentityAndCardPool(identityName, cardpoolName));
-                }
-            } else {
-                decks = deckRepository.filterByIdentityAndCardPool(identityName, cardpool);
-            }
-
-            result = new DeckInfos(cardpool, identityName);
-            for (Deck deck : decks) {
-                DeckInfo info = getDeckInfo(deck);
-                result.addDeckInfo(info);
-            }
-            stopwatch.stop();
-            logger.info(String.format("Saving DeckInfos Statistics: %s - %s (%.3f sec)", cardpool, identityName,
-                    stopwatch.getTotalTimeSeconds()));
-            deckInfosRepository.save(result);
-        }
-        return result;
-    }
-
-    public DeckInfo getDeckInfo(Deck deck) {
-        return new DeckInfo(deckDigest.shortHtmlDigest(deck), deckDigest.htmlDigest(deck),
-                deckDigest.digest(deck), deck.getUrl());
     }
 
     /**
@@ -465,19 +429,22 @@ public class Statistics {
         if (result == null) {
             StopWatch stopwatch = new StopWatch();
             stopwatch.start();
-            result = new IdentityAverage(identity, cardpool);
             List<Deck> decks = new ArrayList<>();
 
             // check is last 3 is requested
+            int topdecknum = 0;
             if (cardpool.equals(LAST_3)) {
                 for (String cardpoolName : lastThree.getLastThreeCardpoolNames()) {
                     decks.addAll(deckRepository.filterByIdentityAndCardPool(identity, cardpoolName));
+                    topdecknum += deckRepository.countTopByIdentityAndCardPool(identity, cardpool);
                 }
             } else {
                 decks = deckRepository.filterByIdentityAndCardPool(identity, cardpool);
+                topdecknum = deckRepository.countTopByIdentityAndCardPool(identity, cardpool);
             }
             Set<Card> cards = new HashSet<>();
             int decknum = decks.size();
+            result = new IdentityAverage(identity, cardpool, decknum, topdecknum);
 
             // get all used cards
             for (Deck deck : decks) {
@@ -507,6 +474,8 @@ public class Statistics {
                         String.format("%.2f", (double) sumused / used));
                 result.addCard(cardAverage);
             }
+
+            result.addDecks(getPackMath(identity, cardpool));
             stopwatch.stop();
             logger.info(String.format("Saving deck averages: %s - %s (%.3f)", identity, cardpool,
                     stopwatch.getTotalTimeSeconds()));
@@ -964,7 +933,7 @@ public class Statistics {
             result.addMostUsedCard(getMostUsedCardsForCardpool(cardpoolTitle, sideCode));
 
             stopwatch.stop();
-            logger.info(String.format("Caltulated tournament drilldown (%.3f sec): %s - %s",
+            logger.info(String.format("Saving tournament drilldown (%.3f sec): %s - %s",
                     stopwatch.getTotalTimeSeconds(), cardpoolTitle, sideCode));
             tournamentDrillDownRepository.save(result);
         }

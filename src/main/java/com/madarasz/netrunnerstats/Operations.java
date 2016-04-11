@@ -92,13 +92,12 @@ public class Operations {
      */
     public void logDBStatCount() {
         logger.info(String.format("CardPoolStats %d, CardPool: %d, DP statistics: %d, CountDeckStands: %d, " +
-                "IdentityMDS: %d, MDSEntry: %d, DeckInfos: %d, DeckInfo: %d, DP Identities: %d, DP Identity: %d, " +
+                "IdentityMDS: %d, MDSEntry: %d, DP Identities: %d, DP Identity: %d, " +
                 "CardUsageStat: %d, CardUsage: %d, IdentityAverage: %d, CardAverage: %d, Cardstat: %d, Cardcombo: %d, DPDecks: %d " +
                 "TournamentDrilldown: %d, StandingDeckCount: %d, StandingDeckCountID: %d",
                 template.count(CardPoolStats.class), template.count(CardPool.class),
                 template.count(DPStatistics.class), template.count(CountDeckStands.class),
                 template.count(IdentityMDS.class), template.count(MDSEntry.class),
-                template.count(DeckInfos.class), template.count(DeckInfo.class),
                 template.count(DPIdentities.class), template.count(DPIdentity.class),
                 template.count(CardUsageStat.class), template.count(CardUsage.class),
                 template.count(IdentityAverage.class), template.count(CardAverage.class),
@@ -414,6 +413,8 @@ public class Operations {
         template.query("MATCH (n:CardPoolStats) OPTIONAL MATCH (n)-[r]-(c:CardPool) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:DeckInfos) OPTIONAL MATCH (n)-[r]-(c:DeckInfo) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:DPIdentities) OPTIONAL MATCH (n)-[r]-(c:DPIdentity) DELETE n,r,c", emptyparams);
+        template.query("MATCH (c:CardAverage) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
+        template.query("MATCH (n:IdentityAverage) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         template.query("MATCH (n:IdentityAverage) OPTIONAL MATCH (n)-[r]-(c:CardAverage) DELETE n,r,c", emptyparams);
         template.query("MATCH (t:TournamentDrilldown) OPTIONAL MATCH (t)-[r]-() " +
                 "DELETE t,r", emptyparams);
@@ -422,9 +423,9 @@ public class Operations {
         template.query("MATCH (c:DPDecks) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         template.query("MATCH (c:CardUsage) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         template.query("MATCH (c:CardStat) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
-        template.query("MATCH (c:CardAverage) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         template.query("MATCH (c:StandingDeckCount) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         template.query("MATCH (c:StandingDeckCountID) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
+        template.query("MATCH (c:MDSEntry) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         // troublemaker nodes
         template.query("MATCH (n:CountDeckStands) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         template.query("MATCH (n:CardUsage) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
