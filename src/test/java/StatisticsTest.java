@@ -67,9 +67,6 @@ public class StatisticsTest {
     CardUsageStatsRepository cardUsageStatsRepository;
 
     @Autowired
-    DPIdentitiesRepository dpIdentitiesRepository;
-
-    @Autowired
     DPStatsRepository dpStatsRepository;
 
     @Autowired

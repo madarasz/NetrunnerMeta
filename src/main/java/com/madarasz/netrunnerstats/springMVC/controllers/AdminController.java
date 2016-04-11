@@ -113,8 +113,6 @@ public class AdminController {
         model.put("countDPStatistics", template.count(DPStatistics.class));
         model.put("countCountDeckStands", template.count(CountDeckStands.class));
         model.put("countMDSEntry", template.count(MDSEntry.class));
-        model.put("countDPIdentities", template.count(DPIdentities.class));
-        model.put("countDPIdentity", template.count(DPIdentity.class));
         model.put("countCardUsageStat", template.count(CardUsageStat.class));
         model.put("countCardUsage", template.count(CardUsage.class));
         model.put("countIdentityAverage", template.count(IdentityAverage.class));

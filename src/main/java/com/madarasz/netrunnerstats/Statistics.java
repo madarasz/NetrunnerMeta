@@ -56,9 +56,6 @@ public class Statistics {
     CardPoolStatsRepository cardPoolStatsRepository;
 
     @Autowired
-    DPIdentitiesRepository dpIdentitiesRepository;
-
-    @Autowired
     CardUsageStatsRepository cardUsageStatsRepository;
 
     @Autowired
