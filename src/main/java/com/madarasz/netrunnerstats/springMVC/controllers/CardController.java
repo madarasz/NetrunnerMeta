@@ -3,6 +3,7 @@ package com.madarasz.netrunnerstats.springMVC.controllers;
 import com.madarasz.netrunnerstats.Statistics;
 import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.stats.CardStat;
+import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardUsage;
 import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
 import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +41,21 @@ public class CardController {
     CardPoolStatsRepository cardPoolStatsRepository;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CardController.class);
+
+    // JSON output
+    @RequestMapping(value="/JSON/Cards/{target}/{sidecode}/{DPName}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<CardUsage> getMostUsedCards(
+            @PathVariable(value="target") String target,
+            @PathVariable(value="sidecode") String sidecode,
+            @PathVariable(value="DPName") String DPName) {
+        switch (target) {
+            case "Cardpack":
+                return statistics.getMostUsedCardsFromCardPack(DPName).getSortedCards(sidecode);
+            default:
+                return new ArrayList<>();
+        }
+    }
 
     @RequestMapping(value="/JSON/Cards/{target}/card.json", method = RequestMethod.GET)
     public @ResponseBody

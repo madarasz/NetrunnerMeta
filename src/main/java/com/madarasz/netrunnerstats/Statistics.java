@@ -277,6 +277,51 @@ public class Statistics {
     }
 
     /**
+     * Calculates most used a card in the cardpack
+     * @param cardpack cardpack name
+     * @return CardUsageStat
+     */
+    public CardUsageStat getMostUsedCardsFromCardPack(String cardpack) {
+        CardUsageStat result = cardUsageStatsRepository.findByCardPackName(cardpack);
+        if (result == null) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
+            int runnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", false);
+            int toprunnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", true);
+            int corpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", false);
+            int topcorpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", true);
+            result = new CardUsageStat(cardpack, false,
+                    runnerdecks, toprunnerdecks, corpdecks, topcorpdecks);
+            List<Card> cards = cardRepository.findByCardPackName(cardpack);
+            for (Card card : cards) {
+                String code = card.getCode();
+                int count = deckRepository.countByUsingCard(code);
+                if (count > 0) {
+                    int topcount = deckRepository.countTopByUsingCard(code);
+                    if (card.getSide_code().equals("runner")) {
+                        result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
+                                card.getSide_code(), card.getFaction_code(), count, topcount,
+                                (double)count / runnerdecks, (double)topcount / toprunnerdecks));
+                    } else {
+                        result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
+                                card.getSide_code(), card.getFaction_code(), count, topcount,
+                                (double)count / corpdecks, (double)topcount / topcorpdecks));
+                    }
+                } else {
+                    result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
+                            card.getSide_code(), card.getFaction_code(), 0, 0, 0, 0));
+                }
+            }
+            stopwatch.stop();
+            logger.info(String.format("Saving Card Usage Statistics, cardpack: %s (%.3f sec)", cardpack,
+                    stopwatch.getTotalTimeSeconds()));
+            cardUsageStatsRepository.save(result);
+        }
+        return result;
+    }
+
+
+    /**
      * Calculates most used a card with a cardpool of tournaments
      * @param cardpool cardpool name
      * @param sidecode runner or corp
