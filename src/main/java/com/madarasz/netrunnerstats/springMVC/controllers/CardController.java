@@ -43,18 +43,12 @@ public class CardController {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CardController.class);
 
     // JSON output
-    @RequestMapping(value="/JSON/Cards/{target}/{sidecode}/{DPName}", method = RequestMethod.GET)
+    @RequestMapping(value="/JSON/Cards/{sidecode}/{DPName}", method = RequestMethod.GET)
     public @ResponseBody
     List<CardUsage> getMostUsedCards(
-            @PathVariable(value="target") String target,
             @PathVariable(value="sidecode") String sidecode,
             @PathVariable(value="DPName") String DPName) {
-        switch (target) {
-            case "Cardpack":
-                return statistics.getMostUsedCardsFromCardPack(DPName).getSortedCards(sidecode);
-            default:
-                return new ArrayList<>();
-        }
+        return statistics.getMostUsedCardsFromCardPack(DPName).getSortedCards(sidecode);
     }
 
     @RequestMapping(value="/JSON/Cards/{target}/card.json", method = RequestMethod.GET)

@@ -90,8 +90,8 @@
                 var encodedtitle = encodeURIComponent(title);
                 $('#runner-cards').empty().addClass('spinner');
                 $('#corp-cards').empty().addClass('spinner');
-                loadCardPackTable('/JSON/Cards/Cardpack/runner/' + encodedtitle, '#runner-cards');
-                loadCardPackTable('/JSON/Cards/Cardpack/corp/' + encodedtitle, '#corp-cards');
+                loadCardPackTable('/JSON/Cards/runner/' + encodedtitle, '#runner-cards');
+                loadCardPackTable('/JSON/Cards/corp/' + encodedtitle, '#corp-cards');
             }
 
             function loadPacks() {

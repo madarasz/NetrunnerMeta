@@ -18,7 +18,6 @@ public class CardUsageStat {
     @GraphId
     private Long id;
     @Indexed private String cardpackname;
-    private boolean cardpool; // true if cardpool, false if cardpack
     private int runnerdecks;
     private int runnertopdecks;
     private int corpdecks;
@@ -28,15 +27,13 @@ public class CardUsageStat {
     public CardUsageStat() {
     }
 
-    public CardUsageStat(String cardpackname, boolean cardpool) {
+    public CardUsageStat(String cardpackname) {
         this.cardpackname = cardpackname;
-        this.cardpool = cardpool;
         cards = new HashSet<>();
     }
 
-    public CardUsageStat(String cardpackname, boolean cardpool, int runnerdecks, int runnertopdecks, int corpdecks, int corptopdecks) {
+    public CardUsageStat(String cardpackname, int runnerdecks, int runnertopdecks, int corpdecks, int corptopdecks) {
         this.cardpackname = cardpackname;
-        this.cardpool = cardpool;
         this.runnerdecks = runnerdecks;
         this.runnertopdecks = runnertopdecks;
         this.corpdecks = corpdecks;
@@ -50,10 +47,6 @@ public class CardUsageStat {
 
     public String getCardpackname() {
         return cardpackname;
-    }
-
-    public boolean isCardpool() {
-        return cardpool;
     }
 
     public int getRunnerdecks() {

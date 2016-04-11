@@ -138,15 +138,15 @@ public class StatisticsTest {
         Assert.assertEquals("Deck counts incorrect", 12,
                 statistics.getDeckNumberFromCardpoolOnward("Old Hollywood", "corp", false));
         // check values
-        CardUsageStat pool = cardUsageStatsRepository.findByCardPoolName("Old Hollywood");
+//        CardUsageStat pool = cardUsageStatsRepository.findByCardPoolName("Old Hollywood");
         CardUsageStat pack = cardUsageStatsRepository.findByCardPackName("Old Hollywood");
         String packrunner = pack.getSortedCards("runner").get(0).getCardtitle();
         ArrayList<String> prPossible = new ArrayList<>(Arrays.asList("Trope", "Film Critic"));
-        String poolcorp = pool.getSortedCards("corp").get(0).getCardtitle();
+//        String poolcorp = pool.getSortedCards("corp").get(0).getCardtitle();
         ArrayList<String> pcPossible = new ArrayList<>(
                 Arrays.asList("Jackson Howard", "Wraparound", "Hedge Fund", "Cyberdex Virus Suite", "Enigma"));
         Assert.assertTrue("Card usage is not calculated right.", prPossible.contains(packrunner));
-        Assert.assertTrue("Card usage is not calculated right.", pcPossible.contains(poolcorp));
+//        Assert.assertTrue("Card usage is not calculated right.", pcPossible.contains(poolcorp));
         // check duplication
 //        cardController.getMostUsedCards("Cardpack", "runner", "Old Hollywood");
 //        cardController.getMostUsedCards("Cardpack", "corp", "Old Hollywood");

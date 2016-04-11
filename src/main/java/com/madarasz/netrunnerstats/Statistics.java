@@ -290,8 +290,7 @@ public class Statistics {
             int toprunnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", true);
             int corpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", false);
             int topcorpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", true);
-            result = new CardUsageStat(cardpack, false,
-                    runnerdecks, toprunnerdecks, corpdecks, topcorpdecks);
+            result = new CardUsageStat(cardpack, runnerdecks, toprunnerdecks, corpdecks, topcorpdecks);
             List<Card> cards = cardRepository.findByCardPackName(cardpack);
             for (Card card : cards) {
                 String code = card.getCode();

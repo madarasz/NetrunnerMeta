@@ -12,9 +12,6 @@ import org.springframework.data.neo4j.repository.RelationshipOperationsRepositor
 public interface CardUsageStatsRepository extends GraphRepository<CardUsageStat>,
         RelationshipOperationsRepository<CardUsageStat> {
 
-    @Query("MATCH (c:CardUsageStat {cardpackname: {0}, cardpool: false}) RETURN c LIMIT 1")
+    @Query("MATCH (c:CardUsageStat {cardpackname: {0}}) RETURN c LIMIT 1")
     CardUsageStat findByCardPackName(String cardpackname);
-
-    @Query("MATCH (c:CardUsageStat {cardpackname: {0}, cardpool: true}) RETURN c LIMIT 1")
-    CardUsageStat findByCardPoolName(String cardpoolname);
 }
