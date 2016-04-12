@@ -1,3 +1,6 @@
+var runnerFactions = ['shaper', 'anarch', 'criminal',  'adam', 'apex', 'sunny-lebeau'],
+    corpFactions = ['jinteki', 'nbn', 'haas-bioroid', 'weyland-consortium'];
+
 // enable popovers
 $(function () {
     $('[data-toggle="popover"]').popover();
@@ -184,46 +187,6 @@ function twitterTimeline(d,s,id, callback) {
         fjs.parentNode.insertBefore(js,fjs);
     }
     typeof callback === 'function' && callback.apply(this, arguments); // make callback if exists
-}
-
-// faction over time chart on home page
-function drawFactionChart(urlvalue, elementid, callback) {
-
-    $.ajax({
-        url: urlvalue,
-        dataType: "json",
-        async: true,
-        success: function(data) {
-
-            var lineColors = [];
-
-            $.each(data.cols, function (index, element) {
-                lineColors.push({color : element.id});
-            });
-
-            lineColors.splice(0, 1); // removing first entry
-
-            var chartData = new google.visualization.DataTable(data);
-
-            var options = {
-                'height': 350,
-                'curveType': 'function',
-                'vAxis': { format:'#,#%', viewWindowMode: 'explicit', viewWindow: { min: 0 } },
-                'hAxis': { showTextEvery: 1, slantedText: 'true' },
-                'chartArea': { top: 10, bottom: 10, height: '70%' },
-                'legend': { position: 'right', maxLines: 6 },
-                'series': lineColors,
-                'lineWidth': 3
-            };
-
-            var chart = new google.visualization.LineChart(document.getElementById(elementid));
-            chart.draw(chartData, options);
-            $('#'+elementid).removeClass('spinner');
-
-            typeof callback === 'function' && callback.apply(this, arguments); // make callback if exists
-        }
-    });
-
 }
 
 // display table on Info page

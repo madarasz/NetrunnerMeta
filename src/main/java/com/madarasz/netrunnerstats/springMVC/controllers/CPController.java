@@ -1,12 +1,11 @@
 package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.Statistics;
+import com.madarasz.netrunnerstats.database.DOs.stats.DPStatistics;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardPool;
 import com.madarasz.netrunnerstats.database.DRs.AdminDataRepository;
 import com.madarasz.netrunnerstats.database.DRs.BlogRepository;
 import com.madarasz.netrunnerstats.database.DRs.stats.CardPoolStatsRepository;
-import com.madarasz.netrunnerstats.helper.gchart.DataTable;
-import com.madarasz.netrunnerstats.helper.gchartConverter.DPStatsToOverTimeGchart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Controller;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +28,6 @@ public class CPController {
 
     @Autowired
     Statistics statistics;
-
-    @Autowired
-    DPStatsToOverTimeGchart dpStatsToOverTimeGchart;
 
     @Autowired
     Neo4jOperations template;
@@ -67,9 +65,15 @@ public class CPController {
         return "Home";
     }
 
-    // DataTable output, factions over time
-    @RequestMapping(value="/DataTable/Cardpool/{sidecode}", method = RequestMethod.GET)
-    public @ResponseBody DataTable getDPTopDataTable(@PathVariable(value = "sidecode") String sidecode) {
-        return dpStatsToOverTimeGchart.converter(sidecode);
+    // JSON for factions over time
+    @RequestMapping(value="/JSON/FactionsOverTime", method = RequestMethod.GET)
+    public @ResponseBody List<DPStatistics> getFactionsOverTime() {
+        List<CardPool> cardPools = statistics.getCardPoolStats().getSortedCardpool();
+        Collections.reverse(cardPools);
+        List<DPStatistics> result = new ArrayList<>();
+        for (CardPool cardPool : cardPools) {
+            result.add(statistics.getPackStats(cardPool.getTitle()));
+        }
+        return result;
     }
 }

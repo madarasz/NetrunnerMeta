@@ -103,15 +103,8 @@
         if ([[${identity}]]) {
             $('#idchart').addClass('hidden');
         }
-        var jsonData;
-        var cardChartData = [['identity', 'decks', 'fraction']];
-        var cardChart;
-        var cardDataTable;
-        var cardChartOptions;
-        var overTimeChartData = [['pack', 'all', 'top 30%']];
-        var overTimeChart;
-        var overTimeDataTable;
-        var overTimeChartOptions;
+        var jsonData, cardChartData = [['identity', 'decks', 'fraction']], cardChart, cardDataTable, cardChartOptions,
+            overTimeChartData = [['pack', 'all', 'top 30%']], overTimeChart, overTimeDataTable, overTimeChartOptions;
 
         google.setOnLoadCallback(drawData);
         function drawData() {

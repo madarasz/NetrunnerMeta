@@ -240,27 +240,19 @@
         });
 
         // init chart data variables
-        var runnerTopFactionData = [['faction', 'standings']];
-        var runnerTopFactionColors = [];
-        var runnerAllFactionData = [['faction', 'standings']];
-        var runnerAllFactionColors = [];
-        var runnerTopIdentityData = [['identity', 'standings']];
-        var runnerTopIdentityColors = [];
-        var runnerAllIdentityData = [['identity', 'standings']];
-        var runnerAllIdentityColors = [];
-        var runnerCompareFactionData = [['faction', 'all', 'top 30%']];
-        var runnerCompareIdentityData = [['faction', 'all', 'top 30%']];
-
-        var corpTopFactionData = [['faction', 'standings']];
-        var corpTopFactionColors = [];
-        var corpAllFactionData = [['faction', 'standings']];
-        var corpAllFactionColors = [];
-        var corpTopIdentityData = [['identity', 'standings']];
-        var corpTopIdentityColors = [];
-        var corpAllIdentityData = [['identity', 'standings']];
-        var corpAllIdentityColors = [];
-        var corpCompareFactionData = [['faction', 'all', 'top 30%']];
-        var corpCompareIdentityData = [['faction', 'all', 'top 30%']];
+        var runnerTopFactionData = [['faction', 'standings']], runnerTopFactionColors = [],
+            runnerAllFactionData = [['faction', 'standings']], runnerAllFactionColors = [],
+            runnerTopIdentityData = [['identity', 'standings']], runnerTopIdentityColors = [],
+            runnerAllIdentityData = [['identity', 'standings']], runnerAllIdentityColors = [],
+            runnerCompareFactionData = [['faction', 'all', 'top 30%']],
+            runnerCompareIdentityData = [['faction', 'all', 'top 30%']],
+            corpTopFactionData = [['faction', 'standings']], corpTopFactionColors = [],
+            corpAllFactionData = [['faction', 'standings']], corpAllFactionColors = [],
+            corpTopIdentityData = [['identity', 'standings']], corpTopIdentityColors = [],
+            corpAllIdentityData = [['identity', 'standings']], corpAllIdentityColors = [],
+            corpCompareFactionData = [['faction', 'all', 'top 30%']],
+            corpCompareIdentityData = [['faction', 'all', 'top 30%']],
+            dpname = encodeURIComponent([[${DPname}]]);
 
         // redraw charts on window resize
         $(window).resize(function(){
@@ -269,7 +261,6 @@
 
         // init google chart
         google.load('visualization', '1.0', {'packages':['corechart']});
-        var dpname = encodeURIComponent([[${DPname}]]);
         google.setOnLoadCallback(populateTournamentCharts(dpname));
 
         /*]]>*/

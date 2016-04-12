@@ -5,9 +5,6 @@ import com.madarasz.netrunnerstats.database.DOs.stats.*;
 import com.madarasz.netrunnerstats.database.DOs.stats.entries.*;
 import com.madarasz.netrunnerstats.database.DRs.stats.*;
 import com.madarasz.netrunnerstats.springMVC.controllers.*;
-import com.madarasz.netrunnerstats.helper.gchart.CellNumber;
-import com.madarasz.netrunnerstats.helper.gchart.CellString;
-import com.madarasz.netrunnerstats.helper.gchart.DataTable;
 import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
@@ -24,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by madarasz on 11/19/15.

@@ -122,9 +122,8 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-        var mdsTooltips = [];
-        var mdsData;
-        var filter = encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${identity}]]);
+        var mdsTooltips = [], mdsData,
+            filter = encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${identity}]]);
 
         google.load('visualization', '1.0', {'packages':['corechart']});
         google.setOnLoadCallback(populateMDSPage(filter));
@@ -168,8 +167,8 @@
                             }
                         }
                         // shape and size
-                        var shape = (element.topdeck == true ? "star" : "circle");
-                        var size = (element.topdeck == true ? 8 : 5);
+                        var shape = (element.topdeck == true ? "star" : "circle"),
+                            size = (element.topdeck == true ? 8 : 5);
                         // add point
                         mdsData.addRow([element.x, element.y,
                             'point { size: ' + size + '; shape-type: ' + shape + '; fill-color: ' + color + '; stroke-color: #FFFFFF;}',

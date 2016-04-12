@@ -11,40 +11,28 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 public class CountDeckStands {
     @GraphId
     private Long id;
-    private String title;
-    private int decknum;
-    private int standingnum;
-    private double percentage; // overall standing percentage
-    private String colorcode;
+    private String faction;
+    private int allStandingCount;
+    private int topStandingCount;
 
     public CountDeckStands() {
     }
 
-    public CountDeckStands(String title, int decknum, int standingnum, double percentage, String colorcode) {
-        this.title = title;
-        this.decknum = decknum;
-        this.standingnum = standingnum;
-        this.percentage = percentage;
-        this.colorcode = colorcode;
+    public CountDeckStands(String faction, int allStandingCount, int topStandingCount) {
+        this.faction = faction;
+        this.allStandingCount = allStandingCount;
+        this.topStandingCount = topStandingCount;
     }
 
-    public String getTitle() {
-        return title;
+    public String getFaction() {
+        return faction;
     }
 
-    public int getDecknum() {
-        return decknum;
+    public int getAllStandingCount() {
+        return allStandingCount;
     }
 
-    public int getStandingnum() {
-        return standingnum;
-    }
-
-    public String getColorcode() {
-        return colorcode;
-    }
-
-    public double getPercentage() {
-        return percentage;
+    public int getTopStandingCount() {
+        return topStandingCount;
     }
 }
