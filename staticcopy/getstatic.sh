@@ -26,22 +26,10 @@ dirs=(
 "static/fonts"
 "JSON"
 "Cards"
-"DataTable"
-"DataTable/Cardpool"
 "DPStats"
-"DataTable/DPStats"
-"DataTable/DPStats/Top"
-"DataTable/DPStats/All"
-"DataTable/DPStats/Compare"
-"DataTable/MDSIdentity"
 "JSON/Cards"
-"JSON/Cards/Cardpack"
-"JSON/Cards/Cardpool"
-"JSON/DPStats"
-"JSON/DPStats/Identities"
-"JSON/DPStats/ICE"
-"JSON/Deck"
-"JSON/Average"
+"JSON/Identity"
+"JSON/Tournament"
 "MDSIdentity"
 "Blog"
 )
@@ -54,19 +42,8 @@ done
 for side in "${sides[@]}"
 do
     dirs=(
-    "DataTable/DPStats/Top/$side"
-    "DataTable/DPStats/Top/$side/faction"
-    "DataTable/DPStats/Top/$side/identity"
-    "DataTable/DPStats/All/$side"
-    "DataTable/DPStats/All/$side/faction"
-    "DataTable/DPStats/All/$side/identity"
-    "DataTable/DPStats/Compare/$side"
-    "DataTable/DPStats/Compare/$side/faction"
-    "DataTable/DPStats/Compare/$side/identity"
-    "JSON/Cards/Cardpack/$side"
-    "JSON/Cards/Cardpool/$side"
-    "JSON/DPStats/Identities/$side"
-    "JSON/DPStats/ICE/$side"
+    "JSON/Cards/$side"
+    "JSON/Tournament/$side"
     )
     for dir in "${dirs[@]}"
     do
@@ -74,14 +51,13 @@ do
     done
 done
 
-
 # download static files
 files=(
 "JSON/Cardpool"
 "JSON/Cardpacks"
 "JSON/Cardpoolnames"
-"DataTable/Cardpool/runner"
-"DataTable/Cardpool/corp"
+"JSON/Cardpacknames"
+"JSON/FactionsOverTime"
 "404"
 "soon"
 "Info"
@@ -124,15 +100,8 @@ do
     for side in "${sides[@]}"
     do
         packfiles=(
-        "DataTable/DPStats/Top/$side/faction/$pack"
-        "DataTable/DPStats/Top/$side/identity/$pack"
-        "DataTable/DPStats/All/$side/faction/$pack"
-        "DataTable/DPStats/All/$side/identity/$pack"
-        "DataTable/DPStats/Compare/$side/faction/$pack"
-        "DataTable/DPStats/Compare/$side/identity/$pack"
-        "JSON/Cards/Cardpool/$side/$pack"
-        "JSON/DPStats/Identities/$side/$pack"
-        "JSON/DPStats/ICE/$side/$pack"
+        "JSON/Cards/$side/$pack"
+        "JSON/Tournament/$side/$pack"
         )
         for packfile in "${packfiles[@]}"
         do
@@ -144,23 +113,17 @@ do
     curl http://localhost:8080/DPStats/$pack > "DPStats/${pack//%20/ }/index.html"
 
     mkdir "MDSIdentity/${pack//%20/ }"
-    mkdir "DataTable/MDSIdentity/${pack//%20/ }"
-    mkdir "JSON/Deck/${pack//%20/ }"
-    mkdir "JSON/Average/${pack//%20/ }"
+    mkdir "JSON/Identity/${pack//%20/ }"
 
     # for each id
-    idsrunner=( $(curl http://localhost:8080/JSON/DPStats/Identities/runner/$pack | jq -r '.[].title' | sed 's/ /%20/g') )
-    idscorp=( $(curl http://localhost:8080/JSON/DPStats/Identities/corp/$pack | jq -r '.[].title' | sed 's/ /%20/g') )
+    idsrunner=( $(curl http://localhost:8080/JSON/Tournament/runner/$pack | jq -r '.ids[].title' | sed 's/ /%20/g') )
+    idscorp=( $(curl http://localhost:8080/JSON/Tournament/corp/$pack | jq -r '.ids[].title' | sed 's/ /%20/g') )
     ids=( "${idsrunner[@]}" "${idscorp[@]}" )
     for identity in "${ids[@]}"
     do
         mkdir "MDSIdentity/${pack//%20/ }/${identity//%20/ }"
         curl http://localhost:8080/MDSIdentity/$pack/$identity > "MDSIdentity/${pack//%20/ }/${identity//%20/ }/index.html"
-        curl http://localhost:8080/DataTable/MDSIdentity/$pack/$identity > "DataTable/MDSIdentity/${pack//%20/ }/${identity//%20/ }"
-        curl http://localhost:8080/JSON/Deck/$pack/$identity > "JSON/Deck/${pack//%20/ }/${identity//%20/ }"
-        mkdir "JSON/Average/${pack//%20/ }/${identity//%20/ }"
-        curl http://localhost:8080/JSON/Average/$pack/$identity/1 > "JSON/Average/${pack//%20/ }/${identity//%20/ }/1"
-        curl http://localhost:8080/JSON/Average/$pack/$identity/2 > "JSON/Average/${pack//%20/ }/${identity//%20/ }/2"
+        curl http://localhost:8080/JSON/Identity/$pack/$identity > "JSON/Identity/${pack//%20/ }/${identity//%20/ }"
     done
 done
 
@@ -168,6 +131,6 @@ packs=( $(curl http://localhost:8080/JSON/Cardpacknames | jq -r '.[]' | sed 's/ 
 
 for pack in "${packs[@]}"
 do
-    curl http://localhost:8080/JSON/Cards/Cardpack/corp/$pack > "JSON/Cards/Cardpack/corp/${pack//%20/ }"
-    curl http://localhost:8080/JSON/Cards/Cardpack/runner/$pack > "JSON/Cards/Cardpack/runner/${pack//%20/ }"
+    curl http://localhost:8080/JSON/Cards/corp/$pack > "JSON/Cards/corp/${pack//%20/ }"
+    curl http://localhost:8080/JSON/Cards/runner/$pack > "JSON/Cards/runner/${pack//%20/ }"
 done

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +41,7 @@ public class CardController {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CardController.class);
 
-    // JSON output
+    // most used cards in card pack, side
     @RequestMapping(value="/JSON/Cards/{sidecode}/{DPName}", method = RequestMethod.GET)
     public @ResponseBody
     List<CardUsage> getMostUsedCards(
@@ -51,6 +50,7 @@ public class CardController {
         return statistics.getMostUsedCardsFromCardPack(DPName).getSortedCards(sidecode);
     }
 
+    // card statistics
     @RequestMapping(value="/JSON/Cards/{target}/card.json", method = RequestMethod.GET)
     public @ResponseBody
     CardStat getCardJSON(@PathVariable(value="target") String target) {

@@ -5,8 +5,8 @@
 <body>
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
+        <a name="top" class="anchor">&nbsp;</a>
         <h3 class="page-header">Statistics on tournament cardpools</h3>
-
         <div class="row top-buffer">
             <div class="col-md-8 col-xs-12">
                 <div class="col-xs-12">
@@ -170,105 +170,6 @@
             corpOption = 'both';
             drawFactionChart(corpData, corpFactions, "chart_div2", corpOption);
         });
-
-        function loadFactionData() {
-            $.ajax({
-                url: '/JSON/FactionsOverTime',
-                dataType: "json",
-                async: true,
-                success: function(data) {
-                    $.each(data, function (index, element) {
-                        runnerData.push([]);
-                        corpData.push([]);
-                        runnerData[runnerData.length - 1].push(element.packTitle);
-                        corpData[corpData.length - 1].push(element.packTitle);
-                        populateFOTData(runnerFactions, element.runners,
-                                element.runnerTopStandingCount, element.runnerAllStandingCount, runnerData);
-                        populateFOTData(corpFactions, element.corps,
-                                element.corpTopStandingCount, element.corpAllStandingCount, corpData);
-                    });
-                    runnerData = new google.visualization.arrayToDataTable(runnerData);
-                    corpData = new google.visualization.arrayToDataTable(corpData);
-                    drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption);
-                    drawFactionChart(corpData, corpFactions, "chart_div2", corpOption);
-                    $('.btn-group-xs button').removeAttr('disabled');
-                    // social
-                    facebookButton(document, 'script', 'facebook-jssdk');
-                    twitterTimeline(document,"script", "twitter-wjs");
-                }
-            });
-        }
-
-        function populateFOTData(factions, factionData, topStanding, allStanding, dataArray) {
-            $.each(factions, function (index, faction) {
-                var datarow = readFaction(factionData, faction);
-                if (datarow === undefined) {
-                    dataArray[dataArray.length - 1].push(0, 0);
-                } else {
-                    var top = datarow.topStandingCount / topStanding,
-                            all = datarow.allStandingCount / allStanding;
-                    dataArray[dataArray.length - 1].push({f: Math.round(top*1000)/10+'%',v: top});
-                    dataArray[dataArray.length - 1].push({f: Math.round(all*1000)/10+'%',v: all});
-                }
-            });
-        }
-
-        function readFaction(data, faction) {
-            var result;
-            $.each(data, function (index, element) {
-               if (element.faction === faction) {
-                   result = element;
-                   return false;
-               }
-            });
-            return result;
-        }
-
-        // faction over time chart on home page
-        function drawFactionChart(data, factions, elementid, options) {
-
-            // calculate colors
-            var color = [];
-            $.each(factions, function (index, faction) {
-                switch (options) {
-                    case "top":
-                        color.push({color: factionCodeToColor(faction)});
-                        break;
-                    case "all":
-                        color.push({color: factionCodeToColor(faction), lineDashStyle: [4, 4]});
-                        break;
-                    default:
-                        color.push({color: factionCodeToColor(faction)},
-                                {color: factionCodeToColor(faction), lineDashStyle: [4, 4]});
-                }
-            });
-
-            var chartOptions = {
-                'height': 350,
-                'curveType': 'function',
-                'vAxis': { format:'#,#%', viewWindowMode: 'explicit', viewWindow: { min: 0 } },
-                'hAxis': { showTextEvery: 1, slantedText: 'true' },
-                'chartArea': { top: 10, bottom: 10, height: '70%' },
-                'legend': { position: 'right', maxLines: 6 },
-                'series': color,
-                'lineWidth': 3
-            };
-
-            var chart = new google.visualization.LineChart(document.getElementById(elementid));
-            // hide lines
-            var view = new google.visualization.DataView(data);
-            switch (options) {
-                case "top":
-                    view.hideColumns([2,4,6,8,10,12]);
-                    break;
-                case "all":
-                    view.hideColumns([1,3,5,7,9,11]);
-                    break;
-            }
-
-            chart.draw(view, chartOptions);
-            $('#'+elementid).removeClass('spinner');
-        }
 
         /*]]>*/
     </script>
