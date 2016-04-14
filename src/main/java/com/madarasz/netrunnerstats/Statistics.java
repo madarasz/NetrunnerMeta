@@ -438,7 +438,12 @@ public class Statistics {
     public int getDeckNumberFromCardpoolOnward(String cardpool, String side, boolean topdeck) {
         List<CardPool> cardPools = getCardPoolStats().getSortedCardpool();
         Collections.reverse(cardPools);
-        CardPack cardPack = cardPackRepository.findByName(cardpool);
+        CardPack cardPack;
+        if (cardpool.equals(LAST_3)) {
+            cardPack = cardPackRepository.findByName(cardPools.get(2).getTitle());
+        } else {
+            cardPack = cardPackRepository.findByName(cardpool);
+        }
         int result = 0;
         boolean count = false;
         for (CardPool currentPool : cardPools) {
