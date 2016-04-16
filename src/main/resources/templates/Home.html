@@ -42,7 +42,7 @@
                         Tournament Drilldown
                         <ktm:tooltip place="top" text="Click on an expansion name for more information on tournaments with that cardpool."/>
                     </h4>
-                    <div class="list-group">
+                    <div class="list-group" id="drilldowns">
                         <a href="/DPStats/Last%203%20aggregated" class="list-group-item list-group-item-info"><em>last 3 aggregated</em></a>
                         <a th:each="cardpool : ${cardpools}" th:text="${cardpool}" th:href="@{/DPStats/__${cardpool}__/}" class="list-group-item"></a>
                     </div>
@@ -86,7 +86,7 @@
         <h3 class="page-header">Latest blog entries <a href="/RSS/blog"><i class="fa fa-rss-square"></i></a></h3>
         <div class="row">
             <div class="col-md-8 col-xs-12">
-                <div class="row">
+                <div class="row" id="blogs">
                     <div class="col-xs-12" th:each="blog : ${blogs}">
                         <div class="row">
                             <div class="col-md-3 teaser-col">
