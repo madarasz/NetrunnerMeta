@@ -97,6 +97,7 @@ packs=( $(curl http://localhost:8080/JSON/Cardpool | jq -r '.[].title' | sed 's/
 # for each pack
 for pack in "${packs[@]}"
 do
+    echo "Calculating card pack: $pack"
     for side in "${sides[@]}"
     do
         packfiles=(
@@ -122,6 +123,7 @@ do
     for identity in "${ids[@]}"
     do
         mkdir "MDSIdentity/${pack//%20/ }/${identity//%20/ }"
+        echo "Calculating $identity for $pack"
         curl http://localhost:8080/MDSIdentity/$pack/$identity > "MDSIdentity/${pack//%20/ }/${identity//%20/ }/index.html"
         curl http://localhost:8080/JSON/Identity/$pack/$identity > "JSON/Identity/${pack//%20/ }/${identity//%20/ }"
     done
@@ -131,6 +133,7 @@ packs=( $(curl http://localhost:8080/JSON/Cardpacknames | jq -r '.[]' | sed 's/ 
 
 for pack in "${packs[@]}"
 do
+    echo "Calculating card usage in pack: $pack"
     curl http://localhost:8080/JSON/Cards/corp/$pack > "JSON/Cards/corp/${pack//%20/ }"
     curl http://localhost:8080/JSON/Cards/runner/$pack > "JSON/Cards/runner/${pack//%20/ }"
 done

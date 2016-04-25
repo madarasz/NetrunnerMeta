@@ -8,7 +8,7 @@ for card in "${cards[@]}"
 do
     title=${titles[$i]}
     if [ ! -f "../src/main/resources/static/img/cards/netrunner-$title.png" ]; then
-        echo $title
+        echo "Downloading card image: $title"
         curl http://netrunnerdb.com/$card > "../src/main/resources/static/img/cards/netrunner-$title.png"
     fi
     ((i++))

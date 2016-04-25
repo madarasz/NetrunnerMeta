@@ -13,6 +13,7 @@ for title in "${titles[@]}"
 do
   mkdir "Cards/${title//%20/ }"
   mkdir "JSON/Cards/${title//%20/ }"
+  echo "Calculating card: $title"
   curl http://localhost:8080/Cards/$title/ > "Cards/${title//%20/ }/index.html"
   curl http://localhost:8080/JSON/Cards/$title/card.json > "JSON/Cards/${title//%20/ }/card.json"
 done
