@@ -568,3 +568,126 @@ function drawFactionChart(data, factions, elementid, options) {
     chart.draw(view, chartOptions);
     $('#'+elementid).removeClass('spinner');
 }
+
+function populateBuyersIds(data) {
+    data.sort(BuyerShorters.byDeckCount);
+    $.each(data, function(index, identity) {
+        if (identity.allDeckCount > 0) {
+            $('#id-list').append($('<a>', {
+                class: 'list-group-item lgi-small',
+                text: ' ' + identity.title,
+                href: '/Buyers-Guide/identity/' + identity.title,
+                id: 'id-' + index
+            }).prepend($('<span>', {
+                class: 'icon-' + identity.faction
+            })));
+            if (identity.allDeckCount < 6) {
+                $('#id-' + index).prepend($('<span>', {
+                    class: 'fa fa-exclamation-triangle warn-badge badge',
+                    title: 'WARNING: low data',
+                    text: ' ',
+                    'aria-hidden': 'true',
+                    style: "color: darkred"
+                }));
+            }
+        }
+    });
+}
+
+function populateBuyersPacks(result, url, type, callback) {
+    $.ajax({
+        url: url,
+        dataType: "json",
+        async: true,
+        success: function (data) {
+            if (type === 'id') {
+                addToBuyersFromMDS(result, data.cards);
+            } else {
+                addToBuyers(result, data.mostUsedCards);
+                if (type === 'side') {
+                    populateBuyersIds(data.ids);
+                }
+            }
+            typeof callback === 'function' && callback.apply(this, arguments); // make callback if exists
+        }
+    });
+}
+
+function displayBuyersCards(data) {
+    data.sort(BuyerShorters.byScore);
+    $.each(data, function(index, packElement) {
+        if (index < 8) {
+            $("#cards").append($("<li>", {
+                text: packElement.pack
+            }).append($("<ul>", {
+                id: 'pack-' + index,
+                class: 'card-list'
+            })));
+
+            packElement.cards.sort(BuyerShorters.byScore);
+            $.each(packElement.cards, function (index2, cardElement) {
+                if (index2 < 6) {
+                    $("#pack-" + index).append($("<li>", {
+                        class: 'icon-' + cardElement.faction + ' card-list'
+                    }).append($("<a>", {
+                        text: cardElement.title,
+                        href: "/Cards/" + cardElement.title + "/"
+                    })));
+                }
+            });
+        }
+    });
+    $('#cards').removeClass('spinner');
+}
+
+var BuyerShorters = {
+    byScore: function (a,b) {
+        return (b.score - a.score);
+    },
+    byDeckCount: function (a,b) {
+        return (b.allDeckCount - a.allDeckCount);
+    }
+};
+
+function addToBuyers(result, data) {
+    $.each(data, function(index, element) {
+        var found = false;
+        var score = element.topdeckfraction * element.topdeckfraction;
+        $.each(result, function(index2, element2) {
+            if (element2.pack === element.cardpacktitle) {
+                element2.score += score;
+                element2.cards.push({title: element.cardtitle, faction: element.faction, score: score});
+                found = true;
+                return true;
+            }
+        });
+        if (!found) {
+            result.push({pack: element.cardpacktitle, score: score, cards: [{title: element.cardtitle, faction: element.faction, score: score}]});
+        }
+
+    });
+}
+
+function addToBuyersFromMDS(result, data) {
+    $.each(data, function(index, element) {
+        var found = false;
+        var score = element.average * element.average / 9;
+        if (element.average > 0.1) {     // at least 0.1
+            $.each(result, function (index2, element2) {
+                if (element2.pack === element.cardpack) {
+                    element2.score += score;
+                    element2.cards.push({title: element.cardtitle, faction: element.faction, score: score});
+                    found = true;
+                    return true;
+                }
+            });
+            if (!found) {
+                result.push({
+                    pack: element.cardpack,
+                    score: score,
+                    cards: [{title: element.cardtitle, faction: element.faction, score: score}]
+                });
+            }
+        }
+    });
+}
