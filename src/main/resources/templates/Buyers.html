@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    <div class="container">
+        <div class="alert alert-warning">
+            <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+            Packs suggested here are based on statistics. Please seek advice from an experienced Netrunner player also before buying.
+        </div>
+        <h3 class="page-header">Buyers guide</h3>
+        <div class="row top-buffer">
+            <div class="col-md-6 col-xs-12">
+                <div id="general" class="hidden">
+                    <h4>Choose a side</h4>
+                    <div class="text-center">
+                        <br/><br/>
+                        <a href="/Buyers-Guide/side/corp" class="btn btn-primary btn-lg">Corporation</a>
+                        <a href="/Buyers-Guide/side/runner" class="btn btn-danger btn-lg">Runner</a>
+                    </div>
+                </div>
+                <div id="ids" class="hidden">
+                    <h4>Choose an identity</h4>
+                    <div id="id-list" class="spinner">
+                    </div>
+                </div>
+                <div id="identity" class="hidden">
+                    <h4>Chosen identity</h4>
+                    <div class="text-center">
+                        <br/>
+                        <img th:src="@{__${imgsrc}__}" class="card-big"/><br />
+                        <a th:href="@{/Cards/__${id}__/}">statistics of ID</a> -
+                        <a th:href="@{/MDSIdentity/Last%203%20aggregated/__${id}__}">deck drilldown of ID</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xs-12">
+                <h4>Popular packs</h4>
+                <ul id="cards" class="spinner"></ul>
+            </div>
+        </div>
+
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </div>
+    <div th:replace="fragments/head :: scripts"></div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        var dataGeneral=[], categories=[];
+
+        if ([[${id}]] !== null) {
+            $('#identity').removeClass('hidden');
+            dataGeneral.push({pack: [[${pack}]], score: 100, cards: [{title: [[${id}]], faction: [[${faction}]], score: 100}]});    // adding ID as card
+            populateBuyersPacks(dataGeneral, "/JSON/Identity/Last%203%20aggregated/" + [[${id}]], function () {
+                displayBuyersCards(dataGeneral)
+            })
+        } else if ([[${side}]] == 'corp') {
+            $('#ids').removeClass('hidden');
+            populateBuyersIds('/JSON/Tournament/corp/Last%203%20aggregated');
+            populateBuyersPacks(dataGeneral, "/JSON/Tournament/corp/Last%203%20aggregated", function () {
+                displayBuyersCards(dataGeneral)
+            })
+        } else if ([[${side}]] == 'runner') {
+            $('#ids').removeClass('hidden');
+            populateBuyersIds('/JSON/Tournament/runner/Last%203%20aggregated');
+            populateBuyersPacks(dataGeneral, "/JSON/Tournament/runner/Last%203%20aggregated", function () {
+                displayBuyersCards(dataGeneral)
+            })
+        } else {
+            $('#general').removeClass('hidden');
+            populateBuyersPacks(dataGeneral, "/JSON/Tournament/runner/Last%203%20aggregated", function () {
+                populateBuyersPacks(dataGeneral, "/JSON/Tournament/corp/Last%203%20aggregated", function () {
+                    displayBuyersCards(dataGeneral)
+                })
+            });
+        }
+
+        function populateBuyersIds(url) {
+            $.ajax({
+                url: url,
+                dataType: "json",
+                async: true,
+                success: function (data) {
+                    data.ids.sort(BuyerShorters.byDeckCount);
+                    $.each(data.ids, function(index, identity) {
+                        if (identity.allDeckCount > 0) {
+                            $('#id-list').append($('<a>', {
+                                class: 'list-group-item lgi-small',
+                                text: ' ' + identity.title,
+                                href: '/Buyers-Guide/identity/' + identity.title,
+                                id: 'id-' + index
+                            }).prepend($('<span>', {
+                                class: 'icon-' + identity.faction
+                            })));
+                            if (identity.allDeckCount < 6) {
+                                $('#id-' + index).prepend($('<span>', {
+                                    class: 'fa fa-exclamation-triangle warn-badge badge',
+                                    title: 'WARNING: low data',
+                                    text: ' ',
+                                    'aria-hidden': 'true',
+                                    style: "color: darkred"
+                                }));
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        function populateBuyersPacks(result, url, callback) {
+            $.ajax({
+                url: url,
+                dataType: "json",
+                async: true,
+                success: function (data) {
+                    if ([[${id}]] !== null) {
+                        addToBuyersFromMDS(result, data.cards);
+                    } else {
+                        addToBuyers(result, data.mostUsedCards);
+                    }
+                    typeof callback === 'function' && callback.apply(this, arguments); // make callback if exists
+                }
+            });
+        }
+
+        function displayBuyersCards(data) {
+            data.sort(BuyerShorters.byScore);
+            $.each(data, function(index, packElement) {
+                if (index < 8) {
+                    $("#cards").append($("<li>", {
+                        text: packElement.pack
+                    }).append($("<ul>", {
+                        id: 'pack-' + index,
+                        class: 'card-list'
+                    })));
+
+                    packElement.cards.sort(BuyerShorters.byScore);
+                    $.each(packElement.cards, function (index2, cardElement) {
+                        if (index2 < 6) {
+                            $("#pack-" + index).append($("<li>", {
+                                class: 'icon-' + cardElement.faction + ' card-list'
+                            }).append($("<a>", {
+                                text: cardElement.title,
+                                href: "/Cards/" + cardElement.title + "/"
+                            })));
+                        }
+                    });
+                }
+            });
+            $('#cards').removeClass('spinner');
+        }
+
+        var BuyerShorters = {
+            byScore: function (a,b) {
+                return (b.score - a.score);
+            },
+            byDeckCount: function (a,b) {
+                return (b.allDeckCount - a.allDeckCount);
+            }
+        };
+
+        function addToBuyers(result, data) {
+            $.each(data, function(index, element) {
+                var found = false;
+                var score = element.topdeckfraction * element.topdeckfraction;
+                $.each(result, function(index2, element2) {
+                    if (element2.pack === element.cardpacktitle) {
+                        element2.score += score;
+                        element2.cards.push({title: element.cardtitle, faction: element.faction, score: score});
+                        found = true;
+                        return true;
+                    }
+                });
+                if (!found) {
+                    result.push({pack: element.cardpacktitle, score: score, cards: [{title: element.cardtitle, faction: element.faction, score: score}]});
+                }
+
+            });
+        }
+
+        function addToBuyersFromMDS(result, data) {
+            $.each(data, function(index, element) {
+                var found = false;
+                var score = element.average * element.average / 9;
+                if (element.average > 0.1) {     // at least 0.1
+                    $.each(result, function (index2, element2) {
+                        if (element2.pack === element.cardpack) {
+                            element2.score += score;
+                            element2.cards.push({title: element.cardtitle, faction: element.faction, score: score});
+                            found = true;
+                            return true;
+                        }
+                    });
+                    if (!found) {
+                        result.push({
+                            pack: element.cardpack,
+                            score: score,
+                            cards: [{title: element.cardtitle, faction: element.faction, score: score}]
+                        });
+                    }
+                }
+            });
+        }
+
+        /*]]>*/
+    </script>
+    <div th:replace="fragments/analytics :: ga"></div>
+</body>
+</html>

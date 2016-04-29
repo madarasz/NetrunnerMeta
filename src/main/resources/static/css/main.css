@@ -98,6 +98,29 @@ a.anchor {
     color: red;
 }
 
+li.card-list {
+    list-style-type: none;
+}
+li.card-list::before {
+    padding: 0em 0.5em;
+    width: 2em;
+    display: inline-block;
+    text-align: center;
+}
+ul.card-list {
+    -webkit-padding-start: 0px;
+    padding-bottom: 10px;
+}
+
+.lgi-small {
+    padding: 5px 15px;
+}
+
+.warn-badge {
+    color: darkred;
+    background-color: white;
+}
+
 table.ordering {
     margin: auto;
 }

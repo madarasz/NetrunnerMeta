@@ -240,7 +240,7 @@ function drawTournamentBarChart(data, elementid) {
     var options = {
         'width': 555,
         'height':300,
-        'vAxis': {format:'#,#%'},
+        'vAxis': { format:'percent' },
         'hAxis': { textPosition: haxis }
     };
 
@@ -493,6 +493,7 @@ function loadFactionData() {
             // social
             facebookButton(document, 'script', 'facebook-jssdk');
             twitterTimeline(document,"script", "twitter-wjs");
+            window.scrollTo(0,0);
         }
     });
 }
