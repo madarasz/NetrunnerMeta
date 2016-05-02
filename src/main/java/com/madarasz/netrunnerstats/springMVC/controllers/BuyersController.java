@@ -44,12 +44,13 @@ public class BuyersController {
     public String getBuyersId(@PathVariable(value="id") String id, Map<String, Object> model) {
         Card card = cardRepository.findByTitle(id);
         if (card != null) {
-            model.put("pageTitle", "Buyers Guide - Know the Meta - Android: Netrunner");
+            model.put("pageTitle", "Buyer's Guide - Know the Meta - Android: Netrunner");
             model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
             model.put("id", id);
             model.put("imgsrc", card.getImageSrc());
             model.put("pack", card.getCardPack().getName());
             model.put("faction", card.getFaction_code());
+            model.put("side", card.isRunner() ? "runner" : "corp");
         }
         return "Buyers";
     }

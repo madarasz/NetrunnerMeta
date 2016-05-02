@@ -3,6 +3,7 @@ module.exports = {
         browser
             .url(browser.launchUrl)
             .waitForElementVisible('body', 3000)
+            .windowMaximize('current')
             .click('li.dropdown a.dropdown-toggle')         // click on tournament drilldown
             .waitForElementVisible('div#chart_div1 div', 3000) // runner chart loads
             .waitForElementVisible('div#chart_div2 div', 3000) // corp chart loads

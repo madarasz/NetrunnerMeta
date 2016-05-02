@@ -32,6 +32,9 @@ dirs=(
 "JSON/Tournament"
 "MDSIdentity"
 "Blog"
+"Buyers-Guide"
+"Buyers-Guide/side"
+"Buyers-Guide/identity"
 )
 for dir in "${dirs[@]}"
 do
@@ -44,6 +47,7 @@ do
     dirs=(
     "JSON/Cards/$side"
     "JSON/Tournament/$side"
+    "Buyers-Guide/side/$side"
     )
     for dir in "${dirs[@]}"
     do
@@ -73,6 +77,9 @@ mv soon soon.html
 mv 404 404.html
 mv Info Info.html
 curl http://localhost:8080/Cards > Cards/index.html
+curl http://localhost:8080/Buyers-Guide > Buyers-Guide/index.html
+curl http://localhost:8080/Buyers-Guide/side/corp > Buyers-Guide/side/corp/index.html
+curl http://localhost:8080/Buyers-Guide/side/runner > Buyers-Guide/side/runner/index.html
 
 # copy static folders
 # skip favicons
@@ -136,4 +143,14 @@ do
     echo "Calculating card usage in pack: $pack"
     curl http://localhost:8080/JSON/Cards/corp/$pack > "JSON/Cards/corp/${pack//%20/ }"
     curl http://localhost:8080/JSON/Cards/runner/$pack > "JSON/Cards/runner/${pack//%20/ }"
+done
+
+# for each ID in last 3
+idsrunner=( $(curl http://localhost:8080/JSON/Tournament/runner/Last%203%20aggregated | jq -r '.ids[].title' | sed 's/ /%20/g') )
+idscorp=( $(curl http://localhost:8080/JSON/Tournament/corp/Last%203%20aggregated | jq -r '.ids[].title' | sed 's/ /%20/g') )
+ids=( "${idsrunner[@]}" "${idscorp[@]}" )
+for identity in "${ids[@]}"
+do
+    mkdir "Buyers-Guide/identity/${identity//%20/ }"
+    curl http://localhost:8080/Buyers-Guide/identity/$identity > "Buyers-Guide/identity/${identity//%20/ }/index.html"
 done
