@@ -7,7 +7,11 @@
     <div class="container">
         <div class="page-header">
             <h3><a th:href="@{/DPStats/__${DPname}__#decks}"><span th:text="${DPname}"></span></a> > </h3>
-            <h4><a th:href="@{/Cards/__${identity}__/}"><span th:text="${identity}"></span></a> - <span id="deck_number"></span> decks</h4>
+            <h4>
+                <a th:href="@{/Cards/__${identity}__/}" id="title-id" class="hidden"><span th:text="${identity}"></span></a>
+                <span th:text="${#strings.capitalize(faction)}" id="title-faction" class="hidden"></span>
+                - <span id="deck_number"></span> decks
+            </h4>
         </div>
 
         <!--MDS and decklist-->
@@ -18,25 +22,28 @@
                 <div class="more-padding">
                     <small>
                         <div class="row">
-                            <div class="col-xs-6">
+                            <div class="col-xs-4">
                                 <span class="glyphicon glyphicon-one-fine-star"></span> top deck<br />
                                 <span class="glyphicon glyphicon-one-fine-dot"></span> non-top deck
                             </div>
-                            <div class="col-xs-6 hidden" id="last3">
-                                <span class="glyphicon glyphicon-stop last3-1"></span>
-                                <a th:href="@{/MDSIdentity/__${cardpools[0]}__/__${identity}__}">
-                                    <span th:text="${cardpools[0]}"></span>
-                                </a>
-                                <br/>
-                                <span class="glyphicon glyphicon-stop last3-2"></span>
-                                <a th:href="@{/MDSIdentity/__${cardpools[1]}__/__${identity}__}">
-                                    <span th:text="${cardpools[1]}"></span>
-                                </a>
-                                <br/>
-                                <span class="glyphicon glyphicon-stop last3-3"></span>
-                                <a th:href="@{/MDSIdentity/__${cardpools[2]}__/__${identity}__}">
-                                    <span th:text="${cardpools[2]}"></span>
-                                </a>
+                            <div class="col-xs-8">
+                                <div class="hidden" id="last3">
+                                    <span class="glyphicon glyphicon-stop last3-1"></span>
+                                    <a th:href="@{/MDSIdentity/__${cardpools[0]}__/__${identity}__}">
+                                        <span th:text="${cardpools[0]}"></span>
+                                    </a>
+                                    <br/>
+                                    <span class="glyphicon glyphicon-stop last3-2"></span>
+                                    <a th:href="@{/MDSIdentity/__${cardpools[1]}__/__${identity}__}">
+                                        <span th:text="${cardpools[1]}"></span>
+                                    </a>
+                                    <br/>
+                                    <span class="glyphicon glyphicon-stop last3-3"></span>
+                                    <a th:href="@{/MDSIdentity/__${cardpools[2]}__/__${identity}__}">
+                                        <span th:text="${cardpools[2]}"></span>
+                                    </a>
+                                </div>
+                                <div class="hidden" id="legend"></div>
                             </div>
                         </div>
                         <div class="row top-buffer">
@@ -63,7 +70,7 @@
         <!--Average card usage stats-->
         <div class="row">
             <div class="col-md-6 col-xs-12">
-                <h4>Average card usage in identity</h4>
+                <h4>Average card usage in <span th:text="${type}"></span></h4>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -122,15 +129,18 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-        var mdsTooltips = [], mdsData,
-            filter = encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${identity}]]);
+        var mdsTooltips = [], mdsData, filter, ids = [];
+
+        if ([[${type}]] === 'identity') {
+            $('#title-id').removeClass('hidden');
+            filter = "Identity/" + encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${identity}]]);
+        } else {
+            $('#title-faction').removeClass('hidden');
+            filter = "Faction/" + encodeURIComponent([[${DPname}]]) + "/" + encodeURIComponent([[${faction}]]);
+        }
 
         google.load('visualization', '1.0', {'packages':['corechart']});
         google.setOnLoadCallback(populateMDSPage(filter));
-
-        if ([[${DPname}]] === "Last 3 aggregated") {
-            $('#last3').removeClass("hidden");
-        }
 
         $(window).resize(function(){
             drawMDSChart(url, tooltipurl);
@@ -138,7 +148,7 @@
 
         function populateMDSPage(filter) {
             $.ajax({
-                url: "/JSON/Identity/" + filter,
+                url: "/JSON/" + filter,
                 dataType: "json",
                 async: true,
                 success: function(data) {
@@ -150,28 +160,70 @@
                     mdsData.addColumn({type: 'string', role: 'style'});
                     mdsData.addColumn({type: 'string', role: 'tooltip'});
 
+                    // precalculate identities and color for faction
+                    if ([[${type}]] === 'faction') {
+                        $.each(data.decks, function(index, element) {
+                            addIdentityToMDS(element.identity, ids);
+                        });
+                        ids.sort(function (a,b) {
+                            return (b.count - a.count);
+                        });
+
+                        $.each(ids, function(index, element) {
+                           element.color =  getIDcolor([[${faction}]], index, ids.length-1);
+                           $('#legend').append($('<span>', {
+                               class: index == 0 ? 'glyphicon glyphicon-unchecked' : 'glyphicon glyphicon-stop',
+                               style: index == 0 ? 'color: black' : 'color: ' + element.color
+                           }), $('<a>', {
+                               href: '/MDSIdentity/' + [[${DPname}]] + '/' + element.identity,
+                               text: element.identity + ' (' + element.count + ')'
+                           }), $('<br>'));
+                        });
+                        $('#legend').removeClass('hidden');
+                    } else if ([[${DPname}]] === "Last 3 aggregated") {
+                        var cardpools = [[${cardpools}]];
+                        for (i=0; i < 3; i++) {
+                            $('#legend').append($('<span>', {
+                                class: 'glyphicon glyphicon-stop',
+                                style: 'color: ' + getIDcolor([[${faction}]], i+1, 4)
+                            }), $('<a>', {
+                                href: '/MDSIdentity/' + cardpools[i] + '/' + [[${identity}]],
+                                text: cardpools[i]
+                            }), $('<br>'));
+                        }
+                        $('#legend').removeClass('hidden');
+                    }
+
                     $.each(data.decks, function(index, element) {
                         // determine color
-                        var color = "#3769cd";
-                        if ([[${DPname}]] === "Last 3 aggregated") {
-                            switch (element.cardpool) {
-                                case [[${cardpools[0]}]]:
-                                    color = "#3769cd";
-                                    break;
-                                case [[${cardpools[1]}]]:
-                                    color = "#cd3737";
-                                    break;
-                                case [[${cardpools[2]}]]:
-                                    color = "#cd9637";
-                                    break;
+                        var color, size, stroke;
+                        if ([[${type}]] === 'faction') {
+                            color = findIdColor(ids, element.identity);
+                            size = (element.topdeck == true ? 6 : 4);
+                            stroke = '#000';
+                        } else {
+                            color = "#3769cd";
+                            size = (element.topdeck == true ? 8 : 5);
+                            stroke = '#FFF';
+                            if ([[${DPname}]] === "Last 3 aggregated") {
+                                switch (element.cardpool) {
+                                    case [[${cardpools[0]}]]:
+                                        color = getIDcolor([[${faction}]], 1, 4);
+                                        break;
+                                    case [[${cardpools[1]}]]:
+                                        color = getIDcolor([[${faction}]], 2, 4);
+                                        break;
+                                    case [[${cardpools[2]}]]:
+                                        color = getIDcolor([[${faction}]], 3, 4);
+                                        break;
+                                }
                             }
                         }
                         // shape and size
-                        var shape = (element.topdeck == true ? "star" : "circle"),
-                            size = (element.topdeck == true ? 8 : 5);
+                        var shape = (element.topdeck == true ? "star" : "circle");
                         // add point
                         mdsData.addRow([element.x, element.y,
-                            'point { size: ' + size + '; shape-type: ' + shape + '; fill-color: ' + color + '; stroke-color: #FFFFFF;}',
+                            'point { size: ' + size + '; shape-type: ' + shape + '; fill-color: ' + color + '; stroke-color: ' + stroke + ';}',
                             element.digest]);
                         // add tooltip
                         mdsTooltips.push({htmlDigest: element.htmlDigest});
@@ -182,6 +234,85 @@
                     populateCardTable(data.cards, '#average-table2', 0, 'icebreaker program barrier code gate sentry mythic trap');
                 }
             })
+        }
+
+        function addIdentityToMDS(identity, result) {
+            var found = false;
+            $.each(result, function(index, element) {
+                if (element.identity == identity) {
+                    element.count++;
+                    found = true;
+                }
+            });
+            if (found == false) {
+                result.push({identity: identity, count: 1, color: ''});
+            }
+        }
+
+        function findIdColor(data, id) {
+            var result;
+            $.each(data, function(index, element) {
+               if (element.identity == id) {
+                   result = element.color;
+                   return true;
+               }
+            });
+            return result;
+        }
+
+        function hslToRgb(h, s, l){
+            var r, g, b;
+
+            if(s == 0){
+                r = g = b = l; // achromatic
+            }else{
+                var hue2rgb = function hue2rgb(p, q, t){
+                    if(t < 0) t += 1;
+                    if(t > 1) t -= 1;
+                    if(t < 1/6) return p + (q - p) * 6 * t;
+                    if(t < 1/2) return q;
+                    if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+
+                var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                var p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+
+            return '#' + ('00' + Math.round(r * 255).toString(16)).substr(-2) +
+                    ('00' + Math.round(g * 255).toString(16)).substr(-2) +
+                    ('00' + Math.round(b * 255).toString(16)).substr(-2);
+        }
+
+        function getIDcolor(faction, index, count) {
+            switch (faction) {
+                case 'shaper':
+                    return hslToRgb(120 / 360, 0.61, (count-index)/count);
+                    break;
+                case 'anarch':
+                    return hslToRgb(16 / 360, 1, (count-index)/count);
+                    break;
+                case 'criminal':
+                    return hslToRgb(225 / 360, 0.57, (count-index)/count);
+                    break;
+                case 'haas-bioroid':
+                    return hslToRgb(271 / 360, 0.76, (count-index)/count);
+                    break;
+                case 'weyland-consortium':
+                    return hslToRgb(120 / 360, 1, (count-index)/count);
+                    break;
+                case 'jinteki':
+                    return hslToRgb(348 / 360, 0.83, (count-index)/count);
+                    break;
+                case 'nbn':
+                    return hslToRgb(33 / 360, 1, (count-index)/count);
+                    break;
+                default:
+                    return hslToRgb(0, 0, 0.15 + (count-index)/count);
+            }
         }
 
         /*]]>*/

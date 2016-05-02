@@ -25,10 +25,20 @@ public interface DeckRepository extends GraphRepository<Deck>, RelationshipOpera
             "RETURN d")
     List<Deck> filterByIdentityAndCardPool(String title, String cardpoolname);
 
+    @Query("MATCH (i:Card {faction_code: {0}})<-[:IDENTITY]-(d:Deck)<-[:IS_DECK]-(:Standing)" +
+            "-[:IN_TOURNAMENT]->(:Tournament)-[:POOL]->(p:CardPack {name: {1}}) " +
+            "RETURN d")
+    List<Deck> filterByFactionAndCardPool(String faction, String cardpoolname);
+
     @Query("MATCH (i:Card {title: {0}})<-[:IDENTITY]-(d:Deck)<-[:IS_DECK]-(s:Standing {topdeck: true})" +
             "-[:IN_TOURNAMENT]->(:Tournament)-[:POOL]->(p:CardPack {name: {1}}) " +
             "RETURN d")
     List<Deck> filterTopByIdentityAndCardPool(String title, String cardpoolname);
+
+    @Query("MATCH (i:Card {faction_code: {0}})<-[:IDENTITY]-(d:Deck)<-[:IS_DECK]-(s:Standing {topdeck: true})" +
+            "-[:IN_TOURNAMENT]->(:Tournament)-[:POOL]->(p:CardPack {name: {1}}) " +
+            "RETURN d")
+    List<Deck> filterTopByFactionAndCardPool(String faction, String cardpoolname);
 
     @Query("MATCH (i:Card {title: {0}})<-[:IDENTITY]-(d:Deck)<-[:IS_DECK]-(:Standing)" +
             "-[:IN_TOURNAMENT]->(:Tournament)-[:POOL]->(p:CardPack {name: {1}}) " +

@@ -182,6 +182,50 @@ public class Statistics {
         return result;
     }
 
+    /**
+     * Generate multidimensional scaling for faction and cardpool legality
+     * @param factionName filter for faction
+     * @param cardpackName filter for cardpool
+     * @return IdentityMDS
+     */
+    public Set<MDSEntry> getPackMathFaction(String factionName, String cardpackName) {
+        StopWatch stopwatch = new StopWatch();
+        stopwatch.start();
+
+        Set<MDSEntry> result = new HashSet<>();
+        ArrayList<Deck> decks = new ArrayList<>(deckRepository.filterByFactionAndCardPool(factionName, cardpackName));
+        ArrayList<Deck> topdecks = new ArrayList<>(deckRepository.filterTopByFactionAndCardPool(factionName, cardpackName));
+
+        ArrayList<String> topURLs = new ArrayList<>();
+        for (Deck topdeck : topdecks) {
+            topURLs.add(topdeck.getUrl());
+        }
+
+        if (decks.size() > 0) {
+            double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
+            double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
+            for (int i = 0; i < decks.size(); i++) {
+                // NaN fix
+                scaling[0][i] = NaNFix(scaling[0][i]);
+                scaling[1][i] = NaNFix(scaling[1][i]);
+                Deck deck = decks.get(i);
+
+                MDSEntry mds = new MDSEntryFaction(scaling[0][i], scaling[1][i], deck.getName(), deck.getUrl(),
+                        topURLs.contains(decks.get(i).getUrl()),
+                        deckDigest.shortHtmlDigest(deck), deckDigest.htmlDigest(deck), deckDigest.digest(deck),
+                        deck.getIdentity().getTitle());
+                result.add(mds);
+
+                logger.debug(String.format("\"%s\",\"%f\",\"%f\"", decks.get(i).getUrl(), scaling[0][i], scaling[1][i]));
+            }
+        }
+        stopwatch.stop();
+        logger.debug("*********************************************************************");
+        logger.info(String.format("* calculating MDS Statistics: %s - %s (%.3f sec)", cardpackName, factionName,
+                stopwatch.getTotalTimeSeconds()));
+        return result;
+    }
+
 
     /**
      * Generates cardpool statistics: deck number, ranking number, tournament number per cardpool
@@ -358,6 +402,65 @@ public class Statistics {
                     stopwatch.getTotalTimeSeconds()));
             identityAverageRepository.save(result);
         }
+        return result;
+    }
+
+    /**
+     * Calculates average card usage statistics for faction and cardpool.
+     * @param faction faction title
+     * @param cardpool cardpool name
+     * @return IdentityAverage
+     */
+    public IdentityAverage getFactionAverage(String faction, String cardpool) {
+//        IdentityAverage result = identityAverageRepository.findIdentityCardPool(faction, cardpool);
+//        if (result == null) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
+            List<Deck> decks = new ArrayList<>();
+
+            // check is last 3 is requested
+            int topdecknum = 0;
+            decks = deckRepository.filterByFactionAndCardPool(faction, cardpool);
+            topdecknum = deckRepository.countTopByCardPoolAndFaction(cardpool, faction);
+            Set<Card> cards = new HashSet<>();
+            int decknum = decks.size();
+            IdentityAverage result = new IdentityAverage(faction, cardpool, decknum, topdecknum);
+
+            // get all used cards
+            for (Deck deck : decks) {
+                for (DeckHasCard card : deck.getCards()) {
+                    if (!cards.contains(card.getCard())) {
+                        cards.add(card.getCard());
+                    }
+                }
+            }
+
+            // examine all used cards
+            for (Card card : cards) {
+                int used = 0;
+                int sumused = 0;
+                String cardcode = card.getCode();
+                for (Deck deck : decks) {
+                    for (DeckHasCard deckHasCard : deck.getCards()) {
+                        if (cardcode.equals(deckHasCard.getCard().getCode())) {
+                            used++;
+                            sumused += deckHasCard.getQuantity();
+                        }
+                    }
+                }
+                CardAverage cardAverage = new CardAverage(card,
+                        String.format("%.1f%%", (double) used / decknum * 100),
+                        String.format("%.2f", (double) sumused / decknum),
+                        String.format("%.2f", (double) sumused / used));
+                result.addCard(cardAverage);
+            }
+
+            result.addDecks(getPackMathFaction(faction, cardpool));
+            stopwatch.stop();
+            logger.info(String.format("Saving deck averages: %s - %s (%.3f)", faction, cardpool,
+                    stopwatch.getTotalTimeSeconds()));
+            identityAverageRepository.save(result);
+//        }
         return result;
     }
 
