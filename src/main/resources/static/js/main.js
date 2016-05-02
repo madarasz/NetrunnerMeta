@@ -249,20 +249,60 @@ function drawTournamentBarChart(data, elementid) {
     $('#'+elementid).removeClass('spinner');
 }
 
-function listTournamentIdentities(data, elementid, linkurl) {
+String.prototype.capitalizeFirstLetter = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
+function listTournamentIdentities(data, elementid, linkurl, linkurlFaction) {
     data.sort(tournamentShorters.byAllDeck);
+
+    // gather factions
+    if  (linkurl.indexOf('Last%203%20aggregated') < 0) {
+        var factions = [], minifactions = ['adam', 'apex', 'sunny-lebeau'];
+        $.each(data, function(index, element) {
+            if ($.inArray(element.faction, minifactions) < 0) {
+                addIdentityToArray(element.faction, factions, element.allDeckCount);
+            }
+        });
+        factions.sort(function (a,b) {
+            return (b.count - a.count);
+        });
+        $.each(factions, function(index, element) {
+            $(elementid).append($('<a>', {
+                class: 'button-' + element.identity + ' list-group-item',
+                text: ' ' + element.identity.capitalizeFirstLetter(),
+                href: linkurlFaction + element.identity
+            }).prepend($('<span>', {
+                class: 'icon-' + element.identity
+            })).append($('<span>', {
+                class: 'badge',
+                text: element.count
+            })));
+        });
+    }
+
     $.each(data, function(index, element) {
         if (element.allDeckCount > 0) {
             $(elementid).append($('<a>', {
                 class: 'list-group-item',
-                text: element.title,
+                text: ' ' + element.title,
                 href: linkurl + element.title
-            }).append($('<span>', {
+            }).prepend($('<span>', {
+                class: 'icon-' + element.faction
+            })).append($('<span>', {
                 class: 'badge',
                 text: element.allDeckCount
             })));
         }
     });
+
+    // if last 3
+    if (linkurl.indexOf('Last%203%20aggregated') > -1) {
+        $(elementid).append($('<a>', {
+            class: 'list-group-item disabled',
+            text: 'faction deck drilldown is not supported here'
+        }));
+    }
     $(elementid).removeClass('spinner');
 }
 
@@ -385,7 +425,7 @@ function populateTournamentCharts(dpname) {
                 data.allStandingCount, data.topStandingCount, "title", "allStandingCount", "topStandingCount", tournamentShorters.byAllStanding);
             runnerCompareIdentityData = buildTournamentBarData(data.ids, runnerCompareIdentityData,
                 data.allStandingCount, data.topStandingCount, "title", "allStandingCount", "topStandingCount", tournamentShorters.byAllStanding);
-            listTournamentIdentities(data.ids, "#text_div1", "/MDSIdentity/" + dpname + "/");
+            listTournamentIdentities(data.ids, "#text_div1", "/MDSIdentity/" + dpname + "/", "/MDSFaction/" + dpname + "/");
             populateCardTable(data.ice, "#breakertable", 5);
             loadTournamentCardPoolTable(data.mostUsedCards.sort(tournamentShorters.byInTopDeck), "#runnertable2");
 
@@ -407,7 +447,7 @@ function populateTournamentCharts(dpname) {
                         data.allStandingCount, data.topStandingCount, "title", "allStandingCount", "topStandingCount", tournamentShorters.byAllStanding);
                     corpCompareIdentityData = buildTournamentBarData(data.ids, corpCompareIdentityData,
                         data.allStandingCount, data.topStandingCount, "title", "allStandingCount", "topStandingCount", tournamentShorters.byAllStanding);
-                    listTournamentIdentities(data.ids, "#text_div2", "/MDSIdentity/" + dpname + "/");
+                    listTournamentIdentities(data.ids, "#text_div2", "/MDSIdentity/" + dpname + "/", "/MDSFaction/" + dpname + "/");
                     populateCardTable(data.ice, "#icetable", 5);
                     loadTournamentCardPoolTable(data.mostUsedCards.sort(tournamentShorters.byInTopDeck), "#corptable2");
 
@@ -694,16 +734,17 @@ function addToBuyersFromMDS(result, data) {
 
 
 
-function addIdentityToMDS(identity, result) {
+function addIdentityToArray(identity, result, increment) {
     var found = false;
+    increment = increment || 1;
     $.each(result, function(index, element) {
         if (element.identity == identity) {
-            element.count++;
+            element.count += increment;
             found = true;
         }
     });
     if (found == false) {
-        result.push({identity: identity, count: 1, color: ''});
+        result.push({identity: identity, count: increment, color: ''});
     }
 }
 

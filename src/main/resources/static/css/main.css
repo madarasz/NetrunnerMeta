@@ -121,6 +121,18 @@ ul.card-list {
     background-color: white;
 }
 
+.list-group > a.disabled {
+    color: #999999;
+    font-style: italic;
+}
+.list-group > a.disabled:hover,
+.list-group > a.disabled:focus {
+    color: #999999;
+    text-decoration: none;
+    font-style: italic;
+    cursor: not-allowed;
+}
+
 table.ordering {
     margin: auto;
 }

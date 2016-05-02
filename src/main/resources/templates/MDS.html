@@ -163,7 +163,7 @@
                     // precalculate identities and color for faction
                     if ([[${type}]] === 'faction') {
                         $.each(data.decks, function(index, element) {
-                            addIdentityToMDS(element.identity, ids);
+                            addIdentityToArray(element.identity, ids);
                         });
                         ids.sort(function (a,b) {
                             return (b.count - a.count);

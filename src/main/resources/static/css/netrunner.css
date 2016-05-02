@@ -84,6 +84,49 @@
     color: darkgoldenrod;
 }
 
+.button-shaper {
+	background-color: #d6f5d6;
+}
+.button-shaper:hover {
+	background-color: #adebad !important;
+}
+.button-anarch {
+	background-color: #ffdacc;
+}
+.button-anarch:hover {
+	background-color: #ffb499 !important;
+}
+.button-criminal {
+	background-color: #d3dcf8;
+}
+.button-criminal:hover {
+	background-color: #a7b9f1 !important;
+}
+.button-nbn {
+	background-color: #ffe8cc;
+}
+.button-nbn:hover {
+	background-color: #ffd199 !important;
+}
+.button-jinteki {
+	background-color: #fbd0d9;
+}
+.button-jinteki:hover {
+	background-color: #f6a2b3 !important;
+}
+.button-weyland-consortium {
+	background-color: #cfc;
+}
+.button-weyland-consortium:hover {
+	background-color: #9f9 !important;
+}
+.button-haas-bioroid {
+	background-color: #e6d2f9;
+}
+.button-haas-bioroid:hover {
+	background-color: #cda5f3 !important;
+}
+
 /* on card icons */
 .icon-credit:before {
 	content: "\e600";
