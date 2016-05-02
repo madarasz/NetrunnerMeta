@@ -412,19 +412,18 @@ public class Statistics {
      * @return IdentityAverage
      */
     public IdentityAverage getFactionAverage(String faction, String cardpool) {
-//        IdentityAverage result = identityAverageRepository.findIdentityCardPool(faction, cardpool);
-//        if (result == null) {
+        IdentityAverage result = identityAverageRepository.findIdentityCardPool(faction, cardpool);
+        if (result == null) {
             StopWatch stopwatch = new StopWatch();
             stopwatch.start();
-            List<Deck> decks = new ArrayList<>();
 
             // check is last 3 is requested
             int topdecknum = 0;
-            decks = deckRepository.filterByFactionAndCardPool(faction, cardpool);
+            List<Deck> decks = deckRepository.filterByFactionAndCardPool(faction, cardpool);
             topdecknum = deckRepository.countTopByCardPoolAndFaction(cardpool, faction);
             Set<Card> cards = new HashSet<>();
             int decknum = decks.size();
-            IdentityAverage result = new IdentityAverage(faction, cardpool, decknum, topdecknum);
+            result = new IdentityAverage(faction, cardpool, decknum, topdecknum);
 
             // get all used cards
             for (Deck deck : decks) {
@@ -460,7 +459,7 @@ public class Statistics {
             logger.info(String.format("Saving deck averages: %s - %s (%.3f)", faction, cardpool,
                     stopwatch.getTotalTimeSeconds()));
             identityAverageRepository.save(result);
-//        }
+        }
         return result;
     }
 

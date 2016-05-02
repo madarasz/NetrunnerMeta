@@ -691,3 +691,84 @@ function addToBuyersFromMDS(result, data) {
         }
     });
 }
+
+
+
+function addIdentityToMDS(identity, result) {
+    var found = false;
+    $.each(result, function(index, element) {
+        if (element.identity == identity) {
+            element.count++;
+            found = true;
+        }
+    });
+    if (found == false) {
+        result.push({identity: identity, count: 1, color: ''});
+    }
+}
+
+function findIdColor(data, id) {
+    var result;
+    $.each(data, function(index, element) {
+        if (element.identity == id) {
+            result = element.color;
+            return true;
+        }
+    });
+    return result;
+}
+
+function hslToRgb(h, s, l){
+    var r, g, b;
+
+    if(s == 0){
+        r = g = b = l; // achromatic
+    }else{
+        var hue2rgb = function hue2rgb(p, q, t){
+            if(t < 0) t += 1;
+            if(t > 1) t -= 1;
+            if(t < 1/6) return p + (q - p) * 6 * t;
+            if(t < 1/2) return q;
+            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        };
+
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+
+    return '#' + ('00' + Math.round(r * 255).toString(16)).substr(-2) +
+        ('00' + Math.round(g * 255).toString(16)).substr(-2) +
+        ('00' + Math.round(b * 255).toString(16)).substr(-2);
+}
+
+function getIDcolor(faction, index, count) {
+    switch (faction) {
+        case 'shaper':
+            return hslToRgb(120 / 360, 0.61, (count-index)/count);
+            break;
+        case 'anarch':
+            return hslToRgb(16 / 360, 1, (count-index)/count);
+            break;
+        case 'criminal':
+            return hslToRgb(225 / 360, 0.57, (count-index)/count);
+            break;
+        case 'haas-bioroid':
+            return hslToRgb(271 / 360, 0.76, (count-index)/count);
+            break;
+        case 'weyland-consortium':
+            return hslToRgb(120 / 360, 1, (count-index)/count);
+            break;
+        case 'jinteki':
+            return hslToRgb(348 / 360, 0.83, (count-index)/count);
+            break;
+        case 'nbn':
+            return hslToRgb(33 / 360, 1, (count-index)/count);
+            break;
+        default:
+            return hslToRgb(0, 0, 0.15 + (count-index)/count);
+    }
+}
