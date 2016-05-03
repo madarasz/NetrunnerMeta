@@ -282,9 +282,7 @@ function listTournamentIdentities(data, elementid, linkurl, linkurlFaction) {
                 addIdentityToArray(element.faction, factions, element.allDeckCount);
             }
         });
-        factions.sort(function (a,b) {
-            return (b.count - a.count);
-        });
+        factions.sort(BuyerShorters.byCount);
         $.each(factions, function(index, element) {
             $(elementid).append($('<a>', {
                 class: 'button-' + element.identity + ' list-group-item',
@@ -603,9 +601,9 @@ function drawFactionChart(data, factions, elementid, options) {
     var chartOptions = {
         'height': 350,
         'curveType': 'function',
-        'vAxis': { format:'#,#%', viewWindowMode: 'explicit', viewWindow: { min: 0 } },
+        'vAxis': { format: 'percent', textPosition: 'out', viewWindowMode: 'pretty', viewWindow: { min: 0 } },
         'hAxis': { showTextEvery: 1, slantedText: 'true' },
-        'chartArea': { top: 10, bottom: 10, height: '70%' },
+        'chartArea': { top: 10, bottom: 70, height: '70%' },
         'legend': { position: 'right', maxLines: 6 },
         'series': color,
         'lineWidth': 3
@@ -635,9 +633,7 @@ function populateBuyersFactions(data) {
             addIdentityToArray(identity.faction, factions, identity.allDeckCount);
         }
     });
-    factions.sort(function (a,b) {
-        return (b.count - a.count);
-    });
+    factions.sort(BuyerShorters.byCount);
     // display factions
     $.each(factions, function(index, faction) {
         $('#faction-list').append($('<a>', {
@@ -747,6 +743,9 @@ var BuyerShorters = {
     },
     byDeckCount: function (a,b) {
         return (b.allDeckCount - a.allDeckCount);
+    },
+    byCount: function (a,b) {
+        return (b.count - a.count);
     }
 };
 
