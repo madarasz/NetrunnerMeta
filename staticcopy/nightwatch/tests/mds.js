@@ -25,5 +25,35 @@ module.exports = {
             .click("//div[@id='text_div2']/a[contains(@href,'Near-Earth')]")
             .validateMDS('corp')
             .end();
+    },
+    'MDS - anarch faction' : function (browser) {
+        browser
+            .useCss()
+            .url(browser.launchUrl)
+            .waitForElementVisible('body', 3000)
+            .windowMaximize('current')                          // maximize browser window
+            .useXpath()
+            .click("//div[@id='drilldowns']/a[2]")
+            .useCss()
+            .click("ul#tabs li a[href='#decks']")
+            .useXpath()
+            .click("//div[@id='text_div1']/a[contains(@href,'anarch')]")
+            .validateMDS('runner')
+            .end();
+    },
+    'MDS - haas-bioroid faction' : function (browser) {
+        browser
+            .useCss()
+            .url(browser.launchUrl)
+            .waitForElementVisible('body', 3000)
+            .windowMaximize('current')                          // maximize browser window
+            .useXpath()
+            .click("//div[@id='drilldowns']/a[2]")
+            .useCss()
+            .click("ul#tabs li a[href='#decks']")
+            .useXpath()
+            .click("//div[@id='text_div2']/a[contains(@href,'haas-bioroid')]")
+            .validateMDS('corp')
+            .end();
     }
 };
