@@ -1,10 +1,24 @@
 var runnerFactions = ['shaper', 'anarch', 'criminal',  'adam', 'apex', 'sunny-lebeau'],
-    corpFactions = ['jinteki', 'nbn', 'haas-bioroid', 'weyland-consortium'];
+    corpFactions = ['jinteki', 'nbn', 'haas-bioroid', 'weyland-consortium'],
+    minifactions = ['adam', 'apex', 'sunny-lebeau'];
 
 // enable popovers
 $(function () {
     $('[data-toggle="popover"]').popover();
 });
+
+function miniFactionToIdentity(faction) {
+    switch (faction) {
+        case 'adam':
+            return 'Adam: Compulsive Hacker';
+            break;
+        case 'apex':
+            return 'Apex: Invasive Predator';
+            break;
+        case 'sunny-lebeau':
+            return 'Sunny Lebeau: Security Specialist';
+    }
+}
 
 // convert faction_code to color code
 function factionCodeToColor(faction) {
@@ -251,16 +265,20 @@ function drawTournamentBarChart(data, elementid) {
 
 String.prototype.capitalizeFirstLetter = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
-}
+};
+
+String.prototype.capitalizeTitle = function() {
+    return this.replace(/[a-zA-Z]+/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+};
 
 function listTournamentIdentities(data, elementid, linkurl, linkurlFaction) {
     data.sort(tournamentShorters.byAllDeck);
 
     // gather factions
     if  (linkurl.indexOf('Last%203%20aggregated') < 0) {
-        var factions = [], minifactions = ['adam', 'apex', 'sunny-lebeau'];
+        var factions = [];
         $.each(data, function(index, element) {
-            if ($.inArray(element.faction, minifactions) < 0) {
+            if (element.allDeckCount > 0 && $.inArray(element.faction, minifactions) < 0) {
                 addIdentityToArray(element.faction, factions, element.allDeckCount);
             }
         });
@@ -270,7 +288,7 @@ function listTournamentIdentities(data, elementid, linkurl, linkurlFaction) {
         $.each(factions, function(index, element) {
             $(elementid).append($('<a>', {
                 class: 'button-' + element.identity + ' list-group-item',
-                text: ' ' + element.identity.capitalizeFirstLetter(),
+                text: ' ' + element.identity.capitalizeTitle(),
                 href: linkurlFaction + element.identity
             }).prepend($('<span>', {
                 class: 'icon-' + element.identity
@@ -609,10 +627,72 @@ function drawFactionChart(data, factions, elementid, options) {
     $('#'+elementid).removeClass('spinner');
 }
 
-function populateBuyersIds(data) {
-    data.sort(BuyerShorters.byDeckCount);
+function populateBuyersFactions(data) {
+    // gather factions
+    var factions = [];
     $.each(data, function(index, identity) {
         if (identity.allDeckCount > 0) {
+            addIdentityToArray(identity.faction, factions, identity.allDeckCount);
+        }
+    });
+    factions.sort(function (a,b) {
+        return (b.count - a.count);
+    });
+    // display factions
+    $.each(factions, function(index, faction) {
+        $('#faction-list').append($('<a>', {
+            class: 'list-group-item lgi-small button-'+faction.identity,
+            text: $.inArray(faction.identity, minifactions) < 0 ? ' ' + faction.identity.capitalizeTitle() : ' ' + miniFactionToIdentity(faction.identity),
+            href: $.inArray(faction.identity, minifactions) < 0 ? '/Buyers-Guide/faction/' + faction.identity : '/Buyers-Guide/identity/' + miniFactionToIdentity(faction.identity),
+            id: 'faction-' + index
+        }).prepend($('<span>', {
+            class: 'icon-' + faction.identity
+        })));
+        if (faction.count < 6) {
+            $('#faction-' + index).prepend($('<span>', {
+                class: 'fa fa-exclamation-triangle warn-badge badge',
+                title: 'WARNING: low data',
+                text: ' low data',
+                'aria-hidden': 'true',
+                style: "color: darkred"
+            }));
+        }
+    });
+}
+
+function populateBuyersPacks(result, url, type, callback, url2, faction) {
+    $.ajax({
+        url: url,
+        dataType: "json",
+        async: true,
+        success: function (data) {
+            if (type === 'general' || type === 'side') {
+                addToBuyers(result, data.mostUsedCards);
+                if (type === 'side') {
+                    populateBuyersFactions(data.ids);
+                }
+            } else {
+                addToBuyersFromMDS(result, data.cards);
+                if (type === 'faction') {
+                    $.ajax({
+                        url: url2,
+                        dataType: "json",
+                        async: true,
+                        success: function (data) {
+                            populateBuyersIds(data.ids, faction);
+                        }
+                    });
+                }
+            }
+            typeof callback === 'function' && callback.apply(this, arguments); // make callback if exists
+        }
+    });
+}
+
+function populateBuyersIds(data, faction) {
+    data.sort(BuyerShorters.byDeckCount);
+    $.each(data, function(index, identity) {
+        if (identity.faction === faction && identity.allDeckCount > 0) {
             $('#id-list').append($('<a>', {
                 class: 'list-group-item lgi-small',
                 text: ' ' + identity.title,
@@ -625,30 +705,11 @@ function populateBuyersIds(data) {
                 $('#id-' + index).prepend($('<span>', {
                     class: 'fa fa-exclamation-triangle warn-badge badge',
                     title: 'WARNING: low data',
-                    text: ' ',
+                    text: ' low data',
                     'aria-hidden': 'true',
                     style: "color: darkred"
                 }));
             }
-        }
-    });
-}
-
-function populateBuyersPacks(result, url, type, callback) {
-    $.ajax({
-        url: url,
-        dataType: "json",
-        async: true,
-        success: function (data) {
-            if (type === 'id') {
-                addToBuyersFromMDS(result, data.cards);
-            } else {
-                addToBuyers(result, data.mostUsedCards);
-                if (type === 'side') {
-                    populateBuyersIds(data.ids);
-                }
-            }
-            typeof callback === 'function' && callback.apply(this, arguments); // make callback if exists
         }
     });
 }

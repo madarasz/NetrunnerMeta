@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -24,6 +25,8 @@ public class BuyersController {
     @Autowired
     CardRepository cardRepository;
 
+    final private String[] corpFactions = {"nbn", "jinteki", "haas-bioroid", "weyland-consortium"};
+
     // html output
     @RequestMapping(value="/Buyers-Guide", method = RequestMethod.GET)
     public String getBuyers(Map<String, Object> model) {
@@ -37,6 +40,15 @@ public class BuyersController {
         model.put("pageTitle", "Buyers Guide - Know the Meta - Android: Netrunner");
         model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         model.put("side", side);
+        return "Buyers";
+    }
+
+    @RequestMapping(value="/Buyers-Guide/faction/{faction}", method = RequestMethod.GET)
+    public String getBuyersFaction(@PathVariable(value="faction") String faction, Map<String, Object> model) {
+        model.put("pageTitle", "Buyers Guide - Know the Meta - Android: Netrunner");
+        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
+        model.put("faction", faction);
+        model.put("side", Arrays.asList(corpFactions).contains(faction) ? "corp" : "runner");
         return "Buyers";
     }
 

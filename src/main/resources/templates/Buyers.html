@@ -16,13 +16,21 @@
                     <h4>Choose a side</h4>
                     <div class="text-center">
                         <br/><br/>
-                        <a href="/Buyers-Guide/side/corp" class="btn btn-primary btn-lg">Corporation</a>
-                        <a href="/Buyers-Guide/side/runner" class="btn btn-danger btn-lg">Runner</a>
+                        <a th:href="@{/Buyers-Guide/side/corp}" class="btn btn-primary btn-lg">Corporation</a>
+                        <a th:href="@{/Buyers-Guide/side/runner}" class="btn btn-danger btn-lg">Runner</a>
+                    </div>
+                </div>
+                <div id="factions" class="hidden">
+                    <h4>
+                        <a href="/Buyers-Guide"><i class="fa fa-arrow-circle-left" title="back"></i></a>
+                        Choose a faction
+                    </h4>
+                    <div id="faction-list" class="spinner">
                     </div>
                 </div>
                 <div id="ids" class="hidden">
                     <h4>
-                        <a href="/Buyers-Guide"><i class="fa fa-arrow-circle-left" title="back"></i></a>
+                        <a th:href="@{/Buyers-Guide/side/__${side}__}"><i class="fa fa-arrow-circle-left" title="back"></i></a>
                         Choose an identity
                     </h4>
                     <div id="id-list" class="spinner">
@@ -30,7 +38,8 @@
                 </div>
                 <div id="identity" class="hidden">
                     <h4>
-                        <a th:href="@{/Buyers-Guide/side/__${side}__/}"><i class="fa fa-arrow-circle-left" title="back"></i></a>
+                        <a th:href="@{/Buyers-Guide/faction/__${faction}__/}"><i class="fa fa-arrow-circle-left hidden" title="back" id="link-faction"></i></a>
+                        <a th:href="@{/Buyers-Guide/side/__${side}__/}"><i class="fa fa-arrow-circle-left hidden" title="back" id="link-side"></i></a>
                         Chosen identity
                     </h4>
                     <div class="text-center">
@@ -62,12 +71,22 @@
 
         if ([[${id}]] !== null) {
             $('#identity').removeClass('hidden');
+            if ($.inArray([[${faction}]], minifactions) < 0) {
+                $('#link-faction').removeClass('hidden');
+            } else {
+                $('#link-side').removeClass('hidden');
+            }
             dataGeneral.push({pack: [[${pack}]], score: 100, cards: [{title: [[${id}]], faction: [[${faction}]], score: 100}]});    // adding ID as card
             populateBuyersPacks(dataGeneral, "/JSON/Identity/Last%203%20aggregated/" + [[${id}]], 'id', function () {
                 displayBuyersCards(dataGeneral)
             })
-        } else if ([[${side}]] !== null) {
+        } else if ([[${faction}]] !== null) {
             $('#ids').removeClass('hidden');
+            var cardpools = [[${cardpools}]];
+            populateBuyersPacks(dataGeneral, "/JSON/Faction/" + cardpools[0] + "/" + [[${faction}]], 'faction', function () {
+                displayBuyersCards(dataGeneral)}, "/JSON/Tournament/" + [[${side}]] + "/Last%203%20aggregated", [[${faction}]])
+        } else if ([[${side}]] !== null) {
+            $('#factions').removeClass('hidden');
             populateBuyersPacks(dataGeneral, "/JSON/Tournament/" + [[${side}]] + "/Last%203%20aggregated", 'side', function () {
                 displayBuyersCards(dataGeneral)
             })
