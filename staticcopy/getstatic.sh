@@ -29,11 +29,14 @@ dirs=(
 "DPStats"
 "JSON/Cards"
 "JSON/Identity"
+"JSON/Faction"
 "JSON/Tournament"
 "MDSIdentity"
+"MDSFaction"
 "Blog"
 "Buyers-Guide"
 "Buyers-Guide/side"
+"Buyers-Guide/faction"
 "Buyers-Guide/identity"
 )
 for dir in "${dirs[@]}"
@@ -100,6 +103,14 @@ cp ../../src/main/resources/static/img/blog/* static/img/blog/
 cp ../../src/main/resources/static/img/cards/* static/img/cards/
 
 packs=( $(curl http://localhost:8080/JSON/Cardpool | jq -r '.[].title' | sed 's/ /%20/g') "Last%203%20aggregated" )
+factions=( "anarch" "criminal" "shaper" "nbn" "jinteki" "haas-bioroid" "weyland-consortium")
+
+# for each faction
+for faction in "${factions[@]}"
+do
+    mkdir "Buyers-Guide/faction/${faction//%20/ }"
+    curl http://localhost:8080/Buyers-Guide/faction/$faction > "Buyers-Guide/faction/${faction//%20/ }/index.html"
+done
 
 # for each pack
 for pack in "${packs[@]}"
@@ -121,7 +132,9 @@ do
     curl http://localhost:8080/DPStats/$pack > "DPStats/${pack//%20/ }/index.html"
 
     mkdir "MDSIdentity/${pack//%20/ }"
+    mkdir "MDSFaction/${pack//%20/ }"
     mkdir "JSON/Identity/${pack//%20/ }"
+    mkdir "JSON/Faction/${pack//%20/ }"
 
     # for each id
     idsrunner=( $(curl http://localhost:8080/JSON/Tournament/runner/$pack | jq -r '.ids[].title' | sed 's/ /%20/g') )
@@ -133,6 +146,14 @@ do
         echo "Calculating $identity for $pack"
         curl http://localhost:8080/MDSIdentity/$pack/$identity > "MDSIdentity/${pack//%20/ }/${identity//%20/ }/index.html"
         curl http://localhost:8080/JSON/Identity/$pack/$identity > "JSON/Identity/${pack//%20/ }/${identity//%20/ }"
+    done
+
+    # for each faction
+    for faction in "${factions[@]}"
+    do
+        mkdir "MDSFaction/${pack//%20/ }/${faction//%20/ }"
+        curl http://localhost:8080/MDSFaction/$pack/$faction > "MDSFaction/${pack//%20/ }/${faction//%20/ }/index.html"
+        curl http://localhost:8080/JSON/Faction/$pack/$faction > "JSON/Faction/${pack//%20/ }/${faction//%20/ }"
     done
 done
 
