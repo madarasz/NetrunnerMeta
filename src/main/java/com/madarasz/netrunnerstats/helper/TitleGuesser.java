@@ -97,6 +97,12 @@ public class TitleGuesser {
             case "Director Haas' Pet Project1" :
                 newtitle = "Director Haas' Pet Project";
                 break;
+            case "Palana Agroplex" :
+                newtitle = "Pālanā Agroplex";
+                break;
+            case "Doppelganger" :
+                newtitle = "Doppelgänger";
+                break;
         }
         return newtitle;
     }
