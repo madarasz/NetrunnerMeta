@@ -103,6 +103,12 @@ public class TitleGuesser {
             case "Doppelganger" :
                 newtitle = "Doppelgänger";
                 break;
+            case "Salems Hospitality" :
+                newtitle = "Salem's Hospitality";
+                break;
+            case "Rielle Kit Peddler: Transhuman" :
+                newtitle = "Rielle \"Kit\" Peddler: Transhuman";
+                break;
         }
         return newtitle;
     }

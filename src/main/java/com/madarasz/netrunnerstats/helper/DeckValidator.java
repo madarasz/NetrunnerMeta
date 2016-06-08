@@ -146,8 +146,9 @@ public class DeckValidator {
 
             // card quantity
             if ((quantity <1) ||
-                    ((!card.isLimited()) && (quantity > 3)) ||
-                    ((card.isLimited()) && (quantity > 1))) {
+                    ((!card.isLimited()) && (!card.getSubtype_code().contains("consumer-grade")) && (quantity > 3)) ||
+                    ((card.isLimited()) && (quantity > 1)) ||
+                    ((card.getSubtype_code().contains("consumer-grade")) && (quantity > 6))){
                 validity += String.format("ERROR - illegal card quantity - %dx %s\n", quantity, card.getTitle());
             }
 
