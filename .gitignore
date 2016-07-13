@@ -9,3 +9,4 @@ src/main/resources/static/img/cards/*
 ktm.concat*
 selenium-*
 reports
+staticcopy/cards.json

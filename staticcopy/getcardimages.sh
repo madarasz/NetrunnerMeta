@@ -12,7 +12,7 @@ do
     if [ ! -f "../src/main/resources/static/img/cards/netrunner-$title.png" ]; then
         image=${imagesrc[$i]}
         echo "Downloading card image: $title"
-        curl "https://netrunnerdb.com$image" > "../src/main/resources/static/img/cards/netrunner-$title.png"
+        curl "$image" > "../src/main/resources/static/img/cards/netrunner-$title.png"
     fi
     ((i++))
 done

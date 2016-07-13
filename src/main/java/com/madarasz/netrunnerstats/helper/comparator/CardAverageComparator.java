@@ -11,10 +11,6 @@ public class CardAverageComparator implements Comparator<CardAverage>{
 
     @Override
     public int compare(CardAverage c1, CardAverage c2) {
-        if (c1.getAverage().compareTo(c2.getAverage()) > 0) {
-            return -1;
-        } else {
-            return 1;
-        }
+        return  -c1.getAverage().compareTo(c2.getAverage());
     }
 }
