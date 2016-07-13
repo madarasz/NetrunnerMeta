@@ -29,6 +29,9 @@ public interface StandingRepository extends GraphRepository<Standing>, Relations
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing {topdeck: true})-[:IS_IDENTITY]->(c:Card {side_code: {1}}) RETURN COUNT(s)")
     int countTopByCardPoolSidecode(String cardpoolname, String side_code);
 
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_IDENTITY]->(c:Card {title: {1}}) RETURN COUNT(s)")
+    int countByCardPoolId(String cardpoolname, String identity);
+
     @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<-[:IN_TOURNAMENT]-(s:Standing {topdeck: true})-[:IS_IDENTITY]->(c:Card {title: {1}}) RETURN COUNT(s)")
     int countTopByCardPoolId(String cardpoolname, String identity);
 

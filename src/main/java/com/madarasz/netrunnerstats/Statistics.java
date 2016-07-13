@@ -586,19 +586,33 @@ public class Statistics {
                 Collections.reverse(cardPools);
                 CardCountComparator comparator = new CardCountComparator();
 
-                // deck numbers over time
+                // deck/standing numbers over time
                 for (CardPool cardPool : cardPools) {
                     String pack = cardPool.getTitle();
                     if (!card.getCardPack().later(cardPackRepository.findByName(pack))) {
-                        int decknum = deckRepository.countByCardpoolAndSide(pack, side);
-                        int topdecknum = deckRepository.countTopByCardpoolAndSide(pack, side);
-                        int using = deckRepository.countByCardpoolUsingCard(pack, cardTitle);
-                        int topusing = deckRepository.countTopByCardpoolUsingCard(pack, cardTitle);
-                        result.addOverTime(
-                                new CardUsage(cardTitle, pack, side, card.getFaction_code(), using, topusing,
-                                        (float) using / decknum, (float) topusing / topdecknum));
-                        logger.debug(String.format("%s - top:%,.3f%% all:%,.3f%%", pack,
-                                (float) topusing / topdecknum, (float) using / decknum));
+                        if (card.getType_code().equals("identity")) {
+                            // count standings for identities
+                            int standingnum = standingRepository.countByCardPoolSidecode(pack, side);
+                            int topstandingnum = standingRepository.countTopByCardPoolSidecode(pack, side);
+                            int using = standingRepository.countByCardPoolId(pack, cardTitle);
+                            int topusing = standingRepository.countTopByCardPoolId(pack, cardTitle);
+                            result.addOverTime(
+                                    new CardUsage(cardTitle, pack, side, card.getFaction_code(), using, topusing,
+                                            (float) using / standingnum, (float) topusing / topstandingnum));
+                            logger.debug(String.format("%s - top:%,.3f%% all:%,.3f%%", pack,
+                                    (float) topusing / topstandingnum, (float) using / standingnum));
+                        } else {
+                            // count decks for non-identity cards
+                            int decknum = deckRepository.countByCardpoolAndSide(pack, side);
+                            int topdecknum = deckRepository.countTopByCardpoolAndSide(pack, side);
+                            int using = deckRepository.countByCardpoolUsingCard(pack, cardTitle);
+                            int topusing = deckRepository.countTopByCardpoolUsingCard(pack, cardTitle);
+                            result.addOverTime(
+                                    new CardUsage(cardTitle, pack, side, card.getFaction_code(), using, topusing,
+                                            (float) using / decknum, (float) topusing / topdecknum));
+                            logger.debug(String.format("%s - top:%,.3f%% all:%,.3f%%", pack,
+                                    (float) topusing / topdecknum, (float) using / decknum));
+                        }
                     } else {
                         validPools.remove(cardPool);
                     }
@@ -619,9 +633,10 @@ public class Statistics {
                 int countcard = decks.size();
                 logger.debug(String.format("All decks: %d - deck using card: %d", alldeck, countcard));
 
-                // get top cards
+                // get top cards/identities
                 List<CardCount> counts = new ArrayList<>();
                 if (card.getType_code().equals("identity")) {
+                    // get top cards
                     List<Card> cards = new ArrayList<>();
                     for (Deck deck : decks) {
                         for (DeckHasCard deckHasCard : deck.getCards()) {
