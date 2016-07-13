@@ -84,9 +84,11 @@ public class CardController {
             if (card.getType_code().equals("identity")) {
                 model.put("identity", true);
                 model.put("toptitle", "Most used cards with this identity");
+                model.put("charttitle", "in standings");
             } else {
                 model.put("identity", false);
                 model.put("toptitle", "Used with identity");
+                model.put("charttitle", "usage in decks");
             }
             return "CardStat";
         }

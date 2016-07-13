@@ -27,7 +27,7 @@
             <!--Usage over time-->
             <div class="col-md-8 col-xs-12 text-center">
                 <h4>
-                    <span th:text="${title}"></span> usage in decks
+                    <span th:text="${title}"></span> <span th:text="${charttitle}"></span>
                     <ktm:tooltip place="bottom" text="at least one of this card in deck"/>
                 </h4>
                 <div id="overtime-chart" class="spinner"></div>
@@ -196,9 +196,9 @@
             overTimeChartOptions = {
                 'height': 350,
                 'curveType': 'none',
-                'vAxis': { format: 'percent', minValue: 0 },
+                'vAxis': { format: 'percent', textPosition: 'out', viewWindowMode: 'pretty', viewWindow: { min: 0 } },
                 'hAxis': { showTextEvery: 1, slantedText: 'true' },
-                'chartArea': { top: 10, bottom: 10, height: '70%'  },
+                'chartArea': { top: 10, bottom: 70, height: '70%'  },
                 'legend': { position: 'right', maxLines: 2 },
                 'lineWidth': 3
             };
