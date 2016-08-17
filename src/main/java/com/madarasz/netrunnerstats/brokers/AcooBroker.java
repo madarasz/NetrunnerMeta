@@ -357,6 +357,9 @@ public class AcooBroker {
             case "icon-stronger-together.jpg" :
                 identityName = "Haas-Bioroid: Stronger Together";
                 break;
+            case "harishchandra-icon.jpg" :
+                identityName = "Harishchandra Ent.: Where You're the Star";
+                break;
             case "icon-harmony-medtech.jpg" :
                 identityName = "Harmony Medtech: Biomedical Pioneer";
                 break;
@@ -399,6 +402,9 @@ public class AcooBroker {
             case "nasir-icon.jpg" :
                 identityName = "Nasir Meidan: Cyber Explorer";
                 break;
+            case "nbn-controlling-the-message-icon.png" :
+                identityName = "NBN: Controlling the Message";
+                break;
             case "icon-nbn-mn.jpg" :
                 identityName = "NBN: Making News";
                 break;
@@ -407,6 +413,9 @@ public class AcooBroker {
                 break;
             case "Near-earth-hub-icon.png" :
                 identityName = "Near-Earth Hub: Broadcast Center";
+                break;
+            case "nero-severn-icon.png" :
+                identityName = "Nero Severn: Information Broker";
                 break;
             case "icon-new-angeles-sol.png" :
                 identityName = "New Angeles Sol: Your News";
@@ -419,6 +428,9 @@ public class AcooBroker {
                 break;
             case "noise-icon.png" :
                 identityName = "Noise: Hacker Extraordinaire";
+                break;
+            case "null-whistleblower-icon.jpg" :
+                identityName = "Null: Whistleblower";
                 break;
             case "icon-palana.png" :
                 identityName = "Pālanā Foods: Sustainable Growth";

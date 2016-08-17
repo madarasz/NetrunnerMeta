@@ -549,6 +549,7 @@ public class Statistics {
         int result = 0;
         boolean count = false;
         for (CardPool currentPool : cardPools) {
+            logger.info(currentPool.getTitle() + currentPool.getCyclenumber() + ' ' + currentPool.getDpnumber());
             if (currentPool.getCyclenumber()*100 + currentPool.getDpnumber()
                     >= cardPack.getCyclenumber()*100 + cardPack.getNumber()) {
                 count = true;

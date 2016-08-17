@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,8 @@ public class BlogController {
     // html output
     @RequestMapping(value="/muchadmin/blog", method = RequestMethod.GET)
     public String getBlogAdmin(Map<String, Object> model) {
+        Map<String, Object> emptyparams = new HashMap<>();
+        template.query("MATCH (n:BlogEntry {url: ''}) DELETE n", emptyparams);
         model.put("pageTitle", "Know the Meta - Android: Netrunner");
         model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
         model.put("blogCount", template.count(BlogEntry.class));

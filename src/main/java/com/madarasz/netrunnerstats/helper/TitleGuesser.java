@@ -109,6 +109,9 @@ public class TitleGuesser {
             case "Rielle Kit Peddler: Transhuman" :
                 newtitle = "Rielle \"Kit\" Peddler: Transhuman";
                 break;
+            case "Controlling the Message" :
+                newtitle = "NBN: Controlling the Message";
+                break;
         }
         return newtitle;
     }
