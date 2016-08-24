@@ -474,6 +474,9 @@ public class AcooBroker {
             case "icon-weyland-BWBi.jpg" :
                 identityName = "Weyland Consortium: Because We Built It";
                 break;
+            case "icon-weyland-builder-of-nations.png" :
+                identityName = "Weyland Consortium: Builder of Nations";
+                break;
             case "icon-weyland-consortium-babw.jpg" :
                 identityName = "Weyland Consortium: Building a Better World";
                 break;
