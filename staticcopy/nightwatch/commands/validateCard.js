@@ -3,11 +3,15 @@ exports.command = function (type, callback) {
 
     client
         .useCss()
-        .waitForElementVisible('body', 3000)
-        .waitForElementVisible('div#overtime-chart div', 3000)     // card over time chart loads
-        .waitForElementVisible('tbody#combos tr td a', 3000)        // combo list loads
-        .waitForElementVisible('tbody#cards tr td a', 3000)         // identity list loads
-        .waitForElementVisible('ul#decks li ul li a', 3000);         // deck links load
+        .waitForElementVisible('body', 3000);
+
+    if (type !== 'unused') {
+        client
+            .waitForElementVisible('div#overtime-chart div', 3000)     // card over time chart loads
+            .waitForElementVisible('tbody#combos tr td a', 3000)        // combo list loads
+            .waitForElementVisible('tbody#cards tr td a', 3000)         // identity list loads
+            .waitForElementVisible('ul#decks li ul li a', 3000);         // deck links load
+    }
 
     if (type === 'id') {
         client

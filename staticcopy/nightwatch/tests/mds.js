@@ -7,7 +7,7 @@ module.exports = {
             .click('div#drilldowns a')
             .click("ul#tabs li a[href='#decks']")
             .useXpath()
-            .click("//div[@id='text_div1']/a[contains(@href,'Digital Tinker')]")
+            .click("//div[@id='text_div1']/a[not(contains(@class,'button-'))]")
             .validateMDS('runner')
             .end();
     },
@@ -22,11 +22,11 @@ module.exports = {
             .useCss()
             .click("ul#tabs li a[href='#decks']")
             .useXpath()
-            .click("//div[@id='text_div2']/a[contains(@href,'Near-Earth')]")
+            .click("//div[@id='text_div2']/a[not(contains(@class,'button-'))]")
             .validateMDS('corp')
             .end();
     },
-    'MDS - anarch faction' : function (browser) {
+    'MDS - runner faction' : function (browser) {
         browser
             .useCss()
             .url(browser.launchUrl)
@@ -37,11 +37,11 @@ module.exports = {
             .useCss()
             .click("ul#tabs li a[href='#decks']")
             .useXpath()
-            .click("//div[@id='text_div1']/a[contains(@href,'anarch')]")
+            .click("//div[@id='text_div1']/a[contains(@class,'button-')]")
             .validateMDS('runner')
             .end();
     },
-    'MDS - haas-bioroid faction' : function (browser) {
+    'MDS - corp faction' : function (browser) {
         browser
             .useCss()
             .url(browser.launchUrl)
@@ -52,7 +52,7 @@ module.exports = {
             .useCss()
             .click("ul#tabs li a[href='#decks']")
             .useXpath()
-            .click("//div[@id='text_div2']/a[contains(@href,'haas-bioroid')]")
+            .click("//div[@id='text_div2']/a[contains(@class,'button-')]")
             .validateMDS('corp')
             .end();
     }
