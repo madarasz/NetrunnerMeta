@@ -39,6 +39,9 @@ public class Operations {
     CardPackRepository cardPackRepository;
 
     @Autowired
+    CardCycleRepository cardCycleRepository;
+
+    @Autowired
     DeckRepository deckRepository;
 
     @Autowired
@@ -82,8 +85,10 @@ public class Operations {
      * Logs DB node, relationship count
      */
     public void logDBCount() {
-        logger.info(String.format("Cards: %d, CardPacks: %d, Decks: %d, Standings: %d, Tournaments: %d, Deck-card relations: %d",
-                template.count(Card.class), template.count(CardPack.class), template.count(Deck.class), template.count(Standing.class), template.count(Tournament.class),
+        logger.info(String.format("Cards: %d, CardPacks: %d, CardCycles: %d, Decks: %d, Standings: %d, Tournaments: %d, " +
+                        "Deck-card relations: %d",
+                template.count(Card.class), template.count(CardPack.class), template.count(CardCycle.class),
+                template.count(Deck.class), template.count(Standing.class), template.count(Tournament.class),
                 template.count(DeckHasCard.class)));
     }
 
@@ -108,14 +113,33 @@ public class Operations {
      * Loads card pack and card information to DB from NetrunnerDB
      */
     public void loadNetrunnerDB() {
+        // load and save card cycles
+        Set<CardCycle> allCardCycles = netrunnerDBBroker.readCycles();
+        int found = 0;
+        for (CardCycle cardCycle : allCardCycles) {
+            if (cardCycleRepository.findByName(cardCycle.getName()) == null) {
+                cardCycleRepository.save(cardCycle);
+                logger.trace("Found cycle: " + cardCycle.toString());
+                found++;
+            }
+        }
+        logger.info("Found new cycles: " + found);
+
         // load and save card packs
         Set<CardPack> allCardPacks = netrunnerDBBroker.readSets();
-        int found = 0;
+        found = 0;
         for (CardPack cardPack : allCardPacks) {
             if (cardPackRepository.findByCode(cardPack.getCode()) == null) {
                 cardPackRepository.save(cardPack);
                 logger.trace("Found pack: " + cardPack.toString());
                 found++;
+            }
+            // add pack to its cycle if necessary
+            CardCycle cycle = cardCycleRepository.findByCyclenumber(cardPack.getCyclenumber());
+            if (!cycle.getCardPacks().contains(cardPack)) {
+                cycle.addCardPack(cardPack);
+                cardCycleRepository.save(cycle);
+                logger.trace("Added pack to its cycle " + cardPack.toString());
             }
         }
         logger.info("Found new card packs: " + found);
