@@ -710,7 +710,7 @@ function populateBuyersIds(data, faction) {
     });
 }
 
-function displayBuyersCards(data) {
+function displayBuyersCards(data, callback) {
     data.sort(BuyerShorters.byScore);
     $.each(data, function(index, packElement) {
         if (index < 8) {
@@ -735,6 +735,7 @@ function displayBuyersCards(data) {
         }
     });
     $('#cards').removeClass('spinner');
+    typeof callback === 'function' && callback.apply(this, arguments); // make callback if exists
 }
 
 var BuyerShorters = {
@@ -872,4 +873,22 @@ function getIDcolor(faction, index, count) {
         default:
             return hslToRgb(0, 0, 0.15 + (count-index)/count);
     }
+}
+
+function displayAmazon(data, elementid) {
+    data.sort(BuyerShorters.byScore);
+    $.each(data, function(index, element) {
+        if (index < 8) {
+            $.ajax({
+                url: '/JSON/Cardpack/' + element.pack,
+                dataType: "json",
+                async: true,
+                success: function (data2) {
+                    if (data2.amazonHtml !== null) {
+                        $('#' + elementid + index).append(data2.amazonHtml);
+                    }
+                }
+            });
+        }
+    });
 }
