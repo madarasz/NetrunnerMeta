@@ -16,6 +16,8 @@ public class CardUsage {
     private String sidecode;
     private String faction;
     private String cardpacktitle;
+    private int dpnumber;
+    private int cyclenumber;
     private int indecks;
     private int intopdecks;
     private double deckfraction;
@@ -24,16 +26,21 @@ public class CardUsage {
     public CardUsage() {
     }
 
-    public CardUsage(String cardtitle, String cardpacktitle, String sidecode, String faction, int indecks, int intopdecks) {
+    public CardUsage(String cardtitle, String cardpacktitle, String sidecode, String faction,
+                     int indecks, int intopdecks, int dpnumber, int cyclenumber) {
         this.cardtitle = cardtitle;
         this.cardpacktitle = cardpacktitle;
         this.sidecode = sidecode;
         this.faction = faction;
         this.indecks = indecks;
         this.intopdecks = intopdecks;
+        this.dpnumber = dpnumber;
+        this.cyclenumber = cyclenumber;
     }
 
-    public CardUsage(String cardtitle, String cardpacktitle, String sidecode, String faction, int indecks, int intopdecks, double deckfraction, double topdeckfraction) {
+    public CardUsage(String cardtitle, String cardpacktitle, String sidecode, String faction,
+                     int indecks, int intopdecks, double deckfraction, double topdeckfraction,
+                     int dpnumber, int cyclenumber) {
         this.cardtitle = cardtitle;
         this.sidecode = sidecode;
         this.faction = faction;
@@ -42,6 +49,8 @@ public class CardUsage {
         this.intopdecks = intopdecks;
         this.deckfraction = deckfraction;
         this.topdeckfraction = topdeckfraction;
+        this.dpnumber = dpnumber;
+        this.cyclenumber = cyclenumber;
     }
 
     public String getCardtitle() {
@@ -74,5 +83,13 @@ public class CardUsage {
 
     public String getFaction() {
         return faction;
+    }
+
+    public int getDpnumber() {
+        return dpnumber;
+    }
+
+    public int getCyclenumber() {
+        return cyclenumber;
     }
 }

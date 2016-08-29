@@ -15,6 +15,8 @@ public class DPDecks {
     @GraphId
     private Long id;
     private int count;
+    private int dpnumber;
+    private int cyclenumber;
     private String dptitle;
     private List<String> deckLinks;
 
@@ -23,10 +25,12 @@ public class DPDecks {
         this.count = 0;
     }
 
-    public DPDecks(String title, int count) {
+    public DPDecks(String title, int count, int dpnumber, int cyclenumber) {
         this.dptitle = title;
         this.deckLinks = new ArrayList<>();
         this.count = count;
+        this.dpnumber = dpnumber;
+        this.cyclenumber = cyclenumber;
     }
 
     public String getDptitle() {
@@ -39,6 +43,14 @@ public class DPDecks {
 
     public int getCount() {
         return count;
+    }
+
+    public int getDpnumber() {
+        return dpnumber;
+    }
+
+    public int getCyclenumber() {
+        return cyclenumber;
     }
 
     public void addDeckLink(String deckLink) {
