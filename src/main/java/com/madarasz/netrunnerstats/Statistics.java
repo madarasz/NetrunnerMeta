@@ -278,11 +278,13 @@ public class Statistics {
                     if (card.getSide_code().equals("runner")) {
                         result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
                                 card.getSide_code(), card.getFaction_code(), count, topcount,
-                                (double)count / runnerdecks, (double)topcount / toprunnerdecks));
+                                (double)count / runnerdecks, (double)topcount / toprunnerdecks,
+                                card.getCardPack().getNumber(), card.getCardPack().getCyclenumber()));
                     } else {
                         result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
                                 card.getSide_code(), card.getFaction_code(), count, topcount,
-                                (double)count / corpdecks, (double)topcount / topcorpdecks));
+                                (double)count / corpdecks, (double)topcount / topcorpdecks,
+                                card.getCardPack().getNumber(), card.getCardPack().getCyclenumber()));
                     }
                 } else {
                     result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
@@ -307,6 +309,8 @@ public class Statistics {
     public List<CardUsage> getMostUsedCardsForCardpool(String cardpool, String sidecode) {
         int topdecks = 0;
         int alldecks = 0;
+        int dpnum = -1;
+        int cyclenum = -1;
         List<CardCounts> stats;
         StopWatch stopwatch = new StopWatch();
         stopwatch.start();
@@ -324,13 +328,17 @@ public class Statistics {
             stats = cardRepository.findMostPopularCardsByCardPackInTop(cardpool, sidecode);
             topdecks = deckRepository.countTopByCardpoolAndSide(cardpool, sidecode);
             alldecks = deckRepository.countByCardpoolAndSide(cardpool, sidecode);
+            CardPack cardPack = cardPackRepository.findByName(cardpool);
+            dpnum = cardPack.getNumber();
+            cyclenum = cardPack.getCyclenumber();
         }
         List<CardUsage> result = new ArrayList<>();
 
         for (CardCounts count : stats) {
             int countAll = deckRepository.countByCardpoolUsingCard(cardpool, count.getTitle());
             result.add(new CardUsage(count.getTitle(), count.getCardpack(), sidecode, count.getFaction(), countAll, count.getCount(),
-                    (double) countAll / alldecks, (double) count.getCount() / topdecks));
+                    (double) countAll / alldecks, (double) count.getCount() / topdecks,
+                    dpnum, cyclenum));
             logger.debug(String.format("%s (%s) - %d", count.getTitle(), count.getCardpack(), count.getCount()));
         }
         stopwatch.stop();
@@ -418,7 +426,7 @@ public class Statistics {
             stopwatch.start();
 
             // check is last 3 is requested
-            int topdecknum = 0;
+            int topdecknum;
             List<Deck> decks = deckRepository.filterByFactionAndCardPool(faction, cardpool);
             topdecknum = deckRepository.countTopByCardPoolAndFaction(cardpool, faction);
             Set<Card> cards = new HashSet<>();
@@ -549,7 +557,6 @@ public class Statistics {
         int result = 0;
         boolean count = false;
         for (CardPool currentPool : cardPools) {
-            logger.info(currentPool.getTitle() + currentPool.getCyclenumber() + ' ' + currentPool.getDpnumber());
             if (currentPool.getCyclenumber()*100 + currentPool.getDpnumber()
                     >= cardPack.getCyclenumber()*100 + cardPack.getNumber()) {
                 count = true;
@@ -599,7 +606,8 @@ public class Statistics {
                             int topusing = standingRepository.countTopByCardPoolId(pack, cardTitle);
                             result.addOverTime(
                                     new CardUsage(cardTitle, pack, side, card.getFaction_code(), using, topusing,
-                                            (float) using / standingnum, (float) topusing / topstandingnum));
+                                            (float) using / standingnum, (float) topusing / topstandingnum,
+                                            cardPool.getDpnumber(), cardPool.getCyclenumber()));
                             logger.debug(String.format("%s - top:%,.3f%% all:%,.3f%%", pack,
                                     (float) topusing / topstandingnum, (float) using / standingnum));
                         } else {
@@ -610,7 +618,8 @@ public class Statistics {
                             int topusing = deckRepository.countTopByCardpoolUsingCard(pack, cardTitle);
                             result.addOverTime(
                                     new CardUsage(cardTitle, pack, side, card.getFaction_code(), using, topusing,
-                                            (float) using / decknum, (float) topusing / topdecknum));
+                                            (float) using / decknum, (float) topusing / topdecknum,
+                                            cardPool.getDpnumber(), cardPool.getCyclenumber()));
                             logger.debug(String.format("%s - top:%,.3f%% all:%,.3f%%", pack,
                                     (float) topusing / topdecknum, (float) using / decknum));
                         }
@@ -666,7 +675,8 @@ public class Statistics {
                         if (cardCount.getCount() > 0) {
                             Card id = cardCount.getCard();
                             result.addTop(new CardUsage(id.getTitle(), id.getCardPack().getName(), side, id.getFaction_code(), cardCount.getCount(), -1,
-                                    (float) cardCount.getCount() / decks.size(), -1));
+                                    (float) cardCount.getCount() / decks.size(), -1,
+                                    id.getCardPack().getNumber(), id.getCardPack().getCyclenumber()));
                             logger.debug(String.format("%s - %,.3f%%",
                                     cardCount.getCard().getTitle(), (float) cardCount.getCount() / decks.size()));
                         }
@@ -695,7 +705,8 @@ public class Statistics {
                                 }
                             }
                             result.addTop(new CardUsage(identity.getTitle(), identity.getCardPack().getName(), side,
-                                    identity.getFaction_code(), count, -1, (float) count / deckcount, -1));
+                                    identity.getFaction_code(), count, -1, (float) count / deckcount, -1,
+                                    identity.getCardPack().getNumber(), identity.getCardPack().getCyclenumber()));
                             logger.debug(String.format("%s - %,.3f%%",
                                     identity.getTitle(), (float) count / deckcount));
                         }
@@ -744,7 +755,8 @@ public class Statistics {
                 // generate deck links
                 for (CardPool cardPool : validPools) {
                     String dptitle = cardPool.getTitle();
-                    DPDecks dpDecks = new DPDecks(dptitle, deckRepository.countByCardpoolUsingCard(dptitle, cardTitle));
+                    DPDecks dpDecks = new DPDecks(dptitle, deckRepository.countByCardpoolUsingCard(dptitle, cardTitle),
+                            cardPool.getDpnumber(), cardPool.getCyclenumber());
                     List<Deck> decksInDP = deckRepository.findBestByCardpoolUsingCard(dptitle, cardTitle);
                     for (Deck deck : decksInDP) {
                         dpDecks.addDeckLink(deckDigest.getDeckLink(deck));
