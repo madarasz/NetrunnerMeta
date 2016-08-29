@@ -28,6 +28,7 @@ dirs=(
 "Cards"
 "DPStats"
 "JSON/Cards"
+"JSON/Cardpack"
 "JSON/Identity"
 "JSON/Faction"
 "JSON/Tournament"
@@ -164,6 +165,7 @@ do
     echo "Calculating card usage in pack: $pack"
     curl http://localhost:8080/JSON/Cards/corp/$pack > "JSON/Cards/corp/${pack//%20/ }"
     curl http://localhost:8080/JSON/Cards/runner/$pack > "JSON/Cards/runner/${pack//%20/ }"
+    curl http://localhost:8080/JSON/Cardpack/$pack > "JSON/Cardpack/${pack//%20/ }"
 done
 
 # for each ID in last 3
