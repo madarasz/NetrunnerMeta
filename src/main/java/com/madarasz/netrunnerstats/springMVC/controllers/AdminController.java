@@ -101,6 +101,7 @@ public class AdminController {
         // NetrunnerDB count
         model.put("countCards", template.count(Card.class));
         model.put("countCardPacks", template.count(CardPack.class));
+        model.put("countCardCycles", template.count(CardCycle.class));
         model.put("countNetrunnerDBDecks", deckRepository.countNetrunnerDBDecks());
         // DB count
         model.put("countTournaments", template.count(Tournament.class));
