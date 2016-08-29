@@ -69,6 +69,10 @@ public class Card {
         this.advancementcost = advancementcost;
         this.agendapoints = agendapoints;
         this.trash = trash;
+        // fixing neutral-corp, neutral-runner
+        if (this.faction_code.contains("neutral")) {
+            this.faction_code = "neutral";
+        }
     }
 
     public boolean isUniquene() {
