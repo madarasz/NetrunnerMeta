@@ -1,8 +1,10 @@
 package com.madarasz.netrunnerstats.brokers;
 
 import com.madarasz.netrunnerstats.database.DOs.Card;
+import com.madarasz.netrunnerstats.database.DOs.CardCycle;
 import com.madarasz.netrunnerstats.database.DOs.CardPack;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DRs.CardCycleRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
 import com.madarasz.netrunnerstats.helper.SafeJSONObject;
@@ -21,10 +23,13 @@ import java.util.Set;
 @Component
 public final class NetrunnerDBBroker {
 
-    private final static String NETRUNNERDB_API_URL = "https://netrunnerdb.com/api/";
+    private final static String NETRUNNERDB_API_URL = "https://netrunnerdb.com/api/2.0/public/";
 
     @Autowired
     private CardPackRepository cardPackRepository;
+
+    @Autowired
+    private CardCycleRepository cardCycleRepository;
 
     @Autowired
     private CardRepository cardRepository;
@@ -37,22 +42,37 @@ public final class NetrunnerDBBroker {
     }
 
     public Set<CardPack> readSets() {
-        JSONArray setData = new JSONObject(httpBroker.readFromUrl(NETRUNNERDB_API_URL + "sets", true))
-                .getJSONArray("input");
+        JSONArray setData = new JSONObject(httpBroker.readFromUrl(NETRUNNERDB_API_URL + "packs", false))
+                .getJSONArray("data");
         Set<CardPack> resultSet = new HashSet<>();
 
         for (int i = 0; i < setData.length(); i++) {
             JSONObject packData = setData.getJSONObject(i);
+            CardCycle cardCycle = cardCycleRepository.findByCode(packData.getString("cycle_code"));
             CardPack cardPack = new CardPack(packData.getString("name"), packData.getString("code"),
-                    packData.getInt("number"), packData.getInt("cyclenumber"));
+                    packData.getInt("position"), cardCycle.getCyclenumber());
             resultSet.add(cardPack);
         }
         return resultSet;
     }
 
+    public Set<CardCycle> readCycles() {
+        JSONArray cycleData = new JSONObject(httpBroker.readFromUrl(NETRUNNERDB_API_URL + "cycles", false))
+                .getJSONArray("data");
+        Set<CardCycle> resultSet = new HashSet<>();
+
+        for (int i = 0; i < cycleData.length(); i++) {
+            JSONObject cycle = cycleData.getJSONObject(i);
+            CardCycle cardCycle = new CardCycle(cycle.getString("name"), cycle.getString("code"),
+                    cycle.getInt("position"));
+            resultSet.add(cardCycle);
+        }
+        return resultSet;
+    }
+
     public Set<Card> readCards() {
-        JSONArray cardsData = new JSONObject(httpBroker.readFromUrl(NETRUNNERDB_API_URL + "cards", true))
-                .getJSONArray("input");
+        JSONArray cardsData = new JSONObject(httpBroker.readFromUrl(NETRUNNERDB_API_URL + "cards", false))
+                .getJSONArray("data");
         Set<Card> resultSet = new HashSet<>();
 
         for (int i = 0; i < cardsData.length(); i++) {
@@ -73,11 +93,11 @@ public final class NetrunnerDBBroker {
     }
 
     public String deckUrlFromId(int deckid) {
-        return NETRUNNERDB_API_URL + "decklist/" + deckid;
+        return NETRUNNERDB_API_URL + "deck/" + deckid;
     }
 
     public Deck readDeck(int deckid) {
-        JSONObject deckData = new JSONObject(httpBroker.readFromUrl(deckUrlFromId(deckid), false));
+        JSONObject deckData = new JSONObject(httpBroker.readFromUrl(deckUrlFromId(deckid), false)).getJSONObject("data");
         Deck resultDeck = new Deck(deckData.getString("name"), deckData.getString("username"), deckUrlFromId(deckid));
 
         JSONObject cards = deckData.getJSONObject("cards");
