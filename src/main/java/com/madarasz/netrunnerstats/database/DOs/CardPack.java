@@ -13,6 +13,7 @@ public class CardPack {
     @GraphId Long id;
     @Indexed(unique=true) private String name;
     private String code;
+    private String amazonHtml;
     private int number;
     private int cyclenumber;
 
@@ -40,6 +41,14 @@ public class CardPack {
 
     public int getCyclenumber() {
         return cyclenumber;
+    }
+
+    public String getAmazonHtml() {
+        return amazonHtml;
+    }
+
+    public void setAmazonHtml(String amazonHtml) {
+        this.amazonHtml = amazonHtml;
     }
 
     /**

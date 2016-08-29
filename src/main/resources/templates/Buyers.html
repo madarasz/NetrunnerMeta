@@ -11,7 +11,7 @@
         </div>
         <h3 class="page-header">Buyer's guide</h3>
         <div class="row top-buffer">
-            <div class="col-md-6 col-xs-12 top-buffer-big">
+            <div class="col-md-5 col-xs-12 top-buffer-big">
                 <div id="general" class="hidden">
                     <h4>Choose a side</h4>
                     <div class="text-center">
@@ -50,15 +50,28 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-xs-12 top-buffer-big">
+            <div class="col-md-5 col-xs-12 top-buffer-big">
                 <h4>
                     Popular packs
                     <ktm:tooltip place="right" text="Card packs are suggested by analyzing decklists played on tournaments with last three cardpools."/>
                 </h4>
                 <ul id="cards" class="spinner"></ul>
             </div>
+            <div class="col-md-2 col-xs-12 top-buffer-big text-center">
+                <span id="amazon0"></span>
+                <span id="amazon1"></span>
+            </div>
         </div>
-
+        <div class="row">
+            <div class="col-md-12 col-xs-12 top-buffer-big text-center">
+                <span id="amazon2"></span>
+                <span id="amazon3"></span>
+                <span id="amazon4"></span>
+                <span id="amazon5"></span>
+                <span id="amazon6"></span>
+                <span id="amazon7"></span>
+            </div>
+        </div>
 
         <div th:replace="fragments/footer :: footer"></div>
     </div>
@@ -69,6 +82,7 @@
 
         var dataGeneral=[];
 
+        // for identity
         if ([[${id}]] !== null) {
             $('#identity').removeClass('hidden');
             if ($.inArray([[${faction}]], minifactions) < 0) {
@@ -78,23 +92,30 @@
             }
             dataGeneral.push({pack: [[${pack}]], score: 100, cards: [{title: [[${id}]], faction: [[${faction}]], score: 100}]});    // adding ID as card
             populateBuyersPacks(dataGeneral, "/JSON/Identity/Last%203%20aggregated/" + [[${id}]], 'id', function () {
-                displayBuyersCards(dataGeneral)
-            })
+                displayBuyersCards(dataGeneral,
+                        displayAmazon(dataGeneral, 'amazon'))
+            });
+        // for faction
         } else if ([[${faction}]] !== null) {
             $('#ids').removeClass('hidden');
             var cardpools = [[${cardpools}]];
             populateBuyersPacks(dataGeneral, "/JSON/Faction/" + cardpools[0] + "/" + [[${faction}]], 'faction', function () {
-                displayBuyersCards(dataGeneral)}, "/JSON/Tournament/" + [[${side}]] + "/Last%203%20aggregated", [[${faction}]])
+                displayBuyersCards(dataGeneral,
+                        displayAmazon(dataGeneral, 'amazon'))}, "/JSON/Tournament/" + [[${side}]] + "/Last%203%20aggregated", [[${faction}]]);
+        // for side
         } else if ([[${side}]] !== null) {
             $('#factions').removeClass('hidden');
             populateBuyersPacks(dataGeneral, "/JSON/Tournament/" + [[${side}]] + "/Last%203%20aggregated", 'side', function () {
-                displayBuyersCards(dataGeneral)
-            })
+                displayBuyersCards(dataGeneral,
+                        displayAmazon(dataGeneral, 'amazon'))
+            });
+        // general
         } else {
             $('#general').removeClass('hidden');
             populateBuyersPacks(dataGeneral, "/JSON/Tournament/runner/Last%203%20aggregated", 'general', function () {
                 populateBuyersPacks(dataGeneral, "/JSON/Tournament/corp/Last%203%20aggregated", 'general', function () {
-                    displayBuyersCards(dataGeneral)
+                    displayBuyersCards(dataGeneral,
+                        displayAmazon(dataGeneral, 'amazon'))
                 })
             });
         }
