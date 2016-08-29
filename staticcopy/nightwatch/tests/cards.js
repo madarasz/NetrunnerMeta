@@ -23,7 +23,7 @@ module.exports = {
             .click("a[href='/Blog']")         // click on blogs section
             .waitForElementVisible('body', 3000)
             .useXpath()
-            .click("//a[contains(@href,'/Blog/')]")
+            .click("//a[contains(text(),'Thoughts on the')]")
             .waitForElementVisible('//body', 3000)
             .click("//div[@class='blog-image']/a")
             .validateCard()
@@ -38,7 +38,7 @@ module.exports = {
     'Unregistered S&W - card' : function (browser) {
         browser
             .url(browser.launchUrl + "/Cards/Unregistered%20S&W%20'35/")
-            .validateCard()
+            .validateCard('unused')
             .end();
     },
     'Kate ID - card' : function (browser) {
