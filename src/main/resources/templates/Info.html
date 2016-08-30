@@ -5,7 +5,10 @@
 <body>
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
-        <h3 class="page-header">Information</h3>
+        <h3 class="page-header">
+            <div th:replace="fragments/socialicons :: icons"></div>
+            Information
+        </h3>
         <div class="row">
             <div class="col-md-6">
                 <h4>Available data</h4>

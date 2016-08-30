@@ -6,7 +6,10 @@
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
         <a name="top" class="anchor">&nbsp;</a>
-        <h3 class="page-header">Statistics on tournament cardpools</h3>
+        <h3 class="page-header">
+            <div th:replace="fragments/socialicons :: icons"></div>
+            Statistics on tournament cardpools
+        </h3>
         <div class="row top-buffer">
             <div class="col-md-8 col-xs-12">
                 <div class="col-xs-12">
@@ -106,8 +109,7 @@
                 </div>
             </div>
             <div class="col-md-4 col-xs-12">
-                <div th:replace="fragments/social :: social"></div>
-                <div th:replace="fragments/googlead :: blog"></div>
+
             </div>
         </div>
 

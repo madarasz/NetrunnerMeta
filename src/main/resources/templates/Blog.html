@@ -6,6 +6,7 @@
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
         <h3 class="page-header">
+            <div th:replace="fragments/socialicons :: icons"></div>
             <span th:text="${blog.title}"></span><br />
             <small><span th:text="${blog.formattedDate}"></span> - <span th:text="${blog.pack}"></span></small>
         </h3>

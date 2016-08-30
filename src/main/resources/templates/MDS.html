@@ -6,6 +6,7 @@
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
         <div class="page-header">
+            <div th:replace="fragments/socialicons :: icons"></div>
             <h3><a th:href="@{/DPStats/__${DPname}__#decks}"><span th:text="${DPname}"></span></a> > </h3>
             <h4>
                 <a th:href="@{/Cards/__${identity}__/}" id="title-id" class="hidden"><span th:text="${identity}"></span></a>

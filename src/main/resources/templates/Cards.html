@@ -5,7 +5,10 @@
 <body>
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
-        <h3 class="page-header">Cards</h3>
+        <h3 class="page-header">
+            <div th:replace="fragments/socialicons :: icons"></div>
+            Cards
+        </h3>
         <div class="row">
             <!--Expansion list-->
             <div class="col-md-4 col-xs-12">
