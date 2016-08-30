@@ -295,7 +295,9 @@ table.ordering > tbody > tr > td {
     }
 }
 
-
+#drilldowns {
+    margin-bottom: 0;
+}
 
 
 

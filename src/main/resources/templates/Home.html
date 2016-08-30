@@ -40,6 +40,7 @@
                 </div>
             </div>
             <div class="col-md-4 col-xs-12">
+                <!--Tournament Drilldown-->
                 <div class="col-xs-12">
                     <h4>
                         Tournament Drilldown
@@ -48,6 +49,15 @@
                     <div class="list-group" id="drilldowns">
                         <a href="/DPStats/Last%203%20aggregated" class="list-group-item list-group-item-info"><em>last 3 aggregated</em></a>
                         <a th:each="cardpool : ${cardpools}" th:text="${cardpool}" th:href="@{/DPStats/__${cardpool}__/}" class="list-group-item"></a>
+
+                    </div>
+                    <div class="text-center">
+                        <a class="btn-default btn" id="more-button" onclick="clickmore();">more...</a>
+                    </div>
+                    <div class="list-group" id="drilldowns-more">
+                        <div id="more-cardpool" class="hidden">
+                            <a th:each="cardpool : ${cardpoolsmore}" th:text="${cardpool}" th:href="@{/DPStats/__${cardpool}__/}" class="list-group-item"></a>
+                        </div>
                     </div>
                 </div>
                 <div class="col-xs-12">
@@ -128,6 +138,8 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
+        window.scrollTo(0,0);
+
         $('.btn-group-xs button').attr('disabled','disabled');
 
         google.setOnLoadCallback(loadFactionData);
@@ -136,42 +148,50 @@
                 'adam top', 'adam all', 'apex top', 'apex all', 'sunny-lebeau top', 'sunny-lebeau all']],
             corpData = [['DP', 'jinteki top', 'jinteki all', 'nbn top', 'nbn all', 'haas-bioroid top', 'haas-bioroid all',
                 'weyland-consortium top', 'weyland-consortium all']],
-            runnerOption = 'top', corpOption = 'top';
+            runnerOption = 'top', corpOption = 'top', showmore = false;
 
         $(window).resize(function(){
-            drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption);
-            drawFactionChart(corpData, corpFactions, "chart_div2", corpOption);
+            drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption, showmore);
+            drawFactionChart(corpData, corpFactions, "chart_div2", corpOption, showmore);
         });
 
         // button triggers
         $('#runnertop').click(function() {
             runnerOption = 'top';
-            drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption);
+            drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption, showmore);
         });
         $('#runnerall').click(function() {
             $('#runnertop').removeClass('active');
             runnerOption = 'all';
-            drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption);
+            drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption, showmore);
         });
         $('#runnerboth').click(function() {
             $('#runnertop').removeClass('active');
             runnerOption = 'both';
-            drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption);
+            drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption, showmore);
         });
         $('#corptop').click(function() {
             corpOption = 'top';
-            drawFactionChart(corpData, corpFactions, "chart_div2", corpOption);
+            drawFactionChart(corpData, corpFactions, "chart_div2", corpOption, showmore);
         });
         $('#corpall').click(function() {
             $('#corptop').removeClass('active');
             corpOption = 'all';
-            drawFactionChart(corpData, corpFactions, "chart_div2", corpOption);
+            drawFactionChart(corpData, corpFactions, "chart_div2", corpOption, showmore);
         });
         $('#corpboth').click(function() {
             $('#corptop').removeClass('active');
             corpOption = 'both';
-            drawFactionChart(corpData, corpFactions, "chart_div2", corpOption);
+            drawFactionChart(corpData, corpFactions, "chart_div2", corpOption, showmore);
         });
+
+        function clickmore () {
+            document.getElementById("more-cardpool").className = "";
+            document.getElementById("more-button").className = "hidden";
+            showmore = true;
+            drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption, showmore);
+            drawFactionChart(corpData, corpFactions, "chart_div2", corpOption, showmore);
+        }
 
         /*]]>*/
     </script>

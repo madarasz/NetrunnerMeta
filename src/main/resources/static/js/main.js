@@ -547,8 +547,8 @@ function loadFactionData() {
             drawFactionChart(corpData, corpFactions, "chart_div2", corpOption);
             $('.btn-group-xs button').removeAttr('disabled');
             // social
-            facebookButton(document, 'script', 'facebook-jssdk');
-            twitterTimeline(document,"script", "twitter-wjs");
+            //facebookButton(document, 'script', 'facebook-jssdk');
+            //twitterTimeline(document,"script", "twitter-wjs");
             window.scrollTo(0,0);
         }
     });
@@ -580,7 +580,13 @@ function readFaction(data, faction) {
 }
 
 // faction over time chart on home page
-function drawFactionChart(data, factions, elementid, options) {
+function drawFactionChart(data, factions, elementid, options, showmore) {
+
+    // last 10 data packs
+    var showdata = jQuery.extend({}, data);
+    if (!showmore) {
+        showdata.Nf = showdata.Nf.slice(data.Nf.length - 10);
+    }
 
     // calculate colors
     var color = [];
@@ -611,7 +617,7 @@ function drawFactionChart(data, factions, elementid, options) {
 
     var chart = new google.visualization.LineChart(document.getElementById(elementid));
     // hide lines
-    var view = new google.visualization.DataView(data);
+    var view = new google.visualization.DataView(showdata);
     switch (options) {
         case "top":
             view.hideColumns([2,4,6,8,10,12]);

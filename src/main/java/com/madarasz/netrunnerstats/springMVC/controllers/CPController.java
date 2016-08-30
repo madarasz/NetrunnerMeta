@@ -59,7 +59,9 @@ public class CPController {
     public String getCPPage(Map<String, Object> model) {
         model.put("pageTitle", "Know the Meta - Android: Netrunner");
         model.put("blogs", blogRepository.getLastThree());
-        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
+        List<String> cardpoolNames = cardPoolStatsRepository.getCardPoolNames();
+        model.put("cardpools", cardpoolNames.subList(0, 10));
+        model.put("cardpoolsmore", cardpoolNames.subList(10, cardpoolNames.size()));
         model.put("lastUpdate", adminDataRepository.getLastUpdate().getData());
 
         return "Home";
