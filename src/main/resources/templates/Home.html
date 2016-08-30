@@ -49,15 +49,12 @@
                     <div class="list-group" id="drilldowns">
                         <a href="/DPStats/Last%203%20aggregated" class="list-group-item list-group-item-info"><em>last 3 aggregated</em></a>
                         <a th:each="cardpool : ${cardpools}" th:text="${cardpool}" th:href="@{/DPStats/__${cardpool}__/}" class="list-group-item"></a>
-
-                    </div>
-                    <div class="text-center">
-                        <a class="btn-default btn" id="more-button" onclick="clickmore();">more...</a>
-                    </div>
-                    <div class="list-group" id="drilldowns-more">
                         <div id="more-cardpool" class="hidden">
                             <a th:each="cardpool : ${cardpoolsmore}" th:text="${cardpool}" th:href="@{/DPStats/__${cardpool}__/}" class="list-group-item"></a>
                         </div>
+                    </div>
+                    <div class="text-center">
+                        <a class="btn-default btn" id="more-button" onclick="clickmore();">more...</a>
                     </div>
                 </div>
                 <div class="col-xs-12">
