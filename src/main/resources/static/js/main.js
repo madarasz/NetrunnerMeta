@@ -583,7 +583,7 @@ function readFaction(data, faction) {
 function drawFactionChart(data, factions, elementid, options, showmore) {
 
     // last 10 data packs
-    var showdata = jQuery.extend({}, data);
+    var showdata = jQuery.extend(true, {}, data);
     if (!showmore) {
         showdata.Nf = showdata.Nf.slice(data.Nf.length - 10);
     }
