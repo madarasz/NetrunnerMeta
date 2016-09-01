@@ -9,6 +9,10 @@
         <h3 class="page-header">
             <div th:replace="fragments/socialicons :: icons"></div>
             Statistics on tournament cardpools
+            <div class="btn-group btn-group-xs" role="group" aria-label="data timeline">
+                <button id="data10" type="button" class="btn btn-default active" onclick="clickless();">Last 10</button>
+                <button id="dataall" type="button" class="btn btn-default" onclick="clickmore();">All</button>
+            </div>
         </h3>
         <div class="row top-buffer">
             <div class="col-md-8 col-xs-12">
@@ -56,7 +60,11 @@
                     <div class="text-center">
                         <a class="btn-default btn" id="more-button" onclick="clickmore();">more...</a>
                     </div>
+                    <div class="text-center">
+                        <a class="btn-default btn hidden" id="less-button" onclick="clickless();">less...</a>
+                    </div>
                 </div>
+                <!--Welcome-->
                 <div class="col-xs-12">
                     <div class="panel panel-default top-buffer" id="infopanel">
                         <div class="panel-heading">Welcome</div>
@@ -148,44 +156,74 @@
             runnerOption = 'top', corpOption = 'top', showmore = false;
 
         $(window).resize(function(){
-            drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption, showmore);
-            drawFactionChart(corpData, corpFactions, "chart_div2", corpOption, showmore);
+            drawFactionCharts();
         });
 
         // button triggers
         $('#runnertop').click(function() {
+            $('#runnertop').addClass('active');
+            $('#runnerall').removeClass('active');
+            $('#runnerboth').removeClass('active');
             runnerOption = 'top';
             drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption, showmore);
         });
         $('#runnerall').click(function() {
             $('#runnertop').removeClass('active');
+            $('#runnerall').addClass('active');
+            $('#runnerboth').removeClass('active');
             runnerOption = 'all';
             drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption, showmore);
         });
         $('#runnerboth').click(function() {
             $('#runnertop').removeClass('active');
+            $('#runnerall').removeClass('active');
+            $('#runnerboth').addClass('active');
             runnerOption = 'both';
             drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption, showmore);
         });
         $('#corptop').click(function() {
+            $('#corptop').addClass('active');
+            $('#corpall').removeClass('active');
+            $('#corpboth').removeClass('active');
             corpOption = 'top';
             drawFactionChart(corpData, corpFactions, "chart_div2", corpOption, showmore);
         });
         $('#corpall').click(function() {
             $('#corptop').removeClass('active');
+            $('#corpall').addClass('active');
+            $('#corpboth').removeClass('active');
             corpOption = 'all';
             drawFactionChart(corpData, corpFactions, "chart_div2", corpOption, showmore);
         });
         $('#corpboth').click(function() {
             $('#corptop').removeClass('active');
+            $('#corpall').removeClass('active');
+            $('#corpboth').addClass('active');
             corpOption = 'both';
             drawFactionChart(corpData, corpFactions, "chart_div2", corpOption, showmore);
         });
 
-        function clickmore () {
+        function clickmore() {
             document.getElementById("more-cardpool").className = "";
-            document.getElementById("more-button").className = "hidden";
+            document.getElementById("more-button").className = "btn-default btn hidden";
+            document.getElementById("less-button").className = "btn-default btn";
+            document.getElementById("data10").className = "btn-default btn";
+            document.getElementById("dataall").className = "btn-default btn active";
             showmore = true;
+            drawFactionCharts();
+        }
+
+        function clickless() {
+            document.getElementById("more-cardpool").className = "hidden";
+            document.getElementById("more-button").className = "btn-default btn";
+            document.getElementById("less-button").className = "btn-default btn hidden";
+            document.getElementById("data10").className = "btn-default btn active";
+            document.getElementById("dataall").className = "btn-default btn";
+            showmore = false;
+            drawFactionCharts();
+        }
+
+        function drawFactionCharts() {
             drawFactionChart(runnerData, runnerFactions, "chart_div1", runnerOption, showmore);
             drawFactionChart(corpData, corpFactions, "chart_div2", corpOption, showmore);
         }
