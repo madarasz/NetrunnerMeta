@@ -11,6 +11,7 @@ import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import com.madarasz.netrunnerstats.brokers.StimhackBroker;
 import com.madarasz.netrunnerstats.helper.DeckValidator;
+import com.madarasz.netrunnerstats.helper.LastThree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class Operations {
 
     private static final Logger logger = LoggerFactory.getLogger(Operations.class);
     private final DateFormat df = new SimpleDateFormat("yyyy.MM.dd.");
+    public static final String LAST_3 = "Last 3 aggregated";
 
     @Autowired
     CardRepository cardRepository;
@@ -67,6 +69,9 @@ public class Operations {
 
     @Autowired
     AdminDataRepository adminDataRepository;
+
+    @Autowired
+    LastThree lastThree;
 
     /**
      * Wipes DB clean
@@ -432,10 +437,7 @@ public class Operations {
         logger.info("Deleting calculated Statistics from database.");
         Map<String, Object> emptyparams = new HashMap<>();
         template.query("MATCH (n:DPStatistics) OPTIONAL MATCH (n)-[r]-(c:CountDeckStands) DELETE n,r,c", emptyparams);
-        template.query("MATCH (n:IdentityMDS) OPTIONAL MATCH (n)-[r]-(c:MDSEntry) DELETE n,r,c", emptyparams);
         template.query("MATCH (n:CardPoolStats) OPTIONAL MATCH (n)-[r]-(c:CardPool) DELETE n,r,c", emptyparams);
-        template.query("MATCH (n:DeckInfos) OPTIONAL MATCH (n)-[r]-(c:DeckInfo) DELETE n,r,c", emptyparams);
-        template.query("MATCH (n:DPIdentities) OPTIONAL MATCH (n)-[r]-(c:DPIdentity) DELETE n,r,c", emptyparams);
         template.query("MATCH (c:CardAverage) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         template.query("MATCH (n:IdentityAverage) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         template.query("MATCH (n:IdentityAverage) OPTIONAL MATCH (n)-[r]-(c:CardAverage) DELETE n,r,c", emptyparams);
@@ -452,6 +454,47 @@ public class Operations {
         // troublemaker nodes
         template.query("MATCH (n:CountDeckStands) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         template.query("MATCH (n:CardUsage) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
+        logDBStatCount();
+    }
+
+    /**
+     * Deletes all statistical data from DB for DP.
+     */
+    public void resetStatsDP(String DPName) {
+        // TODO: CardUsage and DPDecks grows in numbers
+        logDBStatCount();
+
+        Map<String, Object> emptyparams = new HashMap<>();
+        if (lastThree.isInLastThree(DPName)) {
+            template.query("MATCH (c:CardStat)-[r:TOP]-(u:CardUsage) DELETE u,r", emptyparams);
+            template.query("MATCH (c:CardStat)-[r]-(u:CardCombo) DELETE u,r", emptyparams);
+            resetStatsDP(LAST_3);
+        }
+
+        logger.info("Deleting calculated Statistics from database: " + DPName);
+        template.query("MATCH (n:DPStatistics {packTitle: '" + DPName + "'})-[r]-(c:CountDeckStands) DELETE c,r", emptyparams);
+        template.query("MATCH (n:DPStatistics) WHERE n.packTitle = '" + DPName + "' DELETE n", emptyparams);
+
+        template.query("MATCH (n:IdentityAverage {cardpool: '" + DPName + "'})-[r]-(c:CardAverage) DELETE c,r", emptyparams);
+        template.query("MATCH (n:IdentityAverage {cardpool: '" + DPName + "'})-[r]-(c:MDSEntry) DELETE c,r", emptyparams);
+        template.query("MATCH (n:IdentityAverage {cardpool: '" + DPName + "'}) DELETE n", emptyparams);
+
+        template.query("MATCH (n:CardPoolStats)-[r]-(c:CardPool {title: '" + DPName + "'}) DELETE c,r", emptyparams);
+        template.query("MATCH (n:CardPoolStats) OPTIONAL MATCH (n)-[r]-(c:CardPool) DELETE n,r,c", emptyparams);
+
+        template.query("MATCH (n:CardUsageStat {cardpackname: '" + DPName + "'})-[r]-(c:CardUsage) DELETE c,r", emptyparams);
+        template.query("MATCH (n:CardUsageStat {cardpackname: '" + DPName + "'}) DELETE n", emptyparams);
+
+        template.query("MATCH (t:TournamentDrilldown {packTitle: '" + DPName + "'})-[r]-(c:CardAverage) DELETE c,r", emptyparams);
+        template.query("MATCH (t:TournamentDrilldown {packTitle: '" + DPName + "'})-[r]-(c:StandingDeckCount) DELETE c,r", emptyparams);
+        template.query("MATCH (t:TournamentDrilldown {packTitle: '" + DPName + "'})-[r]-(c:StandingDeckCountID) DELETE c,r", emptyparams);
+        template.query("MATCH (t:TournamentDrilldown {packTitle: '" + DPName + "'})-[r]-(c:StandingDeckCountID) DELETE c,r", emptyparams);
+        template.query("MATCH (t:TournamentDrilldown {packTitle: '" + DPName + "'})-[r]-(c:CardUsage) DELETE c,r", emptyparams);
+        template.query("MATCH (t:TournamentDrilldown {packTitle: '" + DPName + "'}) DELETE t", emptyparams);
+
+        template.query("MATCH (c:CardStat)-[r:OVERTIME]-(u:CardUsage {cardpacktitle: '" + DPName + "'}) DELETE u,r", emptyparams);
+        template.query("MATCH (c:CardStat)-[r]-(u:DPDecks {dptitle: '" + DPName + "'}) DELETE u,r", emptyparams);
+
         logDBStatCount();
     }
 

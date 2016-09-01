@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -434,6 +435,13 @@ public class AdminController {
     @RequestMapping(value="/muchadmin/PurgeStat", method = RequestMethod.POST)
     public String purgeStats(Map<String, Object> model) {
         operations.resetStats();
+        return "redirect:/muchadmin";
+    }
+
+    // reset statistical data on datapack
+    @RequestMapping(value="/muchadmin/PurgeStat/{DPName}", method = RequestMethod.POST)
+    public String purgeStatsDP(@PathVariable(value = "DPName") String DPName) {
+        operations.resetStatsDP(DPName);
         return "redirect:/muchadmin";
     }
 

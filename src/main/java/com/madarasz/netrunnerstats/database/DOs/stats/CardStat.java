@@ -97,4 +97,31 @@ public class CardStat {
     public void addDecks(DPDecks dpDecks) {
         this.decks.add(dpDecks);
     }
+
+    public boolean isInOverTime(String pack) {
+        for (CardUsage cardUsage : overTime) {
+            if (cardUsage.getCardpacktitle().equals(pack)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isInTop(String pack) {
+        for (CardUsage cardUsage : top) {
+            if (cardUsage.getCardpacktitle().equals(pack)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isInDecks(String pack) {
+        for (DPDecks dpDecks : decks) {
+            if (dpDecks.getDptitle().equals(pack)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

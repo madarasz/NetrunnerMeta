@@ -124,7 +124,7 @@ public class Statistics {
      * Generate multidimensional scaling for identity and cardpool legality
      * @param identityName filter for identity
      * @param cardpackName filter for cardpool
-     * @return IdentityMDS
+     * @return MDSEntry
      */
     public Set<MDSEntry> getPackMath(String identityName, String cardpackName) {
         StopWatch stopwatch = new StopWatch();
@@ -186,7 +186,7 @@ public class Statistics {
      * Generate multidimensional scaling for faction and cardpool legality
      * @param factionName filter for faction
      * @param cardpackName filter for cardpool
-     * @return IdentityMDS
+     * @return MDSEntry
      */
     public Set<MDSEntry> getPackMathFaction(String factionName, String cardpackName) {
         StopWatch stopwatch = new StopWatch();
@@ -575,29 +575,41 @@ public class Statistics {
     /**
      * Statistics for a single card.
      * Includes usage over time, top cards/identities, possible combos, deck links.
+     * If some parts are missing due to DP statistics purge, it will be recalculated
      * @param cardTitle card title
      * @return CardStat
      */
     public CardStat getCardStats(String cardTitle) {
-        CardStat result = cardStatRepository.findbyTitle(cardTitle);
-        if (result == null) {
-            Card card = cardRepository.findByTitle(cardTitle);
+        Card card = cardRepository.findByTitle(cardTitle);
+        if (card != null) {
 
-            if (card != null) {
-                StopWatch stopwatch = new StopWatch();
-                stopwatch.start();
-
+            CardStat result = cardStatRepository.findbyTitle(cardTitle);
+            if (result == null) {
                 result = new CardStat(card);
-                String side = card.getSide_code();
-                List<CardPool> cardPools = getCardPoolStats().getSortedCardpool();
-                List<CardPool> validPools = new ArrayList<>(cardPools);
-                Collections.reverse(cardPools);
-                CardCountComparator comparator = new CardCountComparator();
+            }
 
-                // deck/standing numbers over time
-                for (CardPool cardPool : cardPools) {
-                    String pack = cardPool.getTitle();
-                    if (!card.getCardPack().later(cardPackRepository.findByName(pack))) {
+            StopWatch stopwatch = new StopWatch();
+            stopwatch.start();
+            boolean changed = false;
+            boolean changedLast3 = false;
+
+            String side = card.getSide_code();
+            List<CardPool> cardPools = getCardPoolStats().getSortedCardpool();
+            List<CardPool> validPools = new ArrayList<>(cardPools);
+            Collections.reverse(cardPools);
+            CardCountComparator comparator = new CardCountComparator();
+
+            // deck/standing numbers over time
+            for (CardPool cardPool : cardPools) {
+                String pack = cardPool.getTitle();
+                if (!card.getCardPack().later(cardPackRepository.findByName(pack))) {  // if the card is later than the pool
+                    if (!result.isInOverTime(pack)) {   // if it's not already in the stats
+
+                        changed = true;
+                        if (lastThree.isInLastThree(pack)) {
+                            changedLast3 = true;
+                        }
+
                         if (card.getType_code().equals("identity")) {
                             // count standings for identities
                             int standingnum = standingRepository.countByCardPoolSidecode(pack, side);
@@ -623,12 +635,14 @@ public class Statistics {
                             logger.debug(String.format("%s - top:%,.3f%% all:%,.3f%%", pack,
                                     (float) topusing / topdecknum, (float) using / decknum));
                         }
-                    } else {
-                        validPools.remove(cardPool);
                     }
+                } else {
+                    validPools.remove(cardPool);
                 }
+            }
 
-                // statistics on last three packs
+            // statistics on last three packs
+            if (changedLast3) {
                 // get all decks using card
                 List<CardPool> last3Pools = new ArrayList<>(validPools);
                 last3Pools = trimCardPool(last3Pools, 3);
@@ -643,7 +657,7 @@ public class Statistics {
                 int countcard = decks.size();
                 logger.debug(String.format("All decks: %d - deck using card: %d", alldeck, countcard));
 
-                // get top cards/identities
+                // get top cards/identities from last 3
                 List<CardCount> counts = new ArrayList<>();
                 if (card.getType_code().equals("identity")) {
                     // get top cards
@@ -683,7 +697,7 @@ public class Statistics {
                     }
 
                 } else {
-                    // get top identities
+                    // get top identities from last 3
                     List<Card> identities = cardRepository.findIdentitiesBySide(side);
                     for (Card identity : identities) {
                         int count = 0;
@@ -713,7 +727,7 @@ public class Statistics {
                     }
                 }
 
-                // get possible combos
+                // get possible combos from last 3
                 List<Card> cards = new ArrayList<>();
                 for (Deck deck : decks) {
                     for (DeckHasCard deckHasCard : deck.getCards()) {
@@ -731,8 +745,8 @@ public class Statistics {
 //                    int countoneof = 0;
                     int countboth = 0;
                     for (CardPool cardPool : validPools) {
-                        if (icard.getCardPack().getCyclenumber()*100 + icard.getCardPack().getNumber() <=
-                                cardPool.getCyclenumber()*100 + cardPool.getDpnumber()) {
+                        if (icard.getCardPack().getCyclenumber() * 100 + icard.getCardPack().getNumber() <=
+                                cardPool.getCyclenumber() * 100 + cardPool.getDpnumber()) {
                             icount += deckRepository.countByCardpoolUsingCard(cardPool.getTitle(), icard.getTitle());
 //                            countoneof += deckRepository.countByCardpoolUsingCardOneOf(cardPool.getTitle(), cardTitle, icard.getTitle());
                             countboth += deckRepository.countByCardpoolUsingCardBoth(cardPool.getTitle(), cardTitle, icard.getTitle());
@@ -751,10 +765,12 @@ public class Statistics {
                     logger.debug(String.format("%s - %d",
                             combo.getTitle(), cardCount.getCount()));
                 }
+            }
 
-                // generate deck links
-                for (CardPool cardPool : validPools) {
-                    String dptitle = cardPool.getTitle();
+            // generate deck links
+            for (CardPool cardPool : validPools) {
+                String dptitle = cardPool.getTitle();
+                if (!result.isInDecks(dptitle)) {   // if it's not already in stats
                     DPDecks dpDecks = new DPDecks(dptitle, deckRepository.countByCardpoolUsingCard(dptitle, cardTitle),
                             cardPool.getDpnumber(), cardPool.getCyclenumber());
                     List<Deck> decksInDP = deckRepository.findBestByCardpoolUsingCard(dptitle, cardTitle);
@@ -766,15 +782,18 @@ public class Statistics {
                     }
                     result.addDecks(dpDecks);
                 }
-                stopwatch.stop();
-                logger.info(String.format("Saving stats for card: %s (%.3f sec)", cardTitle ,
+            }
+            stopwatch.stop();
+            if (changed) {
+                logger.info(String.format("Saving/updating stats for card: %s (%.3f sec)", cardTitle,
                         stopwatch.getTotalTimeSeconds()));
                 cardStatRepository.save(result);
-            } else {
-                logger.error("No such card: " + cardTitle);
             }
+            return result;
+        } else {
+            logger.error("No such card: " + cardTitle);
+            return null;
         }
-        return result;
     }
 
     /**

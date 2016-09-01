@@ -25,4 +25,8 @@ public class LastThree {
         }
     }
 
+    public boolean isInLastThree(String pack) {
+        return getLastThreeCardpoolNames().contains(pack);
+    }
+
 }
