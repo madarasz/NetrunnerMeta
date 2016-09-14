@@ -20,9 +20,12 @@ cd ../NetrunnerMeta/staticcopy
 nightwatch -c nightwatch/nightwatch.json
 
 end=$SECONDS
-echo "Calculation: $(( test - start )) sec"
-echo "Tests: $(( end - test )) sec"
-echo "Total time: $(( end - start )) sec"
+echo "Calculation:"
+date -u -r $(( test - start )) +%T
+echo "Tests:"
+date -u -r $(( end - test )) +%T
+echo "Total time:"
+date -u -r $(( end - start )) +%T
 
 # terminate http-server
 read -p "... Press any key to terminate http server ..." -n 1 -s
