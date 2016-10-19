@@ -153,10 +153,17 @@ public class Operations {
         Set<Card> allCards = netrunnerDBBroker.readCards();
         found = 0;
         for (Card card : allCards) {
-            if (cardRepository.findByTitle(card.getTitle()) == null) {
+            Card foundCard = cardRepository.findByTitle(card.getTitle());
+            if (foundCard == null) {
                 cardRepository.save(card);
                 logger.trace("Found card: " + card.toString());
                 found++;
+            } else {
+                if (foundCard.getCardPack() == null) {
+                    foundCard.setCardPack(card.getCardPack());
+                    cardRepository.save(foundCard);
+                    logger.warn("Card updated with pack: " + foundCard.toString() + " - " + foundCard.getCardPack());
+                }
             }
         }
         logger.info("Found new cards: " + found);

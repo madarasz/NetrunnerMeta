@@ -10,6 +10,8 @@ import com.madarasz.netrunnerstats.database.DRs.CardRepository;
 import com.madarasz.netrunnerstats.helper.SafeJSONObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.HashSet;
@@ -24,6 +26,8 @@ import java.util.Set;
 public final class NetrunnerDBBroker {
 
     private final static String NETRUNNERDB_API_URL = "https://netrunnerdb.com/api/2.0/public/";
+
+    private static final Logger logger = LoggerFactory.getLogger(NetrunnerDBBroker.class);
 
     @Autowired
     private CardPackRepository cardPackRepository;
@@ -79,7 +83,10 @@ public final class NetrunnerDBBroker {
 
             SafeJSONObject cardData = new SafeJSONObject(cardsData.getJSONObject(i));
 
-            CardPack cardPack = cardPackRepository.findByCode(cardData.getString("set_code"));
+            CardPack cardPack = cardPackRepository.findByCode(cardData.getString("pack_code"));
+            if (cardPack == null) {
+                logger.error("Cannot find cardpack for: " + cardData.getString("pack_code") + " - " + cardData.getString("title"));
+            }
 
             Card card = new Card(cardData.getString("code"), cardData.getString("title"), cardData.getString("type_code"), cardData.getString("subtype_code"),
                     cardData.getString("text"), cardData.getString("faction_code"), cardData.getString("side_code"), cardData.getBoolean("uniqueness"),

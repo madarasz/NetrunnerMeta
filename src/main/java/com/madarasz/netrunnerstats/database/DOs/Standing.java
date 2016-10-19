@@ -1,9 +1,6 @@
 package com.madarasz.netrunnerstats.database.DOs;
 
-import org.springframework.data.neo4j.annotation.Fetch;
-import org.springframework.data.neo4j.annotation.GraphId;
-import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
+import org.springframework.data.neo4j.annotation.*;
 
 /**
  * Node for tournament standings
@@ -16,9 +13,9 @@ public class Standing {
     @RelatedTo(type = "IN_TOURNAMENT") @Fetch private Tournament tournament;
     private int rank;
     @RelatedTo(type = "IS_IDENTITY") @Fetch private Card identity;
-    private boolean topdeck;
+    @Indexed(unique=false) private boolean topdeck;
     @RelatedTo(type = "IS_DECK") @Fetch private Deck deck;
-    private boolean is_runner;
+    @Indexed(unique=false) private boolean is_runner;
 
     public Standing() {
     }
