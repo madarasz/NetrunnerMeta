@@ -4,6 +4,11 @@ exports.command = function (callback) {
     client
         .useCss()
         .waitForElementVisible('body', 3000)
+        .waitForElementVisible('div#spot_popular_runner a img', 3000) // most popular runner spotlight
+        .waitForElementVisible('div#spot_popular_corp a img', 3000) // most popular corp spotlight
+        .waitForElementVisible('div#spot_impressive_runner a img', 3000) // most impressive runner spotlight
+        .waitForElementVisible('div#spot_impressive_corp a img', 3000) // most impressive corp spotlight
+        .click("ul#tabs li a[href='#top']")
         .waitForElementVisible('div#chart_div1 div', 3000) // top runner factions chart loads
         .waitForElementVisible('div#chart_div2 div', 3000) // top corp factions chart loads
         .waitForElementVisible('div#chart_div3 div', 3000) // top runner ids chart loads

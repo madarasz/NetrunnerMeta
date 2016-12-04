@@ -21,7 +21,7 @@ public class RegExBroker {
 
     private static final String REGEX_CARD_QUANTITY = "^\\d{1}x?";
     private static final String REGEX_FIRST_NUMBER = "\\d+";
-    private static final String[] DATE_FORMATS = {"yyyy-MM-dd", "MMMM dd, yyyy", "MM/dd/yyyy", "dd.MM.yyyy"};
+    private static final String[] DATE_FORMATS = {"yyyy.MM.dd.", "yyyy-MM-dd", "MMMM dd, yyyy", "MM/dd/yyyy", "dd.MM.yyyy"};
 
     public int getCardQuantity(String line) {
         Pattern pattern = Pattern.compile(REGEX_CARD_QUANTITY);

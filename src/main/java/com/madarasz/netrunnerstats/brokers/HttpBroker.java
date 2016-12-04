@@ -59,7 +59,7 @@ public class HttpBroker {
             }
 
         } catch (Exception ex) {
-            logger.error("logged exception", ex);
+            logger.trace("logged exception", ex);
             return "";
 
         } finally {

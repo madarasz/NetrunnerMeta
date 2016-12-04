@@ -14,8 +14,8 @@ public class CardPack {
     @Indexed(unique=true) private String name;
     private String code;
     private String amazonHtml;
-    private int number;
-    private int cyclenumber;
+    @Indexed(unique=false) private int number;
+    @Indexed(unique=false) private int cyclenumber;
 
     public CardPack() {
     }

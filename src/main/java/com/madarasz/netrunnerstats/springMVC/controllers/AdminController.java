@@ -74,6 +74,7 @@ public class AdminController {
 
     /**
      * Handles date conversion. Null date returns empty string.
+     *
      * @param date date
      * @return formatted date
      */
@@ -87,7 +88,7 @@ public class AdminController {
 
     // html output
 
-    @RequestMapping(value="/muchadmin", method = RequestMethod.GET)
+    @RequestMapping(value = "/muchadmin", method = RequestMethod.GET)
     public String getAdminPage(Map<String, Object> model) {
         // Stimhack count
         model.put("countStimhackTournaments", tournamentRepository.countStimhackTournaments());
@@ -145,16 +146,20 @@ public class AdminController {
     // submissions
 
     // denyUrl data
-    @RequestMapping(value="/muchadmin/Verify", method = RequestMethod.GET)
-    public @ResponseBody List<VerificationProblem> verifyData() {
+    @RequestMapping(value = "/muchadmin/Verify", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<VerificationProblem> verifyData() {
         // remove already banned urls
         List<VerificationProblem> problems = operations.checkDataValidity();
         return problems;
     }
 
-    @RequestMapping(value="/muchadmin/BanDeck", method = RequestMethod.GET)
+    @RequestMapping(value = "/muchadmin/BanDeck", method = RequestMethod.GET)
 //    public @ResponseBody String banDeck(@PathVariable(value="url") String url, final RedirectAttributes redirectAttributes) {
-    public @ResponseBody String banDeck(String url, final RedirectAttributes redirectAttributes) {
+    public
+    @ResponseBody
+    String banDeck(String url, final RedirectAttributes redirectAttributes) {
         if (!url.equals("")) {
             AdminData denyurls = adminDataRepository.getDenyUrls();
             if (denyurls == null) {
@@ -175,7 +180,7 @@ public class AdminController {
     }
 
     // add stimhack tournament
-    @RequestMapping(value="/muchadmin/Stimhack/AddTournament", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/Stimhack/AddTournament", method = RequestMethod.POST)
     public String addStimhackTournament(String url, final RedirectAttributes redirectAttributes) {
         Tournament exists = tournamentRepository.findByUrl(url);
         if (exists == null) {
@@ -197,7 +202,7 @@ public class AdminController {
     }
 
     // add multiple stimhack tournament by datapack
-    @RequestMapping(value="/muchadmin/Stimhack/AddDataPack", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/Stimhack/AddDataPack", method = RequestMethod.POST)
     public String addStimhackTournamentsByDP(String datapack, final RedirectAttributes redirectAttributes) {
         try {
             long count = template.count(Tournament.class);
@@ -220,7 +225,7 @@ public class AdminController {
     }
 
     // add acoo deck
-    @RequestMapping(value="/muchadmin/Acoo/AddDeck", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/Acoo/AddDeck", method = RequestMethod.POST)
     public String addAcooDeck(String deckid, final RedirectAttributes redirectAttributes) {
         try {
             int id = Integer.parseInt(deckid);
@@ -243,7 +248,7 @@ public class AdminController {
     }
 
     // add acoo tournament
-    @RequestMapping(value="/muchadmin/Acoo/AddTournament", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/Acoo/AddTournament", method = RequestMethod.POST)
     public String addAcooTournament(String tournamentid, final RedirectAttributes redirectAttributes) {
         try {
             int id = Integer.parseInt(tournamentid);
@@ -272,7 +277,7 @@ public class AdminController {
     }
 
     // add acoo tournament from page
-    @RequestMapping(value="/muchadmin/Acoo/AddTournaments", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/Acoo/AddTournaments", method = RequestMethod.POST)
     public String addAcooTournaments(String url, boolean paging, final RedirectAttributes redirectAttributes) {
         try {
             long tournamentcount = template.count(Tournament.class);
@@ -301,7 +306,7 @@ public class AdminController {
     }
 
     // load Netrunner DB cards and cardpacks
-    @RequestMapping(value="/muchadmin/NetrunnerDB/LoadDB", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/NetrunnerDB/LoadDB", method = RequestMethod.POST)
     public String loadNetrunnerDB(final RedirectAttributes redirectAttributes) {
         try {
             long cardcount = template.count(Card.class);
@@ -325,7 +330,7 @@ public class AdminController {
     }
 
     // add NetrunnerDB deck
-    @RequestMapping(value="/muchadmin/NetrunnerDB/LoadDeck", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/NetrunnerDB/LoadDeck", method = RequestMethod.POST)
     public String addNetrunnerDBDeck(String deckid, final RedirectAttributes redirectAttributes) {
         try {
             int id = Integer.parseInt(deckid);
@@ -348,7 +353,7 @@ public class AdminController {
     }
 
     // delete deck
-    @RequestMapping(value="/muchadmin/Delete/Deck", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/Delete/Deck", method = RequestMethod.POST)
     public String deleteDeck(String url, final RedirectAttributes redirectAttributes) {
         Deck exists = deckRepository.findByUrl(url);
         if (exists != null) {
@@ -370,7 +375,7 @@ public class AdminController {
     }
 
     // delete tournament
-    @RequestMapping(value="/muchadmin/Delete/Tournament", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/Delete/Tournament", method = RequestMethod.POST)
     public String deleteTournament(String url, final RedirectAttributes redirectAttributes) {
         Tournament exists = tournamentRepository.findByUrl(url);
         if (exists != null) {
@@ -398,7 +403,7 @@ public class AdminController {
     }
 
     // delete denied decks
-    @RequestMapping(value="/muchadmin/Execute/DenyUrls", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/Execute/DenyUrls", method = RequestMethod.POST)
     public String deleteDeniedDecks(final RedirectAttributes redirectAttributes) {
         try {
             AdminData denyurls = adminDataRepository.getDenyUrls();
@@ -425,28 +430,28 @@ public class AdminController {
     }
 
     // reset all data
-    @RequestMapping(value="/muchadmin/PurgeAll", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/PurgeAll", method = RequestMethod.POST)
     public String purgeAll(Map<String, Object> model) {
         operations.cleanDB();
         return "redirect:/muchadmin";
     }
 
     // reset statistical data
-    @RequestMapping(value="/muchadmin/PurgeStat", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/PurgeStat", method = RequestMethod.POST)
     public String purgeStats(Map<String, Object> model) {
         operations.resetStats();
         return "redirect:/muchadmin";
     }
 
     // reset statistical data on datapack
-    @RequestMapping(value="/muchadmin/PurgeStat/{DPName}", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/PurgeStat/{DPName}", method = RequestMethod.POST)
     public String purgeStatsDP(@PathVariable(value = "DPName") String DPName) {
         operations.resetStatsDP(DPName);
         return "redirect:/muchadmin";
     }
 
     // deny urls
-    @RequestMapping(value="/muchadmin/Update/DenyUrls", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/Update/DenyUrls", method = RequestMethod.POST)
     public String denyUrl(String urls, Map<String, Object> model) {
         AdminData newurls = new AdminData("denyUrls", urls);
         adminDataRepository.save(newurls);
@@ -454,23 +459,53 @@ public class AdminController {
     }
 
     // add DAD MWL
-    @RequestMapping(value="/muchadmin/Experimental", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/Experimental", method = RequestMethod.POST)
     public String experimental(final RedirectAttributes redirectAttributes) {
         operations.detectPostMWL(false);
         return "redirect:/muchadmin";
     }
 
     // add DAD MWL
-    @RequestMapping(value="/muchadmin/Experimental2", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/Experimental2", method = RequestMethod.POST)
     public String experimental2(final RedirectAttributes redirectAttributes) {
         operations.detectPostMWL(true);
         return "redirect:/muchadmin";
     }
 
     // detect win more cards
-    @RequestMapping(value="/muchadmin/WinMore", method = RequestMethod.POST)
+    @RequestMapping(value = "/muchadmin/WinMore", method = RequestMethod.POST)
     public String winMore(final RedirectAttributes redirectAttributes) {
         statistics.getWinMoreCards();
         return "redirect:/muchadmin";
     }
+
+    // add acoo tournament from page
+    @RequestMapping(value = "/muchadmin/ABR/AddPack", method = RequestMethod.POST)
+    public String addABRTournaments(String pack, RedirectAttributes redirectAttributes) {
+        try {
+            long tournamentcount = template.count(Tournament.class);
+            long deckcount = template.count(Deck.class);
+            long standingcount = template.count(Standing.class);
+            operations.loadABRTournamentsForPack(pack);
+            tournamentcount = template.count(Tournament.class) - tournamentcount;
+            deckcount = template.count(Deck.class) - deckcount;
+            standingcount = template.count(Standing.class) - standingcount;
+            if (tournamentcount + deckcount + standingcount > 0) {
+                redirectAttributes.addFlashAttribute("successMessage",
+                        String.format("Tournaments added to DB for packcode: %s - new tournaments: %d, new decks: %d, new standings: %d",
+                                pack, tournamentcount, deckcount, standingcount));
+            } else {
+                redirectAttributes.addFlashAttribute("warningMessage",
+                        String.format("No new data was added for packcodeL: %s", pack));
+            }
+        } catch (Exception ex) {
+            logger.error("logged exception", ex);
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    String.format("Error loading tournaments with packcode: %s", pack));
+            return "redirect:/muchadmin";
+        }
+        operations.updateLastUpdateDate();
+        return "redirect:/muchadmin";
+    }
+
 }

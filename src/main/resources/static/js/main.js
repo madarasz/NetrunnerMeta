@@ -391,6 +391,9 @@ var tournamentShorters = {
     },
     byInTopDeck: function (a,b) {
         return (b.intopdecks - a.intopdecks);
+    },
+    byTopAllFractionStanding: function(a,b) {
+        return (b.topStandingCount / b.allStandingCount - a.topStandingCount / a.allStandingCount)
     }
 };
 
@@ -414,12 +417,16 @@ function buildTournamentBarData(datasource, datatable, baseall, basetop, titleli
         datatable.push([]);
         datatable[datatable.length - 1].push(element[titleline]);
         datatable[datatable.length - 1].push(
-            {v: element[allline] / baseall, f: Math.round(element[allline] / baseall * 1000) / 10 + '%'});
+            {v: element[allline] / baseall, f: percentageToString(element[allline] / baseall)});
         datatable[datatable.length - 1].push(
-            {v: element[topline] / basetop, f: Math.round(element[topline] / basetop * 1000) / 10 + '%'});
+            {v: element[topline] / basetop, f: percentageToString(element[topline] / basetop)});
     });
 
     return google.visualization.arrayToDataTable(datatable);
+}
+
+function percentageToString(fraction) {
+    return Math.round(fraction * 1000) / 10 + '%';
 }
 
 function populateTournamentCharts(dpname) {
@@ -444,6 +451,7 @@ function populateTournamentCharts(dpname) {
             listTournamentIdentities(data.ids, "#text_div1", "/MDSIdentity/" + dpname + "/", "/MDSFaction/" + dpname + "/");
             populateCardTable(data.ice, "#breakertable", 5);
             loadTournamentCardPoolTable(data.mostUsedCards.sort(tournamentShorters.byInTopDeck), "#runnertable2");
+            showSpotLight(data.ids, data.allStandingCount, data.topStandingCount, data.allDeckCount, "runner");
 
             // corp data
             $.ajax({
@@ -466,6 +474,7 @@ function populateTournamentCharts(dpname) {
                     listTournamentIdentities(data.ids, "#text_div2", "/MDSIdentity/" + dpname + "/", "/MDSFaction/" + dpname + "/");
                     populateCardTable(data.ice, "#icetable", 5);
                     loadTournamentCardPoolTable(data.mostUsedCards.sort(tournamentShorters.byInTopDeck), "#corptable2");
+                    showSpotLight(data.ids, data.allStandingCount, data.topStandingCount, data.allDeckCount, "corp");
 
                     drawTournamentCharts();
                 }
@@ -474,6 +483,13 @@ function populateTournamentCharts(dpname) {
         }
     });
     window.scrollTo(0,0);
+}
+
+
+
+function imageURL(title) {
+    return "/static/img/cards/netrunner-" +
+        title.toLowerCase().replace(new RegExp(" ", 'g'), "-").replace(new RegExp("[^a-z0-9.-]", 'g'), "") + ".png";
 }
 
 function drawTournamentCharts() {
@@ -562,8 +578,8 @@ function populateFOTData(factions, factionData, topStanding, allStanding, dataAr
         } else {
             var top = datarow.topStandingCount / topStanding,
                 all = datarow.allStandingCount / allStanding;
-            dataArray[dataArray.length - 1].push({f: Math.round(top*1000)/10+'%',v: top});
-            dataArray[dataArray.length - 1].push({f: Math.round(all*1000)/10+'%',v: all});
+            dataArray[dataArray.length - 1].push({f: percentageToString(top),v: top});
+            dataArray[dataArray.length - 1].push({f: percentageToString(all),v: all});
         }
     });
 }

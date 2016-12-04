@@ -1,5 +1,6 @@
 package com.madarasz.netrunnerstats;
 
+import com.madarasz.netrunnerstats.brokers.ABRBroker;
 import com.madarasz.netrunnerstats.database.DOs.*;
 import com.madarasz.netrunnerstats.database.DOs.admin.AdminData;
 import com.madarasz.netrunnerstats.database.DOs.admin.VerificationProblem;
@@ -60,6 +61,9 @@ public class Operations {
 
     @Autowired
     AcooBroker acooBroker;
+
+    @Autowired
+    ABRBroker abrBroker;
 
     @Autowired
     StimhackBroker stimhackBroker;
@@ -610,5 +614,51 @@ public class Operations {
     public void updateLastUpdateDate() {
         AdminData update = new AdminData("lastUpdate", df.format(new Date()));
         adminDataRepository.save(update);
+    }
+
+    public void loadABRTournamentsForPack(String packcode) {
+        // get tournaments
+        Set<Tournament> tournaments = abrBroker.getTournamentIDsForPack(packcode);
+
+        for (Tournament tournament : tournaments) {
+            Tournament tExists = tournamentRepository.findByUrl(tournament.getUrl());
+
+            // saving new tournament
+            if (tExists == null) {
+                logger.info("New tournament, saving: " + tournament.getName());
+                tournamentRepository.save(tournament);
+            } else {
+                logger.info("Tournament is already in DB. Not saving! - " + tExists.getName());
+            }
+
+            // get standings with decks
+            Set<Standing> standings = abrBroker.getStandings(tournament);
+            int savedStandings = 0, savedDecks = 0;
+            for (Standing standing : standings) {
+                Standing sExists = standingRepository.findByTournamentURLRankIdentity(tournament.getUrl(),
+                        standing.getRank(), standing.getIdentity().toString());
+
+                if (sExists == null) {
+                    // save new deck
+                    if (standing.getDeck() != null) {
+                        deckRepository.save(standing.getDeck());
+                        logger.info("Saving new deck: " + standing.getDeck().toString());
+                        savedDecks++;
+                    }
+                    // save new standing
+                    standingRepository.save(standing);
+                    savedStandings++;
+                } else {
+                    // adding deck to existing standing without deck
+                    if ((sExists.getDeck() == null) && (standing.getDeck() != null)) {
+                        deckRepository.save(standing.getDeck());
+                        logger.info("Saving new deck: " + standing.getDeck().toString());
+                        savedDecks++;
+                        standingRepository.save(standing);
+                    }
+                }
+            }
+            logger.info("New standings: " + savedStandings);
+        }
     }
 }

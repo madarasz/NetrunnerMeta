@@ -19,7 +19,7 @@ public class Card {
     private boolean uniqueness;
     private boolean limited;
     @RelatedTo(type = "IN_SET") private @Fetch
-    CardPack cardPack;
+    @Indexed(unique=false) CardPack cardPack;
 
     // for identity
     private int baselink;
@@ -89,6 +89,10 @@ public class Card {
 
     public CardPack getCardPack() {
         return cardPack;
+    }
+
+    public void setCardPack(CardPack cardPack) {
+        this.cardPack = cardPack;
     }
 
     public String getFaction_code() {

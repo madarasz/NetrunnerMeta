@@ -351,6 +351,9 @@ public class AcooBroker {
             case "icon-haarpsichord.png" :
                 identityName = "Haarpsichord Studios: Entertainment Unleashed";
                 break;
+            case "icon-haas-bioroid-architects-of-tomorrow.png" :
+                identityName = "Haas-Bioroid: Architects of Tomorrow";
+                break;
             case "hb-etf-icon.png" :
                 identityName = "Haas-Bioroid: Engineering the Future";
                 break;
@@ -380,6 +383,9 @@ public class AcooBroker {
                 break;
             case "jinteki-pe-icon.png" :
                 identityName = "Jinteki: Personal Evolution";
+                break;
+            case "icon-jinteki-potential-unleashed.png" :
+                identityName = "Jinteki: Potential Unleashed";
                 break;
             case "icon-jinteki-rp.jpg" :
                 identityName = "Jinteki: Replicating Perfection";
@@ -435,6 +441,9 @@ public class AcooBroker {
             case "null-whistleblower-icon.jpg" :
                 identityName = "Null: Whistleblower";
                 break;
+            case "icon-omar-keung-conspiracy-theorist.png" :
+                identityName = "Omar Keung: Conspiracy Theorist";
+                break;
             case "icon-palana.png" :
                 identityName = "Pālanā Foods: Sustainable Growth";
                 break;
@@ -449,6 +458,9 @@ public class AcooBroker {
                 break;
             case "icon-silhouette.jpg" :
                 identityName = "Silhouette: Stealth Operative";
+                break;
+            case "icon-ele-smoke-scovak-cynosure-of-the-net.png" :
+                identityName = "Ele \"Smoke\" Scovak: Cynosure of the Net";
                 break;
             case "icon-spark-agency.png" :
                 identityName = "Spark Agency: Worldswide Reach";

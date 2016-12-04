@@ -17,7 +17,7 @@ test=$SECONDS
 
 # nightwatch integration tests
 cd ../NetrunnerMeta/staticcopy
-nightwatch -c nightwatch/nightwatch.json
+nightwatch -c nightwatch/nightwatch.json --env phantomjs
 
 end=$SECONDS
 echo "Calculation:"

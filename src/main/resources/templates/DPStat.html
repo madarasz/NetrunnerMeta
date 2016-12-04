@@ -10,7 +10,8 @@
             <span th:text="${DPname}"></span>
         </h3>
         <ul class="nav nav-tabs" id="tabs">
-            <li class="active"><a data-toggle="tab" href="#top">Factions / identities, top</a></li>
+            <li class="active"><a data-toggle="tab" href="#spotlight">Spotlight</a></li>
+            <li><a data-toggle="tab" href="#top">Factions / identities, top</a></li>
             <li><a data-toggle="tab" href="#all">Factions / identities, all</a></li>
             <li><a data-toggle="tab" href="#compare">Compare top - all</a></li>
             <li><a data-toggle="tab" href="#decks">Deck Drilldown</a></li>
@@ -20,8 +21,72 @@
 
         <div class="tab-content">
 
+            <!-- Spotlight -->
+            <div id="spotlight" class="tab-pane fade in active">
+                <div class="row">
+                    <div class="col-md-4 col-xs-12">
+                        <h4>Most popular IDs</h4>
+                        <div class="row">
+                            <div id="spot_popular_runner" class="col-xs-6 spotlight-card spinner"></div>
+                            <div id="spot_popular_corp" class="col-xs-6 spotlight-card spinner"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4 col-xs-12">
+                        <h4>
+                            Most impressive IDs
+                            <ktm:tooltip place="right" text="IDs with biggest top/all ratio (and at least 5% usage)"/>
+                        </h4>
+                        <div class="row">
+                            <div id="spot_impressive_runner" class="col-xs-6 spotlight-card spinner"></div>
+                            <div id="spot_impressive_corp" class="col-xs-6 spotlight-card spinner"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row top-buffer" id="spot-deck-row">
+                    <div class="col-md-6 col-xs-12">
+                        <h4>
+                            Most used runner cards of pack
+                            <ktm:tooltip place="right" text="with at least 8% overall usage since cardpack is available"/>
+                        </h4>
+                        <div id="spot_used_runner">
+                            <div class="alert alert-danger text-center top-buffer-big hidden" role="alert" id="low-deck-runner">
+                                Not enough deck data
+                            </div>
+                            <div class="alert alert-warning text-center top-buffer-big hidden" role="alert" id="no-deck-runner">
+                                No notable cards
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-4 spotlight-card" id="spot_used_runner_1"></div>
+                                <div class="col-xs-4 spotlight-card spinner" id="spot_used_runner_2"></div>
+                                <div class="col-xs-4 spotlight-card" id="spot_used_runner_3"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <h4>
+                            Most used corp cards of pack
+                            <ktm:tooltip place="right" text="with at least 8% overall usage since cardpack is available"/>
+                        </h4>
+                        <div id="spot_used_corp">
+                            <div class="alert alert-danger text-center top-buffer-big hidden" role="alert" id="low-deck-corp">
+                                Not enough deck data
+                            </div>
+                            <div class="alert alert-warning text-center top-buffer-big hidden" role="alert" id="no-deck-corp">
+                                No notable cards
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-4 spotlight-card" id="spot_used_corp_1"></div>
+                                <div class="col-xs-4 spotlight-card spinner" id="spot_used_corp_2"></div>
+                                <div class="col-xs-4 spotlight-card" id="spot_used_corp_3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Top tab -->
-            <div id="top" class="tab-pane fade in active">
+            <div id="top" class="tab-pane fade in">
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
                         <h4>Top 30% runner factions</h4>
@@ -255,6 +320,11 @@
             corpCompareIdentityData = [['faction', 'all', 'top 30%']],
             dpname = encodeURIComponent([[${DPname}]]);
 
+        // hide deck card data in spotlight
+        if ([[${DPname}]] === "Last 3 aggregated" || [[${DPname}]] === "D&D, post-MWL") {
+            $('#spot-deck-row').addClass('hidden');
+        }
+
         // redraw charts on window resize
         $(window).resize(function(){
             drawTournamentCharts();
@@ -263,6 +333,72 @@
         // init google chart
         google.load('visualization', '1.0', {'packages':['corechart']});
         google.setOnLoadCallback(populateTournamentCharts(dpname));
+
+        function showSpotLight(data, allStandings, topStandings, allDecks, side) {
+            // most popular IDs
+            data.sort(tournamentShorters.byAllStanding);
+            addCardStat('#spot_popular_'+side, data[0], allStandings, topStandings);
+
+            // most impressive IDs
+            data.sort(tournamentShorters.byTopAllFractionStanding);
+            for (var i = 0, len = data.length; i < len; i++) {
+                if (data[i].allStandingCount / allStandings > 0.05) { // at least 4% all presence
+                    addCardStat('#spot_impressive_'+side, data[i], allStandings, topStandings);
+                    break;
+                }
+            }
+
+            // most used cards
+            if ([[${DPname}]] !== "Last 3 aggregated" && [[${DPname}]] !== "D&D, post-MWL" && allDecks > 15) {
+                $.ajax({
+                    url: "/JSON/Cards/" + side + "/" + dpname,
+                    dataType: "json",
+                    async: true,
+                    success: function (cardData) {
+                        for (var i = 0; i < 3; i++) {
+                            if (cardData[i].deckfraction > 0.08) {
+                                $('#spot_used_'+side+'_'+(i+1)).append($('<a>', {
+                                    href: '/Cards/' + cardData[i].cardtitle + '/'
+                                }).append($('<img>', {
+                                    src: imageURL(cardData[i].cardtitle)
+                                }), $('<div>', {
+                                    class: 'spotlight-title',
+                                    text: cardData[i].cardtitle
+                                })), $('<div>', {
+                                    text: 'all: ' + percentageToString(cardData[i].deckfraction) +
+                                    ' - top: ' + percentageToString(cardData[i].topdeckfraction)
+                                }));
+                            } else {
+                                if (i == 0) {
+                                    $('#no-deck-'+side).removeClass('hidden');
+                                }
+                                break;
+                            }
+                        }
+                        $('#spot_used_'+side+'_2').removeClass('spinner');
+                    }
+                });
+            } else {
+                $('#spot_used_'+side+'_2').removeClass('spinner');
+                $('#low-deck-'+side).removeClass('hidden');
+            }
+
+        }
+
+        function addCardStat(element, card, allCount, topCount) {
+            $(element).append($('<a>', {
+                href: '/Cards/' + card.title + '/'
+            }).append($('<img>', {
+                src: imageURL(card.title)
+            }), $('<div>', {
+                class: 'spotlight-title',
+                text: card.title
+            })), $('<div>', {
+                text: 'all: ' + percentageToString(card.allStandingCount / allCount) +
+                ' - top: ' + percentageToString(card.topStandingCount / topCount)
+            }));
+            $(element).removeClass('spinner');
+        }
 
         /*]]>*/
     </script>

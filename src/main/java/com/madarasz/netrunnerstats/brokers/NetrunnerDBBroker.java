@@ -7,6 +7,7 @@ import com.madarasz.netrunnerstats.database.DOs.Deck;
 import com.madarasz.netrunnerstats.database.DRs.CardCycleRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
+import com.madarasz.netrunnerstats.database.DRs.DeckRepository;
 import com.madarasz.netrunnerstats.helper.SafeJSONObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,6 +41,9 @@ public final class NetrunnerDBBroker {
     
     @Autowired
     private  HttpBroker httpBroker;
+
+    @Autowired
+    private DeckRepository deckRepository;
 
     public NetrunnerDBBroker() {
 
@@ -100,12 +104,25 @@ public final class NetrunnerDBBroker {
     }
 
     public String deckUrlFromId(int deckid) {
-        return NETRUNNERDB_API_URL + "deck/" + deckid;
+        return NETRUNNERDB_API_URL + "decklist/" + deckid;
     }
 
     public Deck readDeck(int deckid) {
-        JSONObject deckData = new JSONObject(httpBroker.readFromUrl(deckUrlFromId(deckid), false)).getJSONObject("data");
-        Deck resultDeck = new Deck(deckData.getString("name"), deckData.getString("username"), deckUrlFromId(deckid));
+        JSONObject deckData = new JSONObject();
+        Deck resultDeck = deckRepository.findByUrl(deckUrlFromId(deckid));
+
+        if (resultDeck != null) {
+            logger.trace("Deck already in DB: " + resultDeck.toString());
+            return resultDeck;
+        }
+
+        try {
+            deckData = new JSONObject(httpBroker.readFromUrl(deckUrlFromId(deckid), false)).getJSONArray("data").getJSONObject(0);
+            resultDeck = new Deck(deckData.getString("name"), deckData.getString("user_name"), deckUrlFromId(deckid));
+        } catch (Exception ex) {
+            logger.error("Could not read deck: " + deckUrlFromId(deckid));
+            return null;
+        }
 
         JSONObject cards = deckData.getJSONObject("cards");
         Iterator<?> cardData = cards.keys();

@@ -14,7 +14,7 @@ import java.util.Date;
 public class Tournament {
     @GraphId
     Long graphid;
-    private int id;  // -1 for Stimhack tournaments
+    private int id;  // -1 for Stimhack tournaments, +100000 for ABR
     private String name;
     private Date date;
     private int playerNumber;
