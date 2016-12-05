@@ -27,6 +27,8 @@ import java.util.Set;
 public final class NetrunnerDBBroker {
 
     private final static String NETRUNNERDB_API_URL = "https://netrunnerdb.com/api/2.0/public/";
+    private final static String NETRUNNERDB_PRIVATEDECK_URL = "https://netrunnerdb.com/en/deck/view/";
+    private final static String NETRUNNERDB_DECKLIST_URL = "https://netrunnerdb.com/en/decklist/";
 
     private static final Logger logger = LoggerFactory.getLogger(NetrunnerDBBroker.class);
 
@@ -103,24 +105,43 @@ public final class NetrunnerDBBroker {
         return resultSet;
     }
 
-    public String deckUrlFromId(int deckid) {
-        return NETRUNNERDB_API_URL + "decklist/" + deckid;
+    public String deckApiUrlFromId(int deckid, boolean published) {
+        if (published) {
+            return NETRUNNERDB_API_URL + "decklist/" + deckid;
+        } else {
+            return NETRUNNERDB_API_URL + "deck/" + deckid;
+        }
+    }
+
+    public String deckViewUrlFromId(int deckid, boolean published) {
+        if (published) {
+            return NETRUNNERDB_DECKLIST_URL + deckid;
+        } else {
+            return NETRUNNERDB_PRIVATEDECK_URL + deckid;
+        }
     }
 
     public Deck readDeck(int deckid) {
-        JSONObject deckData = new JSONObject();
-        Deck resultDeck = deckRepository.findByUrl(deckUrlFromId(deckid));
+        return readDeck(deckid, true);
+    }
+
+    public Deck readDeck(int deckid, boolean published) {
+        JSONObject deckData;
+        Deck resultDeck = deckRepository.findByUrl(deckApiUrlFromId(deckid, published));
 
         if (resultDeck != null) {
             logger.trace("Deck already in DB: " + resultDeck.toString());
             return resultDeck;
         }
 
+        String deckurl = deckViewUrlFromId(deckid, published),
+            apiurl = deckApiUrlFromId(deckid, published);
+
         try {
-            deckData = new JSONObject(httpBroker.readFromUrl(deckUrlFromId(deckid), false)).getJSONArray("data").getJSONObject(0);
-            resultDeck = new Deck(deckData.getString("name"), deckData.getString("user_name"), deckUrlFromId(deckid));
+            deckData = new JSONObject(httpBroker.readFromUrl(apiurl, false)).getJSONArray("data").getJSONObject(0);
+            resultDeck = new Deck(deckData.getString("name"), deckData.getString("user_name"), deckurl);
         } catch (Exception ex) {
-            logger.error("Could not read deck: " + deckUrlFromId(deckid));
+            logger.error("Could not read deck: " + deckurl);
             return null;
         }
 
@@ -129,11 +150,15 @@ public final class NetrunnerDBBroker {
         while (cardData.hasNext()) {
             String key = (String) cardData.next();
             Card card = cardRepository.findByCode(key);
-            if (card.isIdentity()) {
-                resultDeck.setIdentity(card);
+            if (card != null) {
+                if (card.isIdentity()) {
+                    resultDeck.setIdentity(card);
+                } else {
+                    int quantity = cards.getInt(key);
+                    resultDeck.hasCard(card, quantity);
+                }
             } else {
-                int quantity = cards.getInt(key);
-                resultDeck.hasCard(card, quantity);
+                logger.error("Cound not find card for code: " + key + " - " + deckurl);
             }
         }
 

@@ -25,8 +25,8 @@ public class ABRBroker {
 
     private static final Logger logger = LoggerFactory.getLogger(ABRBroker.class);
 
-    public final String URL_API_TOURNAMENTS = "https://www.alwaysberunning.net/api/tournaments?approved=1&concluded=1&recur=0&cardpool=";
-    public final String URL_API_ENTRIES = "https://www.alwaysberunning.net/api/entries?id=";
+    public final String URL_API_TOURNAMENTS = "https://alwaysberunning.net/api/tournaments?approved=1&concluded=1&recur=0&cardpool=";
+    public final String URL_API_ENTRIES = "https://alwaysberunning.net/api/entries?id=";
     public final String URL_TOURNAMENT = "https://www.alwaysberunning.net/tournaments/";
 
     @Autowired
@@ -59,8 +59,14 @@ public class ABRBroker {
             return result;
         }
 
-        JSONArray data = new JSONObject(httpBroker.readFromUrl(URL_API_TOURNAMENTS + pack, true))
-                .getJSONArray("input");
+        JSONArray data = new JSONArray();
+
+        try {
+            data = new JSONObject(httpBroker.readFromUrl(URL_API_TOURNAMENTS + pack, true))
+                    .getJSONArray("input");
+        } catch (Exception ex) {
+            logger.error("Could not read ABR tournaments", ex);
+        }
 
         for (int i = 0; i < data.length(); i++) {
             JSONObject tournamentData = data.getJSONObject(i);
@@ -85,8 +91,14 @@ public class ABRBroker {
     public Set<Standing> getStandings(Tournament tournament) {
         Set<Standing> result = new HashSet<>();
 
-        JSONArray data = new JSONObject(httpBroker.readFromUrl(URL_API_ENTRIES + (tournament.getId()-100000), true))
-                .getJSONArray("input");
+        JSONArray data = new JSONArray();
+
+        try {
+            data = new JSONObject(httpBroker.readFromUrl(URL_API_ENTRIES + (tournament.getId() - 100000), true))
+                    .getJSONArray("input");
+        } catch (Exception ex) {
+            logger.error("Cannot download standings/decks for: " + tournament.toString());
+        }
 
         for (int i = 0; i < data.length(); i++) {
             JSONObject entryData = data.getJSONObject(i);
@@ -126,6 +138,10 @@ public class ABRBroker {
         }
         if (url.contains("https://netrunnerdb.com/en/decklist/")) {
             return netrunnerDBBroker.readDeck(Integer.parseInt(url.substring(url.lastIndexOf("/") + 1)));
+        } else {
+            if (url.contains("https://netrunnerdb.com/en/deck/view/")) {
+                return netrunnerDBBroker.readDeck(Integer.parseInt(url.substring(url.lastIndexOf("/") + 1)), false);
+            }
         }
         return null;
 

@@ -179,7 +179,7 @@ public class Operations {
      * @return deck object
      */
     public Deck loadNetrunnerDbDeck(int deckId) {
-        String url = netrunnerDBBroker.deckUrlFromId(deckId);
+        String url = netrunnerDBBroker.deckViewUrlFromId(deckId, true);
         Deck exists = deckRepository.findByUrl(url);
         if (exists != null) {
             logger.info("Deck is already in DB. Not saving!");

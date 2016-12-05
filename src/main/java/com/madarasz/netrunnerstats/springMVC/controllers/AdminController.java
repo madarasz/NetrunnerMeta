@@ -334,7 +334,7 @@ public class AdminController {
     public String addNetrunnerDBDeck(String deckid, final RedirectAttributes redirectAttributes) {
         try {
             int id = Integer.parseInt(deckid);
-            Deck exists = deckRepository.findByUrl(netrunnerDBBroker.deckUrlFromId(id));
+            Deck exists = deckRepository.findByUrl(netrunnerDBBroker.deckViewUrlFromId(id, true));
             if (exists == null) {
                 operations.loadNetrunnerDbDeck(id);
                 redirectAttributes.addFlashAttribute("successMessage",
