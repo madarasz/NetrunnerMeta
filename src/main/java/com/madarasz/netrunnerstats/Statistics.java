@@ -484,7 +484,7 @@ public class Statistics {
 
         // special non-ice breaker cards that should be counted
         final List<String> extraCards = new ArrayList<>(Arrays.asList("D4v1d", "e3 Feedback Implants",
-                "Grappling Hook"));
+                "Grappling Hook", "Security Nexus"));
 
         List<CardAverage> result = new ArrayList<>();
 
@@ -505,7 +505,7 @@ public class Statistics {
             for (DeckHasCard deckHasCard : deck.getCards()) {
                 Card card = deckHasCard.getCard();
                 if ((!cards.contains(card)) &&
-                        ((card.getSubtype_code().contains("icebreaker")) ||
+                        ((card.getSubtype_code().contains("Icebreaker")) ||
                                 (card.getType_code().contains("ice")) ||
                                 (extraCards.contains(card.getTitle())))) {
                     cards.add(card);

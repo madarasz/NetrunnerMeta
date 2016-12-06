@@ -2,7 +2,7 @@ module.exports = {
     'MDS - last 3 runner' : function (browser) {
         browser
             .url(browser.launchUrl)
-            .waitForElementVisible('body', 3000)
+            .waitForElementVisible('body', 6000)
             .windowMaximize('current')                          // maximize browser window
             .click('div#drilldowns a')
             .click("ul#tabs li a[href='#decks']")
@@ -15,7 +15,7 @@ module.exports = {
         browser
             .useCss()
             .url(browser.launchUrl)
-            .waitForElementVisible('body', 3000)
+            .waitForElementVisible('body', 6000)
             .windowMaximize('current')                          // maximize browser window
             .useXpath()
             .click("//div[@id='drilldowns']/a[2]")
@@ -30,7 +30,7 @@ module.exports = {
         browser
             .useCss()
             .url(browser.launchUrl)
-            .waitForElementVisible('body', 3000)
+            .waitForElementVisible('body', 6000)
             .windowMaximize('current')                          // maximize browser window
             .useXpath()
             .click("//div[@id='drilldowns']/a[2]")
@@ -45,7 +45,7 @@ module.exports = {
         browser
             .useCss()
             .url(browser.launchUrl)
-            .waitForElementVisible('body', 3000)
+            .waitForElementVisible('body', 6000)
             .windowMaximize('current')                          // maximize browser window
             .useXpath()
             .click("//div[@id='drilldowns']/a[2]")

@@ -47,7 +47,7 @@ public class AverageDigest {
     private List<CardAverage> filterAndSortCards(List<CardAverage> cards, String typefilter) {
         List<CardAverage> result = new ArrayList<>();
         for (CardAverage card : cards) {
-            if ((card.getTypecodes().contains(typefilter)) || (card.getCardtitle().equals(typefilter))) {
+            if ((card.getTypecodes().toLowerCase().contains(typefilter)) || (card.getCardtitle().equals(typefilter))) {
                 result.add(card);
                 card.setTypecodes(typefilter);
             }

@@ -23,7 +23,10 @@
 
             <!--Card list-->
             <div class="col-md-8 col-xs-12">
-                <a name="results" class="anchor">&nbsp;</a>
+                <h4>
+                    <a name="results" class="anchor">&nbsp;</a>
+                    <div class="text-center" id="pack-name"></div>
+                </h4>
                 <!--Runner cards-->
                 <table class="table table-hover">
                     <thead>
@@ -91,6 +94,7 @@
 
             function loadTables(title) {
                 var encodedtitle = encodeURIComponent(title);
+                $('#pack-name').text(title);
                 $('#runner-cards').empty().addClass('spinner');
                 $('#corp-cards').empty().addClass('spinner');
                 loadCardPackTable('/JSON/Cards/runner/' + encodedtitle, '#runner-cards');

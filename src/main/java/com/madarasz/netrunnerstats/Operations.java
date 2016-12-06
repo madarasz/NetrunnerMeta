@@ -163,6 +163,11 @@ public class Operations {
                 logger.trace("Found card: " + card.toString());
                 found++;
             } else {
+                if (!foundCard.isSame(card)) {
+                    foundCard.resetValues(card);
+                    cardRepository.save(foundCard);
+                    logger.warn("Card values updated: " + foundCard.getTitle());
+                }
                 if (foundCard.getCardPack() == null) {
                     foundCard.setCardPack(card.getCardPack());
                     cardRepository.save(foundCard);
@@ -400,9 +405,11 @@ public class Operations {
             String oldname = tournament.getCardpool().getName();
             CardPack fix = guessCardPool(tournament);
             if ((!oldname.equals(fix.getName())) && (fix.later(tournament.getCardpool()))) {
+                list.add(new VerificationProblem(tournament.getName(), tournament.getUrl(),
+                        "wrong cardpool", "should be: " + fix.getName()));
                 logger.warn(String.format("ERROR - Wrong cardpool: %s - new cardpool: %s", tournament.toString(), fix.getName()));
-                tournament.setCardpool(fix);
-                tournamentRepository.save(tournament);
+//                tournament.setCardpool(fix);
+//                tournamentRepository.save(tournament);
             }
         }
 

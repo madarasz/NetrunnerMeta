@@ -94,11 +94,11 @@ public final class NetrunnerDBBroker {
                 logger.error("Cannot find cardpack for: " + cardData.getString("pack_code") + " - " + cardData.getString("title"));
             }
 
-            Card card = new Card(cardData.getString("code"), cardData.getString("title"), cardData.getString("type_code"), cardData.getString("subtype_code"),
+            Card card = new Card(cardData.getString("code"), cardData.getString("title"), cardData.getString("type_code"), cardData.getString("keywords"),
                     cardData.getString("text"), cardData.getString("faction_code"), cardData.getString("side_code"), cardData.getBoolean("uniqueness"),
-                    cardData.getInt("limited"), cardPack, cardData.getInt("baselink"), cardData.getInt("influencelimit"), cardData.getInt("minimumdecksize"),
-                    cardData.getInt("cost"), cardData.getInt("factioncost"), cardData.getInt("memoryunits"), cardData.getInt("strength"),
-                    cardData.getInt("advancementcost"), cardData.getInt("agendapoints"), cardData.getInt("trash"));
+                    cardData.getInt("deck_limit"), cardPack, cardData.getInt("base_link"), cardData.getInt("influence_limit"), cardData.getInt("minimum_deck_size"),
+                    cardData.getInt("cost"), cardData.getInt("faction_cost"), cardData.getInt("memory_cost"), cardData.getInt("strength"),
+                    cardData.getInt("advancement_cost"), cardData.getInt("agenda_points"), cardData.getInt("trash_cost"));
             resultSet.add(card);
         }
 

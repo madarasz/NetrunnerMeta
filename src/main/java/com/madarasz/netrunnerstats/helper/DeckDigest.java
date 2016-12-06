@@ -139,9 +139,9 @@ public class DeckDigest {
     private List<DeckHasCard> filterDeck(Set<DeckHasCard> cards, String typeFilter) {
         List<DeckHasCard> result = new ArrayList<>();
         for (DeckHasCard card : cards) {
-            if (((card.getCard().getType_code().contains(typeFilter)) ||
-                    (card.getCard().getSubtype_code().contains(typeFilter))) &&
-                    ((!typeFilter.equals("program")) || (!card.getCard().getSubtype_code().contains("icebreaker")))){
+            if (((card.getCard().getType_code().toLowerCase().contains(typeFilter)) ||
+                    (card.getCard().getSubtype_code().toLowerCase().contains(typeFilter))) &&
+                    ((!typeFilter.equals("program")) || (!card.getCard().getSubtype_code().toLowerCase().contains("icebreaker")))){
                 result.add(card);
             }
         }

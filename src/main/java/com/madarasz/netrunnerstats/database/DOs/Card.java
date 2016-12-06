@@ -17,7 +17,7 @@ public class Card {
     private String faction_code; // neutral, shaper, criminal, anarch, jinteki, haas-bioroid, weyland-consortium, nbn
     private String side_code; // runner, corp
     private boolean uniqueness;
-    private boolean limited;
+    private int decklimit;
     @RelatedTo(type = "IN_SET") private @Fetch
     @Indexed(unique=false) CardPack cardPack;
 
@@ -46,7 +46,7 @@ public class Card {
     public Card() {
     }
 
-    public Card(String code, String title, String type_code, String subtype_code, String text, String faction_code, String side_code, boolean uniqueness, int limited,
+    public Card(String code, String title, String type_code, String subtype_code, String text, String faction_code, String side_code, boolean uniqueness, int decklimit,
                 CardPack cardPack, int baselink, int influencelimit, int minimumdecksize, int cost, int factioncost, int memoryunits, int strength, int advancementcost,
                 int agendapoints, int trash) {
         this.code = code;
@@ -57,7 +57,7 @@ public class Card {
         this.faction_code = faction_code;
         this.side_code = side_code;
         this.uniqueness = uniqueness;
-        this.limited = limited == 1;
+        this.decklimit = decklimit;
         this.cardPack = cardPack;
         this.baselink = baselink;
         this.influencelimit = influencelimit;
@@ -105,10 +105,6 @@ public class Card {
 
     public String getType_code() {
         return type_code;
-    }
-
-    public boolean isLimited() {
-        return limited;
     }
 
     public int getInfluencelimit() {
@@ -165,6 +161,50 @@ public class Card {
 
     public int getAdvancementcost() {
         return advancementcost;
+    }
+
+    public int getDecklimit() {
+        return decklimit;
+    }
+
+    public void resetValues(Card card) {
+        this.title = card.getTitle();
+        this.type_code = card.getType_code();
+        this.subtype_code = card.getSubtype_code();
+        this.text = card.getText();
+        this.faction_code = card.getFaction_code();
+        this.side_code = card.getSide_code();
+        this.uniqueness = card.isUniquene();
+        this.decklimit = card.getDecklimit();
+        this.cardPack = card.getCardPack();
+        this.baselink = card.getBaselink();
+        this.influencelimit = card.getInfluencelimit();
+        this.minimumdecksize = card.getMinimumdecksize();
+        this.cost = card.getCost();
+        this.factioncost = card.getFactioncost();
+        this.memoryunits = card.getMemoryunits();
+        this.strength = card.getStrength();
+        this.advancementcost = card.getAdvancementcost();
+        this.agendapoints = card.getAgendapoints();
+        this.trash = card.getTrash();
+    }
+
+    /**
+     * Compares all values with other card.
+     * @param card
+     * @return
+     */
+    public boolean isSame(Card card) {
+        return (this.title.equals(card.getTitle()) && this.type_code.equals(card.getType_code()) &&
+            this.subtype_code.equals(card.getSubtype_code()) && this.text.equals(card.getText()) &&
+            this.faction_code.equals(card.getFaction_code()) && this.side_code.equals(card.getSide_code()) &&
+            this.uniqueness == card.isUniquene() && this.decklimit == card.getDecklimit() &&
+            this.baselink == card.getBaselink() &&
+            this.influencelimit == card.getInfluencelimit() && this.minimumdecksize == card.getMinimumdecksize() &&
+            this.cost == card.getCost() && this.factioncost == card.getFactioncost() &&
+            this.memoryunits == card.getMemoryunits() && this.strength == card.getStrength() &&
+            this.advancementcost == card.getAdvancementcost() && this.agendapoints == card.getAgendapoints() &&
+            this.trash == card.getTrash());
     }
 
     /**
