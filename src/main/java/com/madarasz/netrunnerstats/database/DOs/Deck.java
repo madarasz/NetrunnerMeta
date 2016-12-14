@@ -111,6 +111,15 @@ public class Deck {
         return decksize;
     }
 
+    public int hasCard(String title) {
+        for (DeckHasCard deckHasCard : cards) {
+            if (deckHasCard.getCard().getTitle().equals(title)) {
+                return deckHasCard.getQuantity();
+            }
+        }
+        return 0;
+    }
+
     public boolean equals(Deck deck) {
         if (!identity.getCode().equals(deck.getIdentity().getCode())) {
             return false;

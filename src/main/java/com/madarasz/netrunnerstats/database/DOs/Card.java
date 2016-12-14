@@ -168,6 +168,7 @@ public class Card {
     }
 
     public void resetValues(Card card) {
+        this.code = card.getCode();
         this.title = card.getTitle();
         this.type_code = card.getType_code();
         this.subtype_code = card.getSubtype_code();
@@ -204,7 +205,7 @@ public class Card {
             this.cost == card.getCost() && this.factioncost == card.getFactioncost() &&
             this.memoryunits == card.getMemoryunits() && this.strength == card.getStrength() &&
             this.advancementcost == card.getAdvancementcost() && this.agendapoints == card.getAgendapoints() &&
-            this.trash == card.getTrash());
+            this.trash == card.getTrash() && this.getCode().equals(card.getCode()));
     }
 
     /**

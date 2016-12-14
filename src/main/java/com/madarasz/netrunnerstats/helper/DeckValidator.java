@@ -22,7 +22,7 @@ public class DeckValidator {
             Arrays.asList("Cerberus \"Lady\" H1", "Clone Chip", "Desperado", "Parasite",
                     "Prepaid VoicePAD", "Yog.0",
                     "Architect", "AstroScript Pilot Program", "Eli 1.0", "NAPD Contract", "SanSan City Grid");
-    private static final String ALLIANCE = "alliance";
+    private static final String ALLIANCE = "Alliance";
 
     public DeckValidator() {
     }
@@ -73,18 +73,21 @@ public class DeckValidator {
      * @return influence count
      */
     public int getInfluenceCount(Deck deck) {
-        final String[] ALLIANCE_6_NAMES = { "Executive Search Firm", "Heritage Committee", "Ibrahim Salem",
-            "Jeeves Model Bioroids", "Raman Rai", "Salem's Hospitality" };
+        final String[] ALLIANCE_NAMES = { "Consulting Visit", "Executive Search Firm", "Heritage Committee",
+                "Ibrahim Salem", "Jeeves Model Bioroids", "Product Recall", "Raman Rai", "Salem's Hospitality" };
         final String ALLIANCE_ICE = "Mumba Temple";
         final String ALLIANCE_SIZE = "Museum of History";
-        final String PROFESSORCODE = "03029";
+        final String ALLIANCE_ASSET = "Mumbad Virtual Tour";
+        final String ALLIANCE_PAD = "PAD Factory";
+        final String PROFESSOR_CODE = "03029";
+        final String PAD_CAMPAIGN_TITLE = "PAD Campaign";
 
         Card identity = deck.getIdentity();
         if (identity == null) return 0;
         int result = 0;
         String faction_code = identity.getFaction_code();
 
-        if (identity.getCode().equals(PROFESSORCODE)) {  // The professor
+        if (identity.getCode().equals(PROFESSOR_CODE)) {  // The professor
             for (DeckHasCard deckHasCard : deck.getCards()) {
                 Card card = deckHasCard.getCard();
                 if (!faction_code.equals(card.getFaction_code())) {
@@ -100,11 +103,14 @@ public class DeckValidator {
                 Card card = deckHasCard.getCard();
                 if (!faction_code.equals(card.getFaction_code())) {
                     if (card.getSubtype_code().contains(ALLIANCE)) { // allience cards
-                        if (((Arrays.asList(ALLIANCE_6_NAMES).contains(card.getTitle())) &&
-                                (countFactionNonAlliance(deck, card.getFaction_code()) < 6)) ||
-                            ((card.getTitle().equals(ALLIANCE_ICE))) && (countType(deck, "ice") > 15) ||
-                            ((card.getTitle().equals(ALLIANCE_SIZE)) && (deck.countCards() < 50 ))) {
-                                    result += card.getFactioncost() * deckHasCard.getQuantity();
+                        if (((Arrays.asList(ALLIANCE_NAMES).contains(card.getTitle())) &&
+                            (countFactionNonAlliance(deck, card.getFaction_code()) < 6)) || // faction alliance
+                            ((card.getTitle().equals(ALLIANCE_ICE)) && (countType(deck, "ice") > 15)) ||
+                            ((card.getTitle().equals(ALLIANCE_SIZE)) && (deck.countCards() < 50 )) ||
+                            ((card.getTitle().equals(ALLIANCE_ASSET)) && (countType(deck, "asset") < 7)) ||
+                            ((card.getTitle().equals(ALLIANCE_PAD)) && (deck.hasCard(PAD_CAMPAIGN_TITLE) < 3))) {
+                                // alliance cards not meeting the condition
+                                result += card.getFactioncost() * deckHasCard.getQuantity();
                         }
                     } else {    // normal cards
                         result += card.getFactioncost() * deckHasCard.getQuantity();
@@ -161,7 +167,7 @@ public class DeckValidator {
 
             // Apex limitation
             if ((isApex) && (card.getType_code().equals("resource"))
-                    && (!card.getSubtype_code().contains("virtual"))) {
+                    && (!card.getSubtype_code().contains("Virtual"))) {
                 validity += String.format("ERROR - Apex can only have virtual resources - %s\n", card.getTitle());
             }
         }

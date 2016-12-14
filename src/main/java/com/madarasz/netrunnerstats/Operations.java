@@ -369,6 +369,7 @@ public class Operations {
 
         // check decks
         List<Deck> decks = deckRepository.getAllDecks();
+        logger.info("Checking deck validity");
         for (Deck deck : decks) {
             logger.debug(String.format("Checking validity: %s", deck.toString()));
             String problem = deckValidator.isValidDeck(deck);
@@ -380,6 +381,7 @@ public class Operations {
         }
 
         // check standings
+        logger.info("Checking IDs");
         List<Standing> standings = standingRepository.getAllStanding();
         for (Standing standing : standings) {
             if (standing.getIdentity().getTitle().equals("The Shadow: Pulling the Strings")) {
@@ -393,14 +395,16 @@ public class Operations {
 
         // check tournaments
         List<Tournament> tournaments = tournamentRepository.getAllTournaments();
+        List<Tournament> tournamentsABR = new ArrayList<>();
         Date nulldate = new Date(0);
+        logger.info("Checking tournament cardpool");
         for (Tournament tournament : tournaments) {
             // check wrong date
-            if (tournament.getDate().equals(nulldate)) {
-                logger.warn(String.format("ERROR - Wrong date: %s", tournament.toString()));
-                list.add(new VerificationProblem(tournament.getName(), tournament.getUrl(),
-                        "wrong date", ""));
-            }
+//            if (tournament.getDate().equals(nulldate)) {
+//                logger.warn(String.format("ERROR - Wrong date: %s", tournament.toString()));
+//                list.add(new VerificationProblem(tournament.getName(), tournament.getUrl(),
+//                        "wrong date", ""));
+//            }
             // check wrong cardpool
             String oldname = tournament.getCardpool().getName();
             CardPack fix = guessCardPool(tournament);
@@ -411,34 +415,67 @@ public class Operations {
 //                tournament.setCardpool(fix);
 //                tournamentRepository.save(tournament);
             }
+            if (tournament.getUrl().contains("alwaysberunning")) {
+                tournamentsABR.add(tournament);
+            }
         }
 
         // checking for duplicated decks, stimhack-acoo
-        List<Deck> decks2 = new ArrayList<>();
-        List<Deck> decks3 = new ArrayList<>();
-        for (Deck deck : decks) {
-            if (deck.getUrl().contains("stimhack")) {
-                decks2.add(deck);   // stimhack
-            } else {
-                Standing standing = standingRepository.findByDeckUrl(deck.getUrl());
-                if ((standing != null) && (standing.getRank() == 1)) {
-                    decks3.add(deck);   // acoo
+//        List<Deck> decksStimhack = new ArrayList<>();
+//        List<Deck> decksAcoo = new ArrayList<>();
+//        for (Deck deck : decks) {
+//            if (deck.getUrl().contains("stimhack")) {
+//                decksStimhack.add(deck);   // stimhack
+//            } else {
+//                Standing standing = standingRepository.findByDeckUrl(deck.getUrl());
+//                if ((deck.getUrl().contains("acoo")) && (standing != null) && (standing.getRank() == 1)) {
+//                    decksAcoo.add(deck);   // acoo
+//                }
+//            }
+//        }
+//        for (Deck deck3 : decksAcoo) {
+//            for (Deck deck2 : decksStimhack) {
+//                if (deck3.equals(deck2)) {
+//                    Tournament tournament3 = tournamentRepository.getTournamentByDeckUrl(deck3.getUrl());
+//                    Tournament tournament2 = tournamentRepository.getTournamentByDeckUrl(deck2.getUrl());
+//                    if (tournament3.getCardpool().getName().equals(tournament2.getCardpool().getName())) {
+//                        logger.warn("WARNING - matching decks:");
+//                        logger.warn(deck3.toString());
+//                        logger.warn(deck2.toString());
+//                        list.add(new VerificationProblem(deck3.getName(), deck3.getUrl(), "duplicate",
+//                                String.format("(%d) %s", tournament3.getPlayerNumber(), tournament3.getName())));
+//                        list.add(new VerificationProblem(deck2.getName(), deck2.getUrl(), "duplicate",
+//                                String.format("(%d) %s", tournament2.getPlayerNumber(), tournament2.getName())));
+//                    }
+//                }
+//            }
+//        }
+
+        // check for ABR duplication
+//        for (int i = 0; i < decksABR.size() - 1; i++) {
+//            for (int u = i + 1; u < decksABR.size(); u++) {
+//                if (decksABR.get(i).getUrl().equals(decksABR.get(u).getUrl())) {
+//                    list.add(new VerificationProblem(decksABR.get(u).getName(), decksABR.get(u).getUrl(), "duplicate deck", ""));
+//                    logger.warn(String.format("ERROR - duplicate ABR deck: %s", decksABR.get(u).getUrl()));
+//                }
+//            }
+//        }
+
+        logger.info("Checking ABR duplication");
+        for (int i = 0; i < tournamentsABR.size() - 1; i++) {
+            for (int u = i + 1; u < tournamentsABR.size(); u++) {
+                if (tournamentsABR.get(i).getUrl().equals(tournamentsABR.get(u).getUrl())) {
+                    list.add(new VerificationProblem(tournamentsABR.get(u).getName(), tournamentsABR.get(u).getUrl(), "duplicate  tournament", ""));
+                    logger.warn(String.format("ERROR - duplicate ABR tournament: %s", tournamentsABR.get(u).getUrl()));
                 }
             }
-        }
-        for (Deck deck3 : decks3) {
-            for (Deck deck2 : decks2) {
-                if (deck3.equals(deck2)) {
-                    Tournament tournament3 = tournamentRepository.getTournamentByDeckUrl(deck3.getUrl());
-                    Tournament tournament2 = tournamentRepository.getTournamentByDeckUrl(deck2.getUrl());
-                    if (tournament3.getCardpool().getName().equals(tournament2.getCardpool().getName())) {
-                        logger.warn("WARNING - matching decks:");
-                        logger.warn(deck3.toString());
-                        logger.warn(deck2.toString());
-                        list.add(new VerificationProblem(deck3.getName(), deck3.getUrl(), "duplicate",
-                                String.format("(%d) %s", tournament3.getPlayerNumber(), tournament3.getName())));
-                        list.add(new VerificationProblem(deck2.getName(), deck2.getUrl(), "duplicate",
-                                String.format("(%d) %s", tournament2.getPlayerNumber(), tournament2.getName())));
+            List<Standing> standingsABT = standingRepository.findByTournamentURL(tournamentsABR.get(i).getUrl());
+            for (int u = 0; u < standingsABT.size() - 1; u++) {
+                for (int e = u + 1; e < standingsABT.size(); e++) {
+                    if ((standingsABT.get(u).getDeck() != null) && (standingsABT.get(e).getDeck() != null) &&
+                            (standingsABT.get(u).getDeck().getUrl().equals(standingsABT.get(e).getDeck().getUrl()))) {
+                        list.add(new VerificationProblem(standingsABT.get(e).getDeck().getName(), tournamentsABR.get(i).getUrl(), "duplicate  deck", ""));
+                        logger.warn(String.format("ERROR - duplicate ABR deck: %s", standingsABT.get(e).getDeck().getName()));
                     }
                 }
             }
