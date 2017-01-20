@@ -698,11 +698,12 @@ public class Operations {
                         deckRepository.save(standing.getDeck());
                         logger.info("Saving new deck: " + standing.getDeck().toString());
                         savedDecks++;
-                        standingRepository.save(standing);
+                        sExists.setDeck(standing.getDeck());
+                        standingRepository.save(sExists);
                     }
                 }
             }
-            logger.info("New standings: " + savedStandings);
+            logger.info("New standings: " + savedStandings + " | new decks: " + savedDecks);
         }
     }
 }
