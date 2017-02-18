@@ -11,6 +11,7 @@ import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Map;
 
@@ -67,5 +68,10 @@ public class SpecialController {
             model.put("lastUpdate", lastUpdate.getData());
         }
         return "Info";
+    }
+
+    @RequestMapping(value="/LastUpdate", method = RequestMethod.GET)
+    @ResponseBody String getUpdateTime() {
+        return adminDataRepository.getLastUpdate().getData();
     }
 }

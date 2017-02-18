@@ -33,6 +33,7 @@ public class Operations {
 
     private static final Logger logger = LoggerFactory.getLogger(Operations.class);
     private final DateFormat df = new SimpleDateFormat("yyyy.MM.dd.");
+    private final DateFormat df2 = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
     public static final String LAST_3 = "Last 3 aggregated";
 
     @Autowired
@@ -656,7 +657,7 @@ public class Operations {
     }
 
     public void updateLastUpdateDate() {
-        AdminData update = new AdminData("lastUpdate", df.format(new Date()));
+        AdminData update = new AdminData("lastUpdate", df2.format(new Date()));
         adminDataRepository.save(update);
     }
 

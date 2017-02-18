@@ -128,11 +128,11 @@ public class AdminController {
         model.put("countStandingDeckCount", template.count(StandingDeckCount.class));
         model.put("countStandingDeckCountID", template.count(StandingDeckCountID.class));
         model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
-        List<Deck> withoutRel = deckRepository.getAllDecksWithoutRel();
-        for (Deck deck : withoutRel) {
-            logger.warn("Deck without rel: " + deck.toString());
-        }
-        model.put("countDecksWithoutRel", withoutRel.size());
+//        List<Deck> withoutRel = deckRepository.getAllDecksWithoutRel();
+//        for (Deck deck : withoutRel) {
+//            logger.warn("Deck without rel: " + deck.toString());
+//        }
+//        model.put("countDecksWithoutRel", withoutRel.size());
 //        model.put("countDoubledStandings", standingRepository.countDoubledStandings());
 
         AdminData denyurls = adminDataRepository.getDenyUrls();

@@ -39,6 +39,7 @@ dirs=(
 "Buyers-Guide/side"
 "Buyers-Guide/faction"
 "Buyers-Guide/identity"
+"LastUpdate"
 )
 for dir in "${dirs[@]}"
 do
@@ -84,6 +85,7 @@ curl http://localhost:8080/Cards > Cards/index.html
 curl http://localhost:8080/Buyers-Guide > Buyers-Guide/index.html
 curl http://localhost:8080/Buyers-Guide/side/corp > Buyers-Guide/side/corp/index.html
 curl http://localhost:8080/Buyers-Guide/side/runner > Buyers-Guide/side/runner/index.html
+curl http://localhost:8080/LastUpdate > LastUpdate/index.html
 
 # copy static folders
 # skip favicons

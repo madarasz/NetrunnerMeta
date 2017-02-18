@@ -62,7 +62,7 @@ public class CPController {
         List<String> cardpoolNames = cardPoolStatsRepository.getCardPoolNames();
         model.put("cardpools", cardpoolNames.subList(0, 10));
         model.put("cardpoolsmore", cardpoolNames.subList(10, cardpoolNames.size()));
-        model.put("lastUpdate", adminDataRepository.getLastUpdate().getData());
+        model.put("lastUpdate", adminDataRepository.getLastUpdate().getData().substring(0, 10));
 
         return "Home";
     }
