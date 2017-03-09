@@ -978,6 +978,8 @@ public class Statistics {
             List<String> dps = cardPackRepository.getSortedPackNamesInCycle(i);
             if (dps.size() > 1) {
                 cycle.addDatapacks(dps);
+            } else if (!dps.get(0).equals(cycle.getTitle())) {
+                cycle.addDatapacks(dps);
             }
             result.add(cycle);
         }

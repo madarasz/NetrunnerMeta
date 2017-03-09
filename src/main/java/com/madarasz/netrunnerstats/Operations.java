@@ -662,49 +662,54 @@ public class Operations {
     }
 
     public void loadABRTournamentsForPack(String packcode) {
+        AdminData denyUrls = adminDataRepository.getDenyUrls();
         // get tournaments
         Set<Tournament> tournaments = abrBroker.getTournamentIDsForPack(packcode);
 
         for (Tournament tournament : tournaments) {
-            Tournament tExists = tournamentRepository.findByUrl(tournament.getUrl());
+            if ((denyUrls == null) || (!denyUrls.getData().contains(tournament.getUrl()))) {
+                Tournament tExists = tournamentRepository.findByUrl(tournament.getUrl());
 
-            // saving new tournament
-            if (tExists == null) {
-                logger.info("New tournament, saving: " + tournament.getName());
-                tournamentRepository.save(tournament);
-            } else {
-                logger.info("Tournament is already in DB. Not saving! - " + tExists.getName());
-            }
-
-            // get standings with decks
-            Set<Standing> standings = abrBroker.getStandings(tournament);
-            int savedStandings = 0, savedDecks = 0;
-            for (Standing standing : standings) {
-                Standing sExists = standingRepository.findByTournamentURLRankIdentity(tournament.getUrl(),
-                        standing.getRank(), standing.getIdentity().toString());
-
-                if (sExists == null) {
-                    // save new deck
-                    if (standing.getDeck() != null) {
-                        deckRepository.save(standing.getDeck());
-                        logger.info("Saving new deck: " + standing.getDeck().toString());
-                        savedDecks++;
-                    }
-                    // save new standing
-                    standingRepository.save(standing);
-                    savedStandings++;
+                // saving new tournament
+                if (tExists == null) {
+                    logger.info("New tournament, saving: " + tournament.getName());
+                    tournamentRepository.save(tournament);
                 } else {
-                    // adding deck to existing standing without deck
-                    if ((sExists.getDeck() == null) && (standing.getDeck() != null)) {
-                        deckRepository.save(standing.getDeck());
-                        logger.info("Saving new deck: " + standing.getDeck().toString());
-                        savedDecks++;
-                        sExists.setDeck(standing.getDeck());
-                        standingRepository.save(sExists);
+                    logger.info("Tournament is already in DB. Not saving! - " + tExists.getName());
+                }
+
+                // get standings with decks
+                Set<Standing> standings = abrBroker.getStandings(tournament);
+                int savedStandings = 0, savedDecks = 0;
+                for (Standing standing : standings) {
+                    Standing sExists = standingRepository.findByTournamentURLRankIdentity(tournament.getUrl(),
+                            standing.getRank(), standing.getIdentity().toString());
+
+                    if (sExists == null) {
+                        // save new deck
+                        if (standing.getDeck() != null) {
+                            deckRepository.save(standing.getDeck());
+                            logger.info("Saving new deck: " + standing.getDeck().toString());
+                            savedDecks++;
+                        }
+                        // save new standing
+                        standingRepository.save(standing);
+                        savedStandings++;
+                    } else {
+                        // adding deck to existing standing without deck
+                        if ((sExists.getDeck() == null) && (standing.getDeck() != null)) {
+                            deckRepository.save(standing.getDeck());
+                            logger.info("Saving new deck: " + standing.getDeck().toString());
+                            savedDecks++;
+                            sExists.setDeck(standing.getDeck());
+                            standingRepository.save(sExists);
+                        }
                     }
                 }
+                logger.info("New standings: " + savedStandings + " | new decks: " + savedDecks);
+            } else {
+                logger.info("Tournament skipped: " + tournament.getName());
             }
-            logger.info("New standings: " + savedStandings + " | new decks: " + savedDecks);
         }
     }
 }
