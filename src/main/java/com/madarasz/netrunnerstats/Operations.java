@@ -666,6 +666,7 @@ public class Operations {
         // get tournaments
         Set<Tournament> tournaments = abrBroker.getTournamentIDsForPack(packcode);
 
+        int index = 1;
         for (Tournament tournament : tournaments) {
             if ((denyUrls == null) || (!denyUrls.getData().contains(tournament.getUrl()))) {
                 Tournament tExists = tournamentRepository.findByUrl(tournament.getUrl());
@@ -706,10 +707,14 @@ public class Operations {
                         }
                     }
                 }
-                logger.info("New standings: " + savedStandings + " | new decks: " + savedDecks);
+                logger.info("New standings: " + savedStandings + " | new decks: " + savedDecks +
+                        " | progress: " + index + " / " + tournaments.size());
             } else {
-                logger.info("Tournament skipped: " + tournament.getName());
+                logger.info("Tournament skipped: " + tournament.getName() +
+                        " | progress: " + index + " / " + tournaments.size());
             }
+            index++;
         }
+        logger.info("Import finished for: " + packcode);
     }
 }
