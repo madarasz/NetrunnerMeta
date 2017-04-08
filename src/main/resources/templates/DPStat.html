@@ -6,7 +6,21 @@
     <div th:replace="fragments/navbar :: navbar"></div>
     <div class="container">
         <h3>
-            <div th:replace="fragments/socialicons :: icons"></div>
+            <div class="pull-right">
+                <a th:href="'/DPStats/'+${DPnameBefore}" class="btn btn-xs btn-primary" th:if="${DPnameBefore!=null}">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                    <span th:text="${DPnameBefore}"></span>
+                </a>
+                <a th:href="'/DPStats/'+${DPnameAfter}" class="btn btn-xs btn-primary" th:if="${DPnameAfter!=null}">
+                    <span th:text="${DPnameAfter}"></span>
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+                <a href="/DPStats/Last%203%20aggregated/" class="btn btn-xs btn-info"
+                   th:if="${DPnameAfter==null and DPindex &gt; -1}">
+                    Last 3 aggregated
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </div>
             <span th:text="${DPname}"></span>
         </h3>
         <ul class="nav nav-tabs" id="tabs">

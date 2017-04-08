@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,9 +37,21 @@ public class DPController {
     // html page output
     @RequestMapping(value="/DPStats/{DPName}", method = RequestMethod.GET)
     public String getDPPage(@PathVariable String DPName, Map<String, Object> model) {
+        List<String> cardpoolNames = cardPoolStatsRepository.getCardPoolNames();
+        int index = cardpoolNames.indexOf(DPName);
+
         model.put("DPname", DPName);
         model.put("pageTitle", DPName + " - Know the Meta - Android: Netrunner");
-        model.put("cardpools", cardPoolStatsRepository.getCardPoolNames());
+        model.put("cardpools", cardpoolNames);
+        model.put("DPindex", index);
+
+        if (index > 0) {
+            model.put("DPnameAfter", cardpoolNames.get(index-1));
+        }
+        if (index < cardpoolNames.size() - 1) {
+            model.put("DPnameBefore", cardpoolNames.get(index+1));
+        }
+
         return "DPStat";
     }
 
