@@ -6,7 +6,7 @@ test.db
 staticcopy/content
 staticcopy/node_modules
 src/main/resources/static/img/cards/*
-ktm.concat*
+ktm*
 selenium-*
 reports
 staticcopy/cards.json

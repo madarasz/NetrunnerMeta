@@ -357,8 +357,13 @@ table.ordering > tbody > tr > td {
     margin-top: -0.2em;
     margin-right: 0.2em;
 }
-
-
+.modal-dialog {
+    z-index: 3000;
+}
+.indicator {
+    line-height: 1em;
+    padding-right: 0.5em;
+}
 
 
 

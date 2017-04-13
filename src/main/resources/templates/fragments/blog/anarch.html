@@ -24,30 +24,54 @@
             <button id="data-all" type="button" class="btn btn-default"
                     onclick="clickFilter(selectedFaction, 'all');">All</button>
         </div>
-        <div id="chart-ids"></div>
+        <div id="chart-ids" class="spinner"></div>
     </div>
 </div>
+<br/>
+<p class="text-center">
+    <em>
+        Throughout the article, I'm going to indicate if Anarchs are getting stronger
+        (<i class="fa fa-chevron-up text-danger" aria-hidden="true"></i>) or weaker
+        (<i class="fa fa-chevron-down text-danger" aria-hidden="true"></i>).
+    </em>
+</p>
 <br/>
 <h4>Humble beginnings</h4>
 <p>
     My data starts at <strong>Up and Over</strong>. <em>mediohxcore</em> won the
     <a href="http://www.acoo.net/anr-tournament/111/worlds-championship-2014/">2014 Worlds Championship</a> with
-    <a href="https://meteor.stimhack.com/decks/ELMc3kBrhENrFmRmp">Daily QT Andy</a>, which is an <em>Andy Sucker</em>
+    <a href="https://meteor.stimhack.com/decks/ELMc3kBrhENrFmRmp">Daily QT Andy</a>, which was an <em>Andy Sucker</em>
     variant utilizing the powerful Criminal events and Core set Anarch breakers with <ktm:card title="Datasucker"/>.
     All of the top-8 runner IDs were Criminals, of which 7 were <em>Andy Sucker</em> decks. This was strongest runner
-    archetype then.
+    archetype then. <em>Prepaid Voicepad (PPVP) Kate</em> also had a great presence.
 </p>
-<div class="blog-image">
-    <ktm:img title="Cerberus &quot;Lady&quot; H1" size="small"/>
+<div class="row blog-image">
+    <div class="col-xs-6 col-md-3 col-md-offset-3">
+        <ktm:img title="Utopia Shard" size="small"/>
+    </div>
+    <div class="col-xs-6 col-md-3 col-md-offset-3">
+        <ktm:img title="Cerberus &quot;Lady&quot; H1" size="small"/>
+    </div>
 </div>
 <p>
-    <strong>All That Remains</strong> introduced <ktm:card title="Cerberus &quot;Lady&quot; H1"/> which gave a nice
-    boost to the blooming <em>Prepaid Voicepad (PPVP) Kate</em> decks. <ktm:card title="Eli 1.0"/> was used by 65% percent of
-    the corporations, making Shapers very happy about their new toy.
-    A nice example is
-    <a href="https://netrunnerdb.com/en/decklist/17510/demon-kate-2-0-1st-place-mtg-deals-sc-san-gabriel-ca-">Demon Kate</a>.
-    Anarchs were the least played faction.
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                <strong>All That Remains</strong> introduced <ktm:card title="Utopia Shard"/>, which was welcomed by Noise players.
+                <ktm:card title="Cerberus &quot;Lady&quot; H1"/> gave a nice
+                boost to the blooming <em>PPVP Kate</em> decks. <ktm:card title="Eli 1.0"/> was used by 65% percent of
+                the corporations, making Shapers very happy about their new toy.
+                A nice example is
+                <a href="https://netrunnerdb.com/en/decklist/17510/demon-kate-2-0-1st-place-mtg-deals-sc-san-gabriel-ca-">Demon Kate</a>.
+                Anarchs were still the least played faction.
+            </td>
+        </tr>
+    </table>
 </p>
+<br/>
 <div class="row blog-image">
     <div class="col-md-3 col-xs-6">
         <ktm:img title="MaxX: Maximum Punk Rock" size="small"/>
@@ -63,16 +87,27 @@
     </div>
 </div>
 <p>
-    This changed with the <strong>Order and Chaos</strong> deluxe expansion featuring new orange cards and IDs. The
-    hot new identity is <ktm:card title="MaxX: Maximum Punk Rock"/>. She usually comes in two flavours:
-    <a href="http://stimhack.com/store-champs-trottas-hobbies-barnegat-nj-26-players">RegAss MaxX</a>
-    with traditional breakers and
-    <a href="https://netrunnerdb.com/en/decklist/14525/maxximum-jank-store-championship-winner-undefeated-">Siphon MaxX</a>
-    using <ktm:card title="Eater"/> plus <ktm:card title="Account Siphon"/>. <ktm:card title="I've Had Worse"/> also
-    helped against kill-corporations and speeded up card draw.
-    The popularity and the power level of the
-    factions were almost even.
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i><br/>
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                This changed with the <strong>Order and Chaos</strong> deluxe expansion featuring new orange cards and IDs. The
+                hot new identity was <ktm:card title="MaxX: Maximum Punk Rock"/>. She usually came in two flavours:
+                <a href="http://stimhack.com/store-champs-trottas-hobbies-barnegat-nj-26-players">RegAss MaxX</a>
+                with traditional breakers and
+                <a href="https://netrunnerdb.com/en/decklist/14525/maxximum-jank-store-championship-winner-undefeated-">Siphon MaxX</a>
+                using <ktm:card title="Eater"/> plus <ktm:card title="Account Siphon"/>. <ktm:card title="I've Had Worse"/> also
+                helped against kill-corporations and speeded up card draw.
+                The popularity and the power level of the
+                factions were almost even.
+            </td>
+        </tr>
+    </table>
 </p>
+<br/>
 <div class="row blog-image">
     <div class="col-md-3 col-xs-6 col-md-offset-3">
         <ktm:img title="Clot" size="small"/>
@@ -82,19 +117,51 @@
     </div>
 </div>
 <p>
-    <strong>The Valley</strong> added <ktm:card title="Clot"/> and <ktm:card title="Adjusted Chronotype"/>. A
-    silver bullet against fast advance was welcomed, but it needed <ktm:card title="Clone Chip"/> to be great, which
-    initially helped Shapers. <em>PPVP Kate</em> decks embraced it with love.
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-minus text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                <strong>The Valley</strong> added <ktm:card title="Clot"/> and <ktm:card title="Adjusted Chronotype"/>. A
+                silver bullet against fast advance was appreciated, but it needed <ktm:card title="Clone Chip"/>  or
+                <ktm:card title="Self-modifying Code"/> to be great, which
+                initially served Shapers the most. <em>PPVP Kate</em> decks embraced it with love. Unfortunately <em>HB Glacier</em>
+                and <em>Jinteki: RP</em> were played a lot at that time, both are bad match-ups for Anarch.<br/>
+                (examples:
+                <a href="http://www.acoo.net/deck/9661/">HB Etf</a>,
+                <a href="https://netrunnerdb.com/en/decklist/19457/ouchy-ouchy-ragey-ragey-winner-london-regionals-19th-april-">
+                    Ouchy ouchy ragey ragey</a>)
+            </td>
+        </tr>
+    </table>
 </p>
+<br/>
 <p>
-    It took a couple of months (<strong>Chrome City</strong>) for the community to piece together
-    <a href="https://netrunnerdb.com/en/decklist/21919/pancake-noise-tulsa-regionals-2015-1st-place-winner">Pancake Noise</a>
-    utilizing the <ktm:card title="Adjusted Chronotype"/> + <ktm:card title="Wyldside"/> combo, driving the corporations
-    crazy with clone-chipped viruses and selling them with <ktm:card title="Aesop's Pawnshop"/>. Also
-    <a href="https://netrunnerdb.com/en/decklist/21538/l4j-looking-for-job-madison-wi-regional-2nd-place">
-    L4J (Looking for Job)</a> Whizzard emerged with <ktm:card title="Net-Ready Eyes"/> and <ktm:card title="Career Fair"/>
-    as an answer for the asset-heavy meta of NBN and HB.
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i><br/>
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                It took a couple of months (<strong>Chrome City</strong>) and
+                <ktm:card title="Near-Earth Hub: Broadcast Center"/> was on top of the corp meta again. This brought forward
+                <a href="https://netrunnerdb.com/en/decklist/21919/pancake-noise-tulsa-regionals-2015-1st-place-winner">Pancake Noise</a>
+                utilizing the <ktm:card title="Adjusted Chronotype"/> + <ktm:card title="Wyldside"/> combo, giving corporations
+                a hard time with clone-chipped viruses (<ktm:card title="Clot"/>) and selling them with <ktm:card title="Aesop's Pawnshop"/>.
+                <ktm:card title="I've Had Worse"/> helped against <em>Butchershop</em> opponents. Also
+                <a href="https://netrunnerdb.com/en/decklist/21538/l4j-looking-for-job-madison-wi-regional-2nd-place">
+                L4J (Looking for Job)</a> Whizzard emerged with <ktm:card title="Net-Ready Eyes"/> and <ktm:card title="Career Fair"/>
+                as an answer for the asset-heavy meta of NBN and HB. Additionally
+                <a href="https://netrunnerdb.com/en/decklist/22039/d1en-s-lockdown-val-rochester-regionals-winner-5-30-15-">
+                    Lockdown Val</a> got popular. Her bad-pub and <ktm:card title="Desperado"/> provided enough
+                credits to deal with trashable cards.
+            </td>
+        </tr>
+    </table>
 </p>
+<br/>
 <div class="blog-image">
     <ktm:img title="Crypsis" size="small"/>
 </div>
@@ -116,50 +183,167 @@
     </div>
 </div>
 <p>
-    <strong>The Underway</strong>:
-    There you have it folks. Cheap AI breaker, wonderful synergy with <ktm:card title="Wyldside"/>. It was especially great
-    with <ktm:card title="D4v1d"/>, which took care of the high-strength ICE. Keep in mind, you
-    also had <ktm:card title="Clone Chip"/> up your sleave.
-    <a href="https://netrunnerdb.com/en/decklist/24158/good-things-on-sale-stranger-1st-place-plano-tx-regionals">Faust Noise</a>
-    was born. <ktm:card title="Swordsman"/> and <ktm:card title="Wraparound"/> were the obvious hate-cards, but they
-    were easily mitigated by <ktm:card title="Mimic"/> and <ktm:card title="Corroder"/>.
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i><br/>
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i><br/>
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                <strong>The Underway</strong>:
+                There you have it folks. Cheap AI breaker, wonderful synergy with <ktm:card title="Wyldside"/>. It was especially great
+                with <ktm:card title="D4v1d"/>, which took care of the high-strength ICE. Keep in mind, you
+                also had <ktm:card title="Clone Chip"/> up your sleave.
+                <a href="https://netrunnerdb.com/en/decklist/24158/good-things-on-sale-stranger-1st-place-plano-tx-regionals">Faust Noise</a>
+                was born. <ktm:card title="Swordsman"/> and <ktm:card title="Wraparound"/> were the obvious hate-cards, but they
+                were easily mitigated by <ktm:card title="Mimic"/> and <ktm:card title="Corroder"/>.
+            </td>
+        </tr>
+    </table>
 </p>
+<br/>
 <div class="blog-image">
     <ktm:img title="Film Critic" size="small"/>
 </div>
 <p>
-    <strong>Old Hollywood</strong> added <ktm:card title="Film Critic"/> which helped to mitigate popular agendas like
-    <ktm:card title="NAPD Contract"/>, <ktm:card title="The Future Perfect"/> and <ktm:card title="Explode-a-palooza"/>.
-    <em>PPVP Kate</em> decks slotted it without hesitation, but the low influence cost helped it to be added to
-    <em>Faust Noise</em> too.
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-down text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                <strong>Old Hollywood</strong> added <ktm:card title="Film Critic"/> helping to mitigate popular agendas like
+                <ktm:card title="NAPD Contract"/>, <ktm:card title="The Future Perfect"/> and <ktm:card title="Explode-a-palooza"/>.
+                <em>PPVP Kate</em> decks slotted it without hesitation.
+            </td>
+        </tr>
+    </table>
 </p>
+<br/>
+<div class="row blog-image">
+    <div class="col-md-4 col-xs-6">
+        <ktm:img title="Data Leak Reversal" size="small"/>
+    </div>
+    <div class="col-md-4 col-xs-6">
+        <ktm:img title="Account Siphon" size="small"/>
+    </div>
+    <div class="col-xs-4 col-xs-12">
+        <ktm:img title="Apocalypse" size="small"/>
+    </div>
+</div>
 <p>
-    <strong>Data and Destiny</strong> boosted NBN with various cards. The runner reaction came in the form of
-    <a href="https://netrunnerdb.com/en/decklist/29419/nexus-kate-v2-0">Nexus Kate</a> weakening NBN traces with
-    <ktm:card title="Rabbit Hole"/> and solving problematic ICE with <ktm:card title="Security Nexus"/>.
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                <strong>Data and Destiny</strong> boosted NBN with various cards. During the
+                <a href="http://www.acoo.net/anr-tournament/802/worlds-championship-2015/">World Championship 2015</a>, we saw a
+                new breed of Anarchs, who were milling the corps with <ktm:card title="Data Leak Reversal"/> while keeping
+                them in check with <ktm:card title="Account Siphon"/>. <em>mediohxcore</em>
+                won the championship again, this time with
+                <a href="http://www.acoo.net/deck/14790/worlds-championship-2015-1st-dan-d039argenio-radisson-cheese-plate/">
+                    Radisson Cheese Plate</a> <em>(DLR Val)</em>. <em>Mtgred</em> played a deck with a similar concept,
+                but built around the more aggressive ID: <a href="https://netrunnerdb.com/en/decklist/28634/minh-maxx">Minh MaxX</a>.
+                <em>PPVP Kate</em> was also doing well.
+                <a href="https://netrunnerdb.com/en/decklist/28358/apocalypse-now-fury-road-6-2-worlds-2nd-icebreaker">Apocalypse MaxX</a>
+                should also be noted for combining Apex's <ktm:card title="Apocalypse"/> with MaxX.
+            </td>
+        </tr>
+    </table>
 </p>
+<br/>
+<div class="row blog-image">
+    <div class="col-md-3 col-xs-6">
+        <ktm:img title="Cerberus &quot;Lady&quot; H1" size="small"/>
+    </div>
+    <div class="col-md-3 col-xs-6">
+        <ktm:img title="Clone Chip" size="small"/>
+    </div>
+    <div class="col-md-3 col-xs-6">
+        <ktm:img title="Desperado" size="small"/>
+    </div>
+    <div class="col-md-3 col-xs-6">
+        <ktm:img title="Parasite" size="small"/>
+    </div>
+</div>
+<div class="row blog-image">
+    <div class="col-md-3 hidden-xs"></div>
+    <div class="col-md-3 col-xs-6">
+        <ktm:img title="Prepaid VoicePAD" size="small"/>
+    </div>
+    <div class="col-md-3 col-xs-6">
+        <ktm:img title="Yog.0" size="small"/>
+    </div>
+    <div class="col-md-3 hidden-xs"></div>
+</div>
 <p>
-    The next gamechanger was the <a href="/Blog/NAPD-most-wanted">NAPD Most Wanted List 1.0</a>. <em>PPVP Kate</em>
-    suffered most of the losses, rendering the archetype useless. <em>Faust Noise</em> was weakened, it had to drop
-    a few <ktm:card title="Clone Chip"/>s, but was still playable.
-    <a href="http://stimhack.com/store-champs-oslo-norway-16-players/">Dumblefork</a> took over and it remained the top
-    runner deck for ages, only changing to incorporate new good-stuff. It is basically <ktm:card title="Whizzard: Master Gamer"/>
-    with cutlery, <ktm:card title="Parasite"/>, <ktm:card title="Faust"/>, <ktm:card title="Wyldside"/> +
-    <ktm:card title="Adjusted Chronotype"/> with <ktm:card title="Levy AR Lab Access"/>.
-    You could still pack the Anarch powerhouses into a deck and have leftover influence for various goodies.
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i><br/>
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                The next gamechanger was the <a href="/Blog/NAPD-most-wanted">NAPD Most Wanted List 1.0</a>. <em>PPVP Kate</em>
+                suffered most of the losses, rendering the archetype useless. <em>Faust Noise</em> was weakened, it had to drop
+                a few <ktm:card title="Clone Chip"/>s, but was still playable.
+                <a href="http://stimhack.com/store-champs-oslo-norway-16-players/">Dumblefork</a> took over and it remained the top
+                runner deck for ages, only changing to incorporate new good-stuff. It is basically <ktm:card title="Whizzard: Master Gamer"/>
+                with cutlery, <ktm:card title="Parasite"/>, <ktm:card title="Faust"/>, <ktm:card title="Wyldside"/> +
+                <ktm:card title="Adjusted Chronotype"/> with <ktm:card title="Levy AR Lab Access"/> as a cherry on top.
+                You could still pack the Anarch powerhouses into a deck and have leftover influence for various goodies.
+                <strong><em>MWL 1.0 made Anarch stronger.</em></strong>
+                To replace the <em>PPVP Kate</em> Shapers
+                tried <a href="https://netrunnerdb.com/en/decklist/29419/nexus-kate-v2-0">Nexus Kate</a>, weakening NBN traces with
+                <ktm:card title="Rabbit Hole"/> and solving problematic ICE with <ktm:card title="Security Nexus"/>.
+            </td>
+        </tr>
+    </table>
 </p>
+<br/>
 <div class="blog-image">
     <ktm:img title="Artist Colony" size="small"/>
 </div>
 <p>
-    <strong>Kala Ghoda</strong> introduced <ktm:card title="Artist Colony"/>, which elevated Shaper-bullshit&trade; to
-    a new level:
-    <a href="https://netrunnerdb.com/en/decklist/32536/pitchfork-sure-gamble-is-a-crutch-">Pitchfork Haley</a>.
-    <a href="http://stimhack.com/store-champs-battleground-games-plainville-ma-42-players/#1">Hyperdriver Kate</a>
-    also got popular, using <ktm:card title="Hyperdriver"/> and <ktm:card title="Professional Contacts"/>. It also
-    utilizes <ktm:card title="Faust"/>, <ktm:card title="Clot"/> and <ktm:card title="Parasite"/> to form a well-working
-    Shaper swiss army knife.
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-down text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                <strong>Kala Ghoda</strong> introduced <ktm:card title="Artist Colony"/>, which elevated Shaper-bullshit&trade; to
+                a new level:
+                <a href="https://netrunnerdb.com/en/decklist/32536/pitchfork-sure-gamble-is-a-crutch-">Pitchfork Haley</a>.
+                <a href="http://stimhack.com/store-champs-battleground-games-plainville-ma-42-players/#1">Hyperdriver Kate</a>
+                also got popular, using <ktm:card title="Hyperdriver"/> and <ktm:card title="Professional Contacts"/>. It also
+                utilizes <ktm:card title="Faust"/>, <ktm:card title="Clot"/> and <ktm:card title="Parasite"/> to form a well-working
+                Shaper swiss army knife.
+            </td>
+        </tr>
+    </table>
 </p>
+<br/>
+<div class="blog-image">
+    <ktm:img title="Pālanā Foods: Sustainable Growth" size="small"/>
+</div>
+<p>
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-down text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                <strong>Business First</strong> added <ktm:card title="Pālanā Foods: Sustainable Growth"/>, which
+                didn't rely on assets to generate credits. This reduced the relevance of <em>Whizzard</em> and
+                <ktm:card title="Imp"/> in the meta.
+            </td>
+        </tr>
+    </table>
+</p>
+<br/>
 <div class="row blog-image">
     <div class="col-md-3 col-xs-6">
         <ktm:img title="Sensie Actors Union" size="small"/>
@@ -175,56 +359,34 @@
     </div>
 </div>
 <p>
-    <strong>Democracy and Dogma</strong> (<ktm:card title="Sensie Actors Union"/>, <ktm:card title="Commercial Bankers Group"/>)
-    and <strong>Salsette Island</strong> ((<ktm:card title="Jeeves Model Bioroids"/>, (<ktm:card title="Mumbad Virtual Tour"/>)
-    elevated the the need for Whizzard's recurring credits.
-    <em>Faust Noise</em> was also doing well. <ktm:card title="Salsette Slums"/> was an important piece, but it gained
-    popularity later on. <strong><em>This was the pinnacle of Anarch power</em></strong>. Almost 60%
-    of players played Anarch and their share was 70% in the tournament top positions.
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i><br/>
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                <strong>Democracy and Dogma</strong> (<ktm:card title="Sensie Actors Union"/>, <ktm:card title="Commercial Bankers Group"/>)
+                and <strong>Salsette Island</strong> (<ktm:card title="Jeeves Model Bioroids"/>, <ktm:card title="Mumbad Virtual Tour"/>)
+                elevated the the need for Whizzard's recurring credits.
+                <em>Faust Noise</em> was also doing well. <ktm:card title="Salsette Slums"/> was an important piece, but it gained
+                popularity later on. <br/>
+                <br/>
+                <strong><em>This was the pinnacle of Anarch power</em></strong>. Almost 60%
+                of runners played Anarch and their share was 70% in the tournament top positions.
+            </td>
+        </tr>
+    </table>
 </p>
 <br/>
-<h4>Sudden dropback</h4>
-<div class="blog-image">
-    <ktm:img title="Exchange of Information" size="small"/>
-</div>
+<h3>To be continued...</h3>
 <p>
-    <strong>The Liberated Mind</strong> delivered a big blow with <ktm:card title="Exchange of Information"/>.
-    <strong><em>Anarchs suffered the heaviest losses</em></strong> as Shapers stepped in to challenge
-    <a href="https://netrunnerdb.com/en/decklist/35373/eoi-sync">EoI SYNC</a> decks. The slower, more careful play of
-    Shapers and the ability to stop <ktm:card title="Breaking News"/> with <ktm:card title="Clot"/> payed off.
-    Shaper and Anarch were head-to-head while Criminal was lagging behind.
+    <br/>
+    Want to know what caused the biggest hit to Anarchs in the history of Netrunner?<br/>
+    <br/>
+    Part two is coming soon!
 </p>
 <br/>
-<h4>Climbing back</h4>
-<div class="row blog-image">
-    <div class="col-md-3 col-xs-6 col-md-offset-3">
-        <ktm:img title="NBN: Controlling the Message" size="small"/>
-    </div>
-    <div class="col-md-3 col-xs-6 col-md-offset-3">
-        <ktm:img title="Hard-Hitting News" size="small"/>
-    </div>
-</div>
-<p>
-    <ktm:card title="NBN: Controlling the Message"/> was the new ID in <strong>23 Seconds</strong>. <em>Dumblefork</em>
-    was an ideal counter for it, so Whizzard started climbing the charts once more. The Shaper gameplan was still valid,
-    but Anarch was doing its business slightly better. <ktm:card title="Salsette Slums"/> and <ktm:card title="Scrubber"/>
-    were taken out of the binder once more.
-</p>
-<div class="row blog-image">
-    <div class="col-xs-4">
-        <ktm:img title="D4v1d" size="small"/>
-    </div>
-    <div class="col-xs-4">
-        <ktm:img title="Faust" size="small"/>
-    </div>
-    <div class="col-xs-4">
-        <ktm:img title="Wyldside" size="small"/>
-    </div>
-</div>
-<p>
-    <a href="/Blog/mwl-2">MWL 1.1</a> <em>Faust Noise</em> ended
-</p>
-TODO: Valencia
 <hr/>
 <h4>Support me</h4>
 <p>
@@ -267,6 +429,16 @@ TODO: Valencia
             <em>(Siphon MaxX)</em> by <em>cdrock</em>
         </li>
         <li>
+            <a href="http://www.acoo.net/deck/9661/">HB Etf</a>
+            <em>(HB Glacier)</em> by <em>vinegarymink</em>
+        </li>
+        <li>
+            <a href="https://netrunnerdb.com/en/decklist/19457/ouchy-ouchy-ragey-ragey-winner-london-regionals-19th-april-">
+                Ouchy ouchy ragey ragey
+            </a>
+            <em>(Jinteki: RP)</em> by <em>Groober</em>
+        </li>
+        <li>
             <a href="https://netrunnerdb.com/en/decklist/21919/pancake-noise-tulsa-regionals-2015-1st-place-winner">
                 Pancake Noise
             </a> by <em>Pacer Stringfellow</em>
@@ -277,10 +449,31 @@ TODO: Valencia
             </a> by <em>spags</em>
         </li>
         <li>
+            <a href="https://netrunnerdb.com/en/decklist/22039/d1en-s-lockdown-val-rochester-regionals-winner-5-30-15-">
+                Lockdown Val
+            </a> by <em>d1en</em>
+        </li>
+        <li>
             <a href="https://netrunnerdb.com/en/decklist/24158/good-things-on-sale-stranger-1st-place-plano-tx-regionals">
                 Good Things on Sale
             </a>
             <em>(Faust Noise)</em> by <em>hi_impact</em>
+        </li>
+        <li>
+            <a href="http://www.acoo.net/deck/14790/worlds-championship-2015-1st-dan-d039argenio-radisson-cheese-plate/">
+                Radisson Cheese Plate
+            </a>
+            <em>(DLR Val)</em> by <em>mediohxcore</em>
+        </li>
+        <li>
+            <a href="https://netrunnerdb.com/en/decklist/28634/minh-maxx">Minh MaxX</a>
+            by <em>Mtgred</em>
+        </li>
+        <li>
+            <a href="https://netrunnerdb.com/en/decklist/28358/apocalypse-now-fury-road-6-2-worlds-2nd-icebreaker">
+                Apocalypse Now / Fury Road
+            </a>
+            <em>(Apocalypse MaxX)</em> by <em>LSK</em>
         </li>
         <li>
             <a href="https://netrunnerdb.com/en/decklist/29419/nexus-kate-v2-0">Nexus Kate v2.0</a>
@@ -297,10 +490,6 @@ TODO: Valencia
         <li>
             <a href="http://stimhack.com/store-champs-battleground-games-plainville-ma-42-players/#1">Hyperdriver Kate</a>
             by <em>Max Gillett</em>
-        </li>
-        <li>
-            <a href="https://netrunnerdb.com/en/decklist/35373/eoi-sync">EoI SYNC</a>
-            by <em>Calimsha</em>
         </li>
     </ul>
     Suggested reading on historic meta:
@@ -319,13 +508,9 @@ TODO: Valencia
             by <em>Necro</em> - <strong>Data and Destiny + MWL 1.0</strong>
         </li>
         <li>
-            <a href="/Blog/mwl-2">New MWL and other changes</a>
-            by <em>Necro</em> - <strong>Fear the Masses</strong>
-        </li>
-        <liL>
-            Every "Meta Snapshow" article on <a href="https://sneakdoor.wordpress.com/">Sneakdoor</a>
+            Every "Meta Snapshot" article on <a href="https://sneakdoor.wordpress.com/">Sneakdoor</a>
             by <em>YOG0</em>
-        </liL>
+        </li>
     </ul>
 </p>
 <script type="text/javascript" src="https://www.google.com/jsapi?autoload={             'modules':[{               'name':'visualization',               'version':'1',               'packages':['corechart']             }]           }"></script>
@@ -336,7 +521,7 @@ TODO: Valencia
     var factionData = { anarch: {}, shaper: {}, criminal: {}};
     var runnerIDs = { anarch: [], shaper: [], criminal: []};
     var cardpacks = [], dataTable, idsOverTimeChart, selectedFaction = 'anarch', selectedData = 'top',
-            chartEl = 'chart-ids';
+            chartEl = 'chart-ids', cropFromPackIndex=16, stopFromPackIndex=19;
     var chartOptions = {
         'isStacked': true,
         'height': 300,
@@ -372,116 +557,5 @@ TODO: Valencia
         drawIDsOverTime(runnerIDs[selectedFaction], factionData[selectedFaction], cardpacks, selectedData);
     }
 
-    function orderIDs(ids, data, dataType) {
-        for (var i = 0; i < ids.length - 1; i++) {
-            for (var u = i + 1; u < ids.length; u++) {
-                if (data[ids[i]][dataType] > data[ids[u]][dataType]) {
-                    var z = ids[i];
-                    ids[i] = ids[u];
-                    ids[u] = z;
-                }
-            }
-        }
-    }
-
-    function drawIDsOverTime(ids, data, packs, dataType) {
-        var i, u;
-        orderIDs(ids, data, dataType + 'Sum');
-        dataTable = new google.visualization.DataTable();
-        dataTable.addColumn('string', 'DP');
-        for (i = 0; i < ids.length; i++) {
-            dataTable.addColumn('number', shortTitle(ids[i]));
-        }
-        for (i = 0; i < packs.length; i++) {
-            var row = [packs[i]];
-            for (u = 0; u < ids.length; u++) {
-                var value = data[ids[u]][dataType][packs[i]];
-                if (!value) {
-                    value = 0;
-                }
-                row.push({f: percentageToString(value), v: value});
-            }
-            dataTable.addRow(row);
-        }
-        idsOverTimeChart = new google.visualization.AreaChart(document.getElementById(chartEl));
-        idsOverTimeChart.draw(dataTable, chartOptions);
-    }
-
-    function loadPacks(callback) {
-        $.ajax({
-            url: 'http://www.knowthemeta.com/JSON/Cardpoolnames',
-            dataType: "json",
-            async: true,
-            success: function (packs) {
-                cardpacks = packs.reverse();
-                typeof callback === 'function' && callback.apply(this, arguments); // make callback if exists
-            }
-        });
-    }
-
-    function loadIDs(ids, callback) {
-        var idCount = 0;
-        $.ajax({
-            url: 'https://netrunnerdb.com/api/2.0/public/cards',
-            dataType: "json",
-            async: true,
-            success: function (idData) {
-                for (var i = 0; i < idData['data'].length; i++) {
-                    if (idData.data[i].type_code == 'identity' && idData.data[i].pack_code != 'draft' && ids.hasOwnProperty(idData.data[i].faction_code)) {
-                        idCount++;
-                        ids[idData.data[i].faction_code].push(idData.data[i].title);
-                        $.ajax({
-                            url: 'http://www.knowthemeta.com/JSON/Cards/' + idData.data[i].title + '/card.json',
-                            dataType: "json",
-                            async: true,
-                            success: function (cardStats) {
-                                // remove if no history or not significant
-                                var unsignificant = true, faction = '', u;
-                                for (u = 0; u < cardStats.overTime.length; u++) {
-                                    if (cardStats.overTime[u].deckfraction > 0.07 || cardStats.overTime[u].topdeckfraction > 0.07) {
-                                        unsignificant = false;
-                                        faction = cardStats.overTime[u].faction;
-                                        break;
-                                    }
-                                }
-                                if (!unsignificant) {
-                                    // build data
-                                    factionData[faction][cardStats.title] = { top: {}, all: {}, topSum: 0, allSum: 0};
-                                    for (u = 0; u < cardStats.overTime.length; u++) {
-                                        var topValue = cardStats.overTime[u].topdeckfraction,
-                                                allValue = cardStats.overTime[u].deckfraction;
-
-                                        factionData[faction][cardStats.title].top[cardStats.overTime[u].cardpacktitle] = topValue;
-                                        factionData[faction][cardStats.title].topSum += topValue;
-                                        factionData[faction][cardStats.title].all[cardStats.overTime[u].cardpacktitle] = allValue;
-                                        factionData[faction][cardStats.title].allSum += allValue;
-                                    }
-                                } else {
-                                    // remove unsignificant
-                                    removeIDFromList(ids, cardStats.title);
-                                }
-
-                                idCount--;
-                                // last one, make callback
-                                if (idCount == 0) {
-                                    typeof callback === 'function' && callback.apply(this, arguments); // make callback if exists
-                                }
-                            }
-                        });
-                    }
-                }
-            }
-        });
-    }
-
-    function removeIDFromList(list, id) {
-        for (var faction in list) {
-            if (list.hasOwnProperty(faction)) {
-                if (list[faction].indexOf(id) > -1) {
-                    list[faction].splice(list[faction].indexOf(id), 1);
-                }
-            }
-        }
-    }
     /*]]>*/
 </script>

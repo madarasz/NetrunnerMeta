@@ -7,6 +7,12 @@ $(function () {
     $('[data-toggle="popover"]').popover();
 });
 
+// enable ekko lightbox
+$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+    event.preventDefault();
+    $(this).ekkoLightbox({alwaysShowClose: true});
+});
+
 function miniFactionToIdentity(faction) {
     switch (faction) {
         case 'adam':
@@ -913,4 +919,127 @@ function displayAmazon(data, elementid) {
             });
         }
     });
+}
+
+// IDs over time
+function orderIDs(ids, data, dataType) {
+    for (var i = 0; i < ids.length - 1; i++) {
+        for (var u = i + 1; u < ids.length; u++) {
+            if (data[ids[i]][dataType] > data[ids[u]][dataType]) {
+                var z = ids[i];
+                ids[i] = ids[u];
+                ids[u] = z;
+            }
+        }
+    }
+}
+
+function drawIDsOverTime(ids, data, packs, dataType) {
+    var i, u;
+    orderIDs(ids, data, dataType + 'Sum');
+    dataTable = new google.visualization.DataTable();
+    dataTable.addColumn('string', 'DP');
+    for (i = 0; i < ids.length; i++) {
+        if (typeof stopFromPackIndex == 'undefined' || i < stopFromPackIndex) {
+            dataTable.addColumn('number', shortTitle(ids[i]));
+        }
+    }
+    for (i = 0; i < packs.length; i++) {
+        if (typeof stopFromPackIndex == 'undefined' || i < stopFromPackIndex) {
+            var row = [packs[i]];
+            for (u = 0; u < ids.length; u++) {
+                var value = data[ids[u]][dataType][packs[i]];
+                if (!value) {
+                    value = 0;
+                }
+                // if we want to crop the data
+                if (typeof cropFromPackIndex == 'undefined' || i < cropFromPackIndex) {
+                    row.push({f: percentageToString(value), v: value});
+                } else {
+                    row.push(null);
+                }
+            }
+            dataTable.addRow(row);
+        }
+    }
+    idsOverTimeChart = new google.visualization.AreaChart(document.getElementById(chartEl));
+    $('#'+chartEl).removeClass('spinner');
+    idsOverTimeChart.draw(dataTable, chartOptions);
+}
+
+function loadPacks(callback) {
+    $.ajax({
+        url: '/JSON/Cardpoolnames',
+        dataType: "json",
+        async: true,
+        success: function (packs) {
+            cardpacks = packs.reverse();
+            typeof callback === 'function' && callback.apply(this, arguments); // make callback if exists
+        }
+    });
+}
+
+function loadIDs(ids, callback) {
+    var idCount = 0;
+    $.ajax({
+        url: 'https://netrunnerdb.com/api/2.0/public/cards',
+        dataType: "json",
+        async: true,
+        success: function (idData) {
+            for (var i = 0; i < idData['data'].length; i++) {
+                if (idData.data[i].type_code == 'identity' && idData.data[i].pack_code != 'draft' && ids.hasOwnProperty(idData.data[i].faction_code)) {
+                    idCount++;
+                    ids[idData.data[i].faction_code].push(idData.data[i].title);
+                    $.ajax({
+                        url: '/JSON/Cards/' + idData.data[i].title + '/card.json',
+                        dataType: "json",
+                        async: true,
+                        success: function (cardStats) {
+                            // remove if no history or not significant
+                            var unsignificant = true, faction = '', u;
+                            for (u = 0; u < cardStats.overTime.length; u++) {
+                                if (cardStats.overTime[u].deckfraction > 0.07 || cardStats.overTime[u].topdeckfraction > 0.07) {
+                                    unsignificant = false;
+                                    faction = cardStats.overTime[u].faction;
+                                    break;
+                                }
+                            }
+                            if (!unsignificant) {
+                                // build data
+                                factionData[faction][cardStats.title] = { top: {}, all: {}, topSum: 0, allSum: 0};
+                                for (u = 0; u < cardStats.overTime.length; u++) {
+                                    var topValue = cardStats.overTime[u].topdeckfraction,
+                                        allValue = cardStats.overTime[u].deckfraction;
+
+                                    factionData[faction][cardStats.title].top[cardStats.overTime[u].cardpacktitle] = topValue;
+                                    factionData[faction][cardStats.title].topSum += topValue;
+                                    factionData[faction][cardStats.title].all[cardStats.overTime[u].cardpacktitle] = allValue;
+                                    factionData[faction][cardStats.title].allSum += allValue;
+                                }
+                            } else {
+                                // remove unsignificant
+                                removeIDFromList(ids, cardStats.title);
+                            }
+
+                            idCount--;
+                            // last one, make callback
+                            if (idCount == 0) {
+                                typeof callback === 'function' && callback.apply(this, arguments); // make callback if exists
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
+}
+
+function removeIDFromList(list, id) {
+    for (var faction in list) {
+        if (list.hasOwnProperty(faction)) {
+            if (list[faction].indexOf(id) > -1) {
+                list[faction].splice(list[faction].indexOf(id), 1);
+            }
+        }
+    }
 }
