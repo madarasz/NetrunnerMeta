@@ -1,0 +1,450 @@
+<!--Charts-->
+<hr/>
+<h4>The big picture</h4>
+<div class="blog-image text-center m-b-1">
+    <a href="/static/img/blog/ahistoryfull.png" data-toggle="lightbox">
+        <img src="/static/img/blog/ahistoryfull.png" alt="Netrunner history anarch full" class="blog-big-picture"/>
+    </a>
+    <br/>
+    <em>click to enlarge</em>
+</div>
+<hr/>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="btn-group btn-group-xs" role="group" aria-label="data timeline">
+            <button id="faction-anarch" type="button" class="btn btn-default active"
+                    onclick="clickFilter('anarch', selectedData);">Anarch</button>
+            <button id="faction-shaper" type="button" class="btn btn-default"
+                    onclick="clickFilter('shaper', selectedData);">Shaper</button>
+            <button id="faction-criminal" type="button" class="btn btn-default"
+                    onclick="clickFilter('criminal', selectedData);">Criminal</button>
+        </div>
+        <div class="btn-group btn-group-xs" role="group" aria-label="data timeline">
+            <button id="data-top" type="button" class="btn btn-default active"
+                    onclick="clickFilter(selectedFaction, 'top');">Top 30%</button>
+            <button id="data-all" type="button" class="btn btn-default"
+                    onclick="clickFilter(selectedFaction, 'all');">All</button>
+        </div>
+        <div id="chart-ids" class="spinner"></div>
+    </div>
+</div>
+<br/>
+<!--Liberated Mind-->
+<h4>Sudden dropback</h4>
+<div class="blog-image">
+    <ktm:img title="Exchange of Information" size="small"/>
+</div>
+<p>
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-down text-danger" aria-hidden="true"></i><br/>
+                <i class="fa fa-chevron-down text-danger" aria-hidden="true"></i><br/>
+                <i class="fa fa-chevron-down text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                <strong>The Liberated Mind</strong> delivered a big blow with <ktm:card title="Exchange of Information"/>.
+                <strong><em>Anarchs suffered the heaviest fallback</em></strong> as Shapers stepped in to challenge
+                <a href="https://netrunnerdb.com/en/decklist/35373/eoi-sync">EoI SYNC</a> decks. The slower, more careful play of
+                Shapers and the ability to stop <ktm:card title="Breaking News"/> with an instant-speed <ktm:card title="Clot"/>
+                payed off.<br/>
+                <br/>
+                <em>I know FFG just dropped the third MWL, but I don't have any statistics on the effect of that.</em><br/>
+                <br/>
+                Even during <strong>Fear the Masses</strong>, the three factions were equally popular, though Criminal
+                was lagging behind in efficiency.
+            </td>
+        </tr>
+    </table>
+</p>
+<br/>
+<h4>Climbing back</h4>
+<!--23 Seconds-->
+<div class="row blog-image">
+    <div class="col-md-3 col-xs-6 col-md-offset-3">
+        <ktm:img title="NBN: Controlling the Message" size="small"/>
+    </div>
+    <div class="col-md-3 col-xs-6 col-md-offset-3">
+        <ktm:img title="Hard-Hitting News" size="small"/>
+    </div>
+</div>
+<p>
+<table>
+    <tr>
+        <td class="indicator">
+            <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i>
+        </td>
+        <td>
+            <ktm:card title="NBN: Controlling the Message"/> was the new ID in <strong>23 Seconds</strong>.
+            It quickly became the strongest corporation deck:
+            <a href="https://netrunnerdb.com/en/decklist/37097/1st-place-uk-nationals-2016-ctm-tempo-rush">
+                CTM Temp Rush</a>. <ktm:card title="Hard-Hitting News"/> could be countered by cautions running and
+            a credit reserve, but the asset-heavy nature of the archetype makes
+            <em>Dumblefork</em> an ideal counter for it, so Whizzard started climbing the charts once more. The Shaper gameplan was still valid,
+            but Anarch was doing its business slightly better as <ktm:card title="Salsette Slums"/> was taken out of the binder.
+        </td>
+    </tr>
+</table>
+</p>
+<br/>
+<!--MWL 1.1-->
+<div class="row blog-image">
+    <div class="col-xs-4">
+        <ktm:img title="D4v1d" size="small"/>
+    </div>
+    <div class="col-xs-4">
+        <ktm:img title="Faust" size="small"/>
+    </div>
+    <div class="col-xs-4">
+        <ktm:img title="Wyldside" size="small"/>
+    </div>
+</div>
+<p>
+<table>
+    <tr>
+        <td class="indicator">
+            <i class="fa fa-minus text-danger" aria-hidden="true"></i>
+        </td>
+        <td>
+            In the meanwhile <a href="/Blog/mwl-2">MWL 1.1</a> was out. Regarding the runner side it only had Anarch cards on it.
+            <strong><em>Surprisingly it did not hurt Anarch overall</em></strong>. It killed the <em>Faust Noise</em> archetype
+            because it could not bare any more strain on influence. <em>Dumblefork</em> took its place while dropping
+            <ktm:card title="Clone Chip"/>s and spending the remaining points on <ktm:card title="Employee Strike"/>.
+            That worked out quite well against the corp meta of the time (HB: EtF, NBN: CtM, Pālanā). <em>Valencia</em>
+            also reappeared with various builds.
+        </td>
+    </tr>
+</table>
+</p>
+<br/>
+<!--Blood Money-->
+<div class="row blog-image">
+    <div class="col-xs-4">
+        <ktm:img title="Rumor Mill" size="small"/>
+    </div>
+    <div class="col-xs-4">
+        <ktm:img title="Paperclip" size="small"/>
+    </div>
+    <div class="col-xs-4">
+        <ktm:img title="Temüjin Contract" size="small"/>
+    </div>
+</div>
+<p>
+<table>
+    <tr>
+        <td class="indicator">
+            <i class="fa fa-chevron-down text-danger" aria-hidden="true"></i>
+        </td>
+        <td>
+            <strong>Blood Money</strong> was an influential pack featuring great runner material.<br/>
+            <br/>
+            <ktm:card title="Rumor Mill"/> was meta-defining. It single-handedly brought down <em>glacier corps</em>. It
+            disables <ktm:card title="Caprice Nisei"/>, <ktm:card title="Ash 2X3ZB9CY"/> and <ktm:card title="Marcus Batty"/>.
+            Basically anything you would add to a scoring server to defend against the runner, especially late-game. It
+            also ended careless <ktm:card title="Jackson Howard"/> usage.<br/>
+            <br/>
+            <ktm:card title="Paperclip"/> became THE barrier breaker, we usually reached a bit deeper into our influence
+            pocket and forgot <ktm:card title="Corroder"/> ever existed. Of course this was not an issue for Anarch, it
+            even synergizes with other card effects.<br/>
+            <br/>
+            <ktm:card title="Temüjin Contract"/>
+            feels like an auto-include in every deck, it is extremely powerful. Especially if the corporation is
+            desperate on tagging you and/or has expensive-to-trash cards. It overshadowed the previous two cards,
+            naturally Criminal was awoken from its slumber and became relevant again.
+            <a href="http://www.acoo.net/deck/19729/">Andy Sucker</a> returned with <ktm:card title="The Turning Wheel"/>,
+            sometimes <ktm:card title="Rebirth"/> and depending on the meta: <ktm:card title="Networking"/>. Every
+            faction tried to squeeze the card in, two-thirds of the runners were playing with this new wonder and these
+            numbers haven't dropped so far.
+            (Kate variant: <a href="https://netrunnerdb.com/en/decklist/37432/temujin-katman">Temujin Katman</a>)
+        </td>
+    </tr>
+</table>
+</p>
+<br/>
+<!--Escalation-->
+<div class="row blog-image">
+    <div class="col-xs-6 col-md-3 col-md-offset-3">
+        <ktm:img title="Obelus" size="small"/>
+    </div>
+    <div class="col-xs-6 col-md-3 col-md-offset-3">
+        <ktm:img title="Black Orchestra" size="small"/>
+    </div>
+</div>
+<p>
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i><br/>
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                <strong>Escalation</strong> brought <ktm:card title="Obelus"/>, the hot, new orange console. It enabled the
+                tag-me playstyle and adding some protection from just released <ktm:card title="BOOM!"/>. It also combos
+                with <ktm:card title="Hades Shard"/> giving insane draw. <ktm:card title="Black Orchestra"/> was a pleasant
+                decoder alternative.<br/>
+            </td>
+        </tr>
+    </table>
+</p>
+<!--Worlds 2016-->
+<p>
+    57% of <a href="https://alwaysberunning.net/tournaments/19/world-championship-2016">World Championship 2016</a> was
+    playing Anarch. Probably this was their bet on the most powerful alternative. This was a good bet as top-16 showed
+    little diversity, 14 contestants were Anarchs. The most popular choice was Whizzard (33%), also
+    <em>Nemamiah</em>, the champion was running with it: <a href="https://netrunnerdb.com/en/decklist/38841">Papa Smurf</a>
+    <em>(Temüjin Whizzard)</em>. The deck used regular orange breakers and spent most of its influence on
+    <ktm:card title="Temüjin Contract"/> and utilized <ktm:card title="Employee Strike"/>.
+    <a href="https://netrunnerdb.com/en/deck/view/805406">Hate Bear</a>
+    was also in demand, relying on <ktm:card title="Account Siphon"/>, floating tags, and drawing with
+    <ktm:card title="Obelus"/> + <ktm:card title="Hades Shard"/> and usually spending its last dot on
+    <ktm:card title="Rebirth"/>.
+    <a href="https://netrunnerdb.com/en/deck/view/809643">Rune Soilder</a> also siphoned credits, but broke with
+    <ktm:card title="Eater"/> and included <ktm:card title="Keyhole"/> as well.
+    <em>Dumblefork</em> builds were still there with <ktm:card title="Faust"/> and
+    <ktm:card title="Levy AR Lab Access"/>. Most Whizzard variants used cutlery events as the main gameplan revolved
+    around ICE destruction and deep <ktm:card title="Medium"/> digs.
+    <strong><em>These Whizzard decks dominated the runner meta until MWL 1.2.</em></strong>
+    <em>Valencia</em> was also there with very similar
+    archetypes.
+</p>
+<br/>
+<!--Intervention-->
+<div class="row blog-image">
+    <div class="col-xs-4">
+        <ktm:img title="En Passant" size="small"/>
+    </div>
+    <div class="col-xs-4">
+        <ktm:img title="Citadel Sanctuary" size="small"/>
+    </div>
+    <div class="col-xs-4">
+        <ktm:img title="Ele &quot;Smoke&quot; Scovak: Cynosure of the Net" size="small"/>
+    </div>
+</div>
+<p>
+<table>
+    <tr>
+        <td class="indicator">
+            <i class="fa fa-chevron-down text-danger" aria-hidden="true"></i>
+        </td>
+        <td>
+            <strong>Intervention</strong> rekindled interest for Shapers with the new ID:
+            <a href="https://netrunnerdb.com/en/decklist/39144/internet-famous-1st-and-2nd-11-1-across-two-sc-">Smoke</a>.
+            Also <em>Temüjin Katman</em> and <em>Nexus Kate</em> decks were quite successful dealing with the corporations.
+            Players realized that link was essential to beat CtM. Criminals dug up <ktm:card title="Power Tap"/>, a card
+            nobody ever though would go into a serious deck. <ktm:card title="Citadel Sanctuary"/> goes well with Siphons
+            demonstrated by
+            <a href="https://netrunnerdb.com/en/decklist/39471/takeshi-s-castle-1st-bromley-sc-">Power Tap Andy</a>.
+            <ktm:card title="En Passant"/> synergizes with <ktm:card title="Blackmail"/> nicely and was a great addition to
+            <a href="https://netrunnerdb.com/en/decklist/39283/miffed-val-passant-1st-place-portsmouth-sc-">Miffed Val-Passant</a>
+            build. For a short time more, Valencia was played more than Whizzard.
+        </td>
+    </tr>
+</table>
+</p>
+<br/>
+<!--Martial Law-->
+<div class="row blog-image">
+    <div class="col-xs-4">
+        <ktm:img title="MKUltra" size="small"/>
+    </div>
+    <div class="col-xs-4">
+        <ktm:img title="On the Lam" size="small"/>
+    </div>
+    <div class="col-xs-4">
+        <ktm:img title="Friends in High Places" size="small"/>
+    </div>
+</div>
+<p>
+<table>
+    <tr>
+        <td class="indicator">
+            <i class="fa fa-chevron-down text-danger" aria-hidden="true"></i>
+        </td>
+        <td>
+            <strong>Martial Law</strong> added <ktm:card title="MKUltra"/>, the last piece of the Anarch heap breaker
+            suite. Criminals got a powerful counter to the NBN tag tactics with <ktm:card title="On the Lam"/>.
+            <em>Power Tap Andy</em> was still strong, there even was a
+            <a href="https://netrunnerdb.com/en/decklist/39370/binder-fodder-s-revenge-1st-ottawa-gnk-16-12-03-">
+                DLR Nexus Andy</a> variant.
+            <ktm:card title="Friends in High Places"/> hit the meta and Whizzard's recurring credits and Criminal wealth
+            was more welcomed as ever. Shapers were going down on the slope.
+        </td>
+    </tr>
+</table>
+</p>
+<br/>
+<!--Quorum-->
+<div class="row blog-image">
+    <div class="col-xs-6 col-md-3 col-md-offset-3">
+        <ktm:img title="Şifr" size="small"/>
+    </div>
+    <div class="col-xs-6 col-md-3 col-md-offset-3">
+        <ktm:img title="Aaron Marrón" size="small"/>
+    </div>
+</div>
+<p>
+    <table>
+        <tr>
+            <td class="indicator">
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i><br/>
+                <i class="fa fa-chevron-up text-danger" aria-hidden="true"></i>
+            </td>
+            <td>
+                <strong>Quorum</strong> introduced <ktm:card title="Şifr"/> which was prophesied to bring the end of
+                Netrunner. It was a strong card indeed, offered easy ICE destruction with <ktm:card title="Parasite"/>
+                and made breaking ICE easier. It was also the last nail in the coffin of glacier corporations playing
+                big ICE. <ktm:card title="Aaron Marrón"/> helped Criminal even further dealing with NBN tags.
+                <ktm:card title="Near-Earth Hub: Broadcast Center"/> took over CtM, the two most popular builds were
+                <a href="https://netrunnerdb.com/en/decklist/40515/d1en-is-my-hero-stroud-store-championship-winner-">
+                    d1en's Railgun</a> and
+                <a href="https://netrunnerdb.com/en/decklist/40523">Team Turtles</a>.
+                <ktm:card title="Cerebral Imaging: Infinite Frontiers"/>
+                also got successful at that time. Most of the runners were either <em>Dumblefork Whizzard</em>,
+                <em>Temüjin Whizzard</em> or some <em>Andromeda</em> variant.
+            </td>
+        </tr>
+    </table>
+</p>
+<br/>
+<hr/>
+<h4>Support me</h4>
+<p>
+    Did you like this article? Are you using
+    <img src="https://alwaysberunning.net/favicon-96x96.png" class="img-inline"/><a href="https://alwaysberunning.net">AlwaysBeRunning.net</a> or
+    <img src="http://www.knowthemeta.com/favicon-96x96.png" class="img-inline"/><a href="http://www.knowthemeta">KnowTheMeta</a>?
+</p>
+<p>
+    If so, please check out the ways you can support me and my sites:<br/>
+    <br/>
+<div class="text-center">
+    <a href="https://alwaysberunning.net/support-me" class="btn btn-warning">Support Me</a>
+</div>
+</p>
+<hr/>
+<h4>Links</h4>
+<p>
+    Example decks in article:
+<ul>
+    <li>
+        <a href="https://netrunnerdb.com/en/decklist/35373/eoi-sync">
+            EoI SYNC
+        </a>
+        by <em>Calimsha</em>
+    </li>
+    <li>
+        <a href="https://netrunnerdb.com/en/decklist/37097/1st-place-uk-nationals-2016-ctm-tempo-rush">
+            CTM Tempo rush
+        </a>
+        by <em>Vikz93</em>
+    </li>
+    <li>
+        <a href="http://www.acoo.net/deck/19729/">
+            Trellbro Andy
+        </a>
+        <em>Andy Sucker</em> by <em>Michiel (Okkdoko) Questier</em>
+    </li>
+    <li>
+        <a href="https://netrunnerdb.com/en/decklist/37432/temujin-katman">Temujin Katman</a>
+        by <em>SneekdoorMelb</em>
+    </li>
+    <li>
+        <a href="https://netrunnerdb.com/en/decklist/38841">Papa Smurf</a>
+        <em>(Temüjin Whizzard)</em> by <em>Nemamiah</em>
+    </li>
+    <li>
+        <a href="https://netrunnerdb.com/en/deck/view/805406">Credit Clicker 5000</a>
+        by <em>(Hate Bear)</em> by <em>tmoiynmwg</em>
+    </li>
+    <li>
+        <a href="https://netrunnerdb.com/en/deck/view/809643">Rune Soilder</a>
+        by <em>Cerberus</em>
+    </li>
+    <li>
+        <a href="https://netrunnerdb.com/en/decklist/39144/internet-famous-1st-and-2nd-11-1-across-two-sc-">
+            Internet Famous
+        </a>
+        <em>(Smoke)</em> br <em>CodeMarvelous</em>
+    </li>
+    <li>
+        <a href="https://netrunnerdb.com/en/decklist/39471/takeshi-s-castle-1st-bromley-sc-">Takeshi's Castle</a>
+        <em>(Power Tap Andy)</em> by <em>rojazu</em>
+    </li>
+    <li>
+        <a href="https://netrunnerdb.com/en/decklist/39283/miffed-val-passant-1st-place-portsmouth-sc-">Miffed Val-Passant</a>
+        by <em>Shmeguy</em>
+    </li>
+    <li>
+        <a href="https://netrunnerdb.com/en/decklist/39370/binder-fodder-s-revenge-1st-ottawa-gnk-16-12-03-">
+            Binder Fodder's Revenge
+        </a>
+        <em>(DLR Nexus Andy)</em> by <em>lopert</em>
+    </li>
+    <li>
+        <a href="https://netrunnerdb.com/en/decklist/40515/d1en-is-my-hero-stroud-store-championship-winner-">
+            D1en is my Hero
+        </a>
+        <em>(D1en's Railgun)</em> by <em>Cerberus</em>
+    </li>
+    <li>
+        <a href="https://netrunnerdb.com/en/decklist/40523">Team Turtles</a>
+        by <em>imrahil</em>
+    </li>
+</ul>
+Suggested reading on historic meta:
+<ul>
+    <li>
+        <a href="/Blog/mwl-2">New MWL and other changes</a>
+        by <em>Necro</em> - <strong>Fear the Masses</strong>
+    </li>
+    <liL>
+        Every "Meta Snapshot" article on <a href="https://sneakdoor.wordpress.com/">Sneakdoor</a>
+        by <em>YOG0</em>
+    </liL>
+</ul>
+</p>
+<script type="text/javascript" src="https://www.google.com/jsapi?autoload={             'modules':[{               'name':'visualization',               'version':'1',               'packages':['corechart']             }]           }"></script>
+<script type="text/javascript">
+    /*<![CDATA[*/
+    google.setOnLoadCallback(loadIDsOverTime);
+
+    var factionData = { anarch: {}, shaper: {}, criminal: {}};
+    var runnerIDs = { anarch: [], shaper: [], criminal: []};
+    var cardpacks = [], dataTable, idsOverTimeChart, selectedFaction = 'anarch', selectedData = 'top',
+            chartEl = 'chart-ids';
+    var chartOptions = {
+        'isStacked': true,
+        'height': 300,
+        'curveType': 'function',
+        'vAxis': { format: 'percent', textPosition: 'out', viewWindowMode: 'pretty', viewWindow: { min: 0, max: 0.7 } },
+        'chartArea': {  width: document.getElementById(chartEl).offsetWidth - 230, height: "70%", left: 100, top: 0 },
+        'hAxis': { showTextEvery: 1, slantedText: 'true' },
+        'legend': { position: 'right'},
+        'lineWidth': 3
+    };
+
+    function loadIDsOverTime() {
+        loadPacks(function() {
+            loadIDs(runnerIDs, function() {
+                drawIDsOverTime(runnerIDs.anarch, factionData.anarch, cardpacks, 'top');
+
+                // redraw if needed
+                $(window).resize(function(){
+                    chartOptions.chartArea.width = document.getElementById(chartEl).offsetWidth - 230;
+                    idsOverTimeChart.draw(dataTable, chartOptions);
+                });
+            });
+        });
+    }
+
+    function clickFilter(faction, datatype) {
+        $('#faction-'+selectedFaction).removeClass('active');
+        selectedFaction = faction;
+        $('#faction-'+selectedFaction).addClass('active');
+        $('#data-'+selectedData).removeClass('active');
+        selectedData = datatype;
+        $('#data-'+selectedData).addClass('active');
+        drawIDsOverTime(runnerIDs[selectedFaction], factionData[selectedFaction], cardpacks, selectedData);
+    }
+
+    /*]]>*/
+</script>
