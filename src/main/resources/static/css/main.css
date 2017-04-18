@@ -47,17 +47,20 @@ a.anchor {
 }
 .card-small {
     width: 143px;
-    height: 200px;
+    height: auto;
+    max-width: 100%;
 }
 
 .card-medium {
     width: 207px;
-    height: 290px;
+    height: auto;
+    max-width: 100%;
 }
 
 .card-big {
     width: 300px;
-    height: 418px;
+    height: auto;
+    max-width: 100%;
 }
 
 .my-popover {
@@ -83,6 +86,7 @@ a.anchor {
     text-align: center;
     /*display: table;*/
     table-layout: fixed;
+    max-width: 100%;
 }
 
 .blog-image > div {
