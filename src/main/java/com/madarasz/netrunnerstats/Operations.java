@@ -387,10 +387,12 @@ public class Operations {
         for (Standing standing : standings) {
             if (standing.getIdentity().getTitle().equals("The Shadow: Pulling the Strings")) {
                 Tournament tournament = standing.getTournament();
-                logger.warn(String.format("Unknown identity during tournament import (#%d): %s",
-                        standing.getRank(), tournament.getUrl()));
-                list.add(new VerificationProblem(tournament.getName(), tournament.getUrl(),
-                        "wrong ID", "rank: " + standing.getRank()));
+                if (tournament != null) {
+                    logger.warn(String.format("Unknown identity during tournament import (#%d): %s",
+                            standing.getRank(), tournament.getUrl()));
+                    list.add(new VerificationProblem(tournament.getName(), tournament.getUrl(),
+                            "wrong ID", "rank: " + standing.getRank()));
+                }
             }
         }
 
@@ -411,8 +413,16 @@ public class Operations {
             CardPack fix = guessCardPool(tournament);
             if ((!oldname.equals(fix.getName())) && (fix.later(tournament.getCardpool()))) {
                 list.add(new VerificationProblem(tournament.getName(), tournament.getUrl(),
-                        "wrong cardpool", "should be: " + fix.getName()));
+                        "wrong t. cardpool", "should be: " + fix.getName()));
                 logger.warn(String.format("ERROR - Wrong cardpool: %s - new cardpool: %s", tournament.toString(), fix.getName()));
+                List<Deck> tDecks = deckRepository.findByTournamentUrl(tournament.getUrl());
+                for (Deck aDeck : tDecks) {
+                    if (aDeck.getUpto().later(tournament.getCardpool())) {
+                        logger.warn("Wrong deck: " + aDeck.getUrl());
+                        list.add(new VerificationProblem(aDeck.getName(), aDeck.getUrl(), "wrong deck",
+                                "updated to:" + aDeck.getUpto().toString() + " from " + tournament.getCardpool().toString()));
+                    }
+                }
 //                tournament.setCardpool(fix);
 //                tournamentRepository.save(tournament);
             }
