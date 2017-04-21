@@ -39,7 +39,7 @@ dirs=(
 "Buyers-Guide/side"
 "Buyers-Guide/faction"
 "Buyers-Guide/identity"
-"LastUpdate",
+"LastUpdate"
 "RSS"
 )
 for dir in "${dirs[@]}"
