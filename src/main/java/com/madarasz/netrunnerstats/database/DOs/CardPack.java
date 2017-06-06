@@ -51,6 +51,10 @@ public class CardPack {
         this.amazonHtml = amazonHtml;
     }
 
+    public void setCyclenumber(int cyclenumber) {
+        this.cyclenumber = cyclenumber;
+    }
+
     /**
      * Checks if this cardPack came out later than the other pack.
      * @param cardPack other pack

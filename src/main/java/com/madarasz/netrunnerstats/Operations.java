@@ -177,6 +177,37 @@ public class Operations {
             }
         }
         logger.info("Found new cards: " + found);
+
+        TweekNetrunnerDB();
+    }
+
+    /**
+     * Correct TD release during mid cycle
+     */
+    public void TweekNetrunnerDB() {
+        final String RED_SAND_PART_2 = "Red Sand part 2";
+        final int RED_SAND_CYCLE_NUM = 14;
+
+        // create Red Sand Part 2
+        CardCycle rs2 = cardCycleRepository.findByName(RED_SAND_PART_2);
+        if (rs2 == null) {
+            rs2 = new CardCycle(RED_SAND_PART_2, "red-sand-2", RED_SAND_CYCLE_NUM);
+            cardCycleRepository.save(rs2);
+        }
+
+        // move packs to Red Sand Part 2
+        CardPack eas = cardPackRepository.findByName("Earth's Scion");
+        eas.setCyclenumber(RED_SAND_CYCLE_NUM);
+        cardPackRepository.save(eas);
+        CardPack baw = cardPackRepository.findByName("Blood and Water");
+        baw.setCyclenumber(RED_SAND_CYCLE_NUM);
+        cardPackRepository.save(baw);
+        CardPack fm = cardPackRepository.findByName("Free Mars");
+        fm.setCyclenumber(RED_SAND_CYCLE_NUM);
+        cardPackRepository.save(fm);
+        CardPack cd = cardPackRepository.findByName("Crimson Dust");
+        cd.setCyclenumber(RED_SAND_CYCLE_NUM);
+        cardPackRepository.save(cd);
     }
 
     /**

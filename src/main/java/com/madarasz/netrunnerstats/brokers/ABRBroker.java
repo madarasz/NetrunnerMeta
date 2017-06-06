@@ -71,18 +71,24 @@ public class ABRBroker {
         for (int i = 0; i < data.length(); i++) {
             JSONObject tournamentData = data.getJSONObject(i);
 
-            Date date = new Date();
-            try {
-                date = regExBroker.parseDate(tournamentData.getString("date"));
-            } catch (Exception ex) {
-                logger.warn("Couldn't parse date from: " + tournamentData.getString("date"));
+            if (tournamentData.getString("format").equals("standard")) {
+
+                Date date = new Date();
+                try {
+                    date = regExBroker.parseDate(tournamentData.getString("date"));
+                } catch (Exception ex) {
+                    logger.warn("Couldn't parse date from: " + tournamentData.getString("date"));
+                }
+
+                Tournament tournament = new Tournament(100000 + tournamentData.getInt("id"),
+                        tournamentData.getString("title"), date, cardPack, URL_TOURNAMENT + tournamentData.getInt("id"),
+                        tournamentData.getInt("players_count"));
+
+                result.add(tournament);
+
+            } else {
+                logger.info("Skipping non-standard tournament: " + tournamentData.getString("title"));
             }
-
-            Tournament tournament = new Tournament(100000 + tournamentData.getInt("id"),
-                    tournamentData.getString("title"), date, cardPack, URL_TOURNAMENT + tournamentData.getInt("id"),
-                    tournamentData.getInt("players_count"));
-
-            result.add(tournament);
         }
         return result;
     }
@@ -117,15 +123,19 @@ public class ABRBroker {
             Deck runnerDeck = getDeckFromDeckURL(entryData.getString("runner_deck_url"));
             Deck corpDeck = getDeckFromDeckURL(entryData.getString("corp_deck_url"));
 
-            if (runnerDeck == null) {
-                result.add(new Standing(tournament, rank, runnerID, rank <= tournament.getPlayerNumber() * 0.3, true));
-            } else {
-                result.add(new Standing(tournament, rank, runnerID, rank <= tournament.getPlayerNumber() * 0.3, true, runnerDeck));
+            if (runnerID.getCardPack().getCyclenumber() != 0) {
+                if (runnerDeck == null) {
+                    result.add(new Standing(tournament, rank, runnerID, rank <= tournament.getPlayerNumber() * 0.3, true));
+                } else {
+                    result.add(new Standing(tournament, rank, runnerID, rank <= tournament.getPlayerNumber() * 0.3, true, runnerDeck));
+                }
             }
-            if (corpDeck == null) {
-                result.add(new Standing(tournament, rank, corpID, rank <= tournament.getPlayerNumber() * 0.3, false));
-            } else {
-                result.add(new Standing(tournament, rank, corpID, rank <= tournament.getPlayerNumber() * 0.3, false, corpDeck));
+            if (corpID.getCardPack().getCyclenumber() != 0) {
+                if (corpDeck == null) {
+                    result.add(new Standing(tournament, rank, corpID, rank <= tournament.getPlayerNumber() * 0.3, false));
+                } else {
+                    result.add(new Standing(tournament, rank, corpID, rank <= tournament.getPlayerNumber() * 0.3, false, corpDeck));
+                }
             }
         }
 
