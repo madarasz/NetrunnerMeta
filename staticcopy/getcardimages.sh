@@ -15,3 +15,6 @@ do
     fi
     ((i++))
 done
+
+# delete missing card stumps
+find ../src/main/resources/static/img/cards/ -size -10k -delete
