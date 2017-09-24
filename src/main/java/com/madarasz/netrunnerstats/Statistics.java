@@ -264,17 +264,29 @@ public class Statistics {
         if (result == null) {
             StopWatch stopwatch = new StopWatch();
             stopwatch.start();
-            int runnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", false);
-            int toprunnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", true);
-            int corpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", false);
-            int topcorpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", true);
+            int runnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", false, true);
+            int toprunnerdecks = getDeckNumberFromCardpoolOnward(cardpack, "runner", true, true);
+            int corpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", false, true);
+            int topcorpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", true, true);
+            List<String> last3Names = lastThree.getLastThreeCardpoolNames();
             result = new CardUsageStat(cardpack, runnerdecks, toprunnerdecks, corpdecks, topcorpdecks);
             List<Card> cards = cardRepository.findByCardPackName(cardpack);
             for (Card card : cards) {
                 String code = card.getCode();
-                int count = deckRepository.countByUsingCard(code);
+//                int count = deckRepository.countByUsingCard(code);
+                int count = 0;
+                for (String cardpoolName : last3Names) {
+                    count += deckRepository.countByCardpoolUsingCard(cardpoolName, card.getTitle());
+                }
+
+
                 if (count > 0) {
-                    int topcount = deckRepository.countTopByUsingCard(code);
+//                    int topcount = deckRepository.countTopByUsingCard(code);
+                    int topcount = 0;
+                    for (String cardpoolName : last3Names) {
+                        topcount += deckRepository.countTopByCardpoolUsingCard(cardpoolName, card.getTitle());
+                    }
+
                     if (card.getSide_code().equals("runner")) {
                         result.addCardUsage(new CardUsage(card.getTitle(), card.getCardPack().getName(),
                                 card.getSide_code(), card.getFaction_code(), count, topcount,
@@ -545,8 +557,14 @@ public class Statistics {
      * @param topdeck just top decks?
      * @return deck number
      */
-    public int getDeckNumberFromCardpoolOnward(String cardpool, String side, boolean topdeck) {
+    public int getDeckNumberFromCardpoolOnward(String cardpool, String side, boolean topdeck, boolean countLast3) {
         List<CardPool> cardPools = getCardPoolStats().getSortedCardpool();
+
+        // if only counting last 3 cardpools
+        if (countLast3) {
+            cardPools = cardPools.subList(0,3);
+        }
+
         Collections.reverse(cardPools);
         CardPack cardPack;
         if (cardpool.equals(LAST_3)) {

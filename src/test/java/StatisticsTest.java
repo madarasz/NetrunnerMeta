@@ -123,13 +123,13 @@ public class StatisticsTest {
         Assert.assertEquals("CardUsage are not created.", 160, template.count(CardUsage.class));
         // check values - deck counts
         Assert.assertEquals("Deck counts incorrect", 2,
-                statistics.getDeckNumberFromCardpoolOnward("The Universe of Tomorrow", "corp", true));
+                statistics.getDeckNumberFromCardpoolOnward("The Universe of Tomorrow", "corp", true, false));
         Assert.assertEquals("Deck counts incorrect", 5,
-                statistics.getDeckNumberFromCardpoolOnward("The Universe of Tomorrow", "corp", false));
+                statistics.getDeckNumberFromCardpoolOnward("The Universe of Tomorrow", "corp", false, false));
         Assert.assertEquals("Deck counts incorrect", 6,
-                statistics.getDeckNumberFromCardpoolOnward("Old Hollywood", "corp", true));
+                statistics.getDeckNumberFromCardpoolOnward("Old Hollywood", "corp", true, false));
         Assert.assertEquals("Deck counts incorrect", 12,
-                statistics.getDeckNumberFromCardpoolOnward("Old Hollywood", "corp", false));
+                statistics.getDeckNumberFromCardpoolOnward("Old Hollywood", "corp", false, false));
         // check values
 //        CardUsageStat pool = cardUsageStatsRepository.findByCardPoolName("Old Hollywood");
         CardUsageStat pack = cardUsageStatsRepository.findByCardPackName("Old Hollywood");
