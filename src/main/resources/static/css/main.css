@@ -369,8 +369,27 @@ table.ordering > tbody > tr > td {
     padding-right: 0.5em;
 }
 
+table.table-small {
+    font-size: 80%;
+    width: 70% !important;
+    margin: 0 auto;
+}
 
+table.table-small th,
+table.table-small td {
+    padding: 4px !important;
+}
 
+blockquote.opinion {
+    background-color: #eeeeee;
+    width: 80%;
+    margin: 0 auto;
+    font-size: 90%;
+}
+blockquote.opinion > h5 > em{
+    font-weight: normal;
+    font-size: 90%;
+}
 
 
 
