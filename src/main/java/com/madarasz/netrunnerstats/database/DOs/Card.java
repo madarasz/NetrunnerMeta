@@ -190,6 +190,10 @@ public class Card {
         this.trash = card.getTrash();
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     /**
      * Compares all values with other card.
      * @param card

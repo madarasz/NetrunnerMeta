@@ -30,6 +30,7 @@ public class Statistics {
 
     private static final Logger logger = LoggerFactory.getLogger(Statistics.class);
     public static final String LAST_3 = "Last 3 aggregated";
+    public static final String CORE_2 = "Revised Core Set";
 
     @Autowired
     CardRepository cardRepository;
@@ -579,7 +580,7 @@ public class Statistics {
                     >= cardPack.getCyclenumber()*100 + cardPack.getNumber()) {
                 count = true;
             }
-            if (count) {
+            if (count || cardpool.equals(CORE_2)) {
                 if (topdeck) {
                     result += deckRepository.countTopByCardpoolAndSide(currentPool.getTitle(), side);
                 } else {
@@ -620,7 +621,8 @@ public class Statistics {
             // deck/standing numbers over time
             for (CardPool cardPool : cardPools) {
                 String pack = cardPool.getTitle();
-                if (!card.getCardPack().later(cardPackRepository.findByName(pack))) {  // if the card is later than the pool
+                if (!card.getCardPack().later(cardPackRepository.findByName(pack)) || // if the card is later than the pool
+                        card.getCardPack().getCode().equals("core2")) {  // or it's 'Revised Core Set'
                     if (!result.isInOverTime(pack)) {   // if it's not already in the stats
 
                         changed = true;
@@ -991,15 +993,17 @@ public class Statistics {
      */
     public List<Cycle> getDPStructure() {
         List<Cycle> result = new ArrayList<>();
-        for (int i = 1; i< Enums.CardCycles.values().length; i++) {
-            Cycle cycle = new Cycle(i);
-            List<String> dps = cardPackRepository.getSortedPackNamesInCycle(i);
-            if (dps.size() > 1) {
-                cycle.addDatapacks(dps);
-            } else if (!dps.get(0).equals(cycle.getTitle())) {
-                cycle.addDatapacks(dps);
+        for (Enums.CardCycles theCycle : Enums.CardCycles.values()) {
+            Cycle cycle = new Cycle(theCycle.getCycleNumber());
+            List<String> dps = cardPackRepository.getSortedPackNamesInCycle(theCycle.getCycleNumber());
+            if (dps.size() > 0) {
+                if (dps.size() > 1) {
+                    cycle.addDatapacks(dps);
+                } else if (!dps.get(0).equals(cycle.getTitle())) {
+                    cycle.addDatapacks(dps);
+                }
+                result.add(cycle);
             }
-            result.add(cycle);
         }
         return result;
     }

@@ -4,6 +4,7 @@ import com.madarasz.netrunnerstats.database.DOs.Card;
 import com.madarasz.netrunnerstats.database.DOs.CardCycle;
 import com.madarasz.netrunnerstats.database.DOs.CardPack;
 import com.madarasz.netrunnerstats.database.DOs.Deck;
+import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.database.DRs.CardCycleRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardPackRepository;
 import com.madarasz.netrunnerstats.database.DRs.CardRepository;
@@ -162,6 +163,38 @@ public final class NetrunnerDBBroker {
             }
         }
 
-        return resultDeck;
+        return updateDeckWithCore2(resultDeck);
+    }
+
+    public Deck updateDeckWithCore2(Deck deck) {
+        deck.setIdentity(updateCardWithCore2(deck.getIdentity()));
+
+        Set<DeckHasCard> oldcards = new HashSet<>(deck.getCards());
+        deck.removeAllCards();
+
+        for (DeckHasCard deckHasCard : oldcards) {
+            deck.hasCard(updateCardWithCore2(deckHasCard.getCard()), deckHasCard.getQuantity());
+        }
+
+        deck.calculateUpto();
+        return deck;
+    }
+
+    /**
+     * Returns Core2 substitute for a card if possible.
+     * @param card
+     * @return
+     */
+    public Card updateCardWithCore2(Card card) {
+        String title = card.getTitle();
+        if (title.contains(" (old)")) {
+            Card substitute = cardRepository.findByTitle(title.substring(0, title.length() - 6));
+            if (substitute != null) {
+                return substitute;
+            } else {
+                logger.error("Could not find substitute for: " + title);
+            }
+        }
+        return card;
     }
 }

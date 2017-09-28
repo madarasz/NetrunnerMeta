@@ -479,6 +479,13 @@ public class AdminController {
         return "redirect:/muchadmin";
     }
 
+    // migrate to post rotation
+    @RequestMapping(value = "/muchadmin/rotate", method = RequestMethod.POST)
+    public String migrateRotation(final RedirectAttributes redirectAttributes) {
+        operations.migrateDecksAfterRotation();
+        return "redirect:/muchadmin";
+    }
+
     // add acoo tournament from page
     @RequestMapping(value = "/muchadmin/ABR/AddPack", method = RequestMethod.POST)
     public String addABRTournaments(String pack, RedirectAttributes redirectAttributes) {

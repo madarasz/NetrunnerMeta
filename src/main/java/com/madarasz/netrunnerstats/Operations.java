@@ -158,13 +158,21 @@ public class Operations {
         Set<Card> allCards = netrunnerDBBroker.readCards();
         found = 0;
         for (Card card : allCards) {
-            Card foundCard = cardRepository.findByTitle(card.getTitle());
+            logger.info("Checking card:" + card.getTitle() + " (" + card.getCode() + ") - " + card.getCardPack().getName());
+            Card foundCard = cardRepository.findByCode(card.getCode());
             if (foundCard == null) {
+                // check for older card with same name
+                Card oldCard = cardRepository.findByTitle(card.getTitle());
+                if (oldCard != null && !oldCard.getCardPack().getCode().equals("core2")) {
+                    logger.warn("Old card prefixed: " + oldCard.getTitle());
+                    oldCard.setTitle(oldCard.getTitle() + " (old)");
+                    cardRepository.save(oldCard);
+                }
                 cardRepository.save(card);
-                logger.trace("Found card: " + card.toString());
+                logger.info("Found new card: " + card.toString());
                 found++;
             } else {
-                if (!foundCard.isSame(card)) {
+                if (!foundCard.isSame(card) && !foundCard.getTitle().contains(" (old)")) {
                     foundCard.resetValues(card);
                     cardRepository.save(foundCard);
                     logger.warn("Card values updated: " + foundCard.getTitle());
@@ -757,5 +765,28 @@ public class Operations {
             index++;
         }
         logger.info("Import finished for: " + packcode);
+    }
+
+    public void migrateDecksAfterRotation() {
+        logger.info("Migrating decks to post rotation");
+        List<Standing> standings = standingRepository.getAllStandingWithDecks();
+        int i = 1;
+        for (Standing standing : standings) {
+            Deck deck = standing.getDeck();
+
+            if (!deckRepository.exists(deck.getId())) {
+                logger.error("This is very weird. This deck does not exists: " + deck.getName());
+            }
+            if (deck.hasOldCard()) {
+                logger.info(i + "/" + standings.size() + " Migrating: " + deck.getName() + " - "
+                        + standing.getTournament().getCardpool().getName());
+                netrunnerDBBroker.updateDeckWithCore2(deck);
+                deckRepository.save(deck);
+            } else {
+                logger.info(i + "/" + standings.size() + " Nothing to migrate: " + deck.getName() + " - "
+                        + standing.getTournament().getCardpool().getName());
+            }
+            i++;
+        }
     }
 }

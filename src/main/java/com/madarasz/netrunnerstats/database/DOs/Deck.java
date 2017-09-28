@@ -36,6 +36,10 @@ public class Deck {
         return deckHasCard;
     }
 
+    public void removeAllCards() {
+        this.cards = new HashSet<>();
+    }
+
     public Set<DeckHasCard> getCards() {
         return cards;
     }
@@ -87,7 +91,7 @@ public class Deck {
         CardPack result = new CardPack("dummy", "dummy", 0, 0);
         for (DeckHasCard deckHasCard : cards) {
             CardPack cardPack = deckHasCard.getCard().getCardPack();
-            if (cardPack.later(result)) {
+            if (cardPack.later(result) && !cardPack.getCode().equals("core2")) {
                 result = cardPack;
             }
         }
@@ -118,6 +122,23 @@ public class Deck {
             }
         }
         return 0;
+    }
+
+    /**
+     * Checks if deck has "old" card (available substitute in Core2)
+     * @return
+     */
+    public boolean hasOldCard() {
+        if (identity.getTitle().contains(" (old)")) {
+            return true;
+        }
+        for (DeckHasCard deckHasCard : cards) {
+            if (deckHasCard.getCard().getTitle().contains(" (old)")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public boolean equals(Deck deck) {

@@ -27,7 +27,7 @@ public class Cycle {
     }
 
     public String getTitle() {
-        return Enums.CardCycles.values()[cyclenumber].toString().replaceAll("_", " ");
+        return Enums.CardCycles.getName(cyclenumber).replaceAll("_", " ");
     }
 
     public void addDatapacks(List<String> datapacks) {
