@@ -92,17 +92,36 @@ function loadCardPackTable(urlvalue, elementid) {
                         class: 'text-left'
                     })));
                 } else {
-                    $(elementid).append($('<tr>').append($('<td>').append($('<span>', {
-                        class: 'icon-' + element.faction
-                    })), $('<td>').append($('<a>', {
-                        text: element.cardtitle,
-                        href: '/Cards/' + element.cardtitle + '/',
-                        class: 'italic'
-                    })), $('<td>', {
-                        class: 'text-center italic',
-                        text: 'unused',
-                        colspan: 4
-                    })));
+                    // cards replaced by Revised Core
+                    if (element.cardtitle.indexOf('(old)') > -1) {
+                        $(elementid).append($('<tr>').append($('<td>').append($('<span>', {
+                            class: 'icon-' + element.faction
+                        })), $('<td>').append($('<a>', {
+                            text: element.cardtitle,
+                            href: '/Cards/' + element.cardtitle + '/',
+                            class: 'italic'
+                        })), $('<td>', {
+                            class: 'text-center italic',
+                            colspan: 4
+                        }).append($('<a>', {
+                            href: '#results',
+                            text: "see 'Revised Core Set'",
+                            onClick: "loadTables('Revised Core Set')"
+                        }))));
+                    } else {
+                        // other cards
+                        $(elementid).append($('<tr>').append($('<td>').append($('<span>', {
+                            class: 'icon-' + element.faction
+                        })), $('<td>').append($('<a>', {
+                            text: element.cardtitle,
+                            href: '/Cards/' + element.cardtitle + '/',
+                            class: 'italic'
+                        })), $('<td>', {
+                            class: 'text-center italic',
+                            text: 'unused',
+                            colspan: 4
+                        })));
+                    }
                 }
             });
             $(elementid).removeClass('spinner');
