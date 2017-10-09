@@ -106,7 +106,7 @@ function loadCardPackTable(urlvalue, elementid) {
                         }).append($('<a>', {
                             href: '#results',
                             text: "see 'Revised Core Set'",
-                            onClick: "loadTables('Revised Core Set')"
+                            onClick: "loadTables('Revised Core Set', 48)"
                         }))));
                     } else {
                         // other cards

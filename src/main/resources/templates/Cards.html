@@ -25,7 +25,26 @@
             <div class="col-md-8 col-xs-12">
                 <h4>
                     <a name="results" class="anchor">&nbsp;</a>
-                    <div class="text-center" id="pack-name"></div>
+                    <table style="border: 0; width: 100%">
+                        <tr>
+                            <td style="width: 33%">
+                                <a href="#results" onclick="" class="btn btn-xs btn-primary hidden" id="button-prev-pack">
+                                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                    <span id="text-prev-pack"></span>
+                                </a>
+                            </td>
+                            <td class="text-center" style="width: 34%">
+                                <span id="pack-name"></span>
+                            </td>
+                            <td class="text-right" style="width: 33%">
+                                <a href="#results" onclick="" class="btn btn-xs btn-primary hidden" id="button-next-pack">
+                                    <span id="text-next-pack"></span>
+                                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+
                 </h4>
                 <!--Runner cards-->
                 <table class="table table-hover">
@@ -90,15 +109,31 @@
     <div th:replace="fragments/head :: scripts"></div>
     <script th:inline="javascript">
         /*<![CDATA[*/
+            var packs = [];
             loadPacks();
 
-            function loadTables(title) {
+            function loadTables(title, packIndex) {
                 var encodedtitle = encodeURIComponent(title);
                 $('#pack-name').text(title);
                 $('#runner-cards').empty().addClass('spinner');
                 $('#corp-cards').empty().addClass('spinner');
                 loadCardPackTable('/JSON/Cards/runner/' + encodedtitle, '#runner-cards');
                 loadCardPackTable('/JSON/Cards/corp/' + encodedtitle, '#corp-cards');
+                // prev/next buttons
+                if (packIndex > 0) {
+                    $('#button-prev-pack').removeClass('hidden')
+                            .attr('onclick', "loadTables('" + packs[packIndex-1].replace(/'/g, '\\\'') + "'," + (packIndex-1) + ')');
+                    $('#text-prev-pack').text(packs[packIndex-1])
+                } else {
+                    $('#button-prev-pack').addClass('hidden');
+                }
+                if (packIndex < packs.length-1) {
+                    $('#button-next-pack').removeClass('hidden')
+                            .attr('onclick', "loadTables('" + packs[packIndex+1].replace(/'/g, '\\\'') + "'," + (packIndex+1) + ')');
+                    $('#text-next-pack').text(packs[packIndex+1]);
+                } else {
+                    $('#button-next-pack').addClass('hidden');
+                }
             }
 
             function loadPacks() {
@@ -111,32 +146,37 @@
                         $.each(data, function (index, element) {
                             var iconclass = 'icon-' + element.title.split(" ").join("-");
                             if (element.datapacks.length == 0) {
+                                // big box
                                 $("#packs").append($("<tr>").append($("<td>").append($("<span>", {
                                     class: iconclass
                                 })),$("<td>", {
                                     colspan: 2
                                 }).append($("<a>", {
                                     text: element.title,
-                                    onClick: "loadTables('" + element.title.replace(/'/g, '\\\'') + "')",
+                                    onClick: "loadTables('" + element.title.replace(/'/g, '\\\'') + "', " + packs.length + ")",
                                     class: 'fake-link',
                                     href: '#results'
                                 }))));
+                                packs.push(element.title);
                             } else {
+                                // cycle
                                 $("#packs").append($("<tr>").append($("<td>").append($("<span>", {
                                     class: iconclass
                                 })),$("<td>", {
                                     text: element.title + ' cycle',
                                     colspan: 2
                                 })));
+                                // data packs
                                 $.each(element.datapacks, function (index2, element2) {
                                     $("#packs").append($("<tr>").append($("<td>"), $("<td>").append($("<span>", {
                                         class: iconclass
                                     })), $("<td>").append($("<a>", {
                                         text: element2,
-                                        onClick: "loadTables('" + element2.replace(/'/g, '\\\'') + "')",
+                                        onClick: "loadTables('" + element2.replace(/'/g, '\\\'') + "', " + packs.length + ")",
                                         class: 'fake-link',
                                         href: '#results'
                                     }))));
+                                    packs.push(element2)
                                 });
                             }
                         });
