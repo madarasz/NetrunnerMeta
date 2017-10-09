@@ -1,6 +1,7 @@
 target
 .idea
 *.iml
+.DS_Store
 netrunner.db
 test.db
 staticcopy/content
