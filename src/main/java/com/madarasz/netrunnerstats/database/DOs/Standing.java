@@ -67,6 +67,10 @@ public class Standing {
         this.deck = deck;
     }
 
+    public void setIdentity(Card identity) {
+        this.identity = identity;
+    }
+
     @Override
     public String toString() {
         if (deck == null) {

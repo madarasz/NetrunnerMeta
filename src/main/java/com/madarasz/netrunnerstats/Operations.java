@@ -767,24 +767,34 @@ public class Operations {
         logger.info("Import finished for: " + packcode);
     }
 
-    public void migrateDecksAfterRotation() {
+    public void migrateStandingsAfterRotation() {
         logger.info("Migrating decks to post rotation");
-        List<Standing> standings = standingRepository.getAllStandingWithDecks();
+        List<Standing> standings = standingRepository.getAllStanding();
         int i = 1;
         for (Standing standing : standings) {
             Deck deck = standing.getDeck();
 
-            if (!deckRepository.exists(deck.getId())) {
-                logger.error("This is very weird. This deck does not exists: " + deck.getName());
-            }
-            if (deck.hasOldCard()) {
-                logger.info(i + "/" + standings.size() + " Migrating: " + deck.getName() + " - "
-                        + standing.getTournament().getCardpool().getName());
-                netrunnerDBBroker.updateDeckWithCore2(deck);
-                deckRepository.save(deck);
+            if (deck != null) {
+                // migrate decks
+                if (!deckRepository.exists(deck.getId())) {
+                    logger.error("This is very weird. This deck does not exists: " + deck.getName());
+                }
+                if (deck.hasOldCard()) {
+                    logger.info(i + "/" + standings.size() + " Migrating: " + deck.getName() + " - "
+                            + standing.getTournament().getCardpool().getName());
+                    netrunnerDBBroker.updateDeckWithCore2(deck);
+                    deckRepository.save(deck);
+                } else {
+                    logger.info(i + "/" + standings.size() + " Nothing to migrate: " + deck.getName() + " - "
+                            + standing.getTournament().getCardpool().getName());
+                }
             } else {
-                logger.info(i + "/" + standings.size() + " Nothing to migrate: " + deck.getName() + " - "
-                        + standing.getTournament().getCardpool().getName());
+                // migrate just standings
+                if (standing.getIdentity().getTitle().contains(" (old)")) {
+                    logger.info(i + "/" + standings.size() + " Migrating ID");
+                    standing.setIdentity(netrunnerDBBroker.updateCardWithCore2(standing.getIdentity()));
+                    standingRepository.save(standing);
+                }
             }
             i++;
         }

@@ -482,7 +482,7 @@ public class AdminController {
     // migrate to post rotation
     @RequestMapping(value = "/muchadmin/rotate", method = RequestMethod.POST)
     public String migrateRotation(final RedirectAttributes redirectAttributes) {
-        operations.migrateDecksAfterRotation();
+        operations.migrateStandingsAfterRotation();
         return "redirect:/muchadmin";
     }
 
