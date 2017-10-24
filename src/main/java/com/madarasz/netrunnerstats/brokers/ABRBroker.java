@@ -110,8 +110,8 @@ public class ABRBroker {
             JSONObject entryData = data.getJSONObject(i);
             Card runnerID = cardRepository.findByCode(entryData.getString("runner_deck_identity_id"));
             Card corpID = cardRepository.findByCode(entryData.getString("corp_deck_identity_id"));
-            netrunnerDBBroker.updateCardWithCore2(runnerID);
-            netrunnerDBBroker.updateCardWithCore2(corpID);
+            runnerID = netrunnerDBBroker.updateCardWithCore2(runnerID);
+            corpID = netrunnerDBBroker.updateCardWithCore2(corpID);
             int rank;
             try {
                 rank = entryData.getInt("rank_top");
