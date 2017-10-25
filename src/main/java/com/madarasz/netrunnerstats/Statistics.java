@@ -1,9 +1,6 @@
 package com.madarasz.netrunnerstats;
 
-import com.madarasz.netrunnerstats.database.DOs.Card;
-import com.madarasz.netrunnerstats.database.DOs.CardPack;
-import com.madarasz.netrunnerstats.database.DOs.Deck;
-import com.madarasz.netrunnerstats.database.DOs.Tournament;
+import com.madarasz.netrunnerstats.database.DOs.*;
 import com.madarasz.netrunnerstats.database.DOs.relationships.DeckHasCard;
 import com.madarasz.netrunnerstats.database.DOs.result.CardCounts;
 import com.madarasz.netrunnerstats.database.DOs.result.StatCounts;
@@ -61,6 +58,9 @@ public class Statistics {
 
     @Autowired
     IdentityAverageRepository identityAverageRepository;
+
+    @Autowired
+    MatchRepository matchRepository;
 
     @Autowired
     CardStatRepository cardStatRepository;
@@ -984,6 +984,29 @@ public class Statistics {
                     stopwatch.getTotalTimeSeconds(), cardpoolTitle, sideCode));
             tournamentDrillDownRepository.save(result);
         }
+        return result;
+    }
+
+    public MatchCount getIDWinrate(String cardPoolTitle, String idTitle) {
+        List<Match> matches = matchRepository.findForPoolID(cardPoolTitle, idTitle);
+
+        int winCount = 0;
+        int timedWinCount = 0;
+        int tieCount = 0;
+        for (Match match : matches) {
+            if (match.isTie()) {
+                tieCount++;
+            } else if (match.getWinner().getTitle().equals(idTitle)) {
+                if (match.isTimed()) {
+                    timedWinCount++;
+                } else {
+                    winCount++;
+                }
+            }
+        }
+
+        MatchCount result = new MatchCount(matches.size(), winCount, timedWinCount, tieCount);
+        logger.info("Found relevant matches: " + matches.size());
         return result;
     }
 

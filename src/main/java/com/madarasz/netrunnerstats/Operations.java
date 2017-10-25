@@ -55,6 +55,9 @@ public class Operations {
     StandingRepository standingRepository;
 
     @Autowired
+    MatchRepository matchRepository;
+
+    @Autowired
     DeckValidator deckValidator;
 
     @Autowired
@@ -626,8 +629,11 @@ public class Operations {
     public void deleteTournament(String url) {
         Map<String, Object> emptyparams = new HashMap<>();
         template.query(String.format(
+                "MATCH (t:Tournament {url: \"%s\"})<-[:IN_TOURNAMENT]-(m:Match) " +
+                        "OPTIONAL MATCH (m)-[r2]-() DELETE m,r2", url), emptyparams);
+        template.query(String.format(
                 "MATCH (t:Tournament {url: \"%s\"})<-[:IN_TOURNAMENT]-(s:Standing)-[:IS_DECK]->(d:Deck) " +
-                        "OPTIONAL MATCH (t)-[r1]-(), (s)-[r2]-(), (d)-[r3]-() DELETE t,s,d,r1,r2,r3", url), emptyparams);
+                        "OPTIONAL MATCH (d)-[r3]-() DELETE d,r3", url), emptyparams);
         template.query(String.format(
                 "MATCH (t:Tournament {url: \"%s\"})<-[:IN_TOURNAMENT]-(s:Standing) " +
                         "OPTIONAL MATCH (t)-[r1]-(), (s)-[r2]-() DELETE t,s,r1,r2", url), emptyparams);
@@ -756,6 +762,10 @@ public class Operations {
                         }
                     }
                 }
+
+                // get NRTM matches
+                loadMatchesForABRTournament(tournament.getId() - 100000);
+
                 logger.info("New standings: " + savedStandings + " | new decks: " + savedDecks +
                         " | progress: " + index + " / " + tournaments.size());
             } else {
@@ -797,6 +807,21 @@ public class Operations {
                 }
             }
             i++;
+        }
+    }
+
+    public void loadMatchesForABRTournament(int tournamentID) {
+
+        List<Match> matches = matchRepository.findForTournamentURL(abrBroker.URL_TOURNAMENT + tournamentID);
+
+        if (matches.size() == 0) {
+            matches = abrBroker.getMatchesForTournament(tournamentID);
+            if (matches.size() > 0) {
+                logger.info("Saving new matches: " + matches.size());
+                matchRepository.save(matches);
+            }
+        } else {
+            logger.info("Matches were already saved");
         }
     }
 }

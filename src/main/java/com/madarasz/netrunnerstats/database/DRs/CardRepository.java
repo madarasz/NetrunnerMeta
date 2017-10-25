@@ -19,6 +19,9 @@ public interface CardRepository extends GraphRepository<Card>, RelationshipOpera
     @Query("MATCH (n:Card) WHERE (UPPER(n.title)=UPPER({0})) RETURN n LIMIT 1")
     Card findByTitle(String title);
 
+    @Query("MATCH (n:Card) WHERE (n.title =~ {0} AND NOT(n.title =~ '.*\\\\(old\\\\)') ) RETURN n LIMIT 1")
+    Card findByTitleLike(String title);
+
     @Query("MATCH (c:Card) RETURN c")
     List<Card> findAllCards();
 

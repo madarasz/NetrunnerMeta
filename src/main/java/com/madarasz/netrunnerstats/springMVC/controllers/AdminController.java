@@ -2,6 +2,7 @@ package com.madarasz.netrunnerstats.springMVC.controllers;
 
 import com.madarasz.netrunnerstats.Operations;
 import com.madarasz.netrunnerstats.Statistics;
+import com.madarasz.netrunnerstats.brokers.ABRBroker;
 import com.madarasz.netrunnerstats.brokers.AcooBroker;
 import com.madarasz.netrunnerstats.brokers.NetrunnerDBBroker;
 import com.madarasz.netrunnerstats.database.DOs.*;
@@ -60,6 +61,9 @@ public class AdminController {
 
     @Autowired
     NetrunnerDBBroker netrunnerDBBroker;
+
+    @Autowired
+    ABRBroker abrBroker;
 
     @Autowired
     AdminDataRepository adminDataRepository;
@@ -383,13 +387,15 @@ public class AdminController {
                 long tournamentcount = template.count(Tournament.class);
                 long deckcount = template.count(Deck.class);
                 long standingcount = template.count(Standing.class);
+                long matchescount = template.count(Match.class);
                 operations.deleteTournament(url);
                 tournamentcount -= template.count(Tournament.class);
                 deckcount -= template.count(Deck.class);
                 standingcount -= template.count(Standing.class);
+                matchescount -= template.count(Match.class);
                 redirectAttributes.addFlashAttribute("successMessage",
-                        String.format("Tournament deleted with URL: %s - deleted tournaments: %d, decks: %d, standings: %d",
-                                url, tournamentcount, deckcount, standingcount));
+                        String.format("Tournament deleted with URL: %s - deleted tournaments: %d, decks: %d, standings: %d, matches: %d",
+                                url, tournamentcount, deckcount, standingcount, matchescount));
             } catch (Exception ex) {
                 logger.error("logged exception", ex);
                 redirectAttributes.addFlashAttribute("errorMessage",
@@ -486,21 +492,31 @@ public class AdminController {
         return "redirect:/muchadmin";
     }
 
-    // add acoo tournament from page
+    // add matches for single ABR tournament
+    @RequestMapping(value = "/muchadmin/ABR/AddMatch", method = RequestMethod.POST)
+    public String addMatchForTournament(String tournamentid, final RedirectAttributes redirectAttributes) {
+//    public @ResponseBody List<Match> addMatchForTournament(String tournamentid, final RedirectAttributes redirectAttributes) {
+        operations.loadMatchesForABRTournament(Integer.parseInt(tournamentid));
+        return "redirect:/muchadmin";
+    }
+
+    // add ABR tournament for pack
     @RequestMapping(value = "/muchadmin/ABR/AddPack", method = RequestMethod.POST)
     public String addABRTournaments(String pack, RedirectAttributes redirectAttributes) {
         try {
             long tournamentcount = template.count(Tournament.class);
             long deckcount = template.count(Deck.class);
             long standingcount = template.count(Standing.class);
+            long matchcount = template.count(Match.class);
             operations.loadABRTournamentsForPack(pack);
             tournamentcount = template.count(Tournament.class) - tournamentcount;
             deckcount = template.count(Deck.class) - deckcount;
             standingcount = template.count(Standing.class) - standingcount;
-            if (tournamentcount + deckcount + standingcount > 0) {
+            matchcount = template.count(Match.class) - matchcount;
+            if (tournamentcount + deckcount + standingcount + matchcount > 0) {
                 redirectAttributes.addFlashAttribute("successMessage",
-                        String.format("Tournaments added to DB for packcode: %s - new tournaments: %d, new decks: %d, new standings: %d",
-                                pack, tournamentcount, deckcount, standingcount));
+                        String.format("Tournaments added to DB for packcode: %s - new tournaments: %d, new decks: %d, new standings: %d, new matches: %d",
+                                pack, tournamentcount, deckcount, standingcount, matchcount));
             } else {
                 redirectAttributes.addFlashAttribute("warningMessage",
                         String.format("No new data was added for packcodeL: %s", pack));
