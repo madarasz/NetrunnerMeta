@@ -63,6 +63,9 @@ public class Statistics {
     MatchRepository matchRepository;
 
     @Autowired
+    MatchCountRepository matchCountRepository;
+
+    @Autowired
     CardStatRepository cardStatRepository;
 
     @Autowired
@@ -904,7 +907,8 @@ public class Statistics {
                     topDeckCount += deckRepository.countTopByIdentityAndCardPool(title, cardpool);
                 }
                 Card card = cardRepository.findByTitle(title);
-                result.add(new StandingDeckCountID(title, card.getFaction_code(), allStandingCount, topStandingCount, allDeckCount, topDeckCount));
+                result.add(new StandingDeckCountID(title, card.getFaction_code(), allStandingCount, topStandingCount,
+                        allDeckCount, topDeckCount, getIDWinrate(cardpoolTitle, title)));
             }
         } else {
             List<StatCounts> identities = standingRepository.getIdentityStatsByCardPoolSide(cardpoolTitle, sideCode);
@@ -915,7 +919,8 @@ public class Statistics {
                 int allDeckCount = deckRepository.countByIdentityAndCardPool(title, cardpoolTitle);
                 int topDeckCount = deckRepository.countTopByIdentityAndCardPool(title, cardpoolTitle);
                 Card card = cardRepository.findByTitle(title);
-                result.add(new StandingDeckCountID(title, card.getFaction_code(), allStandingCount, topStandingCount, allDeckCount, topDeckCount));
+                result.add(new StandingDeckCountID(title, card.getFaction_code(), allStandingCount, topStandingCount,
+                        allDeckCount, topDeckCount, getIDWinrate(cardpoolTitle, title)));
             }
         }
         stopwatch.stop();
@@ -988,25 +993,32 @@ public class Statistics {
     }
 
     public MatchCount getIDWinrate(String cardPoolTitle, String idTitle) {
-        List<Match> matches = matchRepository.findForPoolID(cardPoolTitle, idTitle);
+        MatchCount result = matchCountRepository.findByCardPackID(cardPoolTitle, idTitle);
 
-        int winCount = 0;
-        int timedWinCount = 0;
-        int tieCount = 0;
-        for (Match match : matches) {
-            if (match.isTie()) {
-                tieCount++;
-            } else if (match.getWinner().getTitle().equals(idTitle)) {
-                if (match.isTimed()) {
-                    timedWinCount++;
-                } else {
-                    winCount++;
+        if (result == null) {
+
+            List<Match> matches = matchRepository.findForPoolID(cardPoolTitle, idTitle);
+
+            int winCount = 0;
+            int timedWinCount = 0;
+            int tieCount = 0;
+            for (Match match : matches) {
+                if (match.isTie()) {
+                    tieCount++;
+                } else if (match.getWinner().getTitle().equals(idTitle)) {
+                    if (match.isTimed()) {
+                        timedWinCount++;
+                    } else {
+                        winCount++;
+                    }
                 }
             }
+
+            result = new MatchCount(matches.size(), winCount, timedWinCount, tieCount);
+            logger.info("** Saving relevant matches statistics: " + matches.size());
+            matchCountRepository.save(result);
         }
 
-        MatchCount result = new MatchCount(matches.size(), winCount, timedWinCount, tieCount);
-        logger.info("Found relevant matches: " + matches.size());
         return result;
     }
 
