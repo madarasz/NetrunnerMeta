@@ -833,7 +833,9 @@ public class Statistics {
             List<CardUsage> cardStat = getCardStats(card.getTitle()).getOverTime();
             if (cardStat.size() > 0) {
                 CardUsage last = cardStat.get(cardStat.size() - 1);
-                counts.add(new CardCount(card, (int) (last.getTopdeckfraction() * 1000 - last.getDeckfraction() * 1000)));
+                if (last.getDeckfraction() > 0.05) {
+                    counts.add(new CardCount(card, (int) (last.getTopdeckfraction() / last.getDeckfraction() * 100)));
+                }
             }
         }
 

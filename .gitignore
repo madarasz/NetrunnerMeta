@@ -11,3 +11,5 @@ ktm*
 selenium-*
 reports
 staticcopy/cards.json
+src/main/resources/static/img/ids
+!.gitkeep

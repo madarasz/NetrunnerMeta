@@ -112,14 +112,15 @@ public class Operations {
         logger.info(String.format("CardPoolStats %d, CardPool: %d, DP statistics: %d, CountDeckStands: %d, " +
                 "MDSEntry: %d, " +
                 "CardUsageStat: %d, CardUsage: %d, IdentityAverage: %d, CardAverage: %d, Cardstat: %d, Cardcombo: %d, DPDecks: %d " +
-                "TournamentDrilldown: %d, StandingDeckCount: %d, StandingDeckCountID: %d",
+                "TournamentDrilldown: %d, StandingDeckCount: %d, StandingDeckCountID: %d, MatchCount: %d",
                 template.count(CardPoolStats.class), template.count(CardPool.class),
                 template.count(DPStatistics.class), template.count(CountDeckStands.class),
                 template.count(MDSEntry.class),
                 template.count(CardUsageStat.class), template.count(CardUsage.class),
                 template.count(IdentityAverage.class), template.count(CardAverage.class),
                 template.count(CardStat.class), template.count(CardCombo.class), template.count(DPDecks.class),
-                template.count(TournamentDrilldown.class), template.count(StandingDeckCount.class), template.count(StandingDeckCountID.class)));
+                template.count(TournamentDrilldown.class), template.count(StandingDeckCount.class), template.count(StandingDeckCountID.class),
+                template.count(MatchCount.class)));
     }
 
     /**
@@ -559,6 +560,7 @@ public class Operations {
         template.query("MATCH (c:StandingDeckCount) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         template.query("MATCH (c:StandingDeckCountID) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
         template.query("MATCH (c:MDSEntry) OPTIONAL MATCH (c)-[r]-() DELETE c,r", emptyparams);
+        template.query("MATCH (m:MatchCount) OPTIONAL MATCH (m)-[r]-() DELETE m,r", emptyparams);
         // troublemaker nodes
         template.query("MATCH (n:CountDeckStands) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);
         template.query("MATCH (n:CardUsage) OPTIONAL MATCH (n)-[r]-() DELETE n,r", emptyparams);

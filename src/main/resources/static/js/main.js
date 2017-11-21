@@ -59,6 +59,36 @@ function factionCodeToColor(faction) {
         case "adam":
             return "darkgoldenrod";
             break;
+        case "shaper-light":
+            return "#afd279";
+            break;
+        case "anarch-light":
+            return "#d28e79";
+            break;
+        case "criminal-light":
+            return "#7998d2";
+            break;
+        case "haas-bioroid-light":
+            return "#bb42bd";
+            break;
+        case "weyland-consortium-light":
+            return "#30b58d";
+            break;
+        case "jinteki-light":
+            return "#ee3211";
+            break;
+        case "nbn-light":
+            return "#e0c08a";
+            break;
+        case "apex-light":
+            return "#f00000";
+            break;
+        case "sunny-lebeau-light":
+            return "#333333";
+            break;
+        case "adam-light":
+            return "#f3bd35";
+            break;
         default:
             return "grey";
     }
@@ -96,9 +126,8 @@ function loadCardPackTable(urlvalue, elementid) {
                     if (element.cardtitle.indexOf('(old)') > -1) {
                         $(elementid).append($('<tr>').append($('<td>').append($('<span>', {
                             class: 'icon-' + element.faction
-                        })), $('<td>').append($('<a>', {
+                        })), $('<td>').append($('<span>', {
                             text: element.cardtitle,
-                            href: '/Cards/' + element.cardtitle + '/',
                             class: 'italic'
                         })), $('<td>', {
                             class: 'text-center italic',
@@ -187,11 +216,17 @@ function shortTitle(longtitle) {
         case "Jinteki: Replicating Perfection":
             return "Jinteki: RP";
             break;
+        case "Jinteki: Potential Unleashed":
+            return "Jinteki: PU";
+            break;
         case "NBN: Making News":
             return "NBN: MN";
             break;
         case "NBN: The World is Yours*":
             return "NBN: TWiY*";
+            break;
+        case "NBN: Controlling the Message":
+            return "NBN: CtM";
             break;
         case "Weyland Consortium: Because We Built It":
             return "Weyland: BWBI";
@@ -270,17 +305,21 @@ function drawTournamentPieChart(data, colors, elementid) {
 
 function drawTournamentBarChart(data, elementid) {
     var haxis;
+
+    // faction or identity
     if (data.getNumberOfRows() > 6) {
-        haxis = 'none';
+        haxis = {
+            textPosition: 'none'
+        };
     } else {
-        haxis = 'out';
+        haxis = { textPosition: 'out' };
     }
 
     var options = {
         'width': 555,
-        'height':300,
+        'height': 300,
         'vAxis': { format:'percent' },
-        'hAxis': { textPosition: haxis }
+        'hAxis': haxis
     };
 
     var chart = new google.visualization.ColumnChart(document.getElementById(elementid));
@@ -419,6 +458,10 @@ var tournamentShorters = {
     },
     byTopAllFractionStanding: function(a,b) {
         return (b.topStandingCount / b.allStandingCount - a.topStandingCount / a.allStandingCount)
+    },
+    byWinRate: function(a,b) {
+        return ((b.matches.winMatchCount + b.matches.timedWinMatchCount) / b.matches.allMatchCount -
+            (a.matches.winMatchCount + a.matches.timedWinMatchCount) / a.matches.allMatchCount);
     }
 };
 
@@ -477,6 +520,7 @@ function populateTournamentCharts(dpname) {
             populateCardTable(data.ice, "#breakertable", 5);
             loadTournamentCardPoolTable(data.mostUsedCards.sort(tournamentShorters.byInTopDeck), "#runnertable2");
             showSpotLight(data.ids, data.allStandingCount, data.topStandingCount, data.allDeckCount, "runner");
+            runnerWinrateData = buildWinrateData(data.ids, runnerWinrateData, tournamentShorters.byWinRate, "runner");
 
             // corp data
             $.ajax({
@@ -500,7 +544,9 @@ function populateTournamentCharts(dpname) {
                     populateCardTable(data.ice, "#icetable", 5);
                     loadTournamentCardPoolTable(data.mostUsedCards.sort(tournamentShorters.byInTopDeck), "#corptable2");
                     showSpotLight(data.ids, data.allStandingCount, data.topStandingCount, data.allDeckCount, "corp");
+                    corpWinrateData = buildWinrateData(data.ids, corpWinrateData, tournamentShorters.byWinRate, "corp");
 
+                    winrateData = google.visualization.arrayToDataTable(winrateData);
                     drawTournamentCharts();
                 }
             });
@@ -531,6 +577,10 @@ function drawTournamentCharts() {
     drawTournamentPieChart(corpAllIdentityData, corpAllIdentityColors, 'chart_div8');
     drawTournamentBarChart(corpCompareFactionData, 'chart_div10');
     drawTournamentBarChart(corpCompareIdentityData, 'chart_div12');
+
+    drawSideWinChart();
+    drawIDWinrateCharts(runnerWinrateData, 'win-runner');
+    drawIDWinrateCharts(corpWinrateData, 'win-corp');
 }
 
 function drawMDSChart(data, tooltips) {
@@ -1061,4 +1111,86 @@ function removeIDFromList(list, id) {
             }
         }
     }
+}
+function addCardStat(element, card, allCount, topCount) {
+    $(element).append($('<a>', {
+        href: '/Cards/' + card.title + '/'
+    }).append($('<img>', {
+        src: imageURL(card.title)
+    }), $('<div>', {
+        class: 'spotlight-title',
+        text: card.title
+    })), $('<div>', {
+        text: 'all: ' + percentageToString(card.allStandingCount / allCount) +
+        ' - top: ' + percentageToString(card.topStandingCount / topCount)
+    }));
+    $(element).removeClass('spinner');
+}
+
+function buildWinrateData(dataSource, dataTable, sorter, side) {
+    dataSource.sort(sorter);
+    dataSource.sort(sorter);    // WTF is this needed twice? Once does sort right.
+
+    for (var i = 0; i < dataSource.length; i++) {
+
+        var element = dataSource[i];
+        if (element['matches']['allMatchCount'] >= 50) {
+
+            var winPercentage = element['matches']['winMatchCount'] / element['matches']['allMatchCount'],
+                timedWinPercentage = element['matches']['timedWinMatchCount'] / element['matches']['allMatchCount'];
+
+            dataTable.push([]);
+            dataTable[dataTable.length - 1].push(shortTitle(element['title']));
+            dataTable[dataTable.length - 1].push({
+                v: winPercentage,
+                f: percentageToString(winPercentage) +
+                ' (' + element['matches']['winMatchCount'] + '/' + element['matches']['allMatchCount'] + ' matches)'
+            });
+            dataTable[dataTable.length - 1].push('color: ' + factionCodeToColor(element['faction']));
+            dataTable[dataTable.length - 1].push({
+                v: timedWinPercentage,
+                f: percentageToString(timedWinPercentage) +
+                ' (' + element['matches']['timedWinMatchCount'] + '/' + element['matches']['allMatchCount'] + ' matches)'
+            });
+            dataTable[dataTable.length - 1].push('color: ' + factionCodeToColor(element['faction']+'-light'));
+        }
+
+        winrateData[3][1] += element['matches']['tieMatchCount'] / 2;
+        winrateData[side == "runner" ? 5 : 1][1] += element['matches']['winMatchCount'];
+        winrateData[side == "runner" ? 4 : 2][1] += element['matches']['timedWinMatchCount'];
+        matchCount += element['matches']['allMatchCount'] / 2;
+    }
+
+    return google.visualization.arrayToDataTable(dataTable);
+}
+
+function drawSideWinChart() {
+    var winratePieOptions = {
+        'width': 555,
+        'height': 300,
+        'chartArea': { top: 10, width:'100%', height:'90%' },
+        'slices': [{color: '#337ab7'}, {color: '#78acd9'}, {color: '#cccccc'}, {color: '#eba5a3'}, {color: '#d9534f'}]
+    };
+    var chart = new google.visualization.PieChart(document.getElementById('win-side'));
+    chart.draw(winrateData, winratePieOptions);
+    $('#win-side').removeClass('spinner');
+    if (matchCount >= 300) {
+        $('#tab-winrate').removeClass('hidden');
+    }
+}
+
+function drawIDWinrateCharts(dataTable, element) {
+    var options = {
+        'width': 555,
+        'height': 300,
+        'chartArea': {width: '60%'},
+        'hAxis': { format: 'percent', minValue: 0 },
+        'isStacked': true,
+        'legend': { position: "none" }
+//                'hAxis': haxis
+    };
+
+    var chart = new google.visualization.BarChart(document.getElementById(element));
+    chart.draw(dataTable, options);
+    $('#'+element).removeClass('spinner');
 }

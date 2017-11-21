@@ -12,18 +12,18 @@ module.exports = function(grunt) {
                     '../src/main/resources/static/js/bootstrap.min.js',
                     '../src/main/resources/static/js/ekko-lightbox.min.js',
                     '../src/main/resources/static/js/main.js',
-                    '!../src/main/resources/static/js/ktm2.concat.js',
-                    '!../src/main/resources/static/js/ktm2.concat.min.js'
+                    '!../src/main/resources/static/js/ktm3.concat.js',
+                    '!../src/main/resources/static/js/ktm3.concat.min.js'
                 ],
-                dest: '../src/main/resources/static/js/ktm2.concat.js'
+                dest: '../src/main/resources/static/js/ktm3.concat.js'
             },
             css: {
                 src: [
                     '../src/main/resources/static/css/*.css',
-                    '!../src/main/resources/static/css/ktm2.concat.css',
-                    '!../src/main/resources/static/css/ktm2.concat.min.css'
+                    '!../src/main/resources/static/css/ktm3.concat.css',
+                    '!../src/main/resources/static/css/ktm3.concat.min.css'
                 ],
-                dest: '../src/main/resources/static/css/ktm2.concat.css'
+                dest: '../src/main/resources/static/css/ktm3.concat.css'
             }
         },
 
@@ -31,8 +31,8 @@ module.exports = function(grunt) {
         uglify: {
             my_target: {
                 files: {
-                    '../src/main/resources/static/js/ktm2.concat.min.js':
-                        '../src/main/resources/static/js/ktm2.concat.js'
+                    '../src/main/resources/static/js/ktm3.concat.min.js':
+                        '../src/main/resources/static/js/ktm3.concat.js'
                 }
             }
         },
@@ -40,8 +40,8 @@ module.exports = function(grunt) {
         // minify CSS
         cssmin:  {
             css:{
-                src: '../src/main/resources/static/css/ktm2.concat.css',
-                dest: '../src/main/resources/static/css/ktm2.concat.min.css'
+                src: '../src/main/resources/static/css/ktm3.concat.css',
+                dest: '../src/main/resources/static/css/ktm3.concat.min.css'
             }
         },
 
@@ -50,10 +50,10 @@ module.exports = function(grunt) {
             files: [
                 '../src/main/resources/static/js/*.js',
                 '../src/main/resources/static/css/*.css',
-                '!../src/main/resources/static/css/ktm2.concat.css',
-                '!../src/main/resources/static/css/ktm2.concat.min.css',
-                '!../src/main/resources/static/js/ktm2.concat.min.js',
-                '!../src/main/resources/static/js/ktm2.concat.js'
+                '!../src/main/resources/static/css/ktm3.concat.css',
+                '!../src/main/resources/static/css/ktm3.concat.min.css',
+                '!../src/main/resources/static/js/ktm3.concat.min.js',
+                '!../src/main/resources/static/js/ktm3.concat.js'
             ],
             tasks: ['concat', 'cssmin', 'uglify']
         },

@@ -25,6 +25,7 @@
         </h3>
         <ul class="nav nav-tabs" id="tabs">
             <li class="active"><a data-toggle="tab" href="#spotlight">Spotlight</a></li>
+            <li class="hidden" id="tab-winrate"><a data-toggle="tab" href="#win">Win-rates</a></li>
             <li><a data-toggle="tab" href="#top">Factions / identities, top</a></li>
             <li><a data-toggle="tab" href="#all">Factions / identities, all</a></li>
             <li><a data-toggle="tab" href="#compare">Compare top - all</a></li>
@@ -95,6 +96,36 @@
                                 <div class="col-xs-4 spotlight-card" id="spot_used_corp_3"></div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+             <!--win rates -->
+            <div id="win" class="tab-pane fade in">
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3 col-xs-12">
+                        <h4 class="text-center" style="padding-bottom: 0.5em">
+                            Side win rates
+                            <ktm:tooltip place="right" text="Data is coming from tournament results uploaded
+                             to AlwaysBeRunning.net by NRTM."/>
+                        </h4>
+                        <div id="win-side" class="spinner"></div>
+                    </div>
+                </div>
+                <div class="row top-buffer" id="win-id-row">
+                    <div class="col-md-6 col-xs-12">
+                        <h4>
+                            Runner win rates
+                            <ktm:tooltip place="right" text="with at least 50 recorded matches"/>
+                        </h4>
+                        <div id="win-runner" class="spinner"></div>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <h4>
+                            Corp win rates
+                            <ktm:tooltip place="right" text="with at least 50 recorded matches"/>
+                        </h4>
+                        <div id="win-corp" class="spinner"></div>
                     </div>
                 </div>
             </div>
@@ -332,6 +363,11 @@
             corpAllIdentityData = [['identity', 'standings']], corpAllIdentityColors = [],
             corpCompareFactionData = [['faction', 'all', 'top 30%']],
             corpCompareIdentityData = [['faction', 'all', 'top 30%']],
+            runnerWinrateData = [['identity', 'win rate', { role: 'style' }, 'timed win rate', { role: 'style' }]], runnerWinrateColors = [],
+            corpWinrateData = [['identity', 'win rate', { role: 'style' }, 'timed win rate', { role: 'style' }]], corpWinrateColors = [],
+            winrateData = [['outcome', 'fraction'],
+                ['corporation win', 0], ['corporation timed win', 0], ['draw', 0], ['runner timed win', 0], ['runner win', 0]],
+            matchCount = 0;
             dpname = encodeURIComponent([[${DPname}]]);
 
         // hide deck card data in spotlight
@@ -397,21 +433,6 @@
                 $('#low-deck-'+side).removeClass('hidden');
             }
 
-        }
-
-        function addCardStat(element, card, allCount, topCount) {
-            $(element).append($('<a>', {
-                href: '/Cards/' + card.title + '/'
-            }).append($('<img>', {
-                src: imageURL(card.title)
-            }), $('<div>', {
-                class: 'spotlight-title',
-                text: card.title
-            })), $('<div>', {
-                text: 'all: ' + percentageToString(card.allStandingCount / allCount) +
-                ' - top: ' + percentageToString(card.topStandingCount / topCount)
-            }));
-            $(element).removeClass('spinner');
         }
 
         /*]]>*/
