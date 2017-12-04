@@ -183,7 +183,13 @@ public class ABRBroker {
         data = new JSONObject(rawdata);
 
         // parse players
-        JSONArray players = data.getJSONArray("players");
+        JSONArray players;
+        try {
+            players = data.getJSONArray("players");
+        } catch (Exception e) {
+            logger.error("Cannot parse match players for: " + tournament.getName());
+            return results;
+        }
         List<Card> corps = new ArrayList<>();
         List<Card> runners = new ArrayList<>();
         Card runnerBlank = cardRepository.findByCode("00006");
@@ -201,12 +207,12 @@ public class ABRBroker {
 
         for (int i = 0; i < players.length() ; i++) {
             JSONObject player = players.getJSONObject(i);
-            Card corpID = cardRepository.findByTitleLike(".*" + player.getString("corpIdentity") + ".*");
+            Card corpID = cardRepository.findByTitleLike(".*" + addSpecialCharsToIDs(player.getString("corpIdentity")) + ".*");
             if (corpID == null) {
                 logger.error("Cannot parse ID for: " + player.getString("corpIdentity"));
                 return results;
             }
-            Card runnerID = cardRepository.findByTitleLike(".*" + player.getString("runnerIdentity") + ".*");
+            Card runnerID = cardRepository.findByTitleLike(".*" + addSpecialCharsToIDs(player.getString("runnerIdentity")) + ".*");
             if (runnerID == null) {
                 logger.error("Cannot parse ID for: " + player.getString("runnerIdentity"));
                 return results;
@@ -216,7 +222,14 @@ public class ABRBroker {
         }
 
         // parse matches
-        JSONArray rounds = data.getJSONArray("rounds");
+        JSONArray rounds;
+        try {
+            rounds = data.getJSONArray("rounds");
+        } catch (Exception e) {
+            logger.error("Cannot parse match rounds for: " + tournament.getName());
+            return results;
+        }
+
         for (int roundNum = 0; roundNum < rounds.length() ; roundNum++) {
             JSONArray round = rounds.getJSONArray(roundNum);
             for (int u = 0; u < round.length(); u++) {
@@ -235,38 +248,43 @@ public class ABRBroker {
                     if (!match.getBoolean("eliminationGame")) {
                         // swiss
 
-                        // first match: player 1 runner vs player 2 corp
-                        Match matchABR1;
-                        boolean tie = player1.getInt("runnerScore") == 1 && player2.getInt("corpScore") == 1;
-                        if (tie) {
-                            matchABR1 = new Match(tournament, player1Runner, player2Corp,
-                                    false, true, false, match.getInt("table"), roundNum);
-                        } else {
-                            boolean timed = player1.getInt("runnerScore") == 2 || player2.getInt("corpScore") == 2;
-                            Card winner = player1.getInt("runnerScore") >  player2.getInt("corpScore") ? player1Runner : player2Corp;
-                            Card loser = player1.getInt("runnerScore") >  player2.getInt("corpScore") ? player2Corp : player1Runner;
+                        // if there are points
+                        if (player1.getInt("corpScore") + player2.getInt("corpScore") +
+                                player1.getInt("runnerScore") + player2.getInt("runnerScore") > 0) {
 
-                            matchABR1 = new Match(tournament, winner, loser,
-                                    timed, false, false, match.getInt("table"), roundNum);
+                            // first match: player 1 runner vs player 2 corp
+                            Match matchABR1;
+                            boolean tie = player1.getInt("runnerScore") == 1 && player2.getInt("corpScore") == 1;
+                            if (tie) {
+                                matchABR1 = new Match(tournament, player1Runner, player2Corp,
+                                        false, true, false, match.getInt("table"), roundNum);
+                            } else {
+                                boolean timed = player1.getInt("runnerScore") == 2 || player2.getInt("corpScore") == 2;
+                                Card winner = player1.getInt("runnerScore") > player2.getInt("corpScore") ? player1Runner : player2Corp;
+                                Card loser = player1.getInt("runnerScore") > player2.getInt("corpScore") ? player2Corp : player1Runner;
+
+                                matchABR1 = new Match(tournament, winner, loser,
+                                        timed, false, false, match.getInt("table"), roundNum);
+                            }
+
+                            // second match: player 1 corp vs player 2 runner
+                            Match matchABR2;
+                            tie = player1.getInt("corpScore") == 1 && player2.getInt("runnerScore") == 1;
+                            if (tie) {
+                                matchABR2 = new Match(tournament, player1Corp, player1Runner,
+                                        false, true, false, match.getInt("table"), roundNum);
+                            } else {
+                                boolean timed = player1.getInt("corpScore") == 2 || player2.getInt("runnerScore") == 2;
+                                Card winner = player1.getInt("corpScore") > player2.getInt("runnerScore") ? player1Corp : player2Runner;
+                                Card loser = player1.getInt("corpScore") > player2.getInt("runnerScore") ? player2Runner : player1Corp;
+
+                                matchABR2 = new Match(tournament, winner, loser,
+                                        timed, false, false, match.getInt("table"), roundNum);
+                            }
+
+                            results.add(matchABR1);
+                            results.add(matchABR2);
                         }
-
-                        // second match: player 1 corp vs player 2 runner
-                        Match matchABR2;
-                        tie = player1.getInt("corpScore") == 1 && player2.getInt("runnerScore") == 1;
-                        if (tie) {
-                            matchABR2 = new Match(tournament, player1Corp, player1Runner,
-                                    false, true, false, match.getInt("table"), roundNum);
-                        } else {
-                            boolean timed = player1.getInt("corpScore") == 2 || player2.getInt("runnerScore") == 2;
-                            Card winner = player1.getInt("corpScore") >  player2.getInt("runnerScore") ? player1Corp : player2Runner;
-                            Card loser = player1.getInt("corpScore") >  player2.getInt("runnerScore") ? player2Runner : player1Corp;
-
-                            matchABR2 = new Match(tournament, winner, loser,
-                                    timed, false, false, match.getInt("table"), roundNum);
-                        }
-
-                        results.add(matchABR1);
-                        results.add(matchABR2);
                     } else {
                         // top-cut
                         Card winner;
@@ -301,5 +319,11 @@ public class ABRBroker {
         }
 
         return results;
+    }
+
+    public String addSpecialCharsToIDs(String title) {
+        return title
+                .replace("Wunderkind", "Wünderkind")
+                .replace("Palana", "Pālanā");
     }
 }
