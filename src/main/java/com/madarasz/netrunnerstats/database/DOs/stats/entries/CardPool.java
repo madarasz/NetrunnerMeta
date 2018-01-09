@@ -15,17 +15,19 @@ public class CardPool {
     private int tournamentnum;
     private int decknum;
     private int standingsnum;
+    private int matchesnum;
     private int dpnumber;
     private int cyclenumber;
 
     public CardPool() {
     }
 
-    public CardPool(String title, int tournamentnum, int decknum, int standingsnum, int dpnumber, int cyclenumber) {
+    public CardPool(String title, int tournamentnum, int decknum, int standingsnum, int matchesnum, int dpnumber, int cyclenumber) {
         this.title = title;
         this.tournamentnum = tournamentnum;
         this.decknum = decknum;
         this.standingsnum = standingsnum;
+        this.matchesnum = matchesnum;
         this.dpnumber = dpnumber;
         this.cyclenumber = cyclenumber;
     }
@@ -44,6 +46,10 @@ public class CardPool {
 
     public int getStandingsnum() {
         return standingsnum;
+    }
+
+    public int getMatchesnum() {
+        return matchesnum;
     }
 
     public int getDpnumber() {

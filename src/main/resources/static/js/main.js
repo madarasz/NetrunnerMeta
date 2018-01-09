@@ -284,6 +284,9 @@ function fillInfotable() {
                 }), $('<td>', {
                     text: element.standingsnum,
                     class: 'text-right'
+                }), $('<td>', {
+                    text: element.matchesnum,
+                    class: 'text-right'
                 })));
             });
             $('#cptable').removeClass('spinner');
@@ -1174,8 +1177,10 @@ function drawSideWinChart() {
     var chart = new google.visualization.PieChart(document.getElementById('win-side'));
     chart.draw(winrateData, winratePieOptions);
     $('#win-side').removeClass('spinner');
-    if (matchCount >= 300) {
-        $('#tab-winrate').removeClass('hidden');
+    if (matchCount < 300) {
+        $('#low-matches').removeClass('hidden');
+        $('#win-overall-row').addClass('hidden');
+        $('#win-id-row').addClass('hidden');
     }
 }
 

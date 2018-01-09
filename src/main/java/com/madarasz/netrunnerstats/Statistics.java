@@ -247,7 +247,8 @@ public class Statistics {
                 int standingsnum = standingRepository.countByCardPool(title);
                 int decknum = deckRepository.countByCardpool(title);
                 int tournamentnum = tournamentRepository.countByCardpool(title);
-                CardPool cardPool = new CardPool(title, tournamentnum, decknum, standingsnum,
+                int matchnum = matchRepository.countForPool(title);
+                CardPool cardPool = new CardPool(title, tournamentnum, decknum, standingsnum, matchnum,
                         cardPack.getNumber(), cardPack.getCyclenumber());
                 result.addCardPool(cardPool);
             }
