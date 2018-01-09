@@ -238,7 +238,8 @@ public class ABRBroker {
                 JSONObject player2 = match.getJSONObject("player2");
 
                 // only if there were no intentional draw and not a BYE
-                if (!match.getBoolean("intentionalDraw") && player1.getInt("id") > 0 && player2.getInt("id") > 0) {
+                if (player1.get("id") != JSONObject.NULL && player2.get("id") != JSONObject.NULL &&
+                        !match.getBoolean("intentionalDraw") && player1.getInt("id") > 0 && player2.getInt("id") > 0) {
 
                     Card player1Corp = corps.get(player1.getInt("id")-1);
                     Card player2Corp = corps.get(player2.getInt("id")-1);
