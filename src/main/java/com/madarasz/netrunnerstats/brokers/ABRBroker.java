@@ -207,16 +207,24 @@ public class ABRBroker {
 
         for (int i = 0; i < players.length() ; i++) {
             JSONObject player = players.getJSONObject(i);
-            Card corpID = cardRepository.findByTitleLike(".*" + addSpecialCharsToIDs(player.getString("corpIdentity")) + ".*");
-            if (corpID == null) {
-                logger.error("Cannot parse ID for: " + player.getString("corpIdentity"));
+            Card corpID;
+            Card runnerID;
+            try {
+                corpID = cardRepository.findByTitleLike(".*" + addSpecialCharsToIDs(player.getString("corpIdentity")) + ".*");
+                if (corpID == null) {
+                    logger.error("Cannot parse ID for: " + player.getString("corpIdentity"));
+                    return results;
+                }
+                runnerID = cardRepository.findByTitleLike(".*" + addSpecialCharsToIDs(player.getString("runnerIdentity")) + ".*");
+                if (runnerID == null) {
+                    logger.error("Cannot parse ID for: " + player.getString("runnerIdentity"));
+                    return results;
+                }
+            } catch (Exception ex) {
+                logger.error("Corp or player identity cannot be parsed");
                 return results;
             }
-            Card runnerID = cardRepository.findByTitleLike(".*" + addSpecialCharsToIDs(player.getString("runnerIdentity")) + ".*");
-            if (runnerID == null) {
-                logger.error("Cannot parse ID for: " + player.getString("runnerIdentity"));
-                return results;
-            }
+
             corps.set(player.getInt("id")-1, corpID);
             runners.set(player.getInt("id")-1, runnerID);
         }
@@ -285,34 +293,59 @@ public class ABRBroker {
 
                             results.add(matchABR1);
                             results.add(matchABR2);
+                        } else {
+                            // cobr.ai
+                            try {
+                                if (player1.getInt("combinedScore") == 6) {
+                                    Match matchCobra1 = new Match(tournament, player1Corp, player2Runner,
+                                            false, false, false, match.getInt("table"), roundNum);
+                                    Match matchCobra2 = new Match(tournament, player1Runner, player2Corp,
+                                            false, false, false, match.getInt("table"), roundNum);
+                                    results.add(matchCobra1);
+                                    results.add(matchCobra2);
+                                } else if (player2.getInt("combinedScore") == 6) {
+                                    Match matchCobra1 = new Match(tournament, player2Corp, player1Runner,
+                                            false, false, false, match.getInt("table"), roundNum);
+                                    Match matchCobra2 = new Match(tournament, player2Runner, player1Corp,
+                                            false, false, false, match.getInt("table"), roundNum);
+                                    results.add(matchCobra1);
+                                    results.add(matchCobra2);
+                                }
+                            } catch (Exception ex) {
+                                logger.warn("Problems with parsing Cobr.ai resutls");
+                            }
                         }
                     } else {
                         // top-cut
                         Card winner;
                         Card loser;
 
-                        if (player1.getBoolean("winner")) {
-                            if (player1.getString("role").equals("runner")) {
-                                winner = player1Runner;
-                                loser = player2Corp;
+                        try {
+                            if (player1.getBoolean("winner")) {
+                                if (player1.getString("role").equals("runner")) {
+                                    winner = player1Runner;
+                                    loser = player2Corp;
+                                } else {
+                                    winner = player1Corp;
+                                    loser = player2Runner;
+                                }
                             } else {
-                                winner = player1Corp;
-                                loser = player2Runner;
+                                if (player1.getString("role").equals("runner")) {
+                                    winner = player2Corp;
+                                    loser = player1Runner;
+                                } else {
+                                    winner = player2Runner;
+                                    loser = player1Corp;
+                                }
                             }
-                        } else {
-                            if (player1.getString("role").equals("runner")) {
-                                winner = player2Corp;
-                                loser = player1Runner;
-                            } else {
-                                winner = player2Runner;
-                                loser = player1Corp;
-                            }
+
+                            Match matchABR = new Match(tournament, winner, loser, false, false, true,
+                                    match.getInt("table"), roundNum);
+
+                            results.add(matchABR);
+                        } catch (Exception ex) {
+                            logger.warn("Having problem parsing top cut");
                         }
-
-                        Match matchABR = new Match(tournament, winner, loser, false, false, true,
-                                match.getInt("table"), roundNum);
-
-                        results.add(matchABR);
                     }
 
                 }
