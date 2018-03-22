@@ -145,7 +145,7 @@ public class DeckValidator {
 
         String side = identity.getSide_code();
         int agendaCount = 0;
-        boolean isApex = identity.getTitle().equals("Apex: Invasive Predator");
+//        boolean isApex = identity.getTitle().equals("Apex: Invasive Predator");
         for (DeckHasCard deckHasCard : deck.getCards()) {
             int quantity = deckHasCard.getQuantity();
             Card card = deckHasCard.getCard();
@@ -166,10 +166,10 @@ public class DeckValidator {
             }
 
             // Apex limitation
-            if ((isApex) && (card.getType_code().equals("resource"))
-                    && (!card.getSubtype_code().contains("Virtual"))) {
-                validity += String.format("ERROR - Apex can only have virtual resources - %s\n", card.getTitle());
-            }
+//            if ((isApex) && (card.getType_code().equals("resource"))
+//                    && (!card.getSubtype_code().contains("Virtual"))) {
+//                validity += String.format("ERROR - Apex can only have virtual resources - %s\n", card.getTitle());
+//            }
         }
 
         // agenda count
