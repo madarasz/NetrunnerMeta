@@ -210,6 +210,9 @@ function shortTitle(longtitle) {
         case "Haas-Bioroid: Stronger Together":
             return "HB: ST";
             break;
+        case "Haas-Bioroid: Architects of Tomorrow":
+            return "HB: AoT";
+            break;
         case "Jinteki: Personal Evolution":
             return "Jinteki: PE";
             break;
@@ -234,8 +237,18 @@ function shortTitle(longtitle) {
         case "Weyland Consortium: Building a Better World":
             return "Weyland: BaBW";
             break;
+        case "Skorpios Defense Systems: Persuasive Power":
+            return "Skorpios";
+            break;
+        case "Liza Talking Thunder: Prominent Legislator":
+            return "Liza";
+            break;
         default:
-            return longtitle.substring(0, longtitle.indexOf(':'));
+            if (longtitle.indexOf('"') > -1) {
+                return longtitle.substring(longtitle.indexOf('"')+1, longtitle.indexOf('"', longtitle.indexOf('"')+1));
+            } else {
+                return longtitle.substring(0, longtitle.indexOf(':'));
+            }
     }
 }
 
@@ -1187,10 +1200,11 @@ function drawSideWinChart() {
 function drawIDWinrateCharts(dataTable, element) {
     var options = {
         'width': 555,
-        'height': 300,
+        'height': 400,
         'chartArea': {width: '60%'},
         'hAxis': { format: 'percent', minValue: 0 },
         'isStacked': true,
+        'vAxis': { textPosition: 'out' },
         'legend': { position: "none" }
 //                'hAxis': haxis
     };
