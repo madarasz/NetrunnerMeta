@@ -51,6 +51,14 @@ public class Match {
         return loser;
     }
 
+    public Card getPlayer(int index) {
+        if (index == 1) {
+            return this.winner;
+        } else {
+            return this.loser;
+        }
+    }
+
     public boolean isTimed() {
         return timed;
     }
