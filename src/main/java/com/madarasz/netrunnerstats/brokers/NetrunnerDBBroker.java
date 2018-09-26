@@ -64,6 +64,10 @@ public final class NetrunnerDBBroker {
                     packData.getInt("position"), cardCycle.getCyclenumber());
             resultSet.add(cardPack);
         }
+
+        // add R&R MWL 2.2
+        resultSet.add(new CardPack("R&R MWL 2.2", "rar2", 2, 22));
+
         return resultSet;
     }
 
