@@ -190,6 +190,11 @@ public class ABRBroker {
             logger.error("Cannot parse match players for: " + tournament.getName());
             return results;
         }
+        if (players.length() < 1) {
+            logger.error("Cannot parse match players for: "+ tournament.getName());
+            return results;
+        }
+
         List<Card> corps = new ArrayList<>();
         List<Card> runners = new ArrayList<>();
         Card runnerBlank = cardRepository.findByCode("00006");
@@ -207,22 +212,27 @@ public class ABRBroker {
 
         for (int i = 0; i < players.length() ; i++) {
             JSONObject player = players.getJSONObject(i);
-            Card corpID;
-            Card runnerID;
+            Card corpID = null;
+            Card runnerID = null;
             try {
                 corpID = cardRepository.findByTitleLike(".*" + addSpecialCharsToIDs(player.getString("corpIdentity")) + ".*");
                 if (corpID == null) {
-                    logger.error("Cannot parse ID for: " + player.getString("corpIdentity"));
-                    return results;
+                    logger.warn("Cannot parse ID for: " + player.getString("corpIdentity"));
+                    corpID = cardRepository.findByCode("00005"); // replacing with Shadow
                 }
                 runnerID = cardRepository.findByTitleLike(".*" + addSpecialCharsToIDs(player.getString("runnerIdentity")) + ".*");
                 if (runnerID == null) {
-                    logger.error("Cannot parse ID for: " + player.getString("runnerIdentity"));
-                    return results;
+                    logger.warn("Cannot parse ID for: " + player.getString("runnerIdentity"));
+                    runnerID = cardRepository.findByCode("00006"); // replacing with Mask
                 }
             } catch (Exception ex) {
-                logger.error("Corp or player identity cannot be parsed");
-                return results;
+                logger.warn("Corp and/or Runner identity cannot be parsed");
+                if (corpID == null) {
+                    corpID = cardRepository.findByCode("00005"); // replacing with Shadow
+                }
+                if (runnerID == null) {
+                    runnerID = cardRepository.findByCode("00006"); // replacing with Mask
+                }
             }
 
             corps.set(player.getInt("id")-1, corpID);
@@ -291,8 +301,8 @@ public class ABRBroker {
                                         timed, false, false, match.getInt("table"), roundNum);
                             }
 
-                            results.add(matchABR1);
-                            results.add(matchABR2);
+                            results = addResultsToList(results, matchABR1);
+                            results = addResultsToList(results, matchABR2);
                         } else {
                             // cobr.ai
                             try {
@@ -301,15 +311,15 @@ public class ABRBroker {
                                             false, false, false, match.getInt("table"), roundNum);
                                     Match matchCobra2 = new Match(tournament, player1Runner, player2Corp,
                                             false, false, false, match.getInt("table"), roundNum);
-                                    results.add(matchCobra1);
-                                    results.add(matchCobra2);
+                                    results = addResultsToList(results, matchCobra1);
+                                    results = addResultsToList(results, matchCobra2);
                                 } else if (player2.getInt("combinedScore") == 6) {
                                     Match matchCobra1 = new Match(tournament, player2Corp, player1Runner,
                                             false, false, false, match.getInt("table"), roundNum);
                                     Match matchCobra2 = new Match(tournament, player2Runner, player1Corp,
                                             false, false, false, match.getInt("table"), roundNum);
-                                    results.add(matchCobra1);
-                                    results.add(matchCobra2);
+                                    results = addResultsToList(results, matchCobra1);
+                                    results = addResultsToList(results, matchCobra2);
                                 }
                             } catch (Exception ex) {
                                 logger.warn("Problems with parsing Cobr.ai resutls");
@@ -342,7 +352,7 @@ public class ABRBroker {
                             Match matchABR = new Match(tournament, winner, loser, false, false, true,
                                     match.getInt("table"), roundNum);
 
-                            results.add(matchABR);
+                            results = addResultsToList(results, matchABR);
                         } catch (Exception ex) {
                             logger.warn("Having problem parsing top cut");
                         }
@@ -359,5 +369,19 @@ public class ABRBroker {
         return title
                 .replace("Wunderkind", "Wünderkind")
                 .replace("Palana", "Pālanā");
+    }
+
+    /**
+     * Only adding results to results list if Draft IDs are not being used
+     * @param resultList
+     * @param match
+     * @return
+     */
+    private List<Match> addResultsToList(List<Match> resultList, Match match) {
+        if ((Integer.parseInt(match.getPlayer(1).getCode()) < 1000) ||
+                (Integer.parseInt(match.getPlayer(2).getCode()) < 1000)) {
+            resultList.add(match);
+        }
+        return resultList;
     }
 }
