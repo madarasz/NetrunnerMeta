@@ -1153,9 +1153,12 @@ function buildWinrateData(dataSource, dataTable, sorter, side) {
         if (element['matches']['allMatchCount'] >= 50) {
 
             var winPercentage = element['matches']['winMatchCount'] / element['matches']['allMatchCount'],
-                timedWinPercentage = element['matches']['timedWinMatchCount'] / element['matches']['allMatchCount'];
+                timedWinPercentage = element['matches']['timedWinMatchCount'] / element['matches']['allMatchCount'],
+                standardError = Math.sqrt((winPercentage+timedWinPercentage) * (1-winPercentage-timedWinPercentage)
+                    / element['matches']['allMatchCount']);
 
             dataTable.push([]);
+            // win percentage
             dataTable[dataTable.length - 1].push(shortTitle(element['title']));
             dataTable[dataTable.length - 1].push({
                 v: winPercentage,
@@ -1163,12 +1166,16 @@ function buildWinrateData(dataSource, dataTable, sorter, side) {
                 ' (' + element['matches']['winMatchCount'] + '/' + element['matches']['allMatchCount'] + ' matches)'
             });
             dataTable[dataTable.length - 1].push('color: ' + factionCodeToColor(element['faction']));
+            // timed win percentage
             dataTable[dataTable.length - 1].push({
                 v: timedWinPercentage,
                 f: percentageToString(timedWinPercentage) +
                 ' (' + element['matches']['timedWinMatchCount'] + '/' + element['matches']['allMatchCount'] + ' matches)'
             });
             dataTable[dataTable.length - 1].push('color: ' + factionCodeToColor(element['faction']+'-light'));
+            // standard error, starts on standard+timed win
+            dataTable[dataTable.length - 1].push(timedWinPercentage - standardError);
+            dataTable[dataTable.length - 1].push(timedWinPercentage + standardError);
         }
 
         winrateData[3][1] += element['matches']['tieMatchCount'] / 2;
@@ -1205,7 +1212,8 @@ function drawIDWinrateCharts(dataTable, element) {
         'hAxis': { format: 'percent', minValue: 0 },
         'isStacked': true,
         'vAxis': { textPosition: 'out' },
-        'legend': { position: "none" }
+        'legend': { position: "none" },
+        'intervals': { color: '#999999' }
 //                'hAxis': haxis
     };
 
