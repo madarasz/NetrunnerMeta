@@ -378,9 +378,14 @@ public class ABRBroker {
      * @return
      */
     private List<Match> addResultsToList(List<Match> resultList, Match match) {
-        if ((Integer.parseInt(match.getPlayer(1).getCode()) < 1000) ||
-                (Integer.parseInt(match.getPlayer(2).getCode()) < 1000)) {
+        if ((Integer.parseInt(match.getPlayer(1).getCode()) > 1000) ||
+                (Integer.parseInt(match.getPlayer(2).getCode()) > 1000)) {
             resultList.add(match);
+            logger.info("Match: " + match.getPlayer(1).getTitle() +
+                    (match.getWinner() == null ? " tied with " : " won against ")+ match.getPlayer(0).getTitle());
+        } else {
+            logger.warn("Not adding these: " + match.getPlayer(1).getTitle() + "("+ Integer.parseInt(match.getPlayer(1).getCode()) + "); "
+                    + match.getPlayer(2).getTitle() + "(" + Integer.parseInt(match.getPlayer(2).getCode()) + ")");
         }
         return resultList;
     }

@@ -821,6 +821,8 @@ public class Operations {
             if (matches.size() > 0) {
                 logger.info("Saving new matches: " + matches.size());
                 matchRepository.save(matches);
+            } else {
+                logger.warn("No matches were available: " + matches.size() + " matches");
             }
         } else {
             logger.info("Matches were already saved");
