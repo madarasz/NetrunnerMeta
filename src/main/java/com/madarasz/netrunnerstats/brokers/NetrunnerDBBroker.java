@@ -192,8 +192,9 @@ public final class NetrunnerDBBroker {
     public Card updateCardWithCore2(Card card) {
         String title = card.getTitle();
         if (title.contains(" (old)")) {
-            Card substitute = cardRepository.findByTitle(title.substring(0, title.length() - 6));
+            Card substitute = cardRepository.findByTitle(title.split(" \\(old\\)")[0]);
             if (substitute != null) {
+                // logger.info("Substituting " + title + " with " + substitute.getTitle());
                 return substitute;
             } else {
                 logger.error("Could not find substitute for: " + title);

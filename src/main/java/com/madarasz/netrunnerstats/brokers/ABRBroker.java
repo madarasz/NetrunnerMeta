@@ -215,12 +215,12 @@ public class ABRBroker {
             Card corpID = null;
             Card runnerID = null;
             try {
-                corpID = cardRepository.findByTitleLike(".*" + addSpecialCharsToIDs(player.getString("corpIdentity")) + ".*");
+                corpID = netrunnerDBBroker.updateCardWithCore2(cardRepository.findByTitleLike(".*" + addSpecialCharsToIDs(player.getString("corpIdentity")) + ".*"));
                 if (corpID == null) {
                     logger.warn("Cannot parse ID for: " + player.getString("corpIdentity"));
                     corpID = cardRepository.findByCode("00005"); // replacing with Shadow
                 }
-                runnerID = cardRepository.findByTitleLike(".*" + addSpecialCharsToIDs(player.getString("runnerIdentity")) + ".*");
+                runnerID = netrunnerDBBroker.updateCardWithCore2(cardRepository.findByTitleLike(".*" + addSpecialCharsToIDs(player.getString("runnerIdentity")) + ".*"));
                 if (runnerID == null) {
                     logger.warn("Cannot parse ID for: " + player.getString("runnerIdentity"));
                     runnerID = cardRepository.findByCode("00006"); // replacing with Mask

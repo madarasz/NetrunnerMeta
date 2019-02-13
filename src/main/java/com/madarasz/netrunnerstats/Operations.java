@@ -167,9 +167,9 @@ public class Operations {
             if (foundCard == null) {
                 // check for older card with same name
                 Card oldCard = cardRepository.findByTitle(card.getTitle());
-                if (oldCard != null && !oldCard.getCardPack().getCode().equals("core2")) {
+                if (oldCard != null && !oldCard.getCardPack().getCode().equals("sc19")) {
                     logger.warn("Old card prefixed: " + oldCard.getTitle());
-                    oldCard.setTitle(oldCard.getTitle() + " (old)");
+                    oldCard.setTitle(oldCard.getTitle() + " (old) - " + oldCard.getCardPack().getCode());
                     cardRepository.save(oldCard);
                 }
                 cardRepository.save(card);
