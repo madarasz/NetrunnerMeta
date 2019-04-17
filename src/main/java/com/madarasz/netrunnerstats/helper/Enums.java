@@ -18,7 +18,7 @@ public class Enums {
         Promos(0), Core_Set(1), Genesis(2), Creation_and_Control(3), Spin(4), Honor_and_Profit(5), Lunar(6),
         Order_and_Chaos(7), SanSan(8), Data_and_Destiny(9), Mumbad(10), Flashpoint(11), Red_Sand(12),
         Terminal_Directive(13), Red_Sand_Part_2(14), Revised_Core_Set(20), Kitara(21), Reign_and_Reverie(22),
-        Magnum_Opus(23), System_Core_2019(25);
+        Magnum_Opus(23), System_Core_2019(25), Ashes(26);
 
         private final int cycleNumber;
 
