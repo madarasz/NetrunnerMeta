@@ -98,6 +98,32 @@
                         </div>
                     </div>
                 </div>
+                <div class="row top-buffer" id="spot-hightlight-row">
+                    <div class="col-md-6 col-xs-12">
+                        <h4>
+                            Runner deck highlights
+                            <ktm:tooltip place="right" text="popular and strong deck archetypes"/>
+                        </h4>
+                        <div id="runner-deck-highlights-spinner" class="spinner"></div>
+                        <table id="runner-deck-highlights" class="table table-condensed"></table>
+                        <div class="text-center">
+                            <a class="btn btn-xs btn-primary" id="button-highlight-runner"
+                               onclick="displayMore(deckHighLights['runner'], 'runner-deck-highlights', '#button-highlight-runner', highlightStartindex['runner'])">more</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <h4>
+                            Corp deck highlights
+                            <ktm:tooltip place="right" text="popular and strong deck archetypes"/>
+                        </h4>
+                        <div id="corp-deck-highlights-spinner" class="spinner"></div>
+                        <table id="corp-deck-highlights" class="table table-condensed"></table>
+                        <div class="text-center">
+                            <a class="btn btn-xs btn-primary" id="button-highlight-corp"
+                               onclick="displayMore(deckHighLights['corp'], 'corp-deck-highlights', '#button-highlight-corp', highlightStartindex['corp'])">more</a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
              <!--win rates -->
@@ -105,7 +131,7 @@
                 <div class="alert alert-danger text-center top-buffer-big hidden" role="alert" id="low-matches">
                     Not enough match data
                 </div>
-                <div class="row" id="win-overall-row">
+                <div class="row" id="win-overall-row" style="display: none">
                     <div class="col-md-6 col-md-offset-3 col-xs-12">
                         <h4 class="text-center" style="padding-bottom: 0.5em">
                             Side win rates
@@ -353,6 +379,143 @@
             ga('send', 'event', 'tabs', tabName);
         });
 
+        // Cluster class for deck archetype clustering
+        class Cluster {
+            constructor(elements) {
+                this.elements = elements;
+                this.findCenter();
+                this.calculateStrength();
+            }
+            findCenter() {
+                this.center = {x: 0, y: 0};
+                for (var i = 0; i < this.elements.length; i++) {
+                    this.center.x += this.elements[i].x;
+                    this.center.y += this.elements[i].y;
+                }
+                this.center.x = this.center.x / this.elements.length;
+                this.center.y = this.center.y / this.elements.length;
+            }
+            calculateStrength() {
+                this.strength = 0;
+                var biggestStrength = 0;
+                for (var i = 0; i < this.elements.length; i++) {
+                    var rank = this.matcher(this.elements[i].digest, /#(\d+)/);
+                    var playerNum = this.matcher(this.elements[i].digest, /#\d+ \/ (\d+)/);
+                    var strength = playerNum / Math.pow(rank, 2);
+                    if (strength > biggestStrength) {
+                        biggestStrength = strength;
+                        this.strengthIndex = i;
+                    }
+                    this.strength += strength;
+                }
+            }
+            matcher(str, regex) {
+                var match = str.match(regex);
+                if (match !== null) {
+                    match = parseInt(match[1]);
+                    if (!isNaN(match)) {
+                        return match;
+                    }
+                }
+                return 1000;
+            }
+            merge(cluster) {
+                for (var i = 0; i < cluster.elements.length; i++) {
+                    this.elements.push(cluster.elements[i]);
+                }
+                this.findCenter();
+                this.calculateStrength();
+            }
+        }
+
+        // find smallest distance between deck archetype clusters
+        function findSmallestDistance(clusters) {
+            var smallestDistance = 10000, a = 0, b = 1;
+            if (clusters.length > 1) {
+                for (var i = 0; i < clusters.length - 1; i++) {
+                    for (var u = i + 1; u < clusters.length; u++) {
+                        var distance = Math.sqrt(Math.pow(clusters[i].center.x - clusters[u].center.x, 2) + Math.pow(clusters[i].center.y - clusters[u].center.y, 2));
+                        if (distance < smallestDistance) {
+                            smallestDistance = distance;
+                            a = i;
+                            b = u;
+                        }
+                    }
+                }
+                //console.log("Smallest distance: " + smallestDistance + " - " + clusters[a].elements[0].digest + " - " + clusters[b].elements[0].digest);
+            }
+            return { distance: smallestDistance, index1: a, index2: b};
+        }
+
+        // show decklist highligths
+        function printDecks(decklist, minstrength, maxitems = 10, locator, startindex) {
+            var counter = 0;
+            for (var i = startindex[0]; i < decklist.length; i++) {
+                if ((decklist[i].strength < minstrength || maxitems-- < 1) && counter > 2) {
+                    return 0;
+                }
+                $('#'+locator).append($('<tr>', { id: locator+'decklist'+i }))
+                $('#'+locator+'decklist'+i).append($('<td>').append($('<img>', {
+                    src: '/static/img/ids/'+decklist[i].identity+'.png',
+                    style: 'height: 40px'
+                })));
+                $('#'+locator+'decklist'+i).append($('<td>').append($('<a>', {
+                    text: decklist[i].title,
+                    href: decklist[i].url
+                }), $('<span>', {
+                    text: ' by ',
+                    style: 'font-size: 80%'
+                }), $('<strong>', {
+                    text: decklist[i].player,
+                    style: 'font-size: 80%'
+                }), $('<br>'), $('<em>', { text: decklist[i].influence, style: 'font-size: 80%' })));
+                startindex[0]++;
+                counter++;
+            }
+        }
+
+        // display more decklist highlights
+        function displayMore(decklist, listLocator, buttonLocator, startindex) {
+            printDecks(decklist, 0, 3, listLocator, startindex);
+            if (startindex[0] == decklist.length) {
+                $(buttonLocator).hide();
+            }
+        }
+
+        // turn archetype clusters into decklists
+        function getDecks(clusters, deckArray, identity) {
+            for (var i = 0; i < clusters.length; i++) {
+                if (clusters[i].strength > 5) {
+                    // compile influence costing cards
+                    var infCounts = clusters[i].elements[clusters[i].strengthIndex].htmlDigest.match(/(\d)x <[a-zA-Z0-9=\";\/\.\-\' !\&\(\)]+>[A-zA-Z0-9\'\" :\-\.!\&\(\)]+<\/a>.*<span class=\"influence inf-[a-z-]+\">•/g)
+                            .map(function(x) { return x.substr(0, x.indexOf('x')); });
+                    var infNums = clusters[i].elements[clusters[i].strengthIndex].htmlDigest.match(/<span class=\"influence inf-[a-z-]+\">([• ]+)/g)
+                            .map(function(x) { return x.split("•").length-1; });
+                    var infCards = clusters[i].elements[clusters[i].strengthIndex].htmlDigest.match(/([A-zA-Z0-9\'\" :\-\.!\&\(\)]+)<\/a>.*<span class=\"influence inf[a-z-]+\">•/g)
+                            .map(function(x) { return x.substr(0, x.indexOf('<')); });
+                    var influence = [];
+                    for (var u = 0; u < infCounts.length; u++) {
+                        influence.push({count: infCounts[u], inf: infNums[u], card: infCards[u]});
+                    }
+                    influence.sort(function(a,b) {return b.inf - a.inf});
+
+                    // adding deck to list
+                    deckArray.push({
+                        title: clusters[i].elements[clusters[i].strengthIndex].deckTitle,
+                        url: clusters[i].elements[clusters[i].strengthIndex].deckURL,
+                        strength: clusters[i].strength,
+                        identity: identity,
+                        player: clusters[i].elements[clusters[i].strengthIndex].shortHtmlDigest.match(/<\/strong> by ([a-zA-Z0-9 \.\-:_]+)<br/)[1],
+                        influence: influence.map(function(x) { return x.count + "x " + x.card}).join(", ")
+                    })
+                }
+            }
+        }
+
+        function simplifyText(text) {
+            return text.toLowerCase().replace(/ /g, "-").replace(/[^0-9a-z-]/gi, '');
+        }
+
         // init chart data variables
         var runnerTopFactionData = [['faction', 'standings']], runnerTopFactionColors = [],
             runnerAllFactionData = [['faction', 'standings']], runnerAllFactionColors = [],
@@ -372,12 +535,16 @@
             corpWinrateColors = [],
             winrateData = [['outcome', 'fraction'],
                 ['corporation win', 0], ['corporation timed win', 0], ['draw', 0], ['runner timed win', 0], ['runner win', 0]],
-            matchCount = 0;
+            matchCount = 0,
+            deckHighLights = { runner:[], corp: [] },
+            deckCallCounter = { runner: 0, corp: 0 },
+            highlightStartindex = { runner: [0], corp: [0] };
             dpname = encodeURIComponent([[${DPname}]]);
 
         // hide deck card data in spotlight
         if ([[${DPname}]] === "Last 3 aggregated" || [[${DPname}]] === "D&D, post-MWL") {
             $('#spot-deck-row').addClass('hidden');
+            $('#spot-hightlight-row').addClass('hidden');
         }
 
         // redraw charts on window resize
@@ -437,6 +604,45 @@
                 $('#spot_used_'+side+'_2').removeClass('spinner');
                 $('#low-deck-'+side).removeClass('hidden');
             }
+
+            // decklist highlights
+            data.sort(tournamentShorters.byAllDeck);
+            $.each(data, function(index, element) {
+                if (element.allDeckCount >= 8) {
+                    console.log("Processing ID: " + element.title);
+                    deckCallCounter[side]++;
+                    $.ajax({
+                        url: "/JSON/Identity/" + [[${DPname}]] + "/" + element.title,
+                        dataType: "json",
+                        async: true,
+                        success: function(dataID) {
+                            console.log("ID data loaded: " + dataID.identity);
+
+                            var clusters = [], aggData;
+                            for (var i = 0; i < dataID.decks.length; i++) {
+                                clusters.push(new Cluster([dataID.decks[i]]));
+                            }
+
+                            aggData = findSmallestDistance(clusters);
+                            while (clusters.length > 2 && aggData.distance < 20) {
+                                clusters[aggData.index1].merge(clusters[aggData.index2]);
+                                clusters.splice(aggData.index2, 1);
+                                aggData = findSmallestDistance(clusters);
+                                console.log("Agglomerating, smallest distance: " + aggData.distance);
+                            }
+                            console.log("Clustering finished for " + dataID.identity);
+                            console.log(clusters);
+                            getDecks(clusters, deckHighLights[side], simplifyText(dataID.identity));
+                            if (--deckCallCounter[side] == 0) {
+                                deckHighLights[side].sort(function(a,b) {return b.strength - a.strength});
+                                $('#'+side+'-deck-highlights-spinner').removeClass('spinner');
+                                printDecks(deckHighLights[side], 20, 10, side+'-deck-highlights', highlightStartindex[side]);
+                            }
+
+                        }
+                    });
+                }
+            });
 
         }
 

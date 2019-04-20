@@ -7,9 +7,11 @@ test.db
 staticcopy/content
 staticcopy/node_modules
 src/main/resources/static/img/cards/*
+src/main/resources/static/img/ids/*
 ktm*
 selenium-*
 reports
 staticcopy/cards.json
 src/main/resources/static/img/ids
 !.gitkeep
+know-the-meta.*
