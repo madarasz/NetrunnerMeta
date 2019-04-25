@@ -105,7 +105,7 @@
                             <ktm:tooltip place="right" text="popular and strong deck archetypes"/>
                         </h4>
                         <div id="runner-deck-highlights-spinner" class="spinner"></div>
-                        <table id="runner-deck-highlights" class="table table-condensed"></table>
+                        <table id="runner-deck-highlights" class="table table-condensed notop"></table>
                         <div class="text-center">
                             <a class="btn btn-xs btn-primary" id="button-highlight-runner"
                                onclick="displayMore(deckHighLights['runner'], 'runner-deck-highlights', '#button-highlight-runner', highlightStartindex['runner'])">more</a>
@@ -117,7 +117,7 @@
                             <ktm:tooltip place="right" text="popular and strong deck archetypes"/>
                         </h4>
                         <div id="corp-deck-highlights-spinner" class="spinner"></div>
-                        <table id="corp-deck-highlights" class="table table-condensed"></table>
+                        <table id="corp-deck-highlights" class="table table-condensed notop"></table>
                         <div class="text-center">
                             <a class="btn btn-xs btn-primary" id="button-highlight-corp"
                                onclick="displayMore(deckHighLights['corp'], 'corp-deck-highlights', '#button-highlight-corp', highlightStartindex['corp'])">more</a>
@@ -487,11 +487,14 @@
             for (var i = 0; i < clusters.length; i++) {
                 if (clusters[i].strength > 5) {
                     // compile influence costing cards
-                    var infCounts = clusters[i].elements[clusters[i].strengthIndex].htmlDigest.match(/(\d)x <[a-zA-Z0-9=\";\/\.\-\' !\&\(\)]+>[A-zA-Z0-9\'\" :\-\.!\&\(\)]+<\/a>.*<span class=\"influence inf-[a-z-]+\">•/g)
+                    var infCounts = clusters[i].elements[clusters[i].strengthIndex].htmlDigest
+                            .match(/(\d)x <[a-zA-Z0-9ü=\";\/\.\-\' !\&\(\)]+>[A-zA-Z0-9ü\'\" :\-\.!\&\(\)]+<\/a>.*<span class=\"influence inf-[a-z-]+\">•/g)
                             .map(function(x) { return x.substr(0, x.indexOf('x')); });
-                    var infNums = clusters[i].elements[clusters[i].strengthIndex].htmlDigest.match(/<span class=\"influence inf-[a-z-]+\">([• ]+)/g)
+                    var infNums = clusters[i].elements[clusters[i].strengthIndex].htmlDigest
+                            .match(/<span class=\"influence inf-[a-z-]+\">([• ]+)/g)
                             .map(function(x) { return x.split("•").length-1; });
-                    var infCards = clusters[i].elements[clusters[i].strengthIndex].htmlDigest.match(/([A-zA-Z0-9\'\" :\-\.!\&\(\)]+)<\/a>.*<span class=\"influence inf[a-z-]+\">•/g)
+                    var infCards = clusters[i].elements[clusters[i].strengthIndex].htmlDigest
+                            .match(/([A-zA-Z0-9ü\'\" :\-\.!\&\(\)]+)<\/a>.*<span class=\"influence inf[a-z-]+\">•/g)
                             .map(function(x) { return x.substr(0, x.indexOf('<')); });
                     var influence = [];
                     for (var u = 0; u < infCounts.length; u++) {
@@ -505,7 +508,8 @@
                         url: clusters[i].elements[clusters[i].strengthIndex].deckURL,
                         strength: clusters[i].strength,
                         identity: identity,
-                        player: clusters[i].elements[clusters[i].strengthIndex].shortHtmlDigest.match(/<\/strong> by ([a-zA-Z0-9 \.\-:_]+)<br/)[1],
+                        player: clusters[i].elements[clusters[i].strengthIndex].shortHtmlDigest
+                                .match(/<\/strong> by ([a-zA-Z0-9 \*\.\-\/:_]+)<br/)[1],
                         influence: influence.map(function(x) { return x.count + "x " + x.card}).join(", ")
                     })
                 }
@@ -609,14 +613,14 @@
             data.sort(tournamentShorters.byAllDeck);
             $.each(data, function(index, element) {
                 if (element.allDeckCount >= 8) {
-                    console.log("Processing ID: " + element.title);
+                    //console.log("Processing ID: " + element.title);
                     deckCallCounter[side]++;
                     $.ajax({
                         url: "/JSON/Identity/" + [[${DPname}]] + "/" + element.title,
                         dataType: "json",
                         async: true,
                         success: function(dataID) {
-                            console.log("ID data loaded: " + dataID.identity);
+                            //console.log("ID data loaded: " + dataID.identity);
 
                             var clusters = [], aggData;
                             for (var i = 0; i < dataID.decks.length; i++) {
@@ -628,10 +632,10 @@
                                 clusters[aggData.index1].merge(clusters[aggData.index2]);
                                 clusters.splice(aggData.index2, 1);
                                 aggData = findSmallestDistance(clusters);
-                                console.log("Agglomerating, smallest distance: " + aggData.distance);
+                                //console.log("Agglomerating, smallest distance: " + aggData.distance);
                             }
-                            console.log("Clustering finished for " + dataID.identity);
-                            console.log(clusters);
+                            //console.log("Clustering finished for " + dataID.identity);
+                            //console.log(clusters);
                             getDecks(clusters, deckHighLights[side], simplifyText(dataID.identity));
                             if (--deckCallCounter[side] == 0) {
                                 deckHighLights[side].sort(function(a,b) {return b.strength - a.strength});
