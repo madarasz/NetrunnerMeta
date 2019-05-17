@@ -52,6 +52,7 @@ public class ABRBroker {
 
     public Set<Tournament> getTournamentIDsForPack(String pack) {
         CardPack cardPack = cardPackRepository.findByCode(pack);
+        CardPack cardPackDF32 = cardPackRepository.findByCode("df2"); // Downfall MWL 3.2
         Set<Tournament> result = new HashSet<>();
         if (cardPack == null) {
             logger.warn("No such cardpack code: " + pack);
@@ -73,14 +74,21 @@ public class ABRBroker {
             if (tournamentData.getString("format").equals("standard")) {
 
                 Date date = new Date();
+                CardPack currentCardPack = cardPack;
                 try {
                     date = regExBroker.parseDate(tournamentData.getString("date"));
                 } catch (Exception ex) {
                     logger.warn("Couldn't parse date from: " + tournamentData.getString("date"));
                 }
 
+                // Downfall MWL 3.2
+                if (pack.equals("df") && tournamentData.getString("mwl").equals("Standard MWL 3.2")) {
+                    currentCardPack = cardPackDF32;
+                    logger.info("MWL 3.2 tournament - " + currentCardPack.getCode() + " - " + tournamentData.getString("title"));
+                } 
+
                 Tournament tournament = new Tournament(100000 + tournamentData.getInt("id"),
-                        tournamentData.getString("title"), date, cardPack, URL_TOURNAMENT + tournamentData.getInt("id"),
+                        tournamentData.getString("title"), date, currentCardPack, URL_TOURNAMENT + tournamentData.getInt("id"),
                         tournamentData.getInt("players_count"));
 
                 result.add(tournament);

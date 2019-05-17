@@ -22,7 +22,7 @@ public interface CardPackRepository extends GraphRepository<CardPack>, Relations
     @Query("MATCH (p:CardPack)<-[:POOL]-(:Tournament) RETURN DISTINCT p")
     List<CardPack> findWithStandings();
 
-    @Query("MATCH (p:CardPack) WHERE p.cyclenumber > 0 AND p.name <> 'D&D, post-MWL' RETURN DISTINCT p " +
+    @Query("MATCH (p:CardPack) WHERE p.cyclenumber > 0 AND p.name NOT LIKE '%MWL%' RETURN DISTINCT p " +
             "ORDER BY p.cyclenumber ASC, p.number ASC")
     List<CardPack> getSortedPacks();
 

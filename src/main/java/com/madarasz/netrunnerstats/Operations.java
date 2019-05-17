@@ -678,10 +678,6 @@ public class Operations {
         }
         List<Tournament> tournaments = tournamentRepository.getTournamentsByCardpool("Data and Destiny");
         CardPack cardPack = cardPackRepository.findByName("D&D, post-MWL");
-        if ((reorg) && (cardPack == null)) {
-            cardPack = new CardPack("D&D, post-MWL", "dadmwl", 2, 9);
-            cardPackRepository.save(cardPack);
-        }
         for (Tournament tournament : tournaments) {
             List<Deck> decks = deckRepository.findByTournamentUrl(tournament.getUrl());
             if (decks.size() > 0) {
@@ -730,7 +726,7 @@ public class Operations {
 
                 // saving new tournament
                 if (tExists == null) {
-                    logger.info("New tournament, saving: " + tournament.getName());
+                    logger.info("New tournament (" + tournament.getCardpool().getCode() + "), saving: " + tournament.getName());
                     tournamentRepository.save(tournament);
                 } else {
                     logger.info("Tournament is already in DB. Not saving! - " + tExists.getName());

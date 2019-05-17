@@ -1,7 +1,6 @@
 package com.madarasz.netrunnerstats.helper.comparator;
 
 import com.madarasz.netrunnerstats.database.DOs.CardPack;
-import com.madarasz.netrunnerstats.database.DOs.stats.entries.CardCombo;
 
 import java.util.Comparator;
 

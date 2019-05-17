@@ -65,8 +65,10 @@ public final class NetrunnerDBBroker {
             resultSet.add(cardPack);
         }
 
-        // add R&R MWL 2.2
+        // add R&R MWL 2.2 and Downfall MWL 3.2
+        resultSet.add(new CardPack("D&D, post-MWL", "dadmwl", 2, 9));
         resultSet.add(new CardPack("R&R MWL 2.2", "rar2", 2, 22));
+        resultSet.add(new CardPack("Downfall MWL 3.2", "df2", 2, 26));
 
         return resultSet;
     }
