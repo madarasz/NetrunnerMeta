@@ -1,6 +1,4 @@
 package com.madarasz.netrunnerstats.helper;
-
-import com.madarasz.netrunnerstats.database.DOs.CardCycle;
 import org.springframework.stereotype.Component;
 
 /**

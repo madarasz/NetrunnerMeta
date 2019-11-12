@@ -143,6 +143,7 @@ public class Operations {
         Set<CardPack> allCardPacks = netrunnerDBBroker.readSets();
         found = 0;
         for (CardPack cardPack : allCardPacks) {
+            // add new packs
             if (cardPackRepository.findByCode(cardPack.getCode()) == null) {
                 cardPackRepository.save(cardPack);
                 logger.trace("Found pack: " + cardPack.toString());
@@ -154,6 +155,11 @@ public class Operations {
                 cycle.addCardPack(cardPack);
                 cardCycleRepository.save(cycle);
                 logger.trace("Added pack to its cycle " + cardPack.toString());
+            }
+            // adjust positions
+            if (cardPack.getCode().equals("ur") || cardPack.getCode().equals("urbp")) {
+                cardPack.setNumber(cardPack.getNumber()+2);
+                cardPackRepository.save(cardPack);
             }
         }
         logger.info("Found new card packs: " + found);
@@ -442,7 +448,7 @@ public class Operations {
         // check tournaments
         List<Tournament> tournaments = tournamentRepository.getAllTournaments();
         List<Tournament> tournamentsABR = new ArrayList<>();
-        Date nulldate = new Date(0);
+        // Date nulldate = new Date(0);
         logger.info("Checking tournament cardpool");
         for (Tournament tournament : tournaments) {
             // check wrong date

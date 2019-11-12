@@ -390,6 +390,9 @@ blockquote.opinion > h5 > em{
     font-weight: normal;
     font-size: 90%;
 }
+table.notop tr:first-child td {
+    border: 0px;
+}
 
 
 

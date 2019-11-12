@@ -55,6 +55,10 @@ public class CardPack {
         this.cyclenumber = cyclenumber;
     }
 
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
     /**
      * Checks if this cardPack came out later than the other pack.
      * @param cardPack other pack
