@@ -282,8 +282,9 @@ public class ABRBroker {
                         // swiss
 
                         // if there are points
-                        if (player1.getInt("corpScore") + player2.getInt("corpScore") +
-                                player1.getInt("runnerScore") + player2.getInt("runnerScore") > 0) {
+                        if (!player1.isNull("corpScore") && !player1.isNull("runnerScore") && !player2.isNull("corpScore") && !player2.isNull("runnerScore") &&
+                            (player1.getInt("corpScore") + player2.getInt("corpScore") +
+                                player1.getInt("runnerScore") + player2.getInt("runnerScore") > 0)) {
 
                             // first match: player 1 runner vs player 2 corp
                             Match matchABR1;
