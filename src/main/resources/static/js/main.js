@@ -604,7 +604,7 @@ function drawMDSChart(data, tooltips) {
     var options = {
         'legend': 'none',
         'height': 555,
-        'chartArea': { width:'100%', height:'100%' },
+        'chartArea': { width:'95%', height:'95%' },
         'backgroundColor': { strokeWidth: 1 },
         'hAxis' : { gridlines: { count: 0 }, baselineColor: '#fff'},
         'vAxis' : { gridlines: { count: 0 }, baselineColor: '#fff'},

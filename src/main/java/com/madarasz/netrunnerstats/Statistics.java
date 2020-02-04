@@ -274,21 +274,26 @@ public class Statistics {
             int corpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", false, true);
             int topcorpdecks = getDeckNumberFromCardpoolOnward(cardpack, "corp", true, true);
             List<String> last3Names = lastThree.getLastThreeCardpoolNames();
+            Collections.reverse(last3Names);
             result = new CardUsageStat(cardpack, runnerdecks, toprunnerdecks, corpdecks, topcorpdecks);
             List<Card> cards = cardRepository.findByCardPackName(cardpack);
             for (Card card : cards) {
-                String code = card.getCode();
-//                int count = deckRepository.countByUsingCard(code);
                 int count = 0;
                 for (String cardpoolName : last3Names) {
+                    // if cardpool is in last3, ignore packs before - reprint bugfix where reprinted card can get 100%+ usage
+                    if (cardpoolName.equals(cardpack)) {
+                        count = 0;
+                    }
                     count += deckRepository.countByCardpoolUsingCard(cardpoolName, card.getTitle());
                 }
 
-
                 if (count > 0) {
-//                    int topcount = deckRepository.countTopByUsingCard(code);
                     int topcount = 0;
                     for (String cardpoolName : last3Names) {
+                        // if cardpool is in last3, ignore packs before - reprint bugfix where reprinted card can get 100%+ usage
+                        if (cardpoolName.equals(cardpack)) {
+                            topcount = 0;
+                        }
                         topcount += deckRepository.countTopByCardpoolUsingCard(cardpoolName, card.getTitle());
                     }
 
