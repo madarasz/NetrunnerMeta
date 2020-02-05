@@ -1,5 +1,7 @@
 target
 .idea
+.vscode
+.sts4-cache
 *.iml
 .DS_Store
 netrunner.db
@@ -15,3 +17,8 @@ staticcopy/cards.json
 src/main/resources/static/img/ids
 !.gitkeep
 know-the-meta.*
+staticcopy/nightwatch/bin
+.settings
+.classpath
+.factorypath
+.project

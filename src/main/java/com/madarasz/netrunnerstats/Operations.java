@@ -758,7 +758,7 @@ public class Operations {
                     } else {
                         // adding deck to existing standing without deck
                         if ((sExists.getDeck() == null) && (standing.getDeck() != null)) {
-                            deckRepository.save(standing.getDeck());
+                            deckRepository.save(standing.getDeck());    // TODO: avoid deck duplication
                             logger.info("Saving new deck: " + standing.getDeck().toString());
                             savedDecks++;
                             sExists.setDeck(standing.getDeck());
