@@ -41,6 +41,22 @@ public class DeckDigest {
         return result;
     }
 
+    public String digest(Standing standing) {
+        Deck deck = standing.getDeck();
+        if (deck == null) {
+            return "";
+        }
+
+        String result = deck.getName();
+        if (!deck.getPlayer().equals("")) {
+            result += " by " + deck.getPlayer();
+        }
+        result += " (" + deck.countCards() + " cards)\n";
+        Tournament tournament = standing.getTournament();
+        result += "#" + standing.getRank() + " / " + tournament.getPlayerNumber() + " at " + tournament.getName();
+        return result;
+    }
+
     /**
      * Html output with deck name, player, identity and card count
      * @return html string
@@ -56,7 +72,21 @@ public class DeckDigest {
         return result;
     }
 
-    public String htmlDigest(Deck deck) {
+    public String shortHtmlDigest(Standing standing) {
+        Deck deck = standing.getDeck();
+        if (deck == null) {
+            return "";
+        }
+
+        return shortHtmlDigest(deck);
+    }
+
+    public String htmlDigest(Standing standing) {
+        Deck deck = standing.getDeck();
+        if (deck == null) {
+            return "";
+        }
+
         String result = shortHtmlDigest(deck) + "<br />\n<br />\n";
 
         List<String> categories;
@@ -106,7 +136,6 @@ public class DeckDigest {
         if (!deck.getUrl().contains("stimhack")) {
             result += "<a href=\"" + deck.getUrl() + "\" target=\"_blank\">" + deck.getUrl() + "</a><br />\n";
         }
-        Standing standing = standingRepository.findByDeckUrl(deck.getUrl());
         Tournament tournament = standing.getTournament();
         result += "<a href=\"" + tournament.getUrl() + "\" target=\"_blank\">"
                 + tournament.getName() + "</a> - rank: #" + standing.getRank() + " / " + tournament.getPlayerNumber();
@@ -120,9 +149,9 @@ public class DeckDigest {
      * @param deck Deck object
      * @return deck link string
      */
-    public String getDeckLink(Deck deck) {
+    public String getDeckLink(Standing standing) {
         String result;
-        Standing standing = standingRepository.findByDeckUrl(deck.getUrl());
+        Deck deck = standing.getDeck();
         Tournament tournament = standing.getTournament();
         result = "<a href=\"" + deck.getUrl() + "\" rel=\"nofollow\" target=\"_blank\">";
         if (deck.getName().equals("")) {

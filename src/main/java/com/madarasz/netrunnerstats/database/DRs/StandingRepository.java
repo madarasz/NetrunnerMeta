@@ -103,4 +103,28 @@ public interface StandingRepository extends GraphRepository<Standing>, Relations
             "WHERE p.name IN [{0}, {1}, {2}] " +
             "RETURN c.faction_code AS category, COUNT(*) AS count, c.side_code AS side_code ")
     List<StatCounts> getFactionStatsBy3CardPoolSide(String cpName1, String cpName2, String cpName3, String sideCode);
+
+    @Query("MATCH (i:Card {faction_code: {0}})<-[:IDENTITY]-(d:Deck)<-[:IS_DECK]-(s:Standing)" +
+            "-[:IN_TOURNAMENT]->(:Tournament)-[:POOL]->(p:CardPack {name: {1}}) " +
+            "RETURN s")
+    List<Standing> filterByFactionAndCardPool(String faction, String cardpoolname);
+
+    @Query("MATCH (i:Card {faction_code: {0}})<-[:IDENTITY]-(d:Deck)<-[:IS_DECK]-(s:Standing {topdeck: true})" +
+            "-[:IN_TOURNAMENT]->(:Tournament)-[:POOL]->(p:CardPack {name: {1}}) " +
+            "RETURN s")
+    List<Standing> filterTopByFactionAndCardPool(String faction, String cardpoolname);
+
+    @Query("MATCH (i:Card {title: {0}})<-[:IDENTITY]-(d:Deck)<-[:IS_DECK]-(s:Standing)" +
+            "-[:IN_TOURNAMENT]->(:Tournament)-[:POOL]->(p:CardPack {name: {1}}) " +
+            "RETURN s")
+    List<Standing> filterByIdentityAndCardPool(String title, String cardpoolname);
+
+    @Query("MATCH (i:Card {title: {0}})<-[:IDENTITY]-(d:Deck)<-[:IS_DECK]-(s:Standing {topdeck: true})" +
+            "-[:IN_TOURNAMENT]->(:Tournament)-[:POOL]->(p:CardPack {name: {1}}) " +
+            "RETURN s")
+    List<Standing> filterTopByIdentityAndCardPool(String title, String cardpoolname);
+
+    @Query("MATCH (p:CardPack {name: {0}})<-[:POOL]-(t:Tournament)<--(s:Standing)-->(d:Deck)-->(:Card {title: {1}}) " +
+            "WITH s, t, d ORDER BY (1000 * s.rank / t.playerNumber) ASC LIMIT 10 RETURN s")
+    List<Standing> findBestByCardpoolUsingCard(String cardpackName, String cardTitle);
 }

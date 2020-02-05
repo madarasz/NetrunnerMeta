@@ -136,43 +136,53 @@ public class Statistics {
 
         Set<MDSEntry> result = new HashSet<>();
         ArrayList<Deck> decks = new ArrayList<>();
-        ArrayList<Deck> topdecks = new ArrayList<>();
+        // ArrayList<Deck> topdecks = new ArrayList<>();
+        ArrayList<Standing> standings = new ArrayList<>();
+        ArrayList<Standing> topStandings = new ArrayList<>();
 
         if (cardpackName.equals(LAST_3)) {
             for (String cardpoolName : lastThree.getLastThreeCardpoolNames()) {
+                standings.addAll(standingRepository.filterByIdentityAndCardPool(identityName, cardpoolName));
+                topStandings.addAll(standingRepository.filterTopByIdentityAndCardPool(identityName, cardpoolName));
                 decks.addAll(deckRepository.filterByIdentityAndCardPool(identityName, cardpoolName));
-                topdecks.addAll(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpoolName));
+                // topdecks.addAll(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpoolName));
             }
         } else {
+            standings = new ArrayList<>(standingRepository.filterByIdentityAndCardPool(identityName, cardpackName));
+            topStandings = new ArrayList<>(standingRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
             decks = new ArrayList<>(deckRepository.filterByIdentityAndCardPool(identityName, cardpackName));
-            topdecks = new ArrayList<>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
+            // topdecks = new ArrayList<>(deckRepository.filterTopByIdentityAndCardPool(identityName, cardpackName));
         }
 
         ArrayList<String> topURLs = new ArrayList<>();
-        for (Deck topdeck : topdecks) {
-            topURLs.add(topdeck.getUrl());
+        // for (Deck topdeck : topdecks) {
+        //     topURLs.add(topdeck.getUrl());
+        // }
+        for (Standing topstand: topStandings) {
+            topURLs.add(topstand.getDeck().getUrl());
         }
 
-        if (decks.size() > 0) {
+        if (standings.size() > 0) {
             double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
             double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
-            for (int i = 0; i < decks.size(); i++) {
+            for (int i = 0; i < standings.size(); i++) {
                 // NaN fix
                 scaling[0][i] = NaNFix(scaling[0][i]);
                 scaling[1][i] = NaNFix(scaling[1][i]);
-                Deck deck = decks.get(i);
+                Standing standing = standings.get(i);
+                Deck deck = standing.getDeck();
 
                 if (cardpackName.equals(LAST_3)) {
                     Tournament tournament = tournamentRepository.getTournamentByDeckUrl(deck.getUrl());
                     MDSEntryLast3 mds = new MDSEntryLast3(scaling[0][i], scaling[1][i], deck.getName(), deck.getUrl(),
-                            topURLs.contains(decks.get(i).getUrl()),
-                            deckDigest.shortHtmlDigest(deck), deckDigest.htmlDigest(deck), deckDigest.digest(deck),
+                            topURLs.contains(deck.getUrl()),
+                            deckDigest.shortHtmlDigest(standing), deckDigest.htmlDigest(standing), deckDigest.digest(standing),
                             tournament.getCardpool().getName());
                     result.add(mds);
                 } else {
                     MDSEntry mds = new MDSEntry(scaling[0][i], scaling[1][i], deck.getName(), deck.getUrl(),
-                            topURLs.contains(decks.get(i).getUrl()),
-                            deckDigest.shortHtmlDigest(deck), deckDigest.htmlDigest(deck), deckDigest.digest(deck));
+                            topURLs.contains(deck.getUrl()),
+                            deckDigest.shortHtmlDigest(standing), deckDigest.htmlDigest(standing), deckDigest.digest(standing));
                     result.add(mds);
                 }
 
@@ -198,25 +208,31 @@ public class Statistics {
 
         Set<MDSEntry> result = new HashSet<>();
         ArrayList<Deck> decks = new ArrayList<>(deckRepository.filterByFactionAndCardPool(factionName, cardpackName));
-        ArrayList<Deck> topdecks = new ArrayList<>(deckRepository.filterTopByFactionAndCardPool(factionName, cardpackName));
+        ArrayList<Standing> standings = new ArrayList<>(standingRepository.filterByFactionAndCardPool(factionName, cardpackName));
+        ArrayList<Standing> topStandings = new ArrayList<>(standingRepository.filterTopByFactionAndCardPool(factionName, cardpackName));
+        // ArrayList<Deck> topdecks = new ArrayList<>(deckRepository.filterTopByFactionAndCardPool(factionName, cardpackName));
 
         ArrayList<String> topURLs = new ArrayList<>();
-        for (Deck topdeck : topdecks) {
-            topURLs.add(topdeck.getUrl());
+        // for (Deck topdeck : topdecks) {
+        //     topURLs.add(topdeck.getUrl());
+        // }
+        for (Standing topstand : topStandings) {
+            topURLs.add(topstand.getDeck().getUrl());
         }
 
-        if (decks.size() > 0) {
+        if (standings.size() > 0) {
             double[][] distance = multiDimensionalScaling.getDistanceMatrix(decks);
             double[][] scaling = multiDimensionalScaling.calculateMDS(distance);
-            for (int i = 0; i < decks.size(); i++) {
+            for (int i = 0; i < standings.size(); i++) {
                 // NaN fix
                 scaling[0][i] = NaNFix(scaling[0][i]);
                 scaling[1][i] = NaNFix(scaling[1][i]);
-                Deck deck = decks.get(i);
+                Standing standing = standings.get(i);
+                Deck deck = standing.getDeck();
 
                 MDSEntry mds = new MDSEntryFaction(scaling[0][i], scaling[1][i], deck.getName(), deck.getUrl(),
-                        topURLs.contains(decks.get(i).getUrl()),
-                        deckDigest.shortHtmlDigest(deck), deckDigest.htmlDigest(deck), deckDigest.digest(deck),
+                        topURLs.contains(deck.getUrl()),
+                        deckDigest.shortHtmlDigest(standing), deckDigest.htmlDigest(standing), deckDigest.digest(standing),
                         deck.getIdentity().getTitle());
                 result.add(mds);
 
@@ -802,9 +818,9 @@ public class Statistics {
                 if (!result.isInDecks(dptitle)) {   // if it's not already in stats
                     DPDecks dpDecks = new DPDecks(dptitle, deckRepository.countByCardpoolUsingCard(dptitle, cardTitle),
                             cardPool.getDpnumber(), cardPool.getCyclenumber());
-                    List<Deck> decksInDP = deckRepository.findBestByCardpoolUsingCard(dptitle, cardTitle);
-                    for (Deck deck : decksInDP) {
-                        dpDecks.addDeckLink(deckDigest.getDeckLink(deck));
+                    List<Standing> standingsInDP = standingRepository.findBestByCardpoolUsingCard(dptitle, cardTitle);
+                    for (Standing stand : standingsInDP) {
+                        dpDecks.addDeckLink(deckDigest.getDeckLink(stand));
                     }
                     if (dpDecks.getCount() > 10) {
                         dpDecks.addDeckLink("..."); // symbol for more decks
