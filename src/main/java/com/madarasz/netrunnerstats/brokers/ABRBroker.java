@@ -282,38 +282,37 @@ public class ABRBroker {
                         // swiss
 
                         // if there are points
-                        if (!player1.isNull("corpScore") && !player1.isNull("runnerScore") && !player2.isNull("corpScore") && !player2.isNull("runnerScore") &&
-                            (player1.getInt("corpScore") + player2.getInt("corpScore") +
-                                player1.getInt("runnerScore") + player2.getInt("runnerScore") > 0)) {
+                        if (player1.optInt("corpScore", 0) + player2.optInt("corpScore", 0) +
+                                player1.optInt("runnerScore", 0) + player2.optInt("runnerScore", 0) > 0) {
 
                             // first match: player 1 runner vs player 2 corp
                             Match matchABR1;
-                            boolean tie = player1.getInt("runnerScore") == 1 && player2.getInt("corpScore") == 1;
+                            boolean tie = player1.optInt("runnerScore", 0) == 1 && player2.optInt("corpScore", 0) == 1;
                             if (tie) {
                                 matchABR1 = new Match(tournament, player1Runner, player2Corp,
-                                        false, true, false, match.getInt("table"), roundNum);
+                                        false, true, false, match.optInt("table", 0), roundNum);
                             } else {
-                                boolean timed = player1.getInt("runnerScore") == 2 || player2.getInt("corpScore") == 2;
-                                Card winner = player1.getInt("runnerScore") > player2.getInt("corpScore") ? player1Runner : player2Corp;
-                                Card loser = player1.getInt("runnerScore") > player2.getInt("corpScore") ? player2Corp : player1Runner;
+                                boolean timed = player1.optInt("runnerScore", 0) == 2 || player2.optInt("corpScore", 0) == 2;
+                                Card winner = player1.optInt("runnerScore", 0) > player2.optInt("corpScore", 0) ? player1Runner : player2Corp;
+                                Card loser = player1.optInt("runnerScore", 0) > player2.optInt("corpScore", 0) ? player2Corp : player1Runner;
 
                                 matchABR1 = new Match(tournament, winner, loser,
-                                        timed, false, false, match.getInt("table"), roundNum);
+                                        timed, false, false, match.optInt("table", 0), roundNum);
                             }
 
                             // second match: player 1 corp vs player 2 runner
                             Match matchABR2;
-                            tie = player1.getInt("corpScore") == 1 && player2.getInt("runnerScore") == 1;
+                            tie = player1.optInt("corpScore", 0) == 1 && player2.optInt("runnerScore", 0) == 1;
                             if (tie) {
                                 matchABR2 = new Match(tournament, player1Corp, player1Runner,
-                                        false, true, false, match.getInt("table"), roundNum);
+                                        false, true, false, match.optInt("table", 0), roundNum);
                             } else {
-                                boolean timed = player1.getInt("corpScore") == 2 || player2.getInt("runnerScore") == 2;
-                                Card winner = player1.getInt("corpScore") > player2.getInt("runnerScore") ? player1Corp : player2Runner;
-                                Card loser = player1.getInt("corpScore") > player2.getInt("runnerScore") ? player2Runner : player1Corp;
+                                boolean timed = player1.optInt("corpScore", 0) == 2 || player2.optInt("runnerScore", 0) == 2;
+                                Card winner = player1.optInt("corpScore", 0) > player2.optInt("runnerScore", 0) ? player1Corp : player2Runner;
+                                Card loser = player1.optInt("corpScore", 0) > player2.optInt("runnerScore", 0) ? player2Runner : player1Corp;
 
                                 matchABR2 = new Match(tournament, winner, loser,
-                                        timed, false, false, match.getInt("table"), roundNum);
+                                        timed, false, false, match.optInt("table", 0), roundNum);
                             }
 
                             results = addResultsToList(results, matchABR1);
@@ -321,18 +320,18 @@ public class ABRBroker {
                         } else {
                             // cobr.ai
                             try {
-                                if (player1.getInt("combinedScore") == 6) {
+                                if (player1.optInt("combinedScore", 0) == 6) {
                                     Match matchCobra1 = new Match(tournament, player1Corp, player2Runner,
-                                            false, false, false, match.getInt("table"), roundNum);
+                                            false, false, false, match.optInt("table", 0), roundNum);
                                     Match matchCobra2 = new Match(tournament, player1Runner, player2Corp,
-                                            false, false, false, match.getInt("table"), roundNum);
+                                            false, false, false, match.optInt("table", 0), roundNum);
                                     results = addResultsToList(results, matchCobra1);
                                     results = addResultsToList(results, matchCobra2);
-                                } else if (player2.getInt("combinedScore") == 6) {
+                                } else if (player2.optInt("combinedScore", 0) == 6) {
                                     Match matchCobra1 = new Match(tournament, player2Corp, player1Runner,
-                                            false, false, false, match.getInt("table"), roundNum);
+                                            false, false, false, match.optInt("table", 0), roundNum);
                                     Match matchCobra2 = new Match(tournament, player2Runner, player1Corp,
-                                            false, false, false, match.getInt("table"), roundNum);
+                                            false, false, false, match.optInt("table", 0), roundNum);
                                     results = addResultsToList(results, matchCobra1);
                                     results = addResultsToList(results, matchCobra2);
                                 }
@@ -365,7 +364,7 @@ public class ABRBroker {
                             }
 
                             Match matchABR = new Match(tournament, winner, loser, false, false, true,
-                                    match.getInt("table"), roundNum);
+                                    match.optInt("table", 0), roundNum);
 
                             results = addResultsToList(results, matchABR);
                         } catch (Exception ex) {
