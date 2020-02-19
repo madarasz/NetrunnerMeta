@@ -522,7 +522,7 @@ public class Statistics {
 
         // special non-ice breaker cards that should be counted
         final List<String> extraCards = new ArrayList<>(Arrays.asList("D4v1d", "e3 Feedback Implants",
-                "Grappling Hook", "Security Nexus", "Kongamato", "Gbahali"));
+                "Grappling Hook", "Security Nexus", "Kongamato", "Gbahali", "Boomerang"));
 
         List<CardAverage> result = new ArrayList<>();
 
