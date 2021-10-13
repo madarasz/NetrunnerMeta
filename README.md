@@ -1,5 +1,7 @@
 # Netrunner meta analyzer
 
+OBSOLETE, NOT USED ANYMORE!
+
 This is a personal project for analyzing the meta for the card game Netrunner.
  
 No documentation, totally not user friendly, I know. It's a personal plaything.
