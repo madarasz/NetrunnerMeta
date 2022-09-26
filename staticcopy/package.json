@@ -11,7 +11,7 @@
     "grunt-contrib-watch": "latest",
     "grunt-css": "~0.5.4",
     "http-server": "^0.9.0",
-    "nightwatch": "^0.9.14",
+    "nightwatch": "^2.3.9",
     "selenium-server-standalone-jar": "^3.4.0"
   },
   "main": "Gruntfile.js",
